@@ -1,4 +1,5 @@
-tokenizer = require "./tokenizer"
-tokenizer.source("hello   '\"world\\'s\"'{|;,@}.():$")
-while token = tokenizer.nextToken()
-  console.log token
+
+Parser = require "./parser"
+p = new Parser()
+p.parse("text: name")
+p.parse("text: messages.length(()).fact > 0")

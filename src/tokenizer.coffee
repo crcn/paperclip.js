@@ -18,9 +18,15 @@ class Codes
   @PIPE       = 124      # |
   @RB         = 125      # }
 
+  @byCodes = {}
+
+  @key = (code) ->
+    for key of Codes
+      return key if Codes[key] is code
+
 
 for key of Codes
-  Codes[Codes[key]] = Codes[key]
+  Codes.byCodes[Codes[key]] = Codes[key]
 
 
 
@@ -37,12 +43,14 @@ class Tokenizer
   ###
 
   codes: Codes
+  @codes = Codes
 
   ###
   ###
 
   constructor: () ->
     @_s = strscan "", { skipWhitespace: false }
+    @_pool = []
 
 
   ###
@@ -56,8 +64,14 @@ class Tokenizer
   ###
   ###
 
-  nextToken: () ->
+  putBack: () ->
+    @_pool.push @current
 
+  ###
+  ###
+
+  next: () ->
+    return @_pool.pop() if @_pool.length
     return null if @_s.eof()
 
     # word?
@@ -89,7 +103,7 @@ class Tokenizer
 
     # console.log ccode, @_s.cchar()
 
-    return @_t Codes[ccode] or Codes.OTHER, @_s.cchar()
+    return @_t Codes.byCodes[ccode] or Codes.OTHER, @_s.cchar()
 
 
 
@@ -100,12 +114,7 @@ class Tokenizer
 
     # trigger the next char
     @_s.nextChar()
-    [code, value]
+    @current = [code, value]
 
 
-
-
-
-
-
-module.exports = new Tokenizer()
+module.exports = Tokenizer
