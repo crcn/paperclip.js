@@ -141,9 +141,19 @@ class Parser
       @_nextCode()
 
     if @_currentCode() is TokenCodes.PIPE 
+      buffer.push @_parsePipes()
+
+
+    buffer
+
+  ###
+  ###
+
+  _parsePipes: () ->
+    buffer = []
+    while (c = @_currentCode()) is TokenCodes.PIPE
+      @_nextCode()
       buffer.push @_parsePipe()
-
-
     buffer
 
   ###
@@ -151,12 +161,19 @@ class Parser
   ###
 
   _parsePipe: () ->
-    name = @_t.next()[1]
+    name = @_currentString()
     params = []
+    @_expectNextCode TokenCodes.LP
+
     while c = @_nextCode()
       params.push @_parseActionOptions()
       c = @_currentCode()
+
       break if c isnt TokenCodes.COMA
+      break if c is TokenCodes.RB
+
+
+    @_nextCode()
 
     { name: name, params: params }
 
