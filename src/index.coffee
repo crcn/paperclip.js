@@ -2,4 +2,4 @@
 Parser = require "./parser"
 p = new Parser()
 p.parse("text: name")
-p.parse("text: messages.length(()).fact > 0")
+p.parse("text: messages.length() > 0 ? 'hello' : 'crap'; ")

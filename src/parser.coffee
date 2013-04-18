@@ -71,7 +71,7 @@ class Parser
 
     buffer = []
 
-    while (c = @_nextCode()) and not ~[TokenCodes.RB, TokenCodes.COMA, TokenCodes.LB].indexOf c
+    while (c = @_nextCode()) and not ~[TokenCodes.SEMI_COLON].indexOf c
 
       if c is TokenCodes.WORD
         buffer.push @_parseRef()
