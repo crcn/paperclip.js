@@ -5,6 +5,7 @@ class Codes
   @WORD   = 1            # something
   @STRING = @WORD   << 1 # "something"
   @WS     = @STRING << 1 # \s
+  @NUMBER = @WS     << 1 # 0-9
 
   @DOLLAR     = 36       # $
   @LP         = 40       # (
@@ -49,7 +50,7 @@ class Tokenizer
   ###
 
   constructor: () ->
-    @_s = strscan "", { skipWhitespace: false }
+    @_s = strscan "", { skipWhitespace: true }
     @_pool = []
 
 
@@ -72,7 +73,7 @@ class Tokenizer
 
   next: () ->
     return @_pool.pop() if @_pool.length
-    return null if @_s.eof()
+    return (@current = null) if @_s.eof()
 
     # word?
     if @_s.isAZ()
@@ -97,6 +98,9 @@ class Tokenizer
         buffer.push c
 
       return @_t Codes.STRING, buffer.join("")
+
+    else if @_s.is09()
+      return @_t Codes.NUMBER, @_s.nextNumber()
 
     else if @_s.isWs()
       return @_t Codes.WS, @_s.next /[\s\r\n\t]+/

@@ -25,17 +25,29 @@ class Parser
 
   _parse: () ->
     switch @_nextCode()
-      when TokenCodes.WORD then @_parseAction()
+      when TokenCodes.WORD then @_parseActions()
       else @_error()
 
   ###
   ###
 
-  _parseAction: () ->
-    actionName = @_currentString()
+  _parseActions: () ->
+    actions = []
+    while @_t.current
+      actions.push @_parseAction()
+      if @_currentCode() is TokenCodes.SEMI_COLON
+        @_nextCode()
+    console.log actions
+    actions
 
+  ###
+  ###
+
+  _parseAction: () ->
+    action = { name: @_currentString() }
     @_expectNextCode TokenCodes.COLON
-    @_parseActionOptions()
+    action.options = @_parseActionOptions()
+    action
 
 
 
@@ -45,10 +57,8 @@ class Parser
   _parseActionOptions: () ->
     switch @_nextCode() 
 
-      when TokenCodes.WS then @_parseActionOptions()
-
       # action: { }
-      when TokenCodes.LB then @_parseOptions()
+      when TokenCodes.LB then @_parseMultiOptions()
 
       # action: reference
       when TokenCodes.WORD then @_parseReference()
@@ -57,13 +67,40 @@ class Parser
       when TokenCodes.STRING then @_parseString()
       else @_error()
 
+  ###
+  ###
+
+  _parseMultiOptions: () ->
+    c = @_currentCode()
+    options = []
+
+
+    while c and (c = @_currentCode()) isnt TokenCodes.RB
+
+      @_nextCode()
+
+      ops = { name: @_currentString() }
+
+      @_expectNextCode TokenCodes.COLON
+
+
+      ops.buffer = @_parseActionOptions()
+      options.push ops
+
+
+
+    # get rid of RP
+    @_nextCode()
+
+    options
+
+
+
 
   ###
   ###
 
   _parseReference: () ->
-    @_t.putBack()
-    c = @_currentCode()
 
     # references to watch
     refs   = []
@@ -71,18 +108,38 @@ class Parser
 
     buffer = []
 
-    while (c = @_nextCode()) and c isnt TokenCodes.SEMI_COLON
+    while c = @_currentCode()
 
       if c is TokenCodes.WORD
         buffer.push @_parseRef()
+        c = @_currentCode()
 
-      if @_currentCode() is TokenCodes.WS
-        continue
+      if c is TokenCodes.LP
+        buffer.push @_parseParams()
+        c = @_currentCode()
+
+      if c is TokenCodes.LB
+        buffer.push @_parseBrackes()
+        c = @_currentCode()
+
+
+      # end of multi statement
+      if ~[TokenCodes.RP, TokenCodes.RB].indexOf c
+        return buffer
+
+
+      if not c or ~[TokenCodes.SEMI_COLON, TokenCodes.COMA].indexOf @_currentCode()
+        break
+
 
       buffer.push @_currentString()
 
+      @_nextCode()
 
-    console.log buffer
+    @_nextCode()
+
+    buffer
+
 
   ###
   ###
@@ -108,19 +165,28 @@ class Parser
   ###
   ###
 
-  _parseParams: () ->
+  _parseParams  : () -> @_bufferUntil TokenCodes.LP, TokenCodes.RP
+  _parseBrackes : () -> @_bufferUntil TokenCodes.LB, TokenCodes.RB
+    
+
+  ###
+  ###
+
+  _bufferUntil: (left, right) ->
+
     c = @_currentCode() 
     buffer = []
-    while c and c is TokenCodes.LP
+    while c and c isnt right
       buffer.push @_t.current[1]
-      if (c = @_nextCode()) is TokenCodes.LP 
-        buffer.push @_parseParams()
-      else if c is TokenCodes.RP
-        buffer.push @_t.current[1]
-        @_nextCode() # skip it
-        break
+      if (c = @_nextCode()) is left
+        buffer.push @_bufferUntil left, right
+
+
+    buffer.push @_t.current[1]
+    @_nextCode() # skip it
 
     buffer.join ""
+
 
   ###
   ###
@@ -131,17 +197,23 @@ class Parser
   ###
   ###
 
+  _expectCurrentCode: (code) ->
+    @_error() if @_t.current[0] isnt code
+
+  ###
+  ###
+
   _nextCode: () -> @_t.next()?[0]
 
   ###
   ###
 
-  _currentCode: () -> @_t.current[0]
+  _currentCode: () -> @_t.current?[0]
 
   ###
   ###
 
-  _currentString: () -> @_t.current[1]
+  _currentString: () -> @_t.current?[1]
 
 
 
