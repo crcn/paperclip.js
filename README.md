@@ -1,13 +1,16 @@
-
 controller logic:
 
 ```javascript
-var paperclip = require("paperclip"),
+var paperclip = require("paperclip")(),
 bindable      = require("bindable");
 
 var context = new BindableObject({
   name: "craig"
 });
+
+paperclip.actions.bothWays = function(binding) {
+  binding.bothWays();
+}
 
 paperclip.attach(context, $("#application"));
 ```
