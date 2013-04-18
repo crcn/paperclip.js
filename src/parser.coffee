@@ -128,7 +128,7 @@ class Parser
         return buffer
 
 
-      if not c or ~[TokenCodes.SEMI_COLON, TokenCodes.COMA].indexOf @_currentCode()
+      if not c or ~[TokenCodes.SEMI_COLON, TokenCodes.COMA].indexOf c
         break
 
 
@@ -154,10 +154,11 @@ class Parser
       # function all
       if (c = @_nextCode()) is TokenCodes.LP
         refs.push name + @_parseParams()
+        c = @_currentCode()
       else
         refs.push name
 
-      if @_currentCode() is TokenCodes.DOT 
+      if c is TokenCodes.DOT 
         c = @_nextCode()
 
     refs
