@@ -1,0 +1,5 @@
+[project]
+tpl = template:git+npm
+
+[commands]
+proj = subl .
