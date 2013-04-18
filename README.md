@@ -1,22 +1,29 @@
+
+controller logic:
+
 ```javascript
-var Paperclip = require("paperclip"),
-BindableObject = require("bindable").Object;
+var paperclip = require("paperclip"),
+bindable      = require("bindable");
 
-
-var obj = new BindableObject({
-  name: { 
-    first: "Craig",
-    last: "Blah"
-  },
-  input: $("input")
+var context = new BindableObject({
+  name: "craig"
 });
 
-var clip = new Paperclip(obj, {
-  
-  //create a binding from the text input, to the first name, and vice versa
-  "input": {
-    attributes: {
-      text: { to: "name.first", bothWays: true }
-    }
-  }
-});
+paperclip.attach(context, $("#application"));
+```
+
+html:
+
+```html
+<html>
+  <head>
+    <script type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="application">
+      <input type="text" value="{{name | bothWays}}"></input>
+      <p>hello {{name}}!</p>
+    </div>
+  </body>
+</html>
+```
