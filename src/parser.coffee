@@ -37,7 +37,7 @@ class Parser
       actions.push @_parseAction()
       if @_currentCode() is TokenCodes.SEMI_COLON
         @_nextCode()
-    console.log actions
+    console.log JSON.stringify actions, null, 2
     actions
 
   ###
@@ -46,6 +46,7 @@ class Parser
   _parseAction: () ->
     action = { name: @_currentString() }
     @_expectNextCode TokenCodes.COLON
+    @_nextCode()
     action.options = @_parseActionOptions()
     action
 
@@ -55,7 +56,7 @@ class Parser
   ###
 
   _parseActionOptions: () ->
-    switch @_nextCode() 
+    switch @_currentCode() 
 
       # action: { }
       when TokenCodes.LB then @_parseMultiOptions()
@@ -83,7 +84,7 @@ class Parser
 
       @_expectNextCode TokenCodes.COLON
 
-
+      @_nextCode()
       ops.buffer = @_parseActionOptions()
       options.push ops
 
@@ -128,7 +129,7 @@ class Parser
         return buffer
 
 
-      if not c or ~[TokenCodes.SEMI_COLON, TokenCodes.COMA].indexOf c
+      if not c or ~[TokenCodes.SEMI_COLON, TokenCodes.COMA, TokenCodes.PIPE].indexOf c
         break
 
 
@@ -136,9 +137,32 @@ class Parser
 
       @_nextCode()
 
-    @_nextCode()
+    if @_currentCode() is TokenCodes.SEMI_COLON
+      @_nextCode()
+
+    if @_currentCode() is TokenCodes.PIPE 
+      buffer.push @_parsePipe()
+
 
     buffer
+
+  ###
+   filter item.name > 5, test;
+  ###
+
+  _parsePipe: () ->
+    name = @_t.next()[1]
+    params = []
+    while c = @_nextCode()
+      params.push @_parseActionOptions()
+      c = @_currentCode()
+      break if c isnt TokenCodes.COMA
+
+    { name: name, params: params }
+
+
+
+
 
 
   ###
