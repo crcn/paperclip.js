@@ -16,5 +16,8 @@
   "readmeFilename": "README.md",
   "devDependencies": {
     "jsdom": "*"
+  },
+  "dependencies": {
+    "strscanner": "0.0.x"
   }
 }
