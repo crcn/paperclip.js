@@ -1,6 +1,14 @@
 Tokenizer  = require "./tokenizer"
 TokenCodes = Tokenizer.codes 
 
+ModifierExpression = require "./expressions/modifier"
+ScriptExpression   = require "./expressions/script"
+ActionExpression   = require "./expressions/action"
+OptionsExpression  = require "./expressions/options"
+RefExpression      = require "./expressions/ref"
+RefPathExpression  = require "./expressions/refPath"
+FnExpression       = require "./expressions/fn"
+
 ###
  action: 
 ###
@@ -44,11 +52,10 @@ class Parser
   ###
 
   _parseAction: () ->
-    action = { name: @_currentString() }
+    name = @_currentString()
     @_expectNextCode TokenCodes.COLON
     @_nextCode()
-    action.options = @_parseActionOptions()
-    action
+    new ActionExpression name, @_parseActionOptions()
 
 
 
@@ -77,7 +84,7 @@ class Parser
       @_expectNextCode TokenCodes.COLON
 
       @_nextCode()
-      ops.buffer = @_parseActionOptions()
+      ops.expression = @_parseActionOptions()
       options.push ops
 
 
@@ -85,7 +92,7 @@ class Parser
     # get rid of RP
     @_nextCode()
 
-    options
+    new OptionsExpression options
 
 
 
@@ -96,47 +103,54 @@ class Parser
   _parseReference: () ->
 
     # references to watch
-    refs   = []
+    expressions    = []
+    modifiers     = []
 
 
-    buffer = []
+    cpos = @_t.current[2] - @_t.current[1].length + 1
 
     while c = @_currentCode()
 
       if c is TokenCodes.VAR
-        buffer.push @_parseRef()
+        expressions.push @_parseRef()
         c = @_currentCode()
 
       if c is TokenCodes.LP
-        buffer.push @_parseParams()
+        @_parseParams()
         c = @_currentCode()
 
       if c is TokenCodes.LB
-        buffer.push @_parseBrackes()
+        @_parseBrackes()
         c = @_currentCode()
-
 
       # end of multi statement
       if ~[TokenCodes.RP, TokenCodes.RB].indexOf c
-        return buffer
-
+        break
 
       if not c or ~[TokenCodes.SEMI_COLON, TokenCodes.COMA, TokenCodes.PIPE].indexOf c
         break
 
 
-      buffer.push @_currentString()
-
       @_nextCode()
 
+    pos = @_t._s.pos()
+
+    @_t._s.pos cpos
+    script = @_t._s.to (@_t.current?[2] or pos) - cpos
+    @_t._s.pos pos
+
+    # semi colon? skip it
     if @_currentCode() is TokenCodes.SEMI_COLON
       @_nextCode()
 
+    modifiers = []
+
+    # pipe? it's a modifier
     if @_currentCode() is TokenCodes.PIPE 
-      buffer.push @_parsePipes()
+      modifiers.push @_parsePipes()
 
 
-    buffer
+    new ScriptExpression script, expressions, modifiers
 
   ###
   ###
@@ -155,8 +169,17 @@ class Parser
   _parsePipe: () ->
     name = @_currentString()
     params = []
-    @_expectNextCode TokenCodes.LP
+    @_nextCode()
+    new ModifierExpression name, @_parseParams()
 
+
+  ###
+  ###
+
+  _parseParams: () ->
+
+    @_expectCurrentCode TokenCodes.LP
+    params = []
     while c = @_nextCode()
       params.push @_parseActionOptions()
       c = @_currentCode()
@@ -164,13 +187,9 @@ class Parser
       break if c isnt TokenCodes.COMA
       break if c is TokenCodes.RB
 
-
     @_nextCode()
 
-    { name: name, params: params }
-
-
-
+    params
 
 
 
@@ -186,20 +205,19 @@ class Parser
 
       # function all
       if (c = @_nextCode()) is TokenCodes.LP
-        refs.push name + @_parseParams()
+        refs.push new FnExpression name, @_parseParams()
         c = @_currentCode()
       else
-        refs.push name
+        refs.push new RefExpression name
 
       if c is TokenCodes.DOT 
         c = @_nextCode()
 
-    refs
+    new RefPathExpression refs
 
   ###
   ###
 
-  _parseParams  : () -> @_bufferUntil TokenCodes.LP, TokenCodes.RP
   _parseBrackes : () -> @_bufferUntil TokenCodes.LB, TokenCodes.RB
 
   ###

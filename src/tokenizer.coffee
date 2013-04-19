@@ -117,8 +117,9 @@ class Tokenizer
   _t: (code, value) ->
 
     # trigger the next char
+    p = @_s.pos()
     @_s.nextChar()
-    @current = [code, value]
+    @current = [code, value, p]
 
 
 module.exports = Tokenizer

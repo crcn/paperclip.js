@@ -3,5 +3,5 @@ module.exports = class
   ###
   ###
 
-  constructor: (name, options) ->
+  constructor: (@name, @options) ->
   
