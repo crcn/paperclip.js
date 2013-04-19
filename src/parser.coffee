@@ -57,10 +57,7 @@ class Parser
 
   _parseActionOptions: () ->
     switch @_currentCode() 
-
-      # action: { }
       when TokenCodes.LB then @_parseMultiOptions()
-
       else @_parseReference()
 
   ###
@@ -185,7 +182,7 @@ class Parser
     refs = []
 
     while c is TokenCodes.VAR
-      name = @_t.current[1]
+      name = @_currentString()
 
       # function all
       if (c = @_nextCode()) is TokenCodes.LP
@@ -204,7 +201,6 @@ class Parser
 
   _parseParams  : () -> @_bufferUntil TokenCodes.LP, TokenCodes.RP
   _parseBrackes : () -> @_bufferUntil TokenCodes.LB, TokenCodes.RB
-    
 
   ###
   ###
@@ -214,12 +210,12 @@ class Parser
     c = @_currentCode() 
     buffer = []
     while c and c isnt right
-      buffer.push @_t.current[1]
+      buffer.push @_currentString()
       if (c = @_nextCode()) is left
         buffer.push @_bufferUntil left, right
 
 
-    buffer.push @_t.current[1]
+    buffer.push @_currentString()
     @_nextCode() # skip it
 
     buffer.join ""
