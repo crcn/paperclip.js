@@ -3,11 +3,12 @@ strscan = require "strscanner"
 class Codes
 
   @OTHER  = -1           # ?
-  @WORD   = 1            # something
-  @STRING = @WORD   << 1 # "something"
-  @VAR    = @STRING << 1 # variable
-  @WS     = @VAR    << 1 # \s
-  @NUMBER = @WS     << 1 # 0-9
+  @WORD   = 256         # something
+  @STRING = @WORD   + 1 # "something"
+  @VAR    = @STRING + 1 # variable
+  @WS     = @VAR    + 1 # \s
+  @NUMBER = @WS     + 1 # 0-9
+  @BOOL   = @NUMBER + 1 # 0-9
 
   @DOLLAR     = 36       # $
   @LP         = 40       # (
@@ -79,7 +80,10 @@ class Tokenizer
 
     # word?
     if @_s.isAZ() or (ccode = @_s.ccode()) is 36 or ccode is 95
-      return @_t Codes.VAR, @_s.next /[_$a-zA-Z]+/
+      word = @_s.next /[_$a-zA-Z]+/
+
+      return @_t(Codes.BOOL, word) if /true|false/.test word
+      return @_t Codes.VAR, word
 
     # string?
     else if ccode is 39 or ccode is 34

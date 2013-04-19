@@ -1,9 +1,12 @@
 class Evaluator
 
   constructor: (@expr, @context) ->
+    @actions = @expr.actions.map (expr) -> expr.evaluate context
 
 class ActionsExpression
-  
+    
+  _type: "actions"
+
   ###
   ###
 
@@ -13,7 +16,7 @@ class ActionsExpression
   ###
   ###
 
-  eval: (context) -> new Evaluator @, context
+  evaluate: (context) -> new Evaluator @, context
 
 
 module.exports = ActionsExpression

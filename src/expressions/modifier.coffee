@@ -5,15 +5,10 @@ class Evaluator
 
 class ModifierExpression
   
-  ###
-  ###
+  _type: "modifier"
 
   constructor: (@name, @params) ->
 
-
-  ###
-  ###
-
-  eval: (context) -> new Evaluator @, conext
+  evaluate: (context) -> new Evaluator @, context
 
 module.exports = ModifierExpression

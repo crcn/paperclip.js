@@ -5,9 +5,11 @@ class Evaluator
 
 class OptionsExpression
 
+  _type: "options"
+  
   constructor: (@items) ->
 
-  eval: (context) -> new Evaluator @, context
+  evaluate: (context) -> new Evaluator @, context
 
 
 

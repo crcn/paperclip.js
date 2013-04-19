@@ -1,18 +1,17 @@
 class Evaluator
   
   constructor: (@expr, @context) ->
+    @name = @expr.name
+
+  toString: () -> @name
 
 class RefExpression
 
-  ###
-  ###
+  _type: "ref"
 
   constructor: (@name) ->
 
-  ###
-  ###
-
-  eval: (context) -> new Evaluator @, context
+  evaluate: (context) -> new Evaluator @, context
   
 
 module.exports = RefExpression

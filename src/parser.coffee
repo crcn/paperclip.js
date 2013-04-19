@@ -1,14 +1,17 @@
 Tokenizer  = require "./tokenizer"
 TokenCodes = Tokenizer.codes 
 
-ModifierExpression = require "./expressions/modifier"
-ScriptExpression   = require "./expressions/script"
-ActionExpression   = require "./expressions/action"
-ActionsExpression  = require "./expressions/actions"
-OptionsExpression  = require "./expressions/options"
-RefExpression      = require "./expressions/ref"
-RefPathExpression  = require "./expressions/refPath"
-FnExpression       = require "./expressions/fn"
+ModifierExpression   = require "./expressions/modifier"
+ScriptExpression     = require "./expressions/script"
+ActionExpression     = require "./expressions/action"
+ActionsExpression    = require "./expressions/actions"
+OptionsExpression    = require "./expressions/options"
+RefExpression        = require "./expressions/ref"
+RefPathExpression    = require "./expressions/refPath"
+FnExpression         = require "./expressions/fn"
+JsExpression         = require "./expressions/js"
+ParamsExpression     = require "./expressions/params"
+CollectionExpression = require "./expressions/collection"
 
 ###
  action: 
@@ -112,8 +115,6 @@ class Parser
     modifiers     = []
 
 
-    cpos = @_t.current[2] - @_t.current[1].length + 1
-
     while c = @_currentCode()
 
       if c is TokenCodes.VAR
@@ -121,12 +122,13 @@ class Parser
         c = @_currentCode()
 
       if c is TokenCodes.LP
-        @_parseParams()
+        expressions.push @_parseParams()
         c = @_currentCode()
 
       if c is TokenCodes.LB
         expressions.push @_parseActionOptions()
         c = @_currentCode()
+
 
       # end of multi statement
       if ~[TokenCodes.RP, TokenCodes.RB].indexOf c
@@ -135,17 +137,10 @@ class Parser
       if not c or ~[TokenCodes.SEMI_COLON, TokenCodes.COMA, TokenCodes.PIPE].indexOf c
         break
 
+      expressions.push new JsExpression @_currentString()
 
       @_nextCode()
 
-    pos = @_t._s.pos()
-
-    @_t._s.pos cpos
-
-    # a bit hacky, but we don't want a full JS parser - this
-    # gets evaluated by the browser
-    script = @_t._s.to (@_t.current?[2] or pos) - cpos
-    @_t._s.pos pos
 
     # semi colon? skip it
     if @_currentCode() is TokenCodes.SEMI_COLON
@@ -158,17 +153,18 @@ class Parser
       modifiers.push @_parsePipes()
 
 
-    new ScriptExpression script, expressions, modifiers
+    new ScriptExpression new CollectionExpression(expressions), new CollectionExpression(modifiers)
 
   ###
   ###
 
   _parsePipes: () ->
-    buffer = []
+    modifiers = []
     while (c = @_currentCode()) is TokenCodes.PIPE
       @_nextCode()
-      buffer.push @_parsePipe()
-    buffer
+      modifiers.push @_parsePipe()
+    
+    new CollectionExpression modifiers
 
   ###
    filter item.name > 5, test;
@@ -197,7 +193,7 @@ class Parser
 
     @_nextCode()
 
-    params
+    new ParamsExpression params
 
 
 

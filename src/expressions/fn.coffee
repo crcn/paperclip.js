@@ -4,9 +4,13 @@ class Evaluator
   ###
 
   constructor: (@expr, @context) ->
+    @name   = expr.name
+    @params = @expr.params.evaluate()
 
 
 class FnExpression
+
+  _type: "fn"
   
   ###
   ###
@@ -16,7 +20,7 @@ class FnExpression
   ###
   ###
 
-  eval: (context) -> new Evaluator @, context
+  evaluate: (context) -> new Evaluator @, context
 
 
 

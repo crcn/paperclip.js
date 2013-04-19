@@ -1,16 +1,39 @@
-class Evaluator
+CollectionExpression = require("./collection")
 
-  constructor: (@expr, @context) ->
+class Evaluator extends CollectionExpression.Evaluator
+  
+  # wraps something like 
+  # items.size() in
+  # this.ref("items.size").call()
+  toString: () ->
 
-class RefPathExpression
+    buffer = ["this"]
+    currentChain = []
 
-  ###
-  ###
+    for part in @items
+      currentChain.push part.name
+      if part.expr._type is "fn"
+        buffer.push ".ref('", currentChain.join("."), "').call"
+        buffer.push part.params.toString()
+        currentChain = []
 
-  constructor: (@path) ->
+    if currentChain.length
+      buffer.push ".ref('", currentChain.join("."), "')"
+
+    buffer.join("")
 
 
-  eval: (context) -> new Evaluator @, context
+
+
+
+
+  
+
+class RefPathExpression extends CollectionExpression
+
+  _type: "refPath"
+
+  evaluate: (context) -> new Evaluator @, context
 
 
 module.exports = RefPathExpression
