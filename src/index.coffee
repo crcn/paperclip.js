@@ -6,4 +6,16 @@ p = new Parser()
 #p.parse("css: {'test-name':hello}; text: world")
 #p.parse("each: children | filter({ age: { $gt:  } })")
 #p.parse("each: children | filter(filt) | json()")
-p.parse("text: name | filter(name.length() > 5, test | filter(abcde)) | cat(name); css: craig")
+
+expressions = []
+for i in [0..1000]
+  expressions.push p.parse("text: name | filter(name.length() > 5, test | filter(abcde)) | cat(name); css: craig")
+
+
+expr = p.parse("text: name | filter(name.length > 5, test | filter(abcde)) | cat(name)")
+
+expr.eval(new BindableObject())
+
+setTimeout (() ->
+
+), 1000 * 60

@@ -4,6 +4,7 @@ TokenCodes = Tokenizer.codes
 ModifierExpression = require "./expressions/modifier"
 ScriptExpression   = require "./expressions/script"
 ActionExpression   = require "./expressions/action"
+ActionsExpression  = require "./expressions/actions"
 OptionsExpression  = require "./expressions/options"
 RefExpression      = require "./expressions/ref"
 RefPathExpression  = require "./expressions/refPath"
@@ -20,6 +21,7 @@ class Parser
 
   constructor: () ->
     @_t = new Tokenizer()
+    @_expressions = {}
 
   ###
   ###
@@ -33,7 +35,7 @@ class Parser
 
   _parse: () ->
     switch @_nextCode()
-      when TokenCodes.VAR then @_parseActions()
+      when TokenCodes.VAR then return @_parseActions()
       else @_error()
 
   ###
@@ -45,8 +47,8 @@ class Parser
       actions.push @_parseAction()
       if @_currentCode() is TokenCodes.SEMI_COLON
         @_nextCode()
-    console.log JSON.stringify actions, null, 2
-    actions
+    
+    new ActionsExpression actions
 
   ###
   ###
@@ -56,8 +58,6 @@ class Parser
     @_expectNextCode TokenCodes.COLON
     @_nextCode()
     new ActionExpression name, @_parseActionOptions()
-
-
 
   ###
   ###
@@ -136,6 +136,9 @@ class Parser
     pos = @_t._s.pos()
 
     @_t._s.pos cpos
+
+    # a bit hacky, but we don't want a full JS parser - this
+    # gets evaluated by the browser
     script = @_t._s.to (@_t.current?[2] or pos) - cpos
     @_t._s.pos pos
 

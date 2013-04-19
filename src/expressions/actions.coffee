@@ -2,12 +2,12 @@ class Evaluator
 
   constructor: (@expr, @context) ->
 
-class ScriptExpression
-
+class ActionsExpression
+  
   ###
   ###
 
-  constructor: (@script, @references, @modifiers) ->
+  constructor: (@actions) ->
 
 
   ###
@@ -16,4 +16,4 @@ class ScriptExpression
   eval: (context) -> new Evaluator @, context
 
 
-module.exports = ScriptExpression
+module.exports = ActionsExpression

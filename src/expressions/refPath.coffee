@@ -1,4 +1,8 @@
-class RefExpression
+class Evaluator
+
+  constructor: (@expr, @context) ->
+
+class RefPathExpression
 
   ###
   ###
@@ -6,4 +10,7 @@ class RefExpression
   constructor: (@path) ->
 
 
-module.exports = RefExpression
+  eval: (context) -> new Evaluator @, context
+
+
+module.exports = RefPathExpression
