@@ -27,7 +27,7 @@ class Parser
   ###
 
   parse: (source) ->
-  
+
     if @_expressions[source] 
       return @_expressions[source]
 
@@ -125,7 +125,7 @@ class Parser
         c = @_currentCode()
 
       if c is TokenCodes.LB
-        @_parseBrackes()
+        expressions.push @_parseActionOptions()
         c = @_currentCode()
 
       # end of multi statement
@@ -222,30 +222,6 @@ class Parser
         c = @_nextCode()
 
     new RefPathExpression refs
-
-  ###
-  ###
-
-  _parseBrackes : () -> @_bufferUntil TokenCodes.LB, TokenCodes.RB
-
-  ###
-  ###
-
-  _bufferUntil: (left, right) ->
-
-    c = @_currentCode() 
-    buffer = []
-    while c and c isnt right
-      buffer.push @_currentString()
-      if (c = @_nextCode()) is left
-        buffer.push @_bufferUntil left, right
-
-
-    buffer.push @_currentString()
-    @_nextCode() # skip it
-
-    buffer.join ""
-
 
   ###
   ###
