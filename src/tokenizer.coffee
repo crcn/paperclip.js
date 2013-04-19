@@ -1,6 +1,7 @@
 strscan = require "strscanner"
 
 class Codes
+
   @OTHER  = -1           # ?
   @WORD   = 1            # something
   @STRING = @WORD   << 1 # "something"
@@ -105,8 +106,6 @@ class Tokenizer
 
     else if @_s.isWs()
       return @_t Codes.WS, @_s.next /[\s\r\n\t]+/
-
-    # console.log ccode, @_s.cchar()
 
     return @_t Codes.byCodes[ccode] or Codes.OTHER, @_s.cchar()
 
