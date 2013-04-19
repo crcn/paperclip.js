@@ -38,14 +38,15 @@ class Evaluator extends CollectionExpression.Evaluator
     watchable = []
     cw = []
 
-
+    # TODO - this needs to act a bit like deep property watcher
     for part in @items
+
+      cw.push part.name
+
       if part.expr._type is "fn"
         if cw.length
           watchable.push cw
         cw = []
-      else
-        cw.push part.name
 
 
     if cw.length
