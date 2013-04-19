@@ -27,8 +27,13 @@ class Parser
   ###
 
   parse: (source) ->
+  
+    if @_expressions[source] 
+      return @_expressions[source]
+
     @_t.source source
-    @_parse()
+
+    @_expressions[source] = @_parse()
 
   ###
   ###
