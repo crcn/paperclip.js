@@ -4,7 +4,8 @@ class Codes
   @OTHER  = -1           # ?
   @WORD   = 1            # something
   @STRING = @WORD   << 1 # "something"
-  @WS     = @STRING << 1 # \s
+  @VAR    = @STRING << 1 # variable
+  @WS     = @VAR    << 1 # \s
   @NUMBER = @WS     << 1 # 0-9
 
   @DOLLAR     = 36       # $
@@ -76,11 +77,11 @@ class Tokenizer
     return (@current = null) if @_s.eof()
 
     # word?
-    if @_s.isAZ()
-      return @_t Codes.WORD, @_s.nextWord()
+    if @_s.isAZ() or (ccode = @_s.ccode()) is 36 or ccode is 95
+      return @_t Codes.VAR, @_s.next /[_$a-zA-Z]+/
 
     # string?
-    else if (ccode = @_s.ccode()) is 39 or ccode is 34
+    else if ccode is 39 or ccode is 34
 
       buffer = []
       while ((c = @_s.nextChar()) and not @_s.eof())

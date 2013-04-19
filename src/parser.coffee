@@ -25,7 +25,7 @@ class Parser
 
   _parse: () ->
     switch @_nextCode()
-      when TokenCodes.WORD then @_parseActions()
+      when TokenCodes.VAR then @_parseActions()
       else @_error()
 
   ###
@@ -61,12 +61,7 @@ class Parser
       # action: { }
       when TokenCodes.LB then @_parseMultiOptions()
 
-      # action: reference
-      when TokenCodes.WORD then @_parseReference()
-
-      # action: "string"
-      when TokenCodes.STRING then @_parseString()
-      else @_error()
+      else @_parseReference()
 
   ###
   ###
@@ -111,7 +106,7 @@ class Parser
 
     while c = @_currentCode()
 
-      if c is TokenCodes.WORD
+      if c is TokenCodes.VAR
         buffer.push @_parseRef()
         c = @_currentCode()
 
@@ -189,7 +184,7 @@ class Parser
     c = @_currentCode()
     refs = []
 
-    while c is TokenCodes.WORD
+    while c is TokenCodes.VAR
       name = @_t.current[1]
 
       # function all
