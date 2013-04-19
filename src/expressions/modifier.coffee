@@ -13,10 +13,12 @@ class Evaluator extends base.Evaluator
 
   map: (value, callback) ->
     modifier = @clip.modifiers[@name]
+    #console.log @name, value
     return value if not modifier
     params = @params.items.map (item) -> item.value()
     params.unshift value
-    modifier.apply @, params
+    value = modifier.apply @, params
+    value
 
 
 

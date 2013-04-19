@@ -1,6 +1,9 @@
 CollectionExpression = require "./collection"
 
 class Evaluator extends CollectionExpression.Evaluator
+
+  value: () ->
+    console.log "VALUE"
   
   toString: () ->
     buffer = @items.map((item) -> item.toString())

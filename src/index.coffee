@@ -14,34 +14,23 @@ p = new Parser()
 #  expressions.push p.parse("text: name | filter(name.length() > 5, test | filter(abcde)) | cat(name); css: craig")
 
 
-expr = p.parse("text: person.name | append(person.count | negate()) | capitalize()")
+expr = p.parse("text: person.name | append(person.count | negate())")
 
-clip = new Clip({}, {
+clip = new Clip({ person: { count: 1, name: "craig" }}, {
   modifiers: {
     localize: (value) -> "ching chong!",
     append: (value, text) -> value + text
     capitalize: (value, count) -> String(value).toUpperCase()
-    negate: (value) -> -value
+    negate: (value) -> 
+      -value
   }
 })
-
 
 evaluator = expr.evaluate(clip)
 
 
 evaluator.actions[0].bind (value) ->
   console.log value
-
-clip.data.set "person.name", "jake"
-
-for i in [0..10]
-  clip.data.set "person.count", i
-
-
-clip.data.set "person.name", "jeff"
-
-
-clip.data.set "person.count", 0
 
 
 

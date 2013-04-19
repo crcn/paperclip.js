@@ -41,6 +41,7 @@ class Evaluator extends base.Evaluator
     for modifier in @modifiers.items
       newValue = modifier.map newValue
 
+
     newValue
 
   ###

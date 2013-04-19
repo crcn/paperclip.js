@@ -174,7 +174,6 @@ class Parser
     @_nextCode()
     new ModifierExpression name, @_parseParams()
 
-
   ###
   ###
 
