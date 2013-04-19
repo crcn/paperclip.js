@@ -14,7 +14,7 @@ p = new Parser()
 #  expressions.push p.parse("text: name | filter(name.length() > 5, test | filter(abcde)) | cat(name); css: craig")
 
 
-expr = p.parse("text: person.name.ds.ds.ds | filter(person) ? true : false")
+expr = p.parse("text: person.name() | filter(person) ? true : false")
 
 
 clip = new Clip({ person: { count: 1, name: "craig" }}, {

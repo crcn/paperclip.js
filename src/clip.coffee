@@ -22,7 +22,10 @@ class PropertyChain
         cv = dref.get cv, command.ref
       else
         cv = dref.get cv, command.name
-        cv = cv?.apply cv, command.args
+        if cv and typeof cv is "function"
+          cv = cv?.apply cv, command.args
+        else
+          cv = undefined
 
       break if not cv
 
