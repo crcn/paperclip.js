@@ -1,5 +1,7 @@
 
 Parser = require "./parser"
+Clip   = require "./clip"
+
 p = new Parser()
 #p.parse("text:$name| filter({name:age>5 && person.age(item.name) >6}) | json(five)")
 #p.parse("text: messages.length() > 0 ? hello : crap")
@@ -12,12 +14,19 @@ p = new Parser()
 #  expressions.push p.parse("text: name | filter(name.length() > 5, test | filter(abcde)) | cat(name); css: craig")
 
 
-expr = p.parse("text: name.last(first > 5, 4, name()).first.name.is() > 5 | filter(name.length > (true), test | filter(abcde)) | cat(name)")
+expr = p.parse("text: person.age > 5")
 
-evaluator = expr.evaluate({})
+clip = new Clip()
 
+clip.data.set "name", "craig"
 
-console.log evaluator.actions[0].toString()
+evaluator = expr.evaluate(clip)
+
+clip.data.set "person.age", 5
+clip.data.set "person.age", 6
+
+evaluator.actions[0].bind () ->
+
 
 #expr.eval(new BindableObject()).on("")
 

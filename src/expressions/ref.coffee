@@ -1,6 +1,9 @@
-class Evaluator
+base = require "./base"
+
+class Evaluator extends base.Evaluator
   
-  constructor: (@expr, @context) ->
+  constructor: () ->
+    super arguments...
     @name = @expr.name
 
   toString: () -> @name

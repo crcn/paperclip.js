@@ -3,8 +3,10 @@ class Evaluator
   ###
   ###
 
-  constructor: (@expr, @context) ->
+  constructor: (@expr) ->
 
+
+  init: () ->
 
   ###
   ###
@@ -25,7 +27,7 @@ class JSExpression
   ###
   ###
 
-  evaluate: (context) -> new Evaluator @, context
+  evaluate: () -> new Evaluator @
 
 
 module.exports = JSExpression

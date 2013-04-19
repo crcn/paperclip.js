@@ -1,14 +1,17 @@
-class Evaluator
+base = require "./base"
+
+class Evaluator extends base.Evaluator
   
-  constructor: (@expr, @context) ->
-    @items = @expr.items.map (item) -> item.evaluate(context)
+  constructor: () ->
+    super arguments...
+    @items = @expr.items.map (item) => @linkChild item.evaluate(@context)
 
   toString: () -> @items.map((item) -> item.toString()).join(" ")
 
 class CollectionExpression
   
   _type: "collection"
-  
+
   ###
   ###
 

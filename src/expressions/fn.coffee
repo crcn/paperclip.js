@@ -1,11 +1,14 @@
-class Evaluator
+base = require "./base"
+
+class Evaluator extends base.Evaluator
   
   ###
   ###
 
-  constructor: (@expr, @context) ->
-    @name   = expr.name
-    @params = @expr.params.evaluate()
+  constructor: () ->
+    super arguments...
+    @name   = @expr.name
+    @params = @linkChild @expr.params.evaluate()
 
 
 class FnExpression

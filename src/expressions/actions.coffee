@@ -1,17 +1,14 @@
-class Evaluator
+CollectionExpression = require "./collection"
 
-  constructor: (@expr, @context) ->
-    @actions = @expr.actions.map (expr) -> expr.evaluate context
+class Evaluator extends CollectionExpression.Evaluator
 
-class ActionsExpression
+  constructor: () ->
+    super arguments...
+    @actions = @items
+
+class ActionsExpression extends CollectionExpression
     
   _type: "actions"
-
-  ###
-  ###
-
-  constructor: (@actions) ->
-
 
   ###
   ###

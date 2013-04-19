@@ -1,8 +1,11 @@
-class Evaluator
+base = require "./base"
 
-  constructor: (@expr, @context) ->
-    @references = @expr.references.evaluate(context)
-    @modifiers  = @expr.modifiers.evaluate(context)
+class Evaluator extends base.Evaluator
+
+  constructor: () ->
+    super arguments...
+    @references = @linkChild @expr.references.evaluate @clip
+    @modifiers  = @linkChild @expr.modifiers.evaluate @clip
 
   ###
   ###

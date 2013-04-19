@@ -1,6 +1,9 @@
-class Evaluator
+base = require "./base"
 
-  constructor: (@expr, @context) ->
+class Evaluator extends base.Evaluator
+  
+  constructor: () ->
+    super arguments...
 
 
 class OptionsExpression
