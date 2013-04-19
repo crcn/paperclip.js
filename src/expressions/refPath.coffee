@@ -11,14 +11,17 @@ class Evaluator extends CollectionExpression.Evaluator
     currentChain = []
 
     for part in @items
-      currentChain.push part.name
       if part.expr._type is "fn"
-        buffer.push ".ref('", currentChain.join("."), "').call"
-        buffer.push part.params.toString()
+        buffer.push ".ref('", currentChain.join("."), "').call(", part.name, "["
+        buffer.push part.params.toString(), "]"
         currentChain = []
+      else
+        currentChain.push part.name
 
     if currentChain.length
       buffer.push ".ref('", currentChain.join("."), "')"
+
+    buffer.push(".value()")
 
     buffer.join("")
 

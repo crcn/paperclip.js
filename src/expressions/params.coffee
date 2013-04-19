@@ -4,7 +4,7 @@ class Evaluator extends CollectionExpression.Evaluator
   
   toString: () ->
     buffer = @items.map((item) -> item.toString())
-    ["(",buffer.join(","),")"].join("")
+    buffer.join(",")
 
 class ParamsExpression extends CollectionExpression
   
