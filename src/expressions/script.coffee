@@ -31,10 +31,16 @@ class Evaluator extends base.Evaluator
   toString: () -> 
     @expressions.toString()
 
+  ###
+  ###
+
   _compile: () ->
     fn = eval "(function(){ return #{@expressions.toString()} })"
     @_evalFn = () => fn.call @clip
 
+  ###
+  ###
+  
   _change: () ->
     super()
     @_em.emit "change", @_currentValue = @_evalFn()
