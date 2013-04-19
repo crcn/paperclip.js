@@ -1,13 +1,14 @@
 base = require "./base"
 events = require "events"
+async = require "async"
 
 class Evaluator extends base.Evaluator
 
   constructor: () ->
     super arguments...
     @_em = new events.EventEmitter()
-    @expressions = @linkChild @expr.expressions.evaluate @clip
     @modifiers  = @linkChild @expr.modifiers.evaluate @clip
+    @expressions = @linkChild @expr.expressions.evaluate @clip
 
 
   ###
@@ -34,16 +35,30 @@ class Evaluator extends base.Evaluator
   ###
   ###
 
+  value: () -> 
+
+    newValue = @_evalFn()
+    for modifier in @modifiers.items
+      newValue = modifier.map newValue
+
+    newValue
+
+  ###
+  ###
+
   _compile: () ->
     fn = eval "(function(){ return #{@expressions.toString()} })"
     @_evalFn = () => fn.call @clip
 
   ###
   ###
-  
+
   _change: () ->
     super()
-    @_em.emit "change", @_currentValue = @_evalFn()
+
+    newValue = @value()
+    return if @_currentValue is newValue
+    @_em.emit "change", @_currentValue = newValue
 
 
 
@@ -56,7 +71,6 @@ class ScriptExpression
   ###
 
   constructor: (@expressions, @modifiers) ->
-
 
   ###
   ###

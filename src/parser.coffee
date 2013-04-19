@@ -146,14 +146,7 @@ class Parser
     if @_currentCode() is TokenCodes.SEMI_COLON
       @_nextCode()
 
-    modifiers = []
-
-    # pipe? it's a modifier
-    if @_currentCode() is TokenCodes.PIPE 
-      modifiers.push @_parsePipes()
-
-
-    new ScriptExpression new CollectionExpression(expressions), new CollectionExpression(modifiers)
+    new ScriptExpression new CollectionExpression(expressions), @_parsePipes()
 
   ###
   ###

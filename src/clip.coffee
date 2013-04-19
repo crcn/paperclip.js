@@ -34,8 +34,9 @@ class Clip
   ###
   ###
 
-  constructor: (data = {}) ->
-    @data = new bindable.Object data
+  constructor: (data = {}, options = {}) ->
+    @data      = new bindable.Object data
+    @modifiers = options.modifiers or {}
 
 
   ###

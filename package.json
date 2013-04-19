@@ -21,6 +21,7 @@
     "strscanner": "0.0.x",
     "bindable": "0.2.x",
     "dref": "0.0.x",
-    "hoist": "0.0.x"
+    "hoist": "0.0.x",
+    "async": "0.2.x"
   }
 }
