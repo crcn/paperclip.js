@@ -12,6 +12,7 @@ FnExpression         = require "./expressions/fn"
 JsExpression         = require "./expressions/js"
 ParamsExpression     = require "./expressions/params"
 CollectionExpression = require "./expressions/collection"
+StringExpression     = require "./expressions/string"
 
 ###
  action: 
@@ -128,6 +129,10 @@ class Parser
       if c is TokenCodes.LB
         expressions.push @_parseActionOptions()
         c = @_currentCode()
+
+      if c is TokenCodes.STRING
+        expressions.push new StringExpression @_currentString()
+        c = @_nextCode()
 
 
       # end of multi statement
