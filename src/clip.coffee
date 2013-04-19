@@ -22,7 +22,7 @@ class PropertyChain
         cv = dref.get cv, command.ref
       else
         cv = dref.get cv, command.name
-        cv?.call cv, command.args
+        cv = cv?.apply cv, command.args
 
       break if not cv
 
@@ -43,12 +43,13 @@ class Clip
 
   bind: (property, to) -> @data.bind arguments...
 
-
-
   ###
   ###
 
   ref: (path) -> new PropertyChain(@data).ref path
+  call: (path, args) -> new PropertyChain(@data).call path, args
+
+
 
 
 module.exports = Clip

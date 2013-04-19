@@ -41,7 +41,8 @@ class Evaluator extends CollectionExpression.Evaluator
 
     for part in @items
       if part.expr._type is "fn"
-        watchable.push cw
+        if cw.length
+          watchable.push cw
         cw = []
       else
         cw.push part.name

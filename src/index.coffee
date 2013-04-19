@@ -14,18 +14,20 @@ p = new Parser()
 #  expressions.push p.parse("text: name | filter(name.length() > 5, test | filter(abcde)) | cat(name); css: craig")
 
 
-expr = p.parse("text: person.age > 5")
+expr = p.parse("text: isOld(person.age)")
 
-clip = new Clip()
+clip = new Clip({
+  isOld: (age) -> age > 0
+})
 
-clip.data.set "name", "craig"
 
 evaluator = expr.evaluate(clip)
 
-clip.data.set "person.age", 5
-clip.data.set "person.age", 6
+for i in [0..10]
+  clip.data.set "person.age", i
 
-evaluator.actions[0].bind () ->
+evaluator.actions[0].bind (value) ->
+  console.log value
 
 
 #expr.eval(new BindableObject()).on("")

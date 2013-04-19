@@ -8,7 +8,7 @@ class Evaluator extends base.Evaluator
   constructor: () ->
     super arguments...
     @name   = @expr.name
-    @params = @linkChild @expr.params.evaluate()
+    @params = @linkChild @expr.params.evaluate @clip
 
 
 class FnExpression

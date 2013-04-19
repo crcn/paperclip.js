@@ -1,14 +1,19 @@
 base = require "./base"
+events = require "events"
 
 class Evaluator extends base.Evaluator
 
   constructor: () ->
     super arguments...
+    @_em = new events.EventEmitter()
     @name    = @expr.name
     @options = @linkChild @expr.options.evaluate @clip
     @init()
 
   bind: (to) ->
+    @_em.on "change", to
+    if @_currentValue isnt undefined
+      to @_currentValue
 
   init: () ->
     @_compile()
@@ -24,7 +29,7 @@ class Evaluator extends base.Evaluator
 
   _change: () ->
     super()
-    console.log @_evalFn()
+    @_em.emit "change", @_currentValue = @_evalFn()
 
 
 class ActionExpression
