@@ -4,6 +4,7 @@ controller logic:
 var paperclip = require("paperclip")(),
 bindable      = require("bindable");
 
+
 var context = new BindableObject({
   name: "craig"
 });

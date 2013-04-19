@@ -49,6 +49,7 @@ class Evaluator extends base.Evaluator
 
   _compile: () ->
     fn = eval "(function(){ return #{@expressions.toString()} })"
+    console.log String(fn)
     @_evalFn = () => fn.call @clip
 
   ###

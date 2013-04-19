@@ -134,6 +134,11 @@ class Parser
         expressions.push new StringExpression @_currentString()
         c = @_nextCode()
 
+      if c is TokenCodes.PIPE
+        @_nextCode()
+        modifiers.push @_parsePipe()
+        c = @_currentCode()
+
 
       # end of multi statement
       if ~[TokenCodes.RP, TokenCodes.RB].indexOf c
@@ -151,7 +156,7 @@ class Parser
     if @_currentCode() is TokenCodes.SEMI_COLON
       @_nextCode()
 
-    new ScriptExpression new CollectionExpression(expressions), @_parsePipes()
+    new ScriptExpression new CollectionExpression(expressions), new CollectionExpression modifiers
 
   ###
   ###
