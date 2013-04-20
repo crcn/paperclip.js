@@ -26,6 +26,14 @@ describe("clip", function() {
     expect(clip.value).to.be(25);
   });
 
+
+  it("doesn't screw up groups", function() {
+    var clip = new Clip({
+      script: compile("(5+5) * 3")
+    });
+    expect(clip.value).to.be(30)
+  });
+
   it("can perform a conditional statement", function() {
 
     var clip = new Clip({

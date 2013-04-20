@@ -13,6 +13,7 @@ JsExpression         = require "./expressions/js"
 ParamsExpression     = require "./expressions/params"
 CollectionExpression = require "./expressions/collection"
 StringExpression     = require "./expressions/string"
+GroupExpression      = require "./expressions/group"
 
 ###
  action: 
@@ -124,7 +125,7 @@ class Parser
         c = @_currentCode()
 
       if c is TokenCodes.LP
-        expressions.push @_parseParams()
+        expressions.push @_parseGroup()
         c = @_currentCode()
 
       if c is TokenCodes.LB
@@ -173,7 +174,13 @@ class Parser
   ###
 
   _parseParams: () ->
+    new ParamsExpression @_parseParams2()
 
+
+  ###
+  ###
+
+  _parseParams2: () ->
     @_expectCurrentCode TokenCodes.LP
     params = []
     while c = @_nextCode()
@@ -186,7 +193,16 @@ class Parser
 
     @_nextCode()
 
-    new ParamsExpression params
+    params
+
+
+
+  ###
+  ###
+
+  _parseGroup: () -> new GroupExpression @_parseParams2()
+
+
 
 
 
