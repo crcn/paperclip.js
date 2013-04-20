@@ -2632,7 +2632,7 @@
                     this.value = value;
                 }
                 StringExpression.prototype.toString = function() {
-                    return "'" + this.value.replace("'", "\\'").replace("\n", "\\n") + "'";
+                    return "'" + this.value.replace(/\'/g, "\\'").replace(/\n/g, "\\n") + "'";
                 };
                 return StringExpression;
             }();
@@ -2775,7 +2775,7 @@
                     this.value = value;
                 }
                 Expression.prototype.toString = function() {
-                    return "push('" + this.value.replace("'", "\\'").replace("\n", "\\n") + "')";
+                    return "push('" + this.value.replace(/\'/g, "\\'").replace(/\n/g, "\\n") + "')";
                 };
                 return Expression;
             }(base.Expression);
