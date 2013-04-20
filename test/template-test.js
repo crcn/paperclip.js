@@ -17,4 +17,27 @@ describe("template", function() {
     obj.set("age", 99);
     expect(renderer.text).to.be("hello jake, you are 99 years old!");
   });
-})
+
+  it("it can use inline modifiers", function() {
+    var template = new Template("{{ ('hello ' + name + '!') | uppercase() }}, what's up??"), obj;
+    var renderer = template.render(obj = new bindable.Object({ name: "liam" }));
+    expect(renderer.text).to.be("HELLO LIAM!, what's up??");
+    obj.set("name", "frank");
+    expect(renderer.text).to.be("HELLO FRANK!, what's up??");
+  });
+
+
+
+  it("can listen for on-change event", function() {
+    var template = new Template("hello {{name}}!"), obj;
+    var renderer = template.render(obj = new bindable.Object({ name: "claudia" })),
+    text;
+    renderer.bind("text", function(value) {
+      text = value;
+    });
+
+    expect(text).to.be("hello claudia!");
+    obj.set("name", "monica");
+    expect(text).to.be("hello monica!");
+  });
+});

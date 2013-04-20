@@ -4,6 +4,6 @@ Clip = require "../../../clip"
 class Expression extends base.Expression
   _type: "block"
   constructor: (@value) ->
-  toString: () -> "bind(#{Clip.compile(@value.toString())})"
+  toString: () -> "pushBinding(#{Clip.compile(@value.toString())})"
 
 module.exports = Expression

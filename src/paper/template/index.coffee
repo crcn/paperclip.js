@@ -1,16 +1,17 @@
 Parser = require "./parser"
 Clip   = require "../../clip"
-parser = new Parser()
+events = require "events"
+bindable = require "bindable"
 
-expr = parser.parse("hello, how are you {{person.name}}, how old is your {{person.sibling}}?")
+parser = new Parser()
 
 class TemplateBinding
 
   ###
   ###
 
-  constructor: (@templateWatcher, @fn) ->
-    @clip = new Clip { script: @fn, data: @templateWatcher.data }
+  constructor: (@renderer, @fn) ->
+    @clip = new Clip { script: @fn, data: @renderer._data }
     @clip.bind("value").watch(true).to(@update)
     @value = @clip.get("value")
 
@@ -26,7 +27,7 @@ class TemplateBinding
 
   update: (value) =>
     @value = value
-    @templateWatcher.update()
+    @renderer.update()
 
   ###
   ###
@@ -34,12 +35,13 @@ class TemplateBinding
   toString: () -> @value
 
 
-class TemplateWatcher
+class TemplateRenderer extends bindable.Object
 
   ###
   ###
 
-  constructor: (@data, @fn) ->
+  constructor: (@_data, @fn) ->
+    super()
     @buffer = []
     @_bindings = []
     @fn.call @
@@ -64,7 +66,7 @@ class TemplateWatcher
   ###
   ###
 
-  bind: (script) ->
+  pushBinding: (script) ->
     @buffer.push new TemplateBinding @, script
     @
 
@@ -72,7 +74,8 @@ class TemplateWatcher
   ###
 
   update: () ->
-    @text = @render()
+    @set "text", @text = @render()
+
 
   ###
   ###
@@ -103,7 +106,7 @@ class Template
   ###
 
   render: (data) ->
-    new TemplateWatcher(data, @fn)
+    new TemplateRenderer(data, @fn)
 
 
 module.exports = Template
