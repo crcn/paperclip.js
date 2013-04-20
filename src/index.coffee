@@ -1,5 +1,5 @@
-Clip = require("./clip")
-Paper = require("./paper")
+Clip  = require "./clip"
+Paper = require "./paper"
 
 
 class Paperclip
@@ -13,15 +13,19 @@ class Paperclip
    attaches the context (data), to the element
   ###
 
-  attach: (context, element) ->
-
-
-
+  attach: (data, element) ->
+    dom = new Paper.DOM()
+    dom.attach data, element
 
 
 
 module.exports = () -> new Paperclip()
 
 # clips compiled data-binding to observables
-module.exports.Clip  = Clip
-module.exports.Paper = Paper
+module.exports.Clip     = Clip
+module.exports.Paper    = Paper
+module.exports.bindable = require "bindable"
+
+
+if typeof window isnt "undefined"
+  window.paperclip = module.exports

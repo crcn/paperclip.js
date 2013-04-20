@@ -1,0 +1,25 @@
+<html>
+  <head>
+    <script type="text/javascript" src="/js/paperclip.js"></script>
+    <script type="text/javascript" src="/js/jquery-1.9.1.js"></script>
+    <script type="text/javascript">
+      pc = paperclip();
+      bindable = new paperclip.bindable.Object();
+
+      $(document).ready(function() {
+        pc.attach(bindable, $("#application"));
+      });
+
+      bindable.set("name", "craig");
+
+      setInterval(function() {
+        bindable.set("age", (bindable.get("age") || 0) + 1);
+      }, 1);
+    </script>
+  </head>
+  <body>
+    <div id="application">
+        {{name}} is {{age}} years old!
+    </div>
+  </body>
+</html>
