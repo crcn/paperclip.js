@@ -1,12 +1,9 @@
 base = require "./base"
 
-class Evaluator extends base.Evaluator
-  toString: () -> "'#{@expr.value}'"
-
 class StringExpression
   constructor: (@value) ->
-
-  evaluate: (clip) -> new Evaluator @, clip
+  toString: () -> "'#{@value}'"
+  references: () -> []
 
 
 module.exports = StringExpression

@@ -1,19 +1,26 @@
 CollectionExpression = require "./collection"
 
-class Evaluator extends CollectionExpression.Evaluator
-
-  constructor: () ->
-    super arguments...
-    @actions = @items
-
 class ActionsExpression extends CollectionExpression
     
   _type: "actions"
 
-  ###
-  ###
+  constructor: (items) ->
+    super items
+    @actions = items
 
-  evaluate: (context) -> new Evaluator @, context
+  toString: () ->
+    buffer = ["["]
+    actions = []
+
+    for action in @actions
+      actions.push action.toString()
+
+    buffer.push actions.join ","
+
+    buffer.push "]"
+
+    buffer.join("")
+
 
 
 module.exports = ActionsExpression

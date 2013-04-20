@@ -1,32 +1,21 @@
 
-class Evaluator
+class Expression
     
-  ###
-  ###
-
-  constructor: (@expr, @clip) ->
-    @context = clip
+  constructor: () ->
     @_children = []
 
-  ###
-  ###
 
-  init: () ->
+  addChild: () -> 
+    for child in arguments
+      child._parent = @
+      @_children.push child
+
+
+  references: () -> 
+    refs = []
     for child in @_children
-      child.init()
+      refs = refs.concat child.references()
+    refs
 
-  ###
-  ###
 
-  linkChild: (evaluator) -> 
-    evaluator._parent = @
-    @_children.push evaluator
-    evaluator
-
-  ###
-  ###
-
-  _change: () =>
-    @_parent?._change()
-
-exports.Evaluator = Evaluator
+exports.Expression = Expression

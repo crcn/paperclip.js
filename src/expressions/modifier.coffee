@@ -1,35 +1,25 @@
 base = require "./base"
 
-class Evaluator extends base.Evaluator
-  
-  constructor: () ->
-    super arguments...
-    @name = @expr.name
-    @params = @linkChild @expr.params.evaluate @clip
-
-  init: () ->
-    super()
-
-
-  map: (value, callback) ->
-    modifier = @clip.modifiers[@name]
-    #console.log @name, value
-    return value if not modifier
-    params = @params.items.map (item) -> item.value()
-    params.unshift value
-    value = modifier.apply @, params
-    value
-
-
-
-
-
-class ModifierExpression
+class ModifierExpression extends base.Expression
   
   _type: "modifier"
 
-  constructor: (@name, @params) ->
+  constructor: (@name, @params, @expression) -> 
+    super()
+    @addChild @params, @expression
 
-  evaluate: (context) -> new Evaluator @, context
+  toString: () -> 
+    buffer = ["this.modifiers.#{@name}("]
+
+    params = [@expression.toString()]
+
+    for p in @params.items
+      params.push p.toString()
+
+
+    buffer.push params.join(","), ")"
+
+
+    buffer.join("")
 
 module.exports = ModifierExpression

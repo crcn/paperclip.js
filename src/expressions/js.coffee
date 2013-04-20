@@ -1,33 +1,9 @@
-class Evaluator
-
-  ###
-  ###
-
-  constructor: (@expr) ->
-
-
-  init: () ->
-
-  ###
-  ###
-
-  toString: () -> @expr.value
-
-
-class JSExpression
-
+base = require "./base"
+class JSExpression extends base.Expression
   _type: "js"
-
-  ###
-  ###
-
   constructor: (@value) ->
-
-
-  ###
-  ###
-
-  evaluate: () -> new Evaluator @
+    super()
+  toString: () -> @value
 
 
 module.exports = JSExpression

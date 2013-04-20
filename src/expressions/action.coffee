@@ -1,31 +1,23 @@
 base = require "./base"
 
-class Evaluator extends base.Evaluator
 
-  constructor: () ->
-    super arguments...
-    @name    = @expr.name
-    @options = @linkChild @expr.options.evaluate @clip
-    @init()
-
-  bind: (to) -> @options.bind to
-  toString: () -> @options.toString()
-
-
-
-class ActionExpression
+class ActionExpression extends base.Expression
   
   _type: "action"
 
-  ###
-  ###
-
   constructor: (@name, @options) ->
+    super()
+
+  references: () -> @options.references()
     
+  toString: () -> 
+    buffer = ["{"]
 
-  ###
-  ###
+    buffer.push "name:'#{@name}', "
+    buffer.push "value:" + @options.toString()
 
-  evaluate: (context) -> new Evaluator @, context
+    buffer.push "}"
+    buffer.join("")
+
 
 module.exports = ActionExpression

@@ -1,37 +1,27 @@
 
-Parser = require "./parser"
-Clip   = require "./clip"
+compile = require("./compile")
+Clip     = require("./clip")
 
-p = new Parser()
-#p.parse("text:$name| filter({name:age>5 && person.age(item.name) >6}) | json(five)")
-#p.parse("text: messages.length() > 0 ? hello : crap")
-#p.parse("css: {'test-name':hello}; text: world")
-#p.parse("each: children | filter({ age: { $gt:  } })")
-#p.parse("each: children | filter(filt) | json()")
+scripts = compile("text: person.name ? 'hey ' + person.name : 'no person available' | uppercase() | swearize(); name: person.name ")
 
-#expressions = []
-#for i in [0..1000]
-#  expressions.push p.parse("text: name | filter(name.length() > 5, test | filter(abcde)) | cat(name); css: craig")
-
-
-expr = p.parse("text: person.name().fish ? true : false")
-
-
-clip = new Clip({ person: { count: 1, name: "craig" }}, {
+clip = new Clip({
+  data: { person: { name: "craig" }},
+  script: scripts.text,
   modifiers: {
-    localize: (value) -> "ching chong!",
-    append: (value, text) -> value + text
-    capitalize: (value, count) -> String(value).toUpperCase()
-    negate: (value) -> 
-      -value
+    uppercase: (value) ->  value.toUpperCase()
+    swearize: (value) -> "SHIT... #{value}"
   }
 })
 
-evaluator = expr.evaluate(clip)
+clip.data.set "person.name", "craig"
 
-
-evaluator.actions[0].bind (value) ->
+clip.on "change", (value) ->
   console.log value
+
+console.log clip.value
+clip.data.set "person.name", undefined
+clip.data.set "person.name", "josh"
+
 
 
 

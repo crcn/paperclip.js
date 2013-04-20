@@ -1,18 +1,12 @@
 base = require "./base"
 
-class Evaluator extends base.Evaluator
-  
-  constructor: () ->
-    super arguments...
 
-
-class OptionsExpression
-
+class OptionsExpression extends base.Expression
   _type: "options"
-  
   constructor: (@items) ->
+    super()
+    @addChild items
 
-  evaluate: (context) -> new Evaluator @, context
 
 
 

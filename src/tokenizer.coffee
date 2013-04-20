@@ -88,8 +88,11 @@ class Tokenizer
     # string?
     else if ccode is 39 or ccode is 34
 
+      @_s.skipWhitespace false
+
       buffer = []
       while ((c = @_s.nextChar()) and not @_s.eof())
+
 
         cscode = @_s.ccode()
 
@@ -103,6 +106,7 @@ class Tokenizer
 
         buffer.push c
 
+      @_s.skipWhitespace true
       return @_t Codes.STRING, buffer.join("")
 
     else if @_s.is09()

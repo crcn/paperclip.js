@@ -25,19 +25,13 @@ class Parser
 
   constructor: () ->
     @_t = new Tokenizer()
-    @_expressions = {}
 
   ###
   ###
 
   parse: (source) ->
-
-    if @_expressions[source] 
-      return @_expressions[source]
-
     @_t.source source
-
-    @_expressions[source] = @_parse()
+    @_parse()
 
   ###
   ###
@@ -134,9 +128,9 @@ class Parser
         expressions.push new StringExpression @_currentString()
         c = @_nextCode()
 
-      if c is TokenCodes.PIPE
+      while c is TokenCodes.PIPE
         @_nextCode()
-        modifiers.push @_parsePipe()
+        expressions.push @_parsePipe expressions.pop()
         c = @_currentCode()
 
 
@@ -144,7 +138,7 @@ class Parser
       if ~[TokenCodes.RP, TokenCodes.RB].indexOf c
         break
 
-      if not c or ~[TokenCodes.SEMI_COLON, TokenCodes.COMA, TokenCodes.PIPE].indexOf c
+      if not c or ~[TokenCodes.SEMI_COLON, TokenCodes.COMA].indexOf c
         break
 
       expressions.push new JsExpression @_currentString()
@@ -156,28 +150,17 @@ class Parser
     if @_currentCode() is TokenCodes.SEMI_COLON
       @_nextCode()
 
-    new ScriptExpression new CollectionExpression(expressions), new CollectionExpression modifiers
-
-  ###
-  ###
-
-  _parsePipes: () ->
-    modifiers = []
-    while (c = @_currentCode()) is TokenCodes.PIPE
-      @_nextCode()
-      modifiers.push @_parsePipe()
-    
-    new CollectionExpression modifiers
+    new ScriptExpression new CollectionExpression(expressions)
 
   ###
    filter item.name > 5, test;
   ###
 
-  _parsePipe: () ->
+  _parsePipe: (expressions) ->
     name = @_currentString()
     params = []
     @_nextCode()
-    new ModifierExpression name, @_parseParams()
+    new ModifierExpression name, @_parseParams(), expressions
 
   ###
   ###
@@ -187,11 +170,12 @@ class Parser
     @_expectCurrentCode TokenCodes.LP
     params = []
     while c = @_nextCode()
-      params.push @_parseActionOptions()
+      break if c is TokenCodes.RP
+
+      params.push @_parseReference()
       c = @_currentCode()
 
       break if c isnt TokenCodes.COMA
-      break if c is TokenCodes.RB
 
     @_nextCode()
 
