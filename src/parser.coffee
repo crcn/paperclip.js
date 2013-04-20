@@ -38,14 +38,21 @@ class Parser
 
   _parse: () ->
     switch @_nextCode()
-      when TokenCodes.VAR then return @_parseActions()
-      else @_error()
+      when TokenCodes.VAR then return @_parseActionsOrOptions()
+      when TokenCodes.LB then return @_parseMultiOptions()
+      else @_parseReference()
 
   ###
   ###
 
-  _parseActions: () ->
+  _parseActionsOrOptions: () ->
     actions = []
+
+    # not a colon? actions aren't provided
+    if @_t._s.peek(1) isnt ":"
+      return @_parseActionOptions()
+
+
     while @_t.current
       actions.push @_parseAction()
       if @_currentCode() is TokenCodes.SEMI_COLON

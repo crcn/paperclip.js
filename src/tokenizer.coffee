@@ -80,7 +80,7 @@ class Tokenizer
 
     # word?
     if @_s.isAZ() or (ccode = @_s.ccode()) is 36 or ccode is 95
-      word = @_s.next /[_$a-zA-Z]+/
+      word = @_s.next /[_$a-zA-Z0-9]+/
 
       return @_t(Codes.BOOL, word) if /true|false/.test word
       return @_t Codes.VAR, word

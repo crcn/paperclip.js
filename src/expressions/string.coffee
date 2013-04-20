@@ -2,7 +2,7 @@ base = require "./base"
 
 class StringExpression
   constructor: (@value) ->
-  toString: () -> "'#{@value}'"
+  toString: () -> "'#{@value.replace("\'", "\\'")}'"
   references: () -> []
 
 

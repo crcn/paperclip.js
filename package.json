@@ -15,7 +15,9 @@
   "gitHead": "1336ca5b7f1f0c344a291ace63ddf211d5a94acd",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "jsdom": "*"
+    "jsdom": "*",
+    "expect.js": "0.2.x",
+    "mocha": "1.9.x"
   },
   "dependencies": {
     "strscanner": "0.0.x",

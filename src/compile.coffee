@@ -15,10 +15,17 @@ class Compiler
   compile: (script) ->
     expression = @_parser.parse script
     scripts = {}
+
+    return @_getScript(expression) if expression._type is "script"
+
     for script in expression.items
-      fn = eval "(function(){return #{script.options}})"
-      scripts[script.name] = fn
+      scripts[script.name] = @_getScript script.options
     scripts
+
+  ###
+  ###
+
+  _getScript: (script) -> eval "(function(){return #{script}})"
 
 compiler = new Compiler()
 module.exports = (script) -> compiler.compile script

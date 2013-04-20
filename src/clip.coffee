@@ -84,7 +84,7 @@ class Clip extends events.EventEmitter
 
     @_watching[path] = {
       target: target
-      binding: target.bind(path).watch(true).to(@update).to 
+      binding: target.bind(path).watch(true).to(@update)
     }
 
 
