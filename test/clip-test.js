@@ -5,8 +5,7 @@ compile = Clip.compile;
 
 describe("clip", function() {
 
-  return;
-  
+
   it("can bind to a single value", function() {
     var clip = new Clip({
       script: compile("name")
@@ -61,9 +60,6 @@ describe("clip", function() {
 
     var clip = new Clip({
       script: compile("person.name | uppercase()"),
-      modifiers: {
-        uppercase: function(value) { return String(value).toUpperCase() }
-      }
     });
 
     clip.data.set("person.name", "craig")
@@ -74,7 +70,6 @@ describe("clip", function() {
     var clip = new Clip({
       script: compile("person.name | uppercase() | append(', how are you??')"),
       modifiers: {
-        uppercase: function(value) { return String(value).toUpperCase() },
         append: function(value, text) { return value + text }
       }
     });
@@ -85,10 +80,7 @@ describe("clip", function() {
 
   it("can perform concatenation without a group", function() {
     var clip = new Clip({
-      script: compile("person.name + ', how are you?' | uppercase()"),
-      modifiers: {
-        uppercase: function(value) { return String(value).toUpperCase() }
-      }
+      script: compile("person.name + ', how are you?' | uppercase()")
     });
     clip.data.set("person.name", "monica");
     expect(clip.get("value")).to.be("monica, HOW ARE YOU?")
@@ -99,10 +91,7 @@ describe("clip", function() {
 
   it("can perform concatenation within a group", function() {
     var clip = new Clip({
-      script: compile("(person.name + ', how are you?') | uppercase()"),
-      modifiers: {
-        uppercase: function(value) { return String(value).toUpperCase() }
-      }
+      script: compile("(person.name + ', how are you?') | uppercase()")
     });
     clip.data.set("person.name", "monica");
     expect(clip.get("value")).to.be("MONICA, HOW ARE YOU?")
@@ -135,12 +124,7 @@ describe("clip", function() {
 
   it("can bind a value to clip", function() {
     var clip = new Clip({
-      script: compile("upperName: person.name | uppercase()"),
-      modifiers: {
-        uppercase: function(value) {
-          return String(value).toUpperCase(0)
-        }
-      }
+      script: compile("upperName: person.name | uppercase()")
     });
 
     var uname;

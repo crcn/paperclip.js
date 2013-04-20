@@ -1,6 +1,7 @@
 bindable = require "bindable"
 dref     = require "dref"
 events   = require "events"
+defaultModifiers = require "./modifiers"
 
 ###
  Reads a property chain 
@@ -54,6 +55,7 @@ class ScriptWatcher extends events.EventEmitter
 
   constructor: (@script, @clip) ->
     @modifiers = @clip.modifiers
+    @defaultModifiers = defaultModifiers
     @_watching = {}
 
   ###
@@ -81,6 +83,7 @@ class ScriptWatcher extends events.EventEmitter
   ref: (path) -> new PropertyChain(@).ref path
   self: (path) -> new PropertyChain(@).self path
   call: (path, args) -> new PropertyChain(@).call path, args
+
 
 
   ###
@@ -167,5 +170,6 @@ class Clip
 
 
 module.exports = Clip
-module.exports.Watchers = ClipWatchers
-module.exports.compile = require "./compile"
+module.exports.Watchers  = ClipWatchers
+module.exports.modifiers = defaultModifiers
+module.exports.compile   = require "./compile"

@@ -1,4 +1,5 @@
 base = require "../../base/expression"
+modifiers = require "../modifiers"
 
 class ModifierExpression extends base.Expression
   
@@ -9,7 +10,16 @@ class ModifierExpression extends base.Expression
     @addChild @params, @expression
 
   toString: () -> 
-    buffer = ["this.modifiers.#{@name}("]
+
+
+
+    # exists as a default modifier?
+    if modifiers[@name]
+      buffer = ["this.defaultModifiers."]
+    else
+      buffer = ["this.modifiers."]
+
+    buffer.push "#{@name}("
 
     params = [@expression.toString()]
 
