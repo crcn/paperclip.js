@@ -1,9 +1,19 @@
 var expect = require("expect.js"),
 pc = require("../"),
 Clip = pc.Clip,
-compile = pc.compile;
+compile = Clip.compile;
 
 describe("clip", function() {
+
+  return;
+  
+  it("can bind to a single value", function() {
+    var clip = new Clip({
+      script: compile("name")
+    });
+    clip.data.set("name", "craig");
+    expect(clip.get("value")).to.be("craig")
+  });
 
   
   it("can create a simple clip", function() {
@@ -13,17 +23,18 @@ describe("clip", function() {
     });
 
     clip.data.set("person.name", "craig");
-    expect(clip.value).to.be("craig");
+    expect(clip.get("value")).to.be("craig");
     clip.data.set("person.name", "jake");
-    expect(clip.value).to.be("jake");
+    expect(clip.get("value")).to.be("jake");
   });
+
 
   it("can perform simple a computation", function() {
     var clip = new Clip({
       script: compile("person.age * 5")
     });
     clip.data.set("person.age", 5);
-    expect(clip.value).to.be(25);
+    expect(clip.get("value")).to.be(25);
   });
 
 
@@ -31,7 +42,7 @@ describe("clip", function() {
     var clip = new Clip({
       script: compile("(5+5) * 3")
     });
-    expect(clip.value).to.be(30)
+    expect(clip.get("value")).to.be(30)
   });
 
   it("can perform a conditional statement", function() {
@@ -41,9 +52,9 @@ describe("clip", function() {
     });
 
     clip.data.set("person.name", "craig");
-    expect(clip.value).to.be("hello craig");
+    expect(clip.get("value")).to.be("hello craig");
     clip.data.set("person.name", undefined);
-    expect(clip.value).to.be("person doesn't exist");
+    expect(clip.get("value")).to.be("person doesn't exist");
   });
 
   it("can perform one modifier", function() {
@@ -56,7 +67,7 @@ describe("clip", function() {
     });
 
     clip.data.set("person.name", "craig")
-    expect(clip.value).to.be("CRAIG")
+    expect(clip.get("value")).to.be("CRAIG")
   });
 
   it("can perform two modifiers", function() {
@@ -69,7 +80,7 @@ describe("clip", function() {
     });
 
     clip.data.set("person.name", "sam");
-    expect(clip.value).to.be("SAM, how are you??")
+    expect(clip.get("value")).to.be("SAM, how are you??")
   });
 
   it("can perform concatenation without a group", function() {
@@ -80,9 +91,9 @@ describe("clip", function() {
       }
     });
     clip.data.set("person.name", "monica");
-    expect(clip.value).to.be("monica, HOW ARE YOU?")
+    expect(clip.get("value")).to.be("monica, HOW ARE YOU?")
     clip.data.set("person.name", "chris");
-    expect(clip.value).to.be("chris, HOW ARE YOU?")
+    expect(clip.get("value")).to.be("chris, HOW ARE YOU?")
   });
 
 
@@ -94,7 +105,7 @@ describe("clip", function() {
       }
     });
     clip.data.set("person.name", "monica");
-    expect(clip.value).to.be("MONICA, HOW ARE YOU?")
+    expect(clip.get("value")).to.be("MONICA, HOW ARE YOU?")
   });
 
 
@@ -109,16 +120,51 @@ describe("clip", function() {
 
     clip.data.set("person.name", "craig");
     clip.data.set("person.age", 23);
-    expect(clip.value).to.be("craig, checking id..., you can enter the bar")
+    expect(clip.get("value")).to.be("craig, checking id..., you can enter the bar")
 
     clip.data.set("person.name", "sarah");
     clip.data.set("person.age", 20);
-    expect(clip.value).to.be("sarah, checking id..., you're too young!")
+    expect(clip.get("value")).to.be("sarah, checking id..., you're too young!")
 
     clip.data.set("person.name", "craig");
     clip.data.set("person.forgotId", true);
     clip.data.set("person.age", 23);
-    expect(clip.value).to.be("craig, checking id..., you're too young!")
+    expect(clip.get("value")).to.be("craig, checking id..., you're too young!")
   });
 
+
+  it("can bind a value to clip", function() {
+    var clip = new Clip({
+      script: compile("upperName: person.name | uppercase()"),
+      modifiers: {
+        uppercase: function(value) {
+          return String(value).toUpperCase(0)
+        }
+      }
+    });
+
+    var uname;
+
+    clip.bind("upperName", function(name) {
+      uname = name;
+    })
+
+    clip.data.set("person.name", "craig");
+    expect(uname).to.be("CRAIG");
+  });
+
+
+  it("can recursively change a value", function() {
+    var clip = new Clip({
+      script: compile("@value | increment(5)"),
+      modifiers: {
+          increment: function(value, until) {
+            if(typeof value == "undefined") return 0;
+            return value == until ? value : value + 1
+          }
+      }
+    });
+
+    expect(clip.get("value")).to.be(5);
+  });
 })
