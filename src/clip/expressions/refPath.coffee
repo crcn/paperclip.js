@@ -30,7 +30,8 @@ class RefPathExpression extends CollectionExpression
 
     @_pushRef buffer, currentChain, self
 
-    buffer.push ".value()"
+    if not @noValue
+      buffer.push ".value()"
 
     buffer.join ""
 

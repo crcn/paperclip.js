@@ -43,7 +43,7 @@ class TemplateRenderer extends bindable.Object
   constructor: (@_data, @fn) ->
     super()
     @buffer = []
-    @_bindings = []
+    @bindings = []
     @fn.call @
     @update()
 
@@ -51,10 +51,10 @@ class TemplateRenderer extends bindable.Object
   ###
 
   dispose: () ->
-    for binding in @_bindings
+    for binding in @bindings
       binding.dispose()
 
-    @_bindings = []
+    @bindings = []
 
   ###
   ###
@@ -67,7 +67,8 @@ class TemplateRenderer extends bindable.Object
   ###
 
   pushBinding: (script) ->
-    @buffer.push new TemplateBinding @, script
+    @buffer.push binding = new TemplateBinding @, script
+    @bindings.push binding
     @
 
   ###
@@ -75,7 +76,6 @@ class TemplateRenderer extends bindable.Object
 
   update: () ->
     @set "text", @text = @render()
-
 
   ###
   ###
@@ -88,15 +88,10 @@ class TemplateRenderer extends bindable.Object
   toString: () -> @text
 
 
-
-
-
-
 class Template
 
   ###
   ###
-
 
   constructor: (source) -> 
     @fn = new Function "return " + parser.parse source 

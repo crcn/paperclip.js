@@ -11,25 +11,28 @@ class ModifierExpression extends base.Expression
 
   toString: () -> 
 
+    # this.modify(this.modifier).value()
 
+    buffer = ["this.modify("]
 
-    # exists as a default modifier?
     if modifiers[@name]
-      buffer = ["this.defaultModifiers."]
+      buffer.push "this.defaultModifiers."
     else
-      buffer = ["this.modifiers."]
+      buffer.push "this.modifiers."
 
-    buffer.push "#{@name}("
+    buffer.push "#{@name}, ["
+
+
+    @expression.noValue = true
 
     params = [@expression.toString()]
+
 
     for p in @params.items
       params.push p.toString()
 
 
-    buffer.push params.join(","), ")"
-
-
+    buffer.push params.join(","), "])"
     buffer.join ""
 
 module.exports = ModifierExpression

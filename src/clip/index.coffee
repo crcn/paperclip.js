@@ -9,6 +9,8 @@ defaultModifiers = require "./modifiers"
 
 class PropertyChain
 
+  __isPropertyChain: true
+
   constructor: (@watcher) ->
     @_commands = []
     @clip = @watcher.clip
@@ -16,6 +18,14 @@ class PropertyChain
   ref: (path) ->
     @_commands.push { ref: path }
     @
+
+  path: () ->
+    path = []
+    for c in @_commands
+      path.push c.ref
+
+    path.join(".")
+
 
   self: (path) ->
     @_self = true
@@ -26,13 +36,22 @@ class PropertyChain
     @_commands.push { ref: path, args: args }
     @
 
-  value: () ->
+  exec: () ->
+    @currentValue = @value()
+    @
+
+  value: (value) ->
+    hasValue = arguments.length
 
     cv = if @_self then @clip else @clip.data
+    n = @_commands.length
 
-    for command in @_commands
+    for command, i in @_commands
 
       @watcher._watch command.ref, cv
+
+      if i is n-1 and hasValue
+        if cv.set then cv.set(command.ref, value) else dref.set cv, command.ref, value
 
       cv = if cv.get then cv.get(command.ref) else dref.get cv, command.ref
       
@@ -45,6 +64,9 @@ class PropertyChain
 
       break if not cv
 
+    #modifier(ref.value(), modifier(anotherRef.value()))
+    @watcher.currentRef = @
+
     return cv
 
 
@@ -56,6 +78,7 @@ class ScriptWatcher extends events.EventEmitter
   constructor: (@script, @clip) ->
     @modifiers = @clip.modifiers
     @defaultModifiers = defaultModifiers
+    @options = @clip.options
     @_watching = {}
 
   ###
@@ -79,6 +102,15 @@ class ScriptWatcher extends events.EventEmitter
 
   ###
   ###
+
+  modify: (modifier, args) ->
+    @currentRefs = args.filter (arg) -> arg.__isPropertyChain
+    modifier.apply @, args.map (arg) ->
+      if arg.__isPropertyChain 
+        arg.value()
+      else
+        arg
+
 
   ref: (path) -> new PropertyChain(@).ref path
   self: (path) -> new PropertyChain(@).self path
