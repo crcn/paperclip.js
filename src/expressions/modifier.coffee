@@ -20,6 +20,6 @@ class ModifierExpression extends base.Expression
     buffer.push params.join(","), ")"
 
 
-    buffer.join("")
+    buffer.join ""
 
 module.exports = ModifierExpression

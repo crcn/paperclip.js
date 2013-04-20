@@ -9,7 +9,7 @@ class ActionsExpression extends CollectionExpression
     @actions = items
 
   toString: () ->
-    buffer = ["["]
+    buffer  = ["["]
     actions = []
 
     for action in @actions
@@ -19,7 +19,7 @@ class ActionsExpression extends CollectionExpression
 
     buffer.push "]"
 
-    buffer.join("")
+    buffer.join ""
 
 
 

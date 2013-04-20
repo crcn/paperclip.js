@@ -17,7 +17,7 @@ class ActionExpression extends base.Expression
     buffer.push "value:" + @options.toString()
 
     buffer.push "}"
-    buffer.join("")
+    buffer.join ""
 
 
 module.exports = ActionExpression
