@@ -25,7 +25,7 @@ class Compiler
   ###
   ###
 
-  _getScript: (script) -> eval "(function(){return #{script}})"
+  _getScript: (script) -> new Function "return #{script}"
 
 compiler = new Compiler()
 module.exports = (script) -> compiler.compile script
