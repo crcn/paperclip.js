@@ -74,6 +74,16 @@ describe("clip", function() {
     expect(clip.get("value")).to.be("CRAIG")
   });
 
+  it("can use an OR operator", function() {
+    var clip = new Clip({
+      script: compile("person.age || 0")
+    });
+
+    expect(clip.get("value")).to.be(0)
+    clip.data.set("person.age", 99);
+    expect(clip.get("value")).to.be(99);
+  })
+
   it("can perform two modifiers", function() {
     var clip = new Clip({
       script: compile("person.name | uppercase() | append(', how are you??')"),

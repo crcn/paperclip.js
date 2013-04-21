@@ -10,6 +10,7 @@ class Codes
   @NUMBER = @WS     + 1 # 0-9
   @BOOL   = @NUMBER + 1 # true / false
   @AS     = @BOOL   + 1 # casting
+  @OR     = @AS     + 1 # ||
 
   @DOLLAR     = 36       # $
   @LP         = 40       # (
@@ -91,6 +92,10 @@ class Tokenizer extends BaseTokenizer
 
     else if @_s.isWs()
       return @_t Codes.WS, @_s.next /[\s\r\n\t]+/
+
+    else if ccode is 124 and @_s.peek(2) is "||"
+      @_s.nextChar()
+      return @_t Codes.OR, "||"
 
     else if Codes.byCodes[ccode]
       @_t Codes.byCodes[ccode], @_s.cchar()
