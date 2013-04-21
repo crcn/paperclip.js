@@ -5,7 +5,7 @@
   </head>
   <body>
     <div id="application">
-        <input type="submit" value="toggle show / hide" data-bind="click:showDiv = !showDiv"></input>
+        <input type="submit" value="{{showDiv?'hide':'show'}} message" data-bind="click:showDiv = !showDiv"></input>
         <h1 data-bind="show:showDiv">
           Hello world!
         </h1>
@@ -13,7 +13,7 @@
 
     <script type="text/javascript">
       pc = paperclip();
-      bindable = new paperclip.bindable.Object({ showDiv: false });
+      bindable = new paperclip.bindable.Object();
 
       pc.attach(bindable, $("#application"));
     </script>

@@ -1685,7 +1685,8 @@
                 } else {
                     if (ElementDecorator.test(element)) {
                         classes.push(ElementDecorator);
-                    } else if (BindDecorator.test(element)) {
+                    }
+                    if (BindDecorator.test(element)) {
                         classes.push(BindDecorator);
                     }
                 }
@@ -2208,6 +2209,189 @@
         })();
         return module.exports;
     });
+    define("paperclip/lib/paper/template/tokenizer.js", function(require, module, exports, __dirname, __filename) {
+        var BaseTokenizer, Codes, Tokenizer, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        BaseTokenizer = require("paperclip/lib/base/tokenizer.js");
+        Codes = function() {
+            function Codes() {}
+            Codes.OTHER = -1;
+            Codes.LM = 1;
+            Codes.RM = Codes.LM + 1;
+            Codes.CHAR = Codes.RM + 1;
+            return Codes;
+        }();
+        Tokenizer = function(_super) {
+            __extends(Tokenizer, _super);
+            function Tokenizer() {
+                Tokenizer.__super__.constructor.call(this);
+                this._s.skipWhitespace(false);
+            }
+            Tokenizer.Codes = Codes;
+            Tokenizer.prototype._next = function() {
+                var ccode;
+                if ((ccode = this._s.cchar()) === "{") {
+                    if (this._s.peek(1) === "{") {
+                        this._s.nextChar();
+                        return this._t(Codes.LM, "{{");
+                    }
+                } else if ((ccode = this._s.cchar()) === "}") {
+                    if (this._s.peek(1) === "}") {
+                        this._s.nextChar();
+                        return this._t(Codes.RM, "}}");
+                    }
+                }
+                return this._t(Codes.CHAR, this._s.cchar());
+            };
+            return Tokenizer;
+        }(BaseTokenizer);
+        module.exports = Tokenizer;
+        return module.exports;
+    });
+    define("paperclip/lib/base/parser.js", function(require, module, exports, __dirname, __filename) {
+        var Parser;
+        Parser = function() {
+            function Parser(_t) {
+                this._t = _t;
+            }
+            Parser.prototype.parse = function(source) {
+                this._source = source;
+                this._t.source(source);
+                return this._parse();
+            };
+            Parser.prototype._parse = function() {};
+            Parser.prototype._expectNextCode = function(code) {
+                if (this._t.next()[0] !== code) {
+                    return this._error();
+                }
+            };
+            Parser.prototype._expectCurrentCode = function(code) {
+                if (this._t.current[0] !== code) {
+                    return this._error();
+                }
+            };
+            Parser.prototype._nextCode = function() {
+                var _ref;
+                return (_ref = this._t.next()) != null ? _ref[0] : void 0;
+            };
+            Parser.prototype._currentCode = function() {
+                var _ref;
+                return (_ref = this._t.current) != null ? _ref[0] : void 0;
+            };
+            Parser.prototype._currentString = function() {
+                var _ref;
+                return (_ref = this._t.current) != null ? _ref[1] : void 0;
+            };
+            Parser.prototype._error = function() {
+                throw new Error('unexpected token in "' + this._source + '"');
+            };
+            return Parser;
+        }();
+        module.exports = Parser;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/template/expressions/block.js", function(require, module, exports, __dirname, __filename) {
+        var Clip, Expression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        base = require("paperclip/lib/base/expression.js");
+        Clip = require("paperclip/lib/clip/index.js");
+        Expression = function(_super) {
+            __extends(Expression, _super);
+            Expression.prototype._type = "block";
+            function Expression(value) {
+                this.value = value;
+            }
+            Expression.prototype.toString = function() {
+                return "pushBinding(" + Clip.compile(this.value.toString()) + ")";
+            };
+            return Expression;
+        }(base.Expression);
+        module.exports = Expression;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/template/expressions/string.js", function(require, module, exports, __dirname, __filename) {
+        var Expression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        base = require("paperclip/lib/base/expression.js");
+        Expression = function(_super) {
+            __extends(Expression, _super);
+            Expression.prototype._type = "string";
+            function Expression(value) {
+                this.value = value;
+            }
+            Expression.prototype.toString = function() {
+                return "push('" + this.value.replace(/\'/g, "\\'").replace(/\n/g, "\\n") + "')";
+            };
+            return Expression;
+        }(base.Expression);
+        module.exports = Expression;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/template/expressions/collection.js", function(require, module, exports, __dirname, __filename) {
+        var CollectionExpression, Expression, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        CollectionExpression = require("paperclip/lib/base/collectionExpression.js");
+        Expression = function(_super) {
+            __extends(Expression, _super);
+            function Expression() {
+                _ref = Expression.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            Expression.prototype.toString = function() {
+                var command, item, _i, _len, _ref1;
+                command = [ "this" ];
+                _ref1 = this.items;
+                for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                    item = _ref1[_i];
+                    command.push(item.toString());
+                }
+                return command.join(".");
+            };
+            return Expression;
+        }(CollectionExpression);
+        module.exports = Expression;
+        return module.exports;
+    });
     define("paperclip/lib/clip/tokenizer.js", function(require, module, exports, __dirname, __filename) {
         var BaseTokenizer, Codes, Tokenizer, key, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
             for (var key in parent) {
@@ -2323,48 +2507,6 @@
             return Tokenizer;
         }(BaseTokenizer);
         module.exports = Tokenizer;
-        return module.exports;
-    });
-    define("paperclip/lib/base/parser.js", function(require, module, exports, __dirname, __filename) {
-        var Parser;
-        Parser = function() {
-            function Parser(_t) {
-                this._t = _t;
-            }
-            Parser.prototype.parse = function(source) {
-                this._source = source;
-                this._t.source(source);
-                return this._parse();
-            };
-            Parser.prototype._parse = function() {};
-            Parser.prototype._expectNextCode = function(code) {
-                if (this._t.next()[0] !== code) {
-                    return this._error();
-                }
-            };
-            Parser.prototype._expectCurrentCode = function(code) {
-                if (this._t.current[0] !== code) {
-                    return this._error();
-                }
-            };
-            Parser.prototype._nextCode = function() {
-                var _ref;
-                return (_ref = this._t.next()) != null ? _ref[0] : void 0;
-            };
-            Parser.prototype._currentCode = function() {
-                var _ref;
-                return (_ref = this._t.current) != null ? _ref[0] : void 0;
-            };
-            Parser.prototype._currentString = function() {
-                var _ref;
-                return (_ref = this._t.current) != null ? _ref[1] : void 0;
-            };
-            Parser.prototype._error = function() {
-                throw new Error('unexpected token in "' + this._source + '"');
-            };
-            return Parser;
-        }();
-        module.exports = Parser;
         return module.exports;
     });
     define("paperclip/lib/clip/expressions/modifier.js", function(require, module, exports, __dirname, __filename) {
@@ -2797,147 +2939,6 @@
             return GroupExpresion;
         }(ParamsExpression);
         module.exports = GroupExpresion;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/template/tokenizer.js", function(require, module, exports, __dirname, __filename) {
-        var BaseTokenizer, Codes, Tokenizer, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        BaseTokenizer = require("paperclip/lib/base/tokenizer.js");
-        Codes = function() {
-            function Codes() {}
-            Codes.OTHER = -1;
-            Codes.LM = 1;
-            Codes.RM = Codes.LM + 1;
-            Codes.CHAR = Codes.RM + 1;
-            return Codes;
-        }();
-        Tokenizer = function(_super) {
-            __extends(Tokenizer, _super);
-            function Tokenizer() {
-                Tokenizer.__super__.constructor.call(this);
-                this._s.skipWhitespace(false);
-            }
-            Tokenizer.Codes = Codes;
-            Tokenizer.prototype._next = function() {
-                var ccode;
-                if ((ccode = this._s.cchar()) === "{") {
-                    if (this._s.peek(1) === "{") {
-                        this._s.nextChar();
-                        return this._t(Codes.LM, "{{");
-                    }
-                } else if ((ccode = this._s.cchar()) === "}") {
-                    if (this._s.peek(1) === "}") {
-                        this._s.nextChar();
-                        return this._t(Codes.RM, "}}");
-                    }
-                }
-                return this._t(Codes.CHAR, this._s.cchar());
-            };
-            return Tokenizer;
-        }(BaseTokenizer);
-        module.exports = Tokenizer;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/template/expressions/block.js", function(require, module, exports, __dirname, __filename) {
-        var Clip, Expression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        base = require("paperclip/lib/base/expression.js");
-        Clip = require("paperclip/lib/clip/index.js");
-        Expression = function(_super) {
-            __extends(Expression, _super);
-            Expression.prototype._type = "block";
-            function Expression(value) {
-                this.value = value;
-            }
-            Expression.prototype.toString = function() {
-                return "pushBinding(" + Clip.compile(this.value.toString()) + ")";
-            };
-            return Expression;
-        }(base.Expression);
-        module.exports = Expression;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/template/expressions/string.js", function(require, module, exports, __dirname, __filename) {
-        var Expression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        base = require("paperclip/lib/base/expression.js");
-        Expression = function(_super) {
-            __extends(Expression, _super);
-            Expression.prototype._type = "string";
-            function Expression(value) {
-                this.value = value;
-            }
-            Expression.prototype.toString = function() {
-                return "push('" + this.value.replace(/\'/g, "\\'").replace(/\n/g, "\\n") + "')";
-            };
-            return Expression;
-        }(base.Expression);
-        module.exports = Expression;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/template/expressions/collection.js", function(require, module, exports, __dirname, __filename) {
-        var CollectionExpression, Expression, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        CollectionExpression = require("paperclip/lib/base/collectionExpression.js");
-        Expression = function(_super) {
-            __extends(Expression, _super);
-            function Expression() {
-                _ref = Expression.__super__.constructor.apply(this, arguments);
-                return _ref;
-            }
-            Expression.prototype.toString = function() {
-                var command, item, _i, _len, _ref1;
-                command = [ "this" ];
-                _ref1 = this.items;
-                for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-                    item = _ref1[_i];
-                    command.push(item.toString());
-                }
-                return command.join(".");
-            };
-            return Expression;
-        }(CollectionExpression);
-        module.exports = Expression;
         return module.exports;
     });
     define("paperclip/lib/paper/dom/decor/text.js", function(require, module, exports, __dirname, __filename) {
@@ -4921,7 +4922,8 @@
             Handler.prototype.init = function() {
                 Handler.__super__.init.call(this);
                 this.$element = $(this.element);
-                return this.clip.bind("show").to(this._show);
+                this.clip.bind("show").to(this._show);
+                return this._show(this.clip.get("show"));
             };
             Handler.prototype._show = function(value) {
                 return this.$element.css({

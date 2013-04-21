@@ -16,7 +16,8 @@ class DecoratorFactory
     else
       if ElementDecorator.test element
         classes.push ElementDecorator
-      else if BindDecorator.test element
+        
+      if BindDecorator.test element
         classes.push BindDecorator
 
     return if not classes.length

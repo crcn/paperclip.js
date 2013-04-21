@@ -1,5 +1,11 @@
 
+
 Paperclip is a small declarative data-binding library.
+
+
+### Examples
+
+- http://jsfiddle.net/yW6x9/12/
 
 controller logic:
 
