@@ -10,9 +10,10 @@
         Age: <input type="text" data-bind="value:age;bothWays:true"></input>
         <input type="text" value="{{name}}"></input>
 
-        <h1>First Name: {{name}}</h1><br /> 
-        <h1>Last Name: {{last}}</h1><br />
+        <h1>First Name: {{name}}</h1>
+        <h1>Last Name: {{last}}</h1>
         <h1>Age: {{age||'no age specified'}}</h1>
+        <h1>Can Drink: {{age>20?"Yes":"No"}}</h1>
     </div>
 
     <script type="text/javascript">
