@@ -5,20 +5,21 @@
   </head>
   <body>
     <div id="application">
-        <input type="text" data-bind="value:name;bothWays:true"></input>
-        <input type="text" data-bind="value:last;bothWays:true"></input>
+        Name: <input type="text" data-bind="value:name;bothWays:true"></input>
+        Last: <input type="text" data-bind="value:last;bothWays:true"></input>
+        Age: <input type="text" data-bind="value:age;bothWays:true"></input>
         <input type="text" value="{{name}}"></input>
-        <h1>First Name: {{name}}<br /> Last Name: {{last}}</h1>
+
+        <h1>First Name: {{name}}</h1><br /> 
+        <h1>Last Name: {{last}}</h1><br />
+        <h1>Age: {{age||'no age specified'}}</h1>
     </div>
 
     <script type="text/javascript">
       pc = paperclip();
-      bindable = new paperclip.bindable.Object({ name: "craig", last: "condon", age: 0});
+      bindable = new paperclip.bindable.Object({ name: "craig", last: "condon", age: 99});
 
 
-      setInterval(function() {
-        bindable.set("age", (bindable.get("age") || 0) + 1);
-      }, 500);
 
       pc.attach(bindable, $("#application"));
     </script>
