@@ -8,12 +8,11 @@ class Compiler
   constructor: () ->
     @_parser = new Parser()
 
-
   ###
   ###
 
-  compile: (script) ->
-    expression = @_parser.parse script
+  compile: (source) ->
+    expression = @_parser.parse source
     scripts = {}
 
     return @_getScript(expression) if expression._type is "script"
@@ -25,8 +24,12 @@ class Compiler
   ###
   ###
 
-  _getScript: (script) -> 
-    new Function "return #{script}"
+  _getScript: (expression, source) -> 
+    fn = new Function "return #{expression}"
+    fn.expression = expression
+    fn.source = source
+    fn
+
 
 compiler = new Compiler()
 module.exports = (script) -> compiler.compile script

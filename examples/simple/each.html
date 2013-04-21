@@ -5,7 +5,7 @@
   </head>
   <body>
     <div id="application">
-        <input type="text" data-bind="value:newPerson | bothWays(); enter: addPerson(newPerson) && newPerson | replace('')"></input>
+        <input type="text" data-bind="value:newPerson; bothWays: true; enter: addPerson(newPerson) && newPerson | replace('')"></input>
         <div data-bind="each:people">
           hello {{item.name | uppercase()}} <input type="button" value="remove" data-bind="click:item.remove()"></input>
         </div>

@@ -13,17 +13,16 @@ class ModifierExpression extends base.Expression
 
     # this.modify(this.modifier).value()
 
-    buffer = ["this.modify("]
+    buffer = []
 
     if modifiers[@name]
-      buffer.push "this.defaultModifiers."
+      buffer.push "this.defaultModifiers"
     else
-      buffer.push "this.modifiers."
+      buffer.push "this.modifiers"
 
-    buffer.push "#{@name}, ["
+    buffer.push ".#{@name}("
 
 
-    @expression.noValue = true
 
     params = [@expression.toString()]
 
@@ -32,7 +31,7 @@ class ModifierExpression extends base.Expression
       params.push p.toString()
 
 
-    buffer.push params.join(","), "])"
+    buffer.push params.join(","), ")"
     buffer.join ""
 
 module.exports = ModifierExpression

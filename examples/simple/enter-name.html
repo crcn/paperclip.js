@@ -5,8 +5,8 @@
   </head>
   <body>
     <div id="application">
-        <input type="text" value="{{name | bothWays()}}"></input>
-        <input type="text" value="{{last | bothWays()}}"></input>
+        <input type="text" data-bind="value:name;bothWays:true"></input>
+        <input type="text" data-bind="value:last;bothWays:true"></input>
         <input type="text" value="{{name}}"></input>
         <h1>First Name: {{name}}<br /> Last Name: {{last}}</h1>
     </div>

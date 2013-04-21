@@ -4,7 +4,7 @@ Clip = pc.Clip,
 compile = Clip.compile;
 
 describe("clip", function() {
-
+  
 
   it("can bind to a single value", function() {
     var clip = new Clip({
@@ -145,7 +145,6 @@ describe("clip", function() {
       script: compile("upperName: person.name | uppercase()")
     });
 
-    clip.watcher("upperName").watch();
 
     var uname;
 

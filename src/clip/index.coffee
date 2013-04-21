@@ -2,6 +2,7 @@ bindable = require "bindable"
 dref     = require "dref"
 events   = require "events"
 defaultModifiers = require "./modifiers"
+findRefs = require "./utils/findRefs"
 
 ###
  Reads a property chain 
@@ -75,7 +76,7 @@ class PropertyChain
     return cv
 
 
-class ScriptWatcher extends events.EventEmitter
+class ClipScript extends events.EventEmitter
 
   ###
   ###
@@ -112,6 +113,15 @@ class ScriptWatcher extends events.EventEmitter
     @__watch = true
     @update()
     @
+
+  ###
+  ###
+
+  references: () ->  
+    # will happen with inline bindings
+    return [] if not @script.expression 
+    findRefs @script.expression
+
 
   ###
   ###
@@ -154,13 +164,13 @@ class ScriptWatcher extends events.EventEmitter
 
 
 
-class ClipWatchers
+class ClipScripts
 
   ###
   ###
 
   constructor: (@clip, scripts) ->
-    @_watchers = {}
+    @_scripts = {}
     @names = []
     @_bindScripts scripts
 
@@ -168,22 +178,24 @@ class ClipWatchers
   ###
 
   watch: () ->
-    for key of @_watchers
-      @_watchers[key].watch()
+    for key of @_scripts
+      @_scripts[key].watch()
 
   ###
   ###
 
   dispose: () ->
-    for key of @_watchers
-      @_watchers[key].dispose()
+    for key of @_scripts
+      @_scripts[key].dispose()
 
-    @_watchers = {}
+    @_scripts = {}
+
+
 
   ###
   ###
 
-  get: (name) -> @_watchers[name]
+  get: (name) -> @_scripts[name]
 
   ###
   ###
@@ -200,13 +212,13 @@ class ClipWatchers
 
   _bindScript: (name, script, watch) ->
     @names.push name
-    watcher = new ScriptWatcher script, @clip
-    @_watchers[name] = watcher
-    watcher.on "change", (value) =>
+    clipScript = new ClipScript script, @clip
+    @_scripts[name] = clipScript
+    clipScript.on "change", (value) =>
       @clip.set name, value
 
     if watch
-      watcher.watch()
+      clipScript.watch()
 
 
 
@@ -223,26 +235,27 @@ class Clip
     @_self = new bindable.Object()
     @data = new bindable.Object options.data  or {}
     @modifiers = options.modifiers or {}
+    scripts = @options.scripts or @options.script
 
-    if @options.script
-      @watchers = new ClipWatchers @, @options.script
+    if scripts
+      @scripts = new ClipScripts @, scripts
 
-    if options.watch
+    if options.watch isnt false
       @watch()
 
   watch: () ->
-    @watchers.watch()
+    @scripts.watch()
     @
 
   dispose: () -> 
     @_self?.dispose()
-    @watchers?.dispose()
+    @scripts?.dispose()
     @_self     = undefined
-    @_watchers = undefined
+    @_scripts  = undefined
 
 
-  watcher: (name) ->
-    @watchers.get name
+  script: (name) ->
+    @scripts.get name
 
   get  : () -> @_self.get arguments...
   set  : () -> @_self.set arguments...
@@ -250,6 +263,5 @@ class Clip
 
 
 module.exports = Clip
-module.exports.Watchers  = ClipWatchers
 module.exports.modifiers = defaultModifiers
 module.exports.compile   = require "./compile"

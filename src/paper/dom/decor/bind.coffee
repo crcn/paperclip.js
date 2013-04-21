@@ -7,14 +7,16 @@ class Decorator
 
   constructor: (@data, @element) ->
 
-    @_clip = new Clip { script: Clip.compile(@_dataBind(element)), data: @data }
+    @_clip = new Clip { scripts: Clip.compile(@_dataBind(element)), data: @data, watch: false }
     @_handlers = []
 
-    for action in @_clip.watchers.names
-      if handlers[action]
-        clazz = handlers[action]
-        @_handlers.push handler = new clazz @_clip.watcher(action), @_clip, element
-        @traverse = handler.traverse isnt false
+    for action in @_clip.scripts.names
+
+      clazz = handlers[action] or handlers.base
+      script = @_clip.script(action)
+      @_handlers.push handler = new clazz script, @_clip, element
+      @traverse = handler.traverse isnt false
+
 
 
   init: () ->

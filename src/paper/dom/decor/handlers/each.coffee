@@ -9,6 +9,7 @@ class Handler extends require("./base")
   traverse: false
 
   init: () ->
+    super()
 
     @$element = $(@element)
     @tpl = @$element.html()
@@ -17,7 +18,6 @@ class Handler extends require("./base")
     @_watchSource()
 
     @clip.bind("each").to @_change
-    @watcher.watch()
 
 
 

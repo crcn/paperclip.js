@@ -7,11 +7,8 @@ class RefPathExpression extends CollectionExpression
   constructor: (items, @castAs) ->
     super items
 
-
-  references: () ->
-    refs = super()
-    refs.push @
-    refs
+  toPathString: () ->
+    @items.join(".")
 
   toString: () ->
     buffer = ["this"]
@@ -37,8 +34,7 @@ class RefPathExpression extends CollectionExpression
 
     @_pushRef buffer, currentChain, self
 
-    if not @noValue
-      buffer.push ".value()"
+    buffer.push ".value()"
 
     buffer.join ""
 

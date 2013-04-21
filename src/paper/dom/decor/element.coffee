@@ -17,28 +17,11 @@ class AttributeBinding
 
 
   _elementChange: (event) =>
-
-
     if @name is "value"
       value = @element.value
     else
       value = @attribute.value
 
-    if @currentValue isnt value and (refs = @_bothWays()).length
-      for refsByKey in refs
-        for key of refsByKey
-          refsByKey[key].value value
-
-
-
-
-  _bothWays: () ->
-    refs = []
-    for binding in @_renderer.bindings
-      if binding.clip.options.bothWays
-        refs.push binding.clip.options.bothWays
-
-    refs
 
 
 
