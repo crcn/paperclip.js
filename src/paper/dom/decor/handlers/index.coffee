@@ -6,4 +6,5 @@ module.exports = {
   base: require("./base"),
   show: require("./show"),
   disable: require("./disable")
+  checked: require("./checked")
 }

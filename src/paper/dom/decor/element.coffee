@@ -13,6 +13,7 @@ class AttributeBinding
 
 
   _change: (value) =>
+    #$(@element).attr(@attribute.name, @currentValue = value)
     @attribute.value = @currentValue = value
 
 

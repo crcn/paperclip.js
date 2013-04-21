@@ -7,11 +7,14 @@
     <div id="application">
         <input type="submit" value="toggle disable" data-bind="click:disabled = !disabled"></input>
         <input type="submit" value="some button" data-bind="disable:disabled"></input>
+
+        <input type="submit" value="toggle checked" data-bind="click:checked = !checked"></input>
+        <input type="checkbox" value="some button" data-bind="checked:checked"></input>
     </div>
 
     <script type="text/javascript">
       pc = paperclip();
-      bindable = new paperclip.bindable.Object({ disabled: true });
+      bindable = new paperclip.bindable.Object({ disabled: true, checked: true });
 
       pc.attach(bindable, $("#application"));
     </script>
