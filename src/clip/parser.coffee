@@ -207,6 +207,7 @@ class Parser extends BaseParser
   _parseRef: () ->
     c = @_currentCode()
     refs = []
+    
 
     while c is TokenCodes.VAR
       name = @_currentString()
@@ -222,6 +223,13 @@ class Parser extends BaseParser
         c = @_nextCode()
 
 
-    new RefPathExpression refs
+    if c is TokenCodes.AS
+      @_nextCode()
+      castAs = @_currentString()
+      @_nextCode()
+
+
+
+    new RefPathExpression refs, castAs
 
 module.exports = Parser

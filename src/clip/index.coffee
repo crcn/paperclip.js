@@ -19,6 +19,10 @@ class PropertyChain
     @_commands.push { ref: path }
     @
 
+  castAs: (name) ->
+    @watcher.cast[name] = @
+    @
+
   path: () ->
     path = []
     for c in @_commands
@@ -53,12 +57,13 @@ class PropertyChain
       if i is n-1 and hasValue
         if cv.set then cv.set(command.ref, value) else dref.set cv, command.ref, value
 
+      pv = cv
       cv = if cv.get then cv.get(command.ref) else dref.get cv, command.ref
       
       # reference
       if command.args
         if cv and typeof cv is "function"
-          cv = cv?.apply cv, command.args
+          cv = cv?.apply pv, command.args
         else
           cv = undefined
 
@@ -80,6 +85,7 @@ class ScriptWatcher extends events.EventEmitter
     @defaultModifiers = defaultModifiers
     @options = @clip.options
     @_watching = {}
+    @cast = {}
 
   ###
   ###
@@ -99,19 +105,30 @@ class ScriptWatcher extends events.EventEmitter
     @emit "change", @value = newValue
     newValue
 
+  ###
+  ###
+
+  watch: () ->
+    @__watch = true
+    @update()
+    @
 
   ###
   ###
 
   modify: (modifier, args) ->
     @currentRefs = args.filter (arg) -> arg.__isPropertyChain
-    modifier.apply @, args.map (arg) ->
+    ret = modifier.apply @, args.map (arg) ->
       if arg.__isPropertyChain 
         arg.value()
       else
         arg
 
+    @currentRefs = []
+    ret
 
+
+  castAs: (name) -> new PropertyChain(@).castAs name
   ref: (path) -> new PropertyChain(@).ref path
   self: (path) -> new PropertyChain(@).self path
   call: (path, args) -> new PropertyChain(@).call path, args
@@ -122,6 +139,8 @@ class ScriptWatcher extends events.EventEmitter
   ###
 
   _watch: (path, target) ->
+
+    return if not @__watch
 
     if @_watching[path]
       return if @_watching[path].target is target
@@ -142,7 +161,15 @@ class ClipWatchers
 
   constructor: (@clip, scripts) ->
     @_watchers = {}
+    @names = []
     @_bindScripts scripts
+
+  ###
+  ###
+
+  watch: () ->
+    for key of @_watchers
+      @_watchers[key].watch()
 
   ###
   ###
@@ -156,9 +183,14 @@ class ClipWatchers
   ###
   ###
 
+  get: (name) -> @_watchers[name]
+
+  ###
+  ###
+
   _bindScripts: (scripts) ->
     if typeof scripts is "function"
-      @_bindScript "value", scripts
+      @_bindScript "value", scripts, true
     else
       for scriptName of scripts
         @_bindScript scriptName, scripts[scriptName]
@@ -166,13 +198,18 @@ class ClipWatchers
   ###
   ###
 
-  _bindScript: (name, script) ->
+  _bindScript: (name, script, watch) ->
+    @names.push name
     watcher = new ScriptWatcher script, @clip
     @_watchers[name] = watcher
     watcher.on "change", (value) =>
       @clip.set name, value
 
-    watcher.update()
+    if watch
+      watcher.watch()
+
+
+
 
 
 
@@ -188,13 +225,21 @@ class Clip
     @modifiers = options.modifiers or {}
 
     if @options.script
-      @_watchers = new ClipWatchers @, @options.script
+      @watchers = new ClipWatchers @, @options.script
+
+  watch: () ->
+    @watchers.watch()
+    @
 
   dispose: () -> 
     @_self?.dispose()
-    @_watchers?.dispose()
+    @watchers?.dispose()
     @_self     = undefined
     @_watchers = undefined
+
+
+  watcher: (name) ->
+    @watchers.get name
 
   get  : () -> @_self.get arguments...
   set  : () -> @_self.set arguments...

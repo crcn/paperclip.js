@@ -18,4 +18,9 @@ module.exports = {
   json: (value, count, delimiter) ->
     JSON.stringify.apply JSON, arguments
 
+  replace: (ref, newValue) -> 
+    for ref in @currentRefs
+      ref.value newValue
+    newValue
+
 }

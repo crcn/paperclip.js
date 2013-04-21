@@ -4,6 +4,10 @@ CollectionExpression = require "../../base/collectionExpression"
 class RefPathExpression extends CollectionExpression
   _type: "refPath"
 
+  constructor: (items, @castAs) ->
+    super items
+
+
   references: () ->
     refs = super()
     refs.push @
@@ -13,6 +17,9 @@ class RefPathExpression extends CollectionExpression
     buffer = ["this"]
     currentChain = []
     self = false
+
+    if @castAs
+      buffer.push(".castAs('#{@castAs}')")
 
     for part in @items
       if part._type is "fn"

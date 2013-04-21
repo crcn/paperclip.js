@@ -1,5 +1,6 @@
 TextDecorator    = require "./text"
 ElementDecorator = require "./element"
+BindDecorator    = require "./bind"
 
 class DecoratorFactory
 
@@ -19,6 +20,8 @@ class DecoratorFactory
     else
       if ElementDecorator.test element
         DecoratorClass = ElementDecorator
+      else if BindDecorator.test element
+        DecoratorClass = BindDecorator
 
     return if not DecoratorClass
 

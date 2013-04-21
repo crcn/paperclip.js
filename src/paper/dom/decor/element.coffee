@@ -6,8 +6,9 @@ class AttributeBinding
     @name = attribute.name
     @_template = new Template @attribute.value
     @_renderer = @_template.render @data
-    @_renderer.bind("text").to @_change
 
+  init: () ->
+    @_renderer.bind("text").to @_change
     $(element).bind "mouseup keydown keyup change", @_elementChange
 
 

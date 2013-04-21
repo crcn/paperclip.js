@@ -8,7 +8,8 @@ class Codes
   @VAR    = @STRING + 1 # variable
   @WS     = @VAR    + 1 # \s
   @NUMBER = @WS     + 1 # 0-9
-  @BOOL   = @NUMBER + 1 # 0-9
+  @BOOL   = @NUMBER + 1 # true / false
+  @AS     = @BOOL   + 1 # casting
 
   @DOLLAR     = 36       # $
   @LP         = 40       # (
@@ -58,6 +59,7 @@ class Tokenizer extends BaseTokenizer
       word = @_s.next /[_$@a-zA-Z0-9]+/
 
       return @_t(Codes.BOOL, word) if /true|false/.test word
+      return @_t(Codes.AS, word) if word is "as"
       return @_t Codes.VAR, word
 
     # string?

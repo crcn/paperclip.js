@@ -14,6 +14,14 @@ describe("clip", function() {
     expect(clip.get("value")).to.be("craig")
   });
 
+
+  it("can cast a value as another", function() {
+    var clip = new Clip({
+      script: compile("names as name")
+    });
+
+  })
+
   
   it("can create a simple clip", function() {
 
@@ -126,6 +134,8 @@ describe("clip", function() {
     var clip = new Clip({
       script: compile("upperName: person.name | uppercase()")
     });
+
+    clip.watcher("upperName").watch();
 
     var uname;
 

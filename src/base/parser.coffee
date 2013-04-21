@@ -11,6 +11,7 @@ class Parser
   ###
 
   parse: (source) ->
+    @_source = source
     @_t.source source
     @_parse()
 
@@ -48,8 +49,7 @@ class Parser
   _currentString: () -> @_t.current?[1]
 
 
-
   _error: () ->
-    throw new Error "unexpected token #{TokenCodes.key(@_t.current[0])} '#{@_t.current[1]}' in '#{@_t.source()}'"
+    throw new Error "unexpected token in \"#{@_source}\""
 
 module.exports = Parser
