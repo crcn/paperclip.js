@@ -5,19 +5,13 @@
   </head>
   <body>
     <div id="application">
-        
-        As the years go by... <br />
-        {{name}} is {{age}} years old! He <b>{{ (age >= 21 ? "can" : "cannot") | uppercase() }}</b> enter bars!
+        <input type="submit" value="toggle disable" data-bind="click:disabled = !disabled"></input>
+        <input type="submit" value="some button" data-bind="disable:disabled"></input>
     </div>
 
     <script type="text/javascript">
       pc = paperclip();
-      bindable = new paperclip.bindable.Object({ name: "craig", age: 0});
-
-
-      setInterval(function() {
-        bindable.set("age", (bindable.get("age") || 0) + 1);
-      }, 500);
+      bindable = new paperclip.bindable.Object({ disabled: true });
 
       pc.attach(bindable, $("#application"));
     </script>

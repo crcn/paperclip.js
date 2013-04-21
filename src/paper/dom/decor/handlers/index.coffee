@@ -4,5 +4,6 @@ module.exports = {
   enter: require("./enter"),
   value: require("./value"),
   base: require("./base"),
-  show: require("./show")
+  show: require("./show"),
+  disable: require("./disable")
 }
