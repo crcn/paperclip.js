@@ -211,6 +211,9 @@
                     return (new PropertyChain(this)).call(path, args);
                 };
                 ScriptWatcher.prototype._watch = function(path, target) {
+                    if (!this.__watch) {
+                        return;
+                    }
                     if (this._watching[path]) {
                         if (this._watching[path].target === target) {
                             return;
@@ -342,158 +345,6 @@
             exports.Collection = require("bindable/lib/collection/index.js");
             exports.EventEmitter = require("bindable/lib/core/eventEmitter.js");
             Binding.Collection = exports.Collection;
-        }).call(this);
-        return module.exports;
-    });
-    define("paperclip/lib/paper/template/index.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var Clip, Parser, Template, TemplateBinding, TemplateRenderer, bindable, events, parser, __bind = function(fn, me) {
-                return function() {
-                    return fn.apply(me, arguments);
-                };
-            }, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-                for (var key in parent) {
-                    if (__hasProp.call(parent, key)) child[key] = parent[key];
-                }
-                function ctor() {
-                    this.constructor = child;
-                }
-                ctor.prototype = parent.prototype;
-                child.prototype = new ctor;
-                child.__super__ = parent.prototype;
-                return child;
-            };
-            Parser = require("paperclip/lib/paper/template/parser.js");
-            Clip = require("paperclip/lib/clip/index.js");
-            events = require("events/index.js");
-            bindable = require("bindable/lib/index.js");
-            parser = new Parser;
-            TemplateBinding = function() {
-                function TemplateBinding(renderer, fn) {
-                    this.renderer = renderer;
-                    this.fn = fn;
-                    this.update = __bind(this.update, this);
-                    this.clip = new Clip({
-                        script: this.fn,
-                        data: this.renderer._data,
-                        watch: true
-                    });
-                    this.clip.bind("value").watch(true).to(this.update);
-                    this.value = this.clip.get("value");
-                }
-                TemplateBinding.prototype.dispose = function() {
-                    return this.clip.dispose();
-                };
-                TemplateBinding.prototype.update = function(value) {
-                    this.value = value;
-                    return this.renderer.update();
-                };
-                TemplateBinding.prototype.toString = function() {
-                    return this.value;
-                };
-                return TemplateBinding;
-            }();
-            TemplateRenderer = function(_super) {
-                __extends(TemplateRenderer, _super);
-                function TemplateRenderer(_data, fn) {
-                    this._data = _data;
-                    this.fn = fn;
-                    TemplateRenderer.__super__.constructor.call(this);
-                    this.buffer = [];
-                    this.bindings = [];
-                    this.fn.call(this);
-                    this.update();
-                }
-                TemplateRenderer.prototype.dispose = function() {
-                    var binding, _i, _len, _ref;
-                    _ref = this.bindings;
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        binding = _ref[_i];
-                        binding.dispose();
-                    }
-                    return this.bindings = [];
-                };
-                TemplateRenderer.prototype.push = function(source) {
-                    this.buffer.push(source);
-                    return this;
-                };
-                TemplateRenderer.prototype.pushBinding = function(script) {
-                    var binding;
-                    this.buffer.push(binding = new TemplateBinding(this, script));
-                    this.bindings.push(binding);
-                    return this;
-                };
-                TemplateRenderer.prototype.update = function() {
-                    return this.set("text", this.text = this.render());
-                };
-                TemplateRenderer.prototype.render = function() {
-                    return this.buffer.join("");
-                };
-                TemplateRenderer.prototype.toString = function() {
-                    return this.text;
-                };
-                return TemplateRenderer;
-            }(bindable.Object);
-            Template = function() {
-                function Template(source) {
-                    this.fn = new Function("return " + parser.parse(source));
-                }
-                Template.prototype.render = function(data) {
-                    return new TemplateRenderer(data, this.fn);
-                };
-                return Template;
-            }();
-            module.exports = Template;
-        }).call(this);
-        return module.exports;
-    });
-    define("paperclip/lib/paper/dom/index.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var DOM, DecororFactory;
-            DecororFactory = require("paperclip/lib/paper/dom/decor/index.js");
-            DOM = function() {
-                function DOM() {
-                    this._decorFactory = new DecororFactory;
-                }
-                DOM.prototype.attach = function(context, element) {
-                    var _this = this;
-                    return this._traverse(this._element(element), function(element) {
-                        var decor;
-                        decor = _this._decorFactory.attach(context, element);
-                        if (decor) {
-                            decor.dom = _this;
-                            decor.init();
-                            return decor.traverse !== false;
-                        }
-                    });
-                };
-                DOM.prototype._traverse = function(element, callback) {
-                    var child, traverse, _i, _len, _ref, _results;
-                    if (element.nodeName === "#comment") {
-                        return;
-                    }
-                    traverse = callback(element);
-                    if (traverse === false) {
-                        return;
-                    }
-                    _ref = element.childNodes;
-                    _results = [];
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        child = _ref[_i];
-                        if (this._traverse(child, callback) === false) {
-                            break;
-                        } else {
-                            _results.push(void 0);
-                        }
-                    }
-                    return _results;
-                };
-                DOM.prototype._element = function(element) {
-                    return element[0] || element;
-                };
-                return DOM;
-            }();
-            module.exports = DOM;
         }).call(this);
         return module.exports;
     });
@@ -776,6 +627,158 @@
             module.exports = function(script) {
                 return compiler.compile(script);
             };
+        }).call(this);
+        return module.exports;
+    });
+    define("paperclip/lib/paper/template/index.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var Clip, Parser, Template, TemplateBinding, TemplateRenderer, bindable, events, parser, __bind = function(fn, me) {
+                return function() {
+                    return fn.apply(me, arguments);
+                };
+            }, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+                for (var key in parent) {
+                    if (__hasProp.call(parent, key)) child[key] = parent[key];
+                }
+                function ctor() {
+                    this.constructor = child;
+                }
+                ctor.prototype = parent.prototype;
+                child.prototype = new ctor;
+                child.__super__ = parent.prototype;
+                return child;
+            };
+            Parser = require("paperclip/lib/paper/template/parser.js");
+            Clip = require("paperclip/lib/clip/index.js");
+            events = require("events/index.js");
+            bindable = require("bindable/lib/index.js");
+            parser = new Parser;
+            TemplateBinding = function() {
+                function TemplateBinding(renderer, fn) {
+                    this.renderer = renderer;
+                    this.fn = fn;
+                    this.update = __bind(this.update, this);
+                    this.clip = new Clip({
+                        script: this.fn,
+                        data: this.renderer._data,
+                        watch: true
+                    });
+                    this.clip.bind("value").watch(true).to(this.update);
+                    this.value = this.clip.get("value");
+                }
+                TemplateBinding.prototype.dispose = function() {
+                    return this.clip.dispose();
+                };
+                TemplateBinding.prototype.update = function(value) {
+                    this.value = value;
+                    return this.renderer.update();
+                };
+                TemplateBinding.prototype.toString = function() {
+                    return this.value;
+                };
+                return TemplateBinding;
+            }();
+            TemplateRenderer = function(_super) {
+                __extends(TemplateRenderer, _super);
+                function TemplateRenderer(_data, fn) {
+                    this._data = _data;
+                    this.fn = fn;
+                    TemplateRenderer.__super__.constructor.call(this);
+                    this.buffer = [];
+                    this.bindings = [];
+                    this.fn.call(this);
+                    this.update();
+                }
+                TemplateRenderer.prototype.dispose = function() {
+                    var binding, _i, _len, _ref;
+                    _ref = this.bindings;
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        binding = _ref[_i];
+                        binding.dispose();
+                    }
+                    return this.bindings = [];
+                };
+                TemplateRenderer.prototype.push = function(source) {
+                    this.buffer.push(source);
+                    return this;
+                };
+                TemplateRenderer.prototype.pushBinding = function(script) {
+                    var binding;
+                    this.buffer.push(binding = new TemplateBinding(this, script));
+                    this.bindings.push(binding);
+                    return this;
+                };
+                TemplateRenderer.prototype.update = function() {
+                    return this.set("text", this.text = this.render());
+                };
+                TemplateRenderer.prototype.render = function() {
+                    return this.buffer.join("");
+                };
+                TemplateRenderer.prototype.toString = function() {
+                    return this.text;
+                };
+                return TemplateRenderer;
+            }(bindable.Object);
+            Template = function() {
+                function Template(source) {
+                    this.fn = new Function("return " + parser.parse(source));
+                }
+                Template.prototype.render = function(data) {
+                    return new TemplateRenderer(data, this.fn);
+                };
+                return Template;
+            }();
+            module.exports = Template;
+        }).call(this);
+        return module.exports;
+    });
+    define("paperclip/lib/paper/dom/index.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var DOM, DecororFactory;
+            DecororFactory = require("paperclip/lib/paper/dom/decor/index.js");
+            DOM = function() {
+                function DOM() {
+                    this._decorFactory = new DecororFactory;
+                }
+                DOM.prototype.attach = function(context, element) {
+                    var _this = this;
+                    return this._traverse(this._element(element), function(element) {
+                        var decor;
+                        decor = _this._decorFactory.attach(context, element);
+                        if (decor) {
+                            decor.dom = _this;
+                            decor.init();
+                            return decor.traverse !== false;
+                        }
+                    });
+                };
+                DOM.prototype._traverse = function(element, callback) {
+                    var child, traverse, _i, _len, _ref, _results;
+                    if (element.nodeName === "#comment") {
+                        return;
+                    }
+                    traverse = callback(element);
+                    if (traverse === false) {
+                        return;
+                    }
+                    _ref = element.childNodes;
+                    _results = [];
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        child = _ref[_i];
+                        if (this._traverse(child, callback) === false) {
+                            break;
+                        } else {
+                            _results.push(void 0);
+                        }
+                    }
+                    return _results;
+                };
+                DOM.prototype._element = function(element) {
+                    return element[0] || element;
+                };
+                return DOM;
+            }();
+            module.exports = DOM;
         }).call(this);
         return module.exports;
     });
@@ -1367,110 +1370,6 @@
         }).call(this);
         return module.exports;
     });
-    define("paperclip/lib/paper/template/parser.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var BaseParser, BlockExpression, CollectionExpression, Parser, StringExpression, TokenCodes, Tokenizer, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-                for (var key in parent) {
-                    if (__hasProp.call(parent, key)) child[key] = parent[key];
-                }
-                function ctor() {
-                    this.constructor = child;
-                }
-                ctor.prototype = parent.prototype;
-                child.prototype = new ctor;
-                child.__super__ = parent.prototype;
-                return child;
-            };
-            Tokenizer = require("paperclip/lib/paper/template/tokenizer.js");
-            TokenCodes = Tokenizer.Codes;
-            BaseParser = require("paperclip/lib/base/parser.js");
-            BlockExpression = require("paperclip/lib/paper/template/expressions/block.js");
-            StringExpression = require("paperclip/lib/paper/template/expressions/string.js");
-            CollectionExpression = require("paperclip/lib/paper/template/expressions/collection.js");
-            Parser = function(_super) {
-                __extends(Parser, _super);
-                function Parser() {
-                    this._t = new Tokenizer;
-                }
-                Parser.prototype._parse = function() {
-                    var expressions;
-                    expressions = [];
-                    this._nextCode();
-                    while (this._t.current) {
-                        expressions.push(this._parseExpression());
-                    }
-                    return new CollectionExpression(expressions);
-                };
-                Parser.prototype._parseExpression = function() {
-                    if (this._currentCode() === TokenCodes.LM) {
-                        return this._parseBlock();
-                    } else {
-                        return this._parseString();
-                    }
-                };
-                Parser.prototype._parseBlock = function() {
-                    var buffer, c;
-                    buffer = [];
-                    this._nextCode();
-                    while ((c = this._currentCode()) !== TokenCodes.RM && c) {
-                        if (c === TokenCodes.LM) {
-                            buffer.push("{{", this._parseBlock().value, "}}");
-                        } else {
-                            buffer.push(this._currentString());
-                        }
-                        this._nextCode();
-                    }
-                    this._nextCode();
-                    return new BlockExpression(buffer.join(""));
-                };
-                Parser.prototype._parseString = function() {
-                    var buffer, c;
-                    buffer = [ this._currentString() ];
-                    this._nextCode();
-                    while ((c = this._currentCode()) !== TokenCodes.LM && c) {
-                        buffer.push(this._currentString());
-                        this._nextCode();
-                    }
-                    return new StringExpression(buffer.join(""));
-                };
-                return Parser;
-            }(BaseParser);
-            module.exports = Parser;
-        }).call(this);
-        return module.exports;
-    });
-    define("paperclip/lib/paper/dom/decor/index.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var BindDecorator, DecoratorFactory, ElementDecorator, TextDecorator;
-            TextDecorator = require("paperclip/lib/paper/dom/decor/text.js");
-            ElementDecorator = require("paperclip/lib/paper/dom/decor/element.js");
-            BindDecorator = require("paperclip/lib/paper/dom/decor/bind.js");
-            DecoratorFactory = function() {
-                function DecoratorFactory() {}
-                DecoratorFactory.prototype.attach = function(data, element) {
-                    var DecoratorClass;
-                    if (element.nodeName === "#text") {
-                        if (TextDecorator.test(element)) {
-                            DecoratorClass = TextDecorator;
-                        }
-                    } else {
-                        if (ElementDecorator.test(element)) {
-                            DecoratorClass = ElementDecorator;
-                        } else if (BindDecorator.test(element)) {
-                            DecoratorClass = BindDecorator;
-                        }
-                    }
-                    if (!DecoratorClass) {
-                        return;
-                    }
-                    return element._paperclipDecorator = new DecoratorClass(data, element);
-                };
-                return DecoratorFactory;
-            }();
-            module.exports = DecoratorFactory;
-        }).call(this);
-        return module.exports;
-    });
     define("paperclip/lib/clip/parser.js", function(require, module, exports, __dirname, __filename) {
         (function() {
             var ActionExpression, ActionsExpression, BaseParser, CollectionExpression, FnExpression, GroupExpression, JsExpression, ModifierExpression, OptionsExpression, ParamsExpression, Parser, RefExpression, RefPathExpression, ScriptExpression, StringExpression, TokenCodes, Tokenizer, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
@@ -1661,192 +1560,107 @@
         }).call(this);
         return module.exports;
     });
-    define("bindable/lib/object/setters/factory.js", function(require, module, exports, __dirname, __filename) {
+    define("paperclip/lib/paper/template/parser.js", function(require, module, exports, __dirname, __filename) {
         (function() {
-            var BindableSetter, CollectionSetter, FnSetter;
-            FnSetter = require("bindable/lib/object/setters/fn.js");
-            BindableSetter = require("bindable/lib/object/setters/bindable.js");
-            CollectionSetter = require("bindable/lib/object/setters/collection.js");
-            module.exports = function() {
-                function _Class() {}
-                _Class.prototype.createSetter = function(binding, target, property) {
-                    var callback, to, toProperty;
-                    to = null;
-                    toProperty = null;
-                    callback = null;
-                    if (!target && !property) {
-                        return null;
+            var BaseParser, BlockExpression, CollectionExpression, Parser, StringExpression, TokenCodes, Tokenizer, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+                for (var key in parent) {
+                    if (__hasProp.call(parent, key)) child[key] = parent[key];
+                }
+                function ctor() {
+                    this.constructor = child;
+                }
+                ctor.prototype = parent.prototype;
+                child.prototype = new ctor;
+                child.__super__ = parent.prototype;
+                return child;
+            };
+            Tokenizer = require("paperclip/lib/paper/template/tokenizer.js");
+            TokenCodes = Tokenizer.Codes;
+            BaseParser = require("paperclip/lib/base/parser.js");
+            BlockExpression = require("paperclip/lib/paper/template/expressions/block.js");
+            StringExpression = require("paperclip/lib/paper/template/expressions/string.js");
+            CollectionExpression = require("paperclip/lib/paper/template/expressions/collection.js");
+            Parser = function(_super) {
+                __extends(Parser, _super);
+                function Parser() {
+                    this._t = new Tokenizer;
+                }
+                Parser.prototype._parse = function() {
+                    var expressions;
+                    expressions = [];
+                    this._nextCode();
+                    while (this._t.current) {
+                        expressions.push(this._parseExpression());
                     }
-                    if (typeof property === "string") {
-                        to = target;
-                        toProperty = property;
-                    } else if (typeof target === "string") {
-                        to = binding._from;
-                        toProperty = target;
-                    } else if (typeof target === "function") {
-                        callback = target;
-                    } else if (typeof target === "object" && target) {
-                        if (target.__isBinding) {
-                            throw new Error("Cannot bind to a binding.");
-                        } else if (target.__isCollection) {
-                            return new CollectionSetter(binding, target);
+                    return new CollectionExpression(expressions);
+                };
+                Parser.prototype._parseExpression = function() {
+                    if (this._currentCode() === TokenCodes.LM) {
+                        return this._parseBlock();
+                    } else {
+                        return this._parseString();
+                    }
+                };
+                Parser.prototype._parseBlock = function() {
+                    var buffer, c;
+                    buffer = [];
+                    this._nextCode();
+                    while ((c = this._currentCode()) !== TokenCodes.RM && c) {
+                        if (c === TokenCodes.LM) {
+                            buffer.push("{{", this._parseBlock().value, "}}");
+                        } else {
+                            buffer.push(this._currentString());
+                        }
+                        this._nextCode();
+                    }
+                    this._nextCode();
+                    return new BlockExpression(buffer.join(""));
+                };
+                Parser.prototype._parseString = function() {
+                    var buffer, c;
+                    buffer = [ this._currentString() ];
+                    this._nextCode();
+                    while ((c = this._currentCode()) !== TokenCodes.LM && c) {
+                        buffer.push(this._currentString());
+                        this._nextCode();
+                    }
+                    return new StringExpression(buffer.join(""));
+                };
+                return Parser;
+            }(BaseParser);
+            module.exports = Parser;
+        }).call(this);
+        return module.exports;
+    });
+    define("paperclip/lib/paper/dom/decor/index.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var BindDecorator, DecoratorFactory, ElementDecorator, TextDecorator;
+            TextDecorator = require("paperclip/lib/paper/dom/decor/text.js");
+            ElementDecorator = require("paperclip/lib/paper/dom/decor/element.js");
+            BindDecorator = require("paperclip/lib/paper/dom/decor/bind.js");
+            DecoratorFactory = function() {
+                function DecoratorFactory() {}
+                DecoratorFactory.prototype.attach = function(data, element) {
+                    var DecoratorClass;
+                    if (element.nodeName === "#text") {
+                        if (TextDecorator.test(element)) {
+                            DecoratorClass = TextDecorator;
+                        }
+                    } else {
+                        if (ElementDecorator.test(element)) {
+                            DecoratorClass = ElementDecorator;
+                        } else if (BindDecorator.test(element)) {
+                            DecoratorClass = BindDecorator;
                         }
                     }
-                    if (callback) {
-                        return new FnSetter(binding, callback);
-                    } else if (to && toProperty) {
-                        return new BindableSetter(binding, to, toProperty);
+                    if (!DecoratorClass) {
+                        return;
                     }
-                    return null;
+                    return element._paperclipDecorator = new DecoratorClass(data, element);
                 };
-                return _Class;
+                return DecoratorFactory;
             }();
-        }).call(this);
-        return module.exports;
-    });
-    define("bindable/lib/core/utils.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var hoist;
-            hoist = require("hoist/lib/index.js");
-            exports.tryTransform = function(transformer, method, value, callback) {
-                if (!transformer) {
-                    return callback(null, value);
-                }
-                return transformer[method].call(transformer, value, callback);
-            };
-            exports.transformer = function(options) {
-                if (typeof options === "function") {
-                    options = {
-                        from: options,
-                        to: options
-                    };
-                }
-                if (!options.from) {
-                    options.from = function(value) {
-                        return value;
-                    };
-                }
-                if (!options.to) {
-                    options.to = function(value) {
-                        return value;
-                    };
-                }
-                return {
-                    from: hoist.map(options.from),
-                    to: hoist.map(options.to)
-                };
-            };
-        }).call(this);
-        return module.exports;
-    });
-    define("hoist/lib/index.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var method, transformer, _fn, _i, _len, _ref, _this = this;
-            transformer = require("hoist/lib/transformer.js");
-            module.exports = transformer;
-            _ref = [ "cast", "map", "preCast", "preMap", "postCast", "postMap" ];
-            _fn = function(method) {
-                return module.exports[method] = function() {
-                    var t;
-                    t = transformer();
-                    return t[method].apply(t, arguments);
-                };
-            };
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                method = _ref[_i];
-                _fn(method);
-            }
-        }).call(this);
-        return module.exports;
-    });
-    define("toarray/index.js", function(require, module, exports, __dirname, __filename) {
-        module.exports = function(item) {
-            if (item === undefined) return [];
-            return item instanceof Array ? item : [ item ];
-        };
-        return module.exports;
-    });
-    define("bindable/lib/object/deepPropertyWatcher.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var PropertyWatcher, dref, poolParty, propertyWatcher, __bind = function(fn, me) {
-                return function() {
-                    return fn.apply(me, arguments);
-                };
-            };
-            dref = require("dref/lib/index.js");
-            poolParty = require("poolparty/lib/index.js");
-            PropertyWatcher = function() {
-                function PropertyWatcher(options) {
-                    this._changed = __bind(this._changed, this);
-                    this.reset(options);
-                }
-                PropertyWatcher.prototype.reset = function(options) {
-                    if (options.property) {
-                        options.path = options.property.split(".");
-                    }
-                    this.index = options.index || 0;
-                    this._fullPath = options.path;
-                    this._path = this._fullPath.slice(0, this.index);
-                    this._property = this._path.join(".");
-                    this.target = options.target;
-                    this.callback = options.callback;
-                    return this._watch();
-                };
-                PropertyWatcher.prototype._dispose = function() {
-                    if (this._listener) {
-                        this._listener.dispose();
-                        this._listener = void 0;
-                    }
-                    if (this._binding) {
-                        this._binding.dispose();
-                        this._binding = void 0;
-                    }
-                    if (this._child) {
-                        this._child.dispose();
-                        return this._child = void 0;
-                    }
-                };
-                PropertyWatcher.prototype.dispose = function() {
-                    this._dispose();
-                    return propertyWatcher.add(this);
-                };
-                PropertyWatcher.prototype._watch = function() {
-                    var value;
-                    value = this.target.get(this._property);
-                    if (this._property.length) {
-                        this._listener = this.target.on("change:" + this._property, this._changed);
-                    }
-                    if (value && value.__isBindable) {
-                        return this._binding = propertyWatcher.create({
-                            target: value,
-                            path: this._fullPath.slice(this.index),
-                            callback: this._changed
-                        });
-                    } else if (this._path.length < this._fullPath.length) {
-                        return this._child = propertyWatcher.create({
-                            target: this.target,
-                            path: this._fullPath,
-                            callback: this.callback,
-                            index: this.index + 1
-                        });
-                    }
-                };
-                PropertyWatcher.prototype._changed = function(value) {
-                    this._dispose();
-                    this._watch();
-                    return this.callback(value);
-                };
-                return PropertyWatcher;
-            }();
-            propertyWatcher = module.exports = poolParty({
-                max: 100,
-                factory: function(options) {
-                    return new PropertyWatcher(options);
-                },
-                recycle: function(watcher, options) {
-                    return watcher.reset(options);
-                }
-            });
+            module.exports = DecoratorFactory;
         }).call(this);
         return module.exports;
     });
@@ -2014,6 +1828,195 @@
                 return Builder;
             }();
         }).call(this);
+        return module.exports;
+    });
+    define("bindable/lib/object/deepPropertyWatcher.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var PropertyWatcher, dref, poolParty, propertyWatcher, __bind = function(fn, me) {
+                return function() {
+                    return fn.apply(me, arguments);
+                };
+            };
+            dref = require("dref/lib/index.js");
+            poolParty = require("poolparty/lib/index.js");
+            PropertyWatcher = function() {
+                function PropertyWatcher(options) {
+                    this._changed = __bind(this._changed, this);
+                    this.reset(options);
+                }
+                PropertyWatcher.prototype.reset = function(options) {
+                    if (options.property) {
+                        options.path = options.property.split(".");
+                    }
+                    this.index = options.index || 0;
+                    this._fullPath = options.path;
+                    this._path = this._fullPath.slice(0, this.index);
+                    this._property = this._path.join(".");
+                    this.target = options.target;
+                    this.callback = options.callback;
+                    return this._watch();
+                };
+                PropertyWatcher.prototype._dispose = function() {
+                    if (this._listener) {
+                        this._listener.dispose();
+                        this._listener = void 0;
+                    }
+                    if (this._binding) {
+                        this._binding.dispose();
+                        this._binding = void 0;
+                    }
+                    if (this._child) {
+                        this._child.dispose();
+                        return this._child = void 0;
+                    }
+                };
+                PropertyWatcher.prototype.dispose = function() {
+                    this._dispose();
+                    return propertyWatcher.add(this);
+                };
+                PropertyWatcher.prototype._watch = function() {
+                    var value;
+                    value = this.target.get(this._property);
+                    if (this._property.length) {
+                        this._listener = this.target.on("change:" + this._property, this._changed);
+                    }
+                    if (value && value.__isBindable) {
+                        return this._binding = propertyWatcher.create({
+                            target: value,
+                            path: this._fullPath.slice(this.index),
+                            callback: this._changed
+                        });
+                    } else if (this._path.length < this._fullPath.length) {
+                        return this._child = propertyWatcher.create({
+                            target: this.target,
+                            path: this._fullPath,
+                            callback: this.callback,
+                            index: this.index + 1
+                        });
+                    }
+                };
+                PropertyWatcher.prototype._changed = function(value) {
+                    this._dispose();
+                    this._watch();
+                    return this.callback(value);
+                };
+                return PropertyWatcher;
+            }();
+            propertyWatcher = module.exports = poolParty({
+                max: 100,
+                factory: function(options) {
+                    return new PropertyWatcher(options);
+                },
+                recycle: function(watcher, options) {
+                    return watcher.reset(options);
+                }
+            });
+        }).call(this);
+        return module.exports;
+    });
+    define("bindable/lib/object/setters/factory.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var BindableSetter, CollectionSetter, FnSetter;
+            FnSetter = require("bindable/lib/object/setters/fn.js");
+            BindableSetter = require("bindable/lib/object/setters/bindable.js");
+            CollectionSetter = require("bindable/lib/object/setters/collection.js");
+            module.exports = function() {
+                function _Class() {}
+                _Class.prototype.createSetter = function(binding, target, property) {
+                    var callback, to, toProperty;
+                    to = null;
+                    toProperty = null;
+                    callback = null;
+                    if (!target && !property) {
+                        return null;
+                    }
+                    if (typeof property === "string") {
+                        to = target;
+                        toProperty = property;
+                    } else if (typeof target === "string") {
+                        to = binding._from;
+                        toProperty = target;
+                    } else if (typeof target === "function") {
+                        callback = target;
+                    } else if (typeof target === "object" && target) {
+                        if (target.__isBinding) {
+                            throw new Error("Cannot bind to a binding.");
+                        } else if (target.__isCollection) {
+                            return new CollectionSetter(binding, target);
+                        }
+                    }
+                    if (callback) {
+                        return new FnSetter(binding, callback);
+                    } else if (to && toProperty) {
+                        return new BindableSetter(binding, to, toProperty);
+                    }
+                    return null;
+                };
+                return _Class;
+            }();
+        }).call(this);
+        return module.exports;
+    });
+    define("bindable/lib/core/utils.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var hoist;
+            hoist = require("hoist/lib/index.js");
+            exports.tryTransform = function(transformer, method, value, callback) {
+                if (!transformer) {
+                    return callback(null, value);
+                }
+                return transformer[method].call(transformer, value, callback);
+            };
+            exports.transformer = function(options) {
+                if (typeof options === "function") {
+                    options = {
+                        from: options,
+                        to: options
+                    };
+                }
+                if (!options.from) {
+                    options.from = function(value) {
+                        return value;
+                    };
+                }
+                if (!options.to) {
+                    options.to = function(value) {
+                        return value;
+                    };
+                }
+                return {
+                    from: hoist.map(options.from),
+                    to: hoist.map(options.to)
+                };
+            };
+        }).call(this);
+        return module.exports;
+    });
+    define("hoist/lib/index.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var method, transformer, _fn, _i, _len, _ref, _this = this;
+            transformer = require("hoist/lib/transformer.js");
+            module.exports = transformer;
+            _ref = [ "cast", "map", "preCast", "preMap", "postCast", "postMap" ];
+            _fn = function(method) {
+                return module.exports[method] = function() {
+                    var t;
+                    t = transformer();
+                    return t[method].apply(t, arguments);
+                };
+            };
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                method = _ref[_i];
+                _fn(method);
+            }
+        }).call(this);
+        return module.exports;
+    });
+    define("toarray/index.js", function(require, module, exports, __dirname, __filename) {
+        module.exports = function(item) {
+            if (item === undefined) return [];
+            return item instanceof Array ? item : [ item ];
+        };
         return module.exports;
     });
     define("bindable/lib/collection/binding.js", function(require, module, exports, __dirname, __filename) {
@@ -2197,395 +2200,6 @@
         })();
         return module.exports;
     });
-    define("paperclip/lib/paper/template/tokenizer.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var BaseTokenizer, Codes, Tokenizer, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-                for (var key in parent) {
-                    if (__hasProp.call(parent, key)) child[key] = parent[key];
-                }
-                function ctor() {
-                    this.constructor = child;
-                }
-                ctor.prototype = parent.prototype;
-                child.prototype = new ctor;
-                child.__super__ = parent.prototype;
-                return child;
-            };
-            BaseTokenizer = require("paperclip/lib/base/tokenizer.js");
-            Codes = function() {
-                function Codes() {}
-                Codes.OTHER = -1;
-                Codes.LM = 1;
-                Codes.RM = Codes.LM + 1;
-                Codes.CHAR = Codes.RM + 1;
-                return Codes;
-            }();
-            Tokenizer = function(_super) {
-                __extends(Tokenizer, _super);
-                function Tokenizer() {
-                    Tokenizer.__super__.constructor.call(this);
-                    this._s.skipWhitespace(false);
-                }
-                Tokenizer.Codes = Codes;
-                Tokenizer.prototype._next = function() {
-                    var ccode;
-                    if ((ccode = this._s.cchar()) === "{") {
-                        if (this._s.peek(1) === "{") {
-                            this._s.nextChar();
-                            return this._t(Codes.LM, "{{");
-                        }
-                    } else if ((ccode = this._s.cchar()) === "}") {
-                        if (this._s.peek(1) === "}") {
-                            this._s.nextChar();
-                            return this._t(Codes.RM, "}}");
-                        }
-                    }
-                    return this._t(Codes.CHAR, this._s.cchar());
-                };
-                return Tokenizer;
-            }(BaseTokenizer);
-            module.exports = Tokenizer;
-        }).call(this);
-        return module.exports;
-    });
-    define("paperclip/lib/base/parser.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var Parser;
-            Parser = function() {
-                function Parser(_t) {
-                    this._t = _t;
-                }
-                Parser.prototype.parse = function(source) {
-                    this._source = source;
-                    this._t.source(source);
-                    return this._parse();
-                };
-                Parser.prototype._parse = function() {};
-                Parser.prototype._expectNextCode = function(code) {
-                    if (this._t.next()[0] !== code) {
-                        return this._error();
-                    }
-                };
-                Parser.prototype._expectCurrentCode = function(code) {
-                    if (this._t.current[0] !== code) {
-                        return this._error();
-                    }
-                };
-                Parser.prototype._nextCode = function() {
-                    var _ref;
-                    return (_ref = this._t.next()) != null ? _ref[0] : void 0;
-                };
-                Parser.prototype._currentCode = function() {
-                    var _ref;
-                    return (_ref = this._t.current) != null ? _ref[0] : void 0;
-                };
-                Parser.prototype._currentString = function() {
-                    var _ref;
-                    return (_ref = this._t.current) != null ? _ref[1] : void 0;
-                };
-                Parser.prototype._error = function() {
-                    throw new Error('unexpected token in "' + this._source + '"');
-                };
-                return Parser;
-            }();
-            module.exports = Parser;
-        }).call(this);
-        return module.exports;
-    });
-    define("paperclip/lib/paper/template/expressions/block.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var Clip, Expression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-                for (var key in parent) {
-                    if (__hasProp.call(parent, key)) child[key] = parent[key];
-                }
-                function ctor() {
-                    this.constructor = child;
-                }
-                ctor.prototype = parent.prototype;
-                child.prototype = new ctor;
-                child.__super__ = parent.prototype;
-                return child;
-            };
-            base = require("paperclip/lib/base/expression.js");
-            Clip = require("paperclip/lib/clip/index.js");
-            Expression = function(_super) {
-                __extends(Expression, _super);
-                Expression.prototype._type = "block";
-                function Expression(value) {
-                    this.value = value;
-                }
-                Expression.prototype.toString = function() {
-                    return "pushBinding(" + Clip.compile(this.value.toString()) + ")";
-                };
-                return Expression;
-            }(base.Expression);
-            module.exports = Expression;
-        }).call(this);
-        return module.exports;
-    });
-    define("paperclip/lib/paper/template/expressions/string.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var Expression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-                for (var key in parent) {
-                    if (__hasProp.call(parent, key)) child[key] = parent[key];
-                }
-                function ctor() {
-                    this.constructor = child;
-                }
-                ctor.prototype = parent.prototype;
-                child.prototype = new ctor;
-                child.__super__ = parent.prototype;
-                return child;
-            };
-            base = require("paperclip/lib/base/expression.js");
-            Expression = function(_super) {
-                __extends(Expression, _super);
-                Expression.prototype._type = "string";
-                function Expression(value) {
-                    this.value = value;
-                }
-                Expression.prototype.toString = function() {
-                    return "push('" + this.value.replace(/\'/g, "\\'").replace(/\n/g, "\\n") + "')";
-                };
-                return Expression;
-            }(base.Expression);
-            module.exports = Expression;
-        }).call(this);
-        return module.exports;
-    });
-    define("paperclip/lib/paper/template/expressions/collection.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var CollectionExpression, Expression, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-                for (var key in parent) {
-                    if (__hasProp.call(parent, key)) child[key] = parent[key];
-                }
-                function ctor() {
-                    this.constructor = child;
-                }
-                ctor.prototype = parent.prototype;
-                child.prototype = new ctor;
-                child.__super__ = parent.prototype;
-                return child;
-            };
-            CollectionExpression = require("paperclip/lib/base/collectionExpression.js");
-            Expression = function(_super) {
-                __extends(Expression, _super);
-                function Expression() {
-                    _ref = Expression.__super__.constructor.apply(this, arguments);
-                    return _ref;
-                }
-                Expression.prototype.toString = function() {
-                    var command, item, _i, _len, _ref1;
-                    command = [ "this" ];
-                    _ref1 = this.items;
-                    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-                        item = _ref1[_i];
-                        command.push(item.toString());
-                    }
-                    return command.join(".");
-                };
-                return Expression;
-            }(CollectionExpression);
-            module.exports = Expression;
-        }).call(this);
-        return module.exports;
-    });
-    define("paperclip/lib/paper/dom/decor/text.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var Decorator, Template, __bind = function(fn, me) {
-                return function() {
-                    return fn.apply(me, arguments);
-                };
-            };
-            Template = require("paperclip/lib/paper/template/index.js");
-            Decorator = function() {
-                function Decorator(data, element) {
-                    this.data = data;
-                    this.element = element;
-                    this._change = __bind(this._change, this);
-                    this._template = new Template(this.element.nodeValue);
-                    this._renderer = this._template.render(this.data);
-                }
-                Decorator.prototype.init = function() {
-                    return this._renderer.bind("text").to(this._change);
-                };
-                Decorator.prototype._change = function(value) {
-                    return this.element.nodeValue = value;
-                };
-                Decorator.test = function(element) {
-                    return !!~element.nodeValue.indexOf("{{");
-                };
-                return Decorator;
-            }();
-            module.exports = Decorator;
-        }).call(this);
-        return module.exports;
-    });
-    define("paperclip/lib/paper/dom/decor/element.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var AttributeBinding, Decorator, Template, __bind = function(fn, me) {
-                return function() {
-                    return fn.apply(me, arguments);
-                };
-            };
-            Template = require("paperclip/lib/paper/template/index.js");
-            AttributeBinding = function() {
-                function AttributeBinding(data, attribute, element) {
-                    this.data = data;
-                    this.attribute = attribute;
-                    this.element = element;
-                    this._elementChange = __bind(this._elementChange, this);
-                    this._change = __bind(this._change, this);
-                    this.name = attribute.name;
-                    this._template = new Template(this.attribute.value);
-                    this._renderer = this._template.render(this.data);
-                }
-                AttributeBinding.prototype.init = function() {
-                    this._renderer.bind("text").to(this._change);
-                    return $(this.element).bind("mouseup keydown keyup change", this._elementChange);
-                };
-                AttributeBinding.prototype._change = function(value) {
-                    return this.attribute.value = this.currentValue = value;
-                };
-                AttributeBinding.prototype._elementChange = function(event) {
-                    var key, refs, refsByKey, value, _i, _len, _results;
-                    if (this.name === "value") {
-                        value = this.element.value;
-                    } else {
-                        value = this.attribute.value;
-                    }
-                    if (this.currentValue !== value && (refs = this._bothWays()).length) {
-                        _results = [];
-                        for (_i = 0, _len = refs.length; _i < _len; _i++) {
-                            refsByKey = refs[_i];
-                            _results.push(function() {
-                                var _results1;
-                                _results1 = [];
-                                for (key in refsByKey) {
-                                    _results1.push(refsByKey[key].value(value));
-                                }
-                                return _results1;
-                            }());
-                        }
-                        return _results;
-                    }
-                };
-                AttributeBinding.prototype._bothWays = function() {
-                    var binding, refs, _i, _len, _ref;
-                    refs = [];
-                    _ref = this._renderer.bindings;
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        binding = _ref[_i];
-                        if (binding.clip.options.bothWays) {
-                            refs.push(binding.clip.options.bothWays);
-                        }
-                    }
-                    return refs;
-                };
-                return AttributeBinding;
-            }();
-            Decorator = function() {
-                function Decorator(data, element) {
-                    this.data = data;
-                    this.element = element;
-                    this._bindings = [];
-                }
-                Decorator.prototype.init = function() {
-                    var attr, binding, _i, _len, _ref, _results;
-                    _ref = this.element.attributes;
-                    _results = [];
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        attr = _ref[_i];
-                        if (!!~String(attr.value).indexOf("{{")) {
-                            this._bindings.push(binding = new AttributeBinding(this.data, attr, this.element));
-                            _results.push(binding.init());
-                        } else {
-                            _results.push(void 0);
-                        }
-                    }
-                    return _results;
-                };
-                Decorator.test = function(element) {
-                    var attr, _i, _len, _ref;
-                    _ref = element.attributes;
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        attr = _ref[_i];
-                        if (!!~String(attr.value).indexOf("{{")) {
-                            return true;
-                        }
-                    }
-                    return false;
-                };
-                return Decorator;
-            }();
-            module.exports = Decorator;
-        }).call(this);
-        return module.exports;
-    });
-    define("paperclip/lib/paper/dom/decor/bind.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var Clip, Decorator, Template, handlers;
-            Template = require("paperclip/lib/paper/template/index.js");
-            Clip = require("paperclip/lib/clip/index.js");
-            handlers = require("paperclip/lib/paper/dom/decor/handlers/index.js");
-            Decorator = function() {
-                function Decorator(data, element) {
-                    var action, clazz, handler, _i, _len, _ref;
-                    this.data = data;
-                    this.element = element;
-                    this._clip = new Clip({
-                        script: Clip.compile(this._dataBind(element)),
-                        data: this.data
-                    });
-                    this._handlers = [];
-                    _ref = this._clip.watchers.names;
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        action = _ref[_i];
-                        if (handlers[action]) {
-                            clazz = handlers[action];
-                            this._handlers.push(handler = new clazz(this._clip.watcher(action), this._clip, element));
-                            this.traverse = handler.traverse !== false;
-                        }
-                    }
-                }
-                Decorator.prototype.init = function() {
-                    var handler, _i, _len, _ref, _results;
-                    _ref = this._handlers;
-                    _results = [];
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        handler = _ref[_i];
-                        handler.dom = this.dom;
-                        _results.push(typeof handler.init === "function" ? handler.init() : void 0);
-                    }
-                    return _results;
-                };
-                Decorator.prototype._dataBind = function(element) {
-                    var attr, _i, _len, _ref;
-                    _ref = element.attributes;
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        attr = _ref[_i];
-                        if (attr.name === "data-bind") {
-                            return attr.value;
-                        }
-                    }
-                };
-                Decorator.test = function(element) {
-                    var attr, _i, _len, _ref;
-                    _ref = element.attributes;
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        attr = _ref[_i];
-                        if (attr.name === "data-bind") {
-                            return true;
-                        }
-                    }
-                    return false;
-                };
-                return Decorator;
-            }();
-            module.exports = Decorator;
-        }).call(this);
-        return module.exports;
-    });
     define("paperclip/lib/clip/tokenizer.js", function(require, module, exports, __dirname, __filename) {
         (function() {
             var BaseTokenizer, Codes, Tokenizer, key, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
@@ -2682,6 +2296,50 @@
                 return Tokenizer;
             }(BaseTokenizer);
             module.exports = Tokenizer;
+        }).call(this);
+        return module.exports;
+    });
+    define("paperclip/lib/base/parser.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var Parser;
+            Parser = function() {
+                function Parser(_t) {
+                    this._t = _t;
+                }
+                Parser.prototype.parse = function(source) {
+                    this._source = source;
+                    this._t.source(source);
+                    return this._parse();
+                };
+                Parser.prototype._parse = function() {};
+                Parser.prototype._expectNextCode = function(code) {
+                    if (this._t.next()[0] !== code) {
+                        return this._error();
+                    }
+                };
+                Parser.prototype._expectCurrentCode = function(code) {
+                    if (this._t.current[0] !== code) {
+                        return this._error();
+                    }
+                };
+                Parser.prototype._nextCode = function() {
+                    var _ref;
+                    return (_ref = this._t.next()) != null ? _ref[0] : void 0;
+                };
+                Parser.prototype._currentCode = function() {
+                    var _ref;
+                    return (_ref = this._t.current) != null ? _ref[0] : void 0;
+                };
+                Parser.prototype._currentString = function() {
+                    var _ref;
+                    return (_ref = this._t.current) != null ? _ref[1] : void 0;
+                };
+                Parser.prototype._error = function() {
+                    throw new Error('unexpected token in "' + this._source + '"');
+                };
+                return Parser;
+            }();
+            module.exports = Parser;
         }).call(this);
         return module.exports;
     });
@@ -3146,6 +2804,430 @@
         }).call(this);
         return module.exports;
     });
+    define("paperclip/lib/paper/template/tokenizer.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var BaseTokenizer, Codes, Tokenizer, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+                for (var key in parent) {
+                    if (__hasProp.call(parent, key)) child[key] = parent[key];
+                }
+                function ctor() {
+                    this.constructor = child;
+                }
+                ctor.prototype = parent.prototype;
+                child.prototype = new ctor;
+                child.__super__ = parent.prototype;
+                return child;
+            };
+            BaseTokenizer = require("paperclip/lib/base/tokenizer.js");
+            Codes = function() {
+                function Codes() {}
+                Codes.OTHER = -1;
+                Codes.LM = 1;
+                Codes.RM = Codes.LM + 1;
+                Codes.CHAR = Codes.RM + 1;
+                return Codes;
+            }();
+            Tokenizer = function(_super) {
+                __extends(Tokenizer, _super);
+                function Tokenizer() {
+                    Tokenizer.__super__.constructor.call(this);
+                    this._s.skipWhitespace(false);
+                }
+                Tokenizer.Codes = Codes;
+                Tokenizer.prototype._next = function() {
+                    var ccode;
+                    if ((ccode = this._s.cchar()) === "{") {
+                        if (this._s.peek(1) === "{") {
+                            this._s.nextChar();
+                            return this._t(Codes.LM, "{{");
+                        }
+                    } else if ((ccode = this._s.cchar()) === "}") {
+                        if (this._s.peek(1) === "}") {
+                            this._s.nextChar();
+                            return this._t(Codes.RM, "}}");
+                        }
+                    }
+                    return this._t(Codes.CHAR, this._s.cchar());
+                };
+                return Tokenizer;
+            }(BaseTokenizer);
+            module.exports = Tokenizer;
+        }).call(this);
+        return module.exports;
+    });
+    define("paperclip/lib/paper/template/expressions/block.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var Clip, Expression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+                for (var key in parent) {
+                    if (__hasProp.call(parent, key)) child[key] = parent[key];
+                }
+                function ctor() {
+                    this.constructor = child;
+                }
+                ctor.prototype = parent.prototype;
+                child.prototype = new ctor;
+                child.__super__ = parent.prototype;
+                return child;
+            };
+            base = require("paperclip/lib/base/expression.js");
+            Clip = require("paperclip/lib/clip/index.js");
+            Expression = function(_super) {
+                __extends(Expression, _super);
+                Expression.prototype._type = "block";
+                function Expression(value) {
+                    this.value = value;
+                }
+                Expression.prototype.toString = function() {
+                    return "pushBinding(" + Clip.compile(this.value.toString()) + ")";
+                };
+                return Expression;
+            }(base.Expression);
+            module.exports = Expression;
+        }).call(this);
+        return module.exports;
+    });
+    define("paperclip/lib/paper/template/expressions/string.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var Expression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+                for (var key in parent) {
+                    if (__hasProp.call(parent, key)) child[key] = parent[key];
+                }
+                function ctor() {
+                    this.constructor = child;
+                }
+                ctor.prototype = parent.prototype;
+                child.prototype = new ctor;
+                child.__super__ = parent.prototype;
+                return child;
+            };
+            base = require("paperclip/lib/base/expression.js");
+            Expression = function(_super) {
+                __extends(Expression, _super);
+                Expression.prototype._type = "string";
+                function Expression(value) {
+                    this.value = value;
+                }
+                Expression.prototype.toString = function() {
+                    return "push('" + this.value.replace(/\'/g, "\\'").replace(/\n/g, "\\n") + "')";
+                };
+                return Expression;
+            }(base.Expression);
+            module.exports = Expression;
+        }).call(this);
+        return module.exports;
+    });
+    define("paperclip/lib/paper/template/expressions/collection.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var CollectionExpression, Expression, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+                for (var key in parent) {
+                    if (__hasProp.call(parent, key)) child[key] = parent[key];
+                }
+                function ctor() {
+                    this.constructor = child;
+                }
+                ctor.prototype = parent.prototype;
+                child.prototype = new ctor;
+                child.__super__ = parent.prototype;
+                return child;
+            };
+            CollectionExpression = require("paperclip/lib/base/collectionExpression.js");
+            Expression = function(_super) {
+                __extends(Expression, _super);
+                function Expression() {
+                    _ref = Expression.__super__.constructor.apply(this, arguments);
+                    return _ref;
+                }
+                Expression.prototype.toString = function() {
+                    var command, item, _i, _len, _ref1;
+                    command = [ "this" ];
+                    _ref1 = this.items;
+                    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                        item = _ref1[_i];
+                        command.push(item.toString());
+                    }
+                    return command.join(".");
+                };
+                return Expression;
+            }(CollectionExpression);
+            module.exports = Expression;
+        }).call(this);
+        return module.exports;
+    });
+    define("paperclip/lib/paper/dom/decor/text.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var Decorator, Template, __bind = function(fn, me) {
+                return function() {
+                    return fn.apply(me, arguments);
+                };
+            };
+            Template = require("paperclip/lib/paper/template/index.js");
+            Decorator = function() {
+                function Decorator(data, element) {
+                    this.data = data;
+                    this.element = element;
+                    this._change = __bind(this._change, this);
+                    this._template = new Template(this.element.nodeValue);
+                    this._renderer = this._template.render(this.data);
+                }
+                Decorator.prototype.init = function() {
+                    return this._renderer.bind("text").to(this._change);
+                };
+                Decorator.prototype._change = function(value) {
+                    return this.element.nodeValue = value;
+                };
+                Decorator.test = function(element) {
+                    return !!~element.nodeValue.indexOf("{{");
+                };
+                return Decorator;
+            }();
+            module.exports = Decorator;
+        }).call(this);
+        return module.exports;
+    });
+    define("paperclip/lib/paper/dom/decor/element.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var AttributeBinding, Decorator, Template, __bind = function(fn, me) {
+                return function() {
+                    return fn.apply(me, arguments);
+                };
+            };
+            Template = require("paperclip/lib/paper/template/index.js");
+            AttributeBinding = function() {
+                function AttributeBinding(data, attribute, element) {
+                    this.data = data;
+                    this.attribute = attribute;
+                    this.element = element;
+                    this._elementChange = __bind(this._elementChange, this);
+                    this._change = __bind(this._change, this);
+                    this.name = attribute.name;
+                    this._template = new Template(this.attribute.value);
+                    this._renderer = this._template.render(this.data);
+                }
+                AttributeBinding.prototype.init = function() {
+                    this._renderer.bind("text").to(this._change);
+                    return $(this.element).bind("mouseup keydown keyup change", this._elementChange);
+                };
+                AttributeBinding.prototype._change = function(value) {
+                    return this.attribute.value = this.currentValue = value;
+                };
+                AttributeBinding.prototype._elementChange = function(event) {
+                    var key, refs, refsByKey, value, _i, _len, _results;
+                    if (this.name === "value") {
+                        value = this.element.value;
+                    } else {
+                        value = this.attribute.value;
+                    }
+                    if (this.currentValue !== value && (refs = this._bothWays()).length) {
+                        _results = [];
+                        for (_i = 0, _len = refs.length; _i < _len; _i++) {
+                            refsByKey = refs[_i];
+                            _results.push(function() {
+                                var _results1;
+                                _results1 = [];
+                                for (key in refsByKey) {
+                                    _results1.push(refsByKey[key].value(value));
+                                }
+                                return _results1;
+                            }());
+                        }
+                        return _results;
+                    }
+                };
+                AttributeBinding.prototype._bothWays = function() {
+                    var binding, refs, _i, _len, _ref;
+                    refs = [];
+                    _ref = this._renderer.bindings;
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        binding = _ref[_i];
+                        if (binding.clip.options.bothWays) {
+                            refs.push(binding.clip.options.bothWays);
+                        }
+                    }
+                    return refs;
+                };
+                return AttributeBinding;
+            }();
+            Decorator = function() {
+                function Decorator(data, element) {
+                    this.data = data;
+                    this.element = element;
+                    this._bindings = [];
+                }
+                Decorator.prototype.init = function() {
+                    var attr, binding, _i, _len, _ref, _results;
+                    _ref = this.element.attributes;
+                    _results = [];
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        attr = _ref[_i];
+                        if (!!~String(attr.value).indexOf("{{")) {
+                            this._bindings.push(binding = new AttributeBinding(this.data, attr, this.element));
+                            _results.push(binding.init());
+                        } else {
+                            _results.push(void 0);
+                        }
+                    }
+                    return _results;
+                };
+                Decorator.test = function(element) {
+                    var attr, _i, _len, _ref;
+                    _ref = element.attributes;
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        attr = _ref[_i];
+                        if (!!~String(attr.value).indexOf("{{")) {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+                return Decorator;
+            }();
+            module.exports = Decorator;
+        }).call(this);
+        return module.exports;
+    });
+    define("paperclip/lib/paper/dom/decor/bind.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var Clip, Decorator, Template, handlers;
+            Template = require("paperclip/lib/paper/template/index.js");
+            Clip = require("paperclip/lib/clip/index.js");
+            handlers = require("paperclip/lib/paper/dom/decor/handlers/index.js");
+            Decorator = function() {
+                function Decorator(data, element) {
+                    var action, clazz, handler, _i, _len, _ref;
+                    this.data = data;
+                    this.element = element;
+                    this._clip = new Clip({
+                        script: Clip.compile(this._dataBind(element)),
+                        data: this.data
+                    });
+                    this._handlers = [];
+                    _ref = this._clip.watchers.names;
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        action = _ref[_i];
+                        if (handlers[action]) {
+                            clazz = handlers[action];
+                            this._handlers.push(handler = new clazz(this._clip.watcher(action), this._clip, element));
+                            this.traverse = handler.traverse !== false;
+                        }
+                    }
+                }
+                Decorator.prototype.init = function() {
+                    var handler, _i, _len, _ref, _results;
+                    _ref = this._handlers;
+                    _results = [];
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        handler = _ref[_i];
+                        handler.dom = this.dom;
+                        _results.push(typeof handler.init === "function" ? handler.init() : void 0);
+                    }
+                    return _results;
+                };
+                Decorator.prototype._dataBind = function(element) {
+                    var attr, _i, _len, _ref;
+                    _ref = element.attributes;
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        attr = _ref[_i];
+                        if (attr.name === "data-bind") {
+                            return attr.value;
+                        }
+                    }
+                };
+                Decorator.test = function(element) {
+                    var attr, _i, _len, _ref;
+                    _ref = element.attributes;
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        attr = _ref[_i];
+                        if (attr.name === "data-bind") {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
+                return Decorator;
+            }();
+            module.exports = Decorator;
+        }).call(this);
+        return module.exports;
+    });
+    define("poolparty/lib/index.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var PoolParty, __bind = function(fn, me) {
+                return function() {
+                    return fn.apply(me, arguments);
+                };
+            };
+            PoolParty = function() {
+                function PoolParty(options) {
+                    if (options == null) {
+                        options = {};
+                    }
+                    this.drip = __bind(this.drip, this);
+                    this.max = options.max || 50;
+                    this.min = options.min || 0;
+                    this.staleTimeout = options.staleTimeout || 1e3;
+                    this.factory = options.factory || options.create;
+                    this.recycle = options.recycle;
+                    this._pool = [];
+                    this._size = 0;
+                }
+                PoolParty.prototype.size = function() {
+                    return this._size;
+                };
+                PoolParty.prototype.drain = function() {
+                    var i, _i, _ref, _results;
+                    _results = [];
+                    for (i = _i = 0, _ref = this._size - this.min; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+                        _results.push(this.drip());
+                    }
+                    return _results;
+                };
+                PoolParty.prototype.drip = function() {
+                    this._dripping = false;
+                    if (!this._size) {
+                        return;
+                    }
+                    this._size--;
+                    this._pool.shift();
+                    return this._timeoutDrip();
+                };
+                PoolParty.prototype.create = function(options) {
+                    var item;
+                    if (this._size) {
+                        this._size--;
+                        item = this._pool.shift();
+                        this.recycle(item, options);
+                        return item;
+                    }
+                    item = this.factory(options);
+                    item.__pool = this;
+                    return item;
+                };
+                PoolParty.prototype.add = function(object) {
+                    if (object.__pool !== this) {
+                        return this;
+                    }
+                    if (!~this._pool.indexOf(object) && this._size < this.max) {
+                        this._size++;
+                        this._pool.push(object);
+                        this._timeoutDrip();
+                    }
+                    return this;
+                };
+                PoolParty.prototype._timeoutDrip = function() {
+                    if (this._dripping) {
+                        return;
+                    }
+                    this._dripping = true;
+                    return setTimeout(this.drip, this.staleTimeout);
+                };
+                return PoolParty;
+            }();
+            module.exports = function(options) {
+                return new PoolParty(options);
+            };
+        }).call(this);
+        return module.exports;
+    });
     define("bindable/lib/object/setters/fn.js", function(require, module, exports, __dirname, __filename) {
         (function() {
             var Base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
@@ -3382,85 +3464,6 @@
                     return this;
                 };
                 return self;
-            };
-        }).call(this);
-        return module.exports;
-    });
-    define("poolparty/lib/index.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var PoolParty, __bind = function(fn, me) {
-                return function() {
-                    return fn.apply(me, arguments);
-                };
-            };
-            PoolParty = function() {
-                function PoolParty(options) {
-                    if (options == null) {
-                        options = {};
-                    }
-                    this.drip = __bind(this.drip, this);
-                    this.max = options.max || 50;
-                    this.min = options.min || 0;
-                    this.staleTimeout = options.staleTimeout || 1e3;
-                    this.factory = options.factory || options.create;
-                    this.recycle = options.recycle;
-                    this._pool = [];
-                    this._size = 0;
-                }
-                PoolParty.prototype.size = function() {
-                    return this._size;
-                };
-                PoolParty.prototype.drain = function() {
-                    var i, _i, _ref, _results;
-                    _results = [];
-                    for (i = _i = 0, _ref = this._size - this.min; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-                        _results.push(this.drip());
-                    }
-                    return _results;
-                };
-                PoolParty.prototype.drip = function() {
-                    this._dripping = false;
-                    if (!this._size) {
-                        return;
-                    }
-                    this._size--;
-                    this._pool.shift();
-                    return this._timeoutDrip();
-                };
-                PoolParty.prototype.create = function(options) {
-                    var item;
-                    if (this._size) {
-                        this._size--;
-                        item = this._pool.shift();
-                        this.recycle(item, options);
-                        return item;
-                    }
-                    item = this.factory(options);
-                    item.__pool = this;
-                    return item;
-                };
-                PoolParty.prototype.add = function(object) {
-                    if (object.__pool !== this) {
-                        return this;
-                    }
-                    if (!~this._pool.indexOf(object) && this._size < this.max) {
-                        this._size++;
-                        this._pool.push(object);
-                        this._timeoutDrip();
-                    }
-                    return this;
-                };
-                PoolParty.prototype._timeoutDrip = function() {
-                    if (this._dripping) {
-                        return;
-                    }
-                    this._dripping = true;
-                    return setTimeout(this.drip, this.staleTimeout);
-                };
-                return PoolParty;
-            }();
-            module.exports = function(options) {
-                return new PoolParty(options);
             };
         }).call(this);
         return module.exports;

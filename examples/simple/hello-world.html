@@ -6,7 +6,7 @@
   <body>
     <div id="application">
         As the years go by... <br />
-        {{name}} is {{age}} years old! He {{ (age > 21 ? "can" : "cannot") | uppercase() }} enter bars!
+        {{name}} is {{age}} years old! He <b>{{ (age >= 21 ? "can" : "cannot") | uppercase() }}</b> enter bars!
     </div>
 
     <script type="text/javascript">
