@@ -1,20 +1,14 @@
 
-
-Paperclip is a small declarative data-binding library that allows you angularjs-style HTML bindings with backbone.js, and spine.js. 
+Paperclip is a small declarative data-binding library.
 
 controller logic:
 
 ```javascript
 var paperclip = require("paperclip")
 
-
 var context = new BindableObject({
   name: "craig"
 });
-
-paperclip.actions.bothWays = function(value, bothWays) {
-  this.options.bothWays = true;
-}
 
 paperclip.attach(context, $("#application"));
 ```
@@ -28,7 +22,7 @@ html:
   </head>
   <body>
     <div id="application">
-      <input type="text" value="{{name | bothWays(true)}}"></input>
+      <input type="text" data-bind="value:name;bothWays:true"></input>
       <p>hello {{name}}!</p>
     </div>
   </body>
