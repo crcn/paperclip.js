@@ -9,7 +9,7 @@ class AttributeBinding
 
   init: () ->
     @_renderer.bind("text").to @_change
-    $(element).bind "mouseup keydown keyup change", @_elementChange
+    $(@element).bind "mouseup keydown keyup change", @_elementChange
 
 
   _change: (value) =>
@@ -17,6 +17,7 @@ class AttributeBinding
 
 
   _elementChange: (event) =>
+
 
     if @name is "value"
       value = @element.value
@@ -48,10 +49,13 @@ class Decorator
   
   constructor: (@data, @element) ->
     @_bindings = []
+
+
+  init: () ->
     for attr in @element.attributes
       if !!~String(attr.value).indexOf "{{"
-        @_bindings.push new AttributeBinding @data, attr, @element
-
+        @_bindings.push binding = new AttributeBinding @data, attr, @element
+        binding.init()
 
   
   @test: (element) ->

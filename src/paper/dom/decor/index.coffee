@@ -25,6 +25,7 @@ class DecoratorFactory
 
     return if not DecoratorClass
 
+
     element._paperclipDecorator = new DecoratorClass data, element
 
 

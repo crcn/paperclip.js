@@ -20,7 +20,7 @@ class Decorator
   init: () ->
     for handler in @_handlers
       handler.dom = @dom
-      handler.init()
+      handler.init?()
 
   _dataBind: (element) ->
     for attr in element.attributes

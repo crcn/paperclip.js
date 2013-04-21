@@ -140,7 +140,6 @@ class ScriptWatcher extends events.EventEmitter
 
   _watch: (path, target) ->
 
-    return if not @__watch
 
     if @_watching[path]
       return if @_watching[path].target is target
@@ -226,6 +225,9 @@ class Clip
 
     if @options.script
       @watchers = new ClipWatchers @, @options.script
+
+    if options.watch
+      @watch()
 
   watch: () ->
     @watchers.watch()

@@ -11,7 +11,7 @@ class TemplateBinding
   ###
 
   constructor: (@renderer, @fn) ->
-    @clip = new Clip { script: @fn, data: @renderer._data }
+    @clip = new Clip { script: @fn, data: @renderer._data, watch: true }
     @clip.bind("value").watch(true).to(@update)
     @value = @clip.get("value")
 
