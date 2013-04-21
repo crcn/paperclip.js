@@ -13,11 +13,13 @@ class DOM
 
   attach: (context, element) ->
     @_traverse @_element(element), (element) =>
-      decor = @_decorFactory.attach context, element
-      if decor
-        decor.dom = @
-        decor.init()
-        return decor.traverse isnt false
+      decors = @_decorFactory.attach context, element
+      if decors
+        for decor in decors
+          decor.dom = @
+          decor.init()
+          traverse = decor isnt false
+        return if traverse is false
 
   ###
   ###
@@ -29,8 +31,6 @@ class DOM
     for child in element.childNodes
       if @_traverse(child, callback) is false
         break
-
-
 
   ###
   ###

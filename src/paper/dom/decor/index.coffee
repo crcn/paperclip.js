@@ -7,26 +7,23 @@ class DecoratorFactory
   ###
   ###
 
-  constructor: () ->
-
-
-  ###
-  ###
-
   attach: (data, element) ->
+    classes = []
+
     if element.nodeName is "#text"
       if TextDecorator.test element
-        DecoratorClass = TextDecorator
+        classes.push TextDecorator
     else
       if ElementDecorator.test element
-        DecoratorClass = ElementDecorator
+        classes.push ElementDecorator
       else if BindDecorator.test element
-        DecoratorClass = BindDecorator
+        classes.push BindDecorator
 
-    return if not DecoratorClass
+    return if not classes.length
 
 
-    element._paperclipDecorator = new DecoratorClass data, element
+    element._pcDecorators = classes.map (clazz) ->
+      new clazz data, element
 
 
 module.exports = DecoratorFactory

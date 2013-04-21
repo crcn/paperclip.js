@@ -744,12 +744,16 @@
             DOM.prototype.attach = function(context, element) {
                 var _this = this;
                 return this._traverse(this._element(element), function(element) {
-                    var decor;
-                    decor = _this._decorFactory.attach(context, element);
-                    if (decor) {
-                        decor.dom = _this;
-                        decor.init();
-                        return decor.traverse !== false;
+                    var decor, decors, traverse, _i, _len;
+                    decors = _this._decorFactory.attach(context, element);
+                    if (decors) {
+                        for (_i = 0, _len = decors.length; _i < _len; _i++) {
+                            decor = decors[_i];
+                            decor.dom = _this;
+                            decor.init();
+                            traverse = decor !== false;
+                        }
+                        if (traverse === false) {}
                     }
                 });
             };
@@ -1370,194 +1374,6 @@
         }).call(this);
         return module.exports;
     });
-    define("paperclip/lib/clip/parser.js", function(require, module, exports, __dirname, __filename) {
-        var ActionExpression, ActionsExpression, BaseParser, CollectionExpression, FnExpression, GroupExpression, JsExpression, ModifierExpression, OptionsExpression, ParamsExpression, Parser, RefExpression, RefPathExpression, ScriptExpression, StringExpression, TokenCodes, Tokenizer, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        Tokenizer = require("paperclip/lib/clip/tokenizer.js");
-        TokenCodes = Tokenizer.codes;
-        BaseParser = require("paperclip/lib/base/parser.js");
-        ModifierExpression = require("paperclip/lib/clip/expressions/modifier.js");
-        ScriptExpression = require("paperclip/lib/clip/expressions/script.js");
-        ActionExpression = require("paperclip/lib/clip/expressions/action.js");
-        ActionsExpression = require("paperclip/lib/clip/expressions/actions.js");
-        OptionsExpression = require("paperclip/lib/clip/expressions/options.js");
-        RefExpression = require("paperclip/lib/clip/expressions/ref.js");
-        RefPathExpression = require("paperclip/lib/clip/expressions/refPath.js");
-        FnExpression = require("paperclip/lib/clip/expressions/fn.js");
-        JsExpression = require("paperclip/lib/clip/expressions/js.js");
-        ParamsExpression = require("paperclip/lib/clip/expressions/params.js");
-        CollectionExpression = require("paperclip/lib/base/collectionExpression.js");
-        StringExpression = require("paperclip/lib/clip/expressions/string.js");
-        GroupExpression = require("paperclip/lib/clip/expressions/group.js");
-        Parser = function(_super) {
-            __extends(Parser, _super);
-            function Parser() {
-                Parser.__super__.constructor.call(this, new Tokenizer);
-            }
-            Parser.prototype._parse = function() {
-                switch (this._nextCode()) {
-                  case TokenCodes.VAR:
-                    return this._parseActionsOrOptions();
-                  case TokenCodes.LB:
-                    return this._parseMultiOptions();
-                  default:
-                    return this._parseReference();
-                }
-            };
-            Parser.prototype._parseActionsOrOptions = function() {
-                var actions, pn;
-                actions = [];
-                if (!(pn = this._t.peekNext()) || pn[0] !== TokenCodes.COLON) {
-                    return this._parseActionOptions();
-                }
-                while (this._t.current) {
-                    actions.push(this._parseAction());
-                    if (this._currentCode() === TokenCodes.SEMI_COLON) {
-                        this._nextCode();
-                    }
-                }
-                return new ActionsExpression(actions);
-            };
-            Parser.prototype._parseAction = function() {
-                var name;
-                name = this._currentString();
-                this._expectNextCode(TokenCodes.COLON);
-                this._nextCode();
-                return new ActionExpression(name, this._parseActionOptions());
-            };
-            Parser.prototype._parseActionOptions = function() {
-                switch (this._currentCode()) {
-                  case TokenCodes.LB:
-                    return this._parseMultiOptions();
-                  default:
-                    return this._parseReference();
-                }
-            };
-            Parser.prototype._parseMultiOptions = function() {
-                var c, ops, options;
-                c = this._currentCode();
-                options = [];
-                while (c && (c = this._currentCode()) !== TokenCodes.RB) {
-                    this._nextCode();
-                    ops = {
-                        name: this._currentString()
-                    };
-                    this._expectNextCode(TokenCodes.COLON);
-                    this._nextCode();
-                    ops.expression = this._parseActionOptions();
-                    options.push(ops);
-                }
-                this._nextCode();
-                return new OptionsExpression(options);
-            };
-            Parser.prototype._parseReference = function() {
-                var c, expressions, modifiers;
-                expressions = [];
-                modifiers = [];
-                while (c = this._currentCode()) {
-                    if (c === TokenCodes.VAR) {
-                        expressions.push(this._parseRef());
-                        c = this._currentCode();
-                    }
-                    if (c === TokenCodes.LP) {
-                        expressions.push(this._parseGroup());
-                        c = this._currentCode();
-                    }
-                    if (c === TokenCodes.LB) {
-                        expressions.push(this._parseActionOptions());
-                        c = this._currentCode();
-                    }
-                    if (c === TokenCodes.STRING) {
-                        expressions.push(new StringExpression(this._currentString()));
-                        c = this._nextCode();
-                    }
-                    while (c === TokenCodes.PIPE) {
-                        this._nextCode();
-                        expressions.push(this._parsePipe(expressions.pop()));
-                        c = this._currentCode();
-                    }
-                    if (~[ TokenCodes.RP, TokenCodes.RB ].indexOf(c)) {
-                        break;
-                    }
-                    if (!c || ~[ TokenCodes.SEMI_COLON, TokenCodes.COMA ].indexOf(c)) {
-                        break;
-                    }
-                    expressions.push(new JsExpression(this._currentString()));
-                    this._nextCode();
-                }
-                if (this._currentCode() === TokenCodes.SEMI_COLON) {
-                    this._nextCode();
-                }
-                return new ScriptExpression(new CollectionExpression(expressions));
-            };
-            Parser.prototype._parsePipe = function(expressions) {
-                var name, params;
-                name = this._currentString();
-                params = [];
-                this._nextCode();
-                return new ModifierExpression(name, this._parseParams(), expressions);
-            };
-            Parser.prototype._parseParams = function() {
-                return new ParamsExpression(this._parseParams2());
-            };
-            Parser.prototype._parseParams2 = function() {
-                var c, params;
-                this._expectCurrentCode(TokenCodes.LP);
-                params = [];
-                while (c = this._nextCode()) {
-                    if (c === TokenCodes.RP) {
-                        break;
-                    }
-                    params.push(this._parseReference());
-                    c = this._currentCode();
-                    if (c !== TokenCodes.COMA) {
-                        break;
-                    }
-                }
-                this._nextCode();
-                return params;
-            };
-            Parser.prototype._parseGroup = function() {
-                return new GroupExpression(this._parseParams2());
-            };
-            Parser.prototype._parseRef = function() {
-                var c, castAs, name, refs;
-                c = this._currentCode();
-                refs = [];
-                while (c === TokenCodes.VAR) {
-                    name = this._currentString();
-                    if ((c = this._nextCode()) === TokenCodes.LP) {
-                        refs.push(new FnExpression(name, this._parseParams()));
-                        c = this._currentCode();
-                    } else {
-                        refs.push(new RefExpression(name));
-                    }
-                    if (c === TokenCodes.DOT) {
-                        c = this._nextCode();
-                    }
-                }
-                if (c === TokenCodes.AS) {
-                    this._nextCode();
-                    castAs = this._currentString();
-                    this._nextCode();
-                }
-                return new RefPathExpression(refs, castAs);
-            };
-            return Parser;
-        }(BaseParser);
-        module.exports = Parser;
-        return module.exports;
-    });
     define("type-component/index.js", function(require, module, exports, __dirname, __filename) {
         var toString = Object.prototype.toString;
         module.exports = function(val) {
@@ -1658,22 +1474,25 @@
         DecoratorFactory = function() {
             function DecoratorFactory() {}
             DecoratorFactory.prototype.attach = function(data, element) {
-                var DecoratorClass;
+                var classes;
+                classes = [];
                 if (element.nodeName === "#text") {
                     if (TextDecorator.test(element)) {
-                        DecoratorClass = TextDecorator;
+                        classes.push(TextDecorator);
                     }
                 } else {
                     if (ElementDecorator.test(element)) {
-                        DecoratorClass = ElementDecorator;
+                        classes.push(ElementDecorator);
                     } else if (BindDecorator.test(element)) {
-                        DecoratorClass = BindDecorator;
+                        classes.push(BindDecorator);
                     }
                 }
-                if (!DecoratorClass) {
+                if (!classes.length) {
                     return;
                 }
-                return element._paperclipDecorator = new DecoratorClass(data, element);
+                return element._pcDecorators = classes.map(function(clazz) {
+                    return new clazz(data, element);
+                });
             };
             return DecoratorFactory;
         }();
@@ -1867,6 +1686,194 @@
                 }
             });
         }).call(this);
+        return module.exports;
+    });
+    define("paperclip/lib/clip/parser.js", function(require, module, exports, __dirname, __filename) {
+        var ActionExpression, ActionsExpression, BaseParser, CollectionExpression, FnExpression, GroupExpression, JsExpression, ModifierExpression, OptionsExpression, ParamsExpression, Parser, RefExpression, RefPathExpression, ScriptExpression, StringExpression, TokenCodes, Tokenizer, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        Tokenizer = require("paperclip/lib/clip/tokenizer.js");
+        TokenCodes = Tokenizer.codes;
+        BaseParser = require("paperclip/lib/base/parser.js");
+        ModifierExpression = require("paperclip/lib/clip/expressions/modifier.js");
+        ScriptExpression = require("paperclip/lib/clip/expressions/script.js");
+        ActionExpression = require("paperclip/lib/clip/expressions/action.js");
+        ActionsExpression = require("paperclip/lib/clip/expressions/actions.js");
+        OptionsExpression = require("paperclip/lib/clip/expressions/options.js");
+        RefExpression = require("paperclip/lib/clip/expressions/ref.js");
+        RefPathExpression = require("paperclip/lib/clip/expressions/refPath.js");
+        FnExpression = require("paperclip/lib/clip/expressions/fn.js");
+        JsExpression = require("paperclip/lib/clip/expressions/js.js");
+        ParamsExpression = require("paperclip/lib/clip/expressions/params.js");
+        CollectionExpression = require("paperclip/lib/base/collectionExpression.js");
+        StringExpression = require("paperclip/lib/clip/expressions/string.js");
+        GroupExpression = require("paperclip/lib/clip/expressions/group.js");
+        Parser = function(_super) {
+            __extends(Parser, _super);
+            function Parser() {
+                Parser.__super__.constructor.call(this, new Tokenizer);
+            }
+            Parser.prototype._parse = function() {
+                switch (this._nextCode()) {
+                  case TokenCodes.VAR:
+                    return this._parseActionsOrOptions();
+                  case TokenCodes.LB:
+                    return this._parseMultiOptions();
+                  default:
+                    return this._parseReference();
+                }
+            };
+            Parser.prototype._parseActionsOrOptions = function() {
+                var actions, pn;
+                actions = [];
+                if (!(pn = this._t.peekNext()) || pn[0] !== TokenCodes.COLON) {
+                    return this._parseActionOptions();
+                }
+                while (this._t.current) {
+                    actions.push(this._parseAction());
+                    if (this._currentCode() === TokenCodes.SEMI_COLON) {
+                        this._nextCode();
+                    }
+                }
+                return new ActionsExpression(actions);
+            };
+            Parser.prototype._parseAction = function() {
+                var name;
+                name = this._currentString();
+                this._expectNextCode(TokenCodes.COLON);
+                this._nextCode();
+                return new ActionExpression(name, this._parseActionOptions());
+            };
+            Parser.prototype._parseActionOptions = function() {
+                switch (this._currentCode()) {
+                  case TokenCodes.LB:
+                    return this._parseMultiOptions();
+                  default:
+                    return this._parseReference();
+                }
+            };
+            Parser.prototype._parseMultiOptions = function() {
+                var c, ops, options;
+                c = this._currentCode();
+                options = [];
+                while (c && (c = this._currentCode()) !== TokenCodes.RB) {
+                    this._nextCode();
+                    ops = {
+                        name: this._currentString()
+                    };
+                    this._expectNextCode(TokenCodes.COLON);
+                    this._nextCode();
+                    ops.expression = this._parseActionOptions();
+                    options.push(ops);
+                }
+                this._nextCode();
+                return new OptionsExpression(options);
+            };
+            Parser.prototype._parseReference = function() {
+                var c, expressions, modifiers;
+                expressions = [];
+                modifiers = [];
+                while (c = this._currentCode()) {
+                    if (c === TokenCodes.VAR) {
+                        expressions.push(this._parseRef());
+                        c = this._currentCode();
+                    }
+                    if (c === TokenCodes.LP) {
+                        expressions.push(this._parseGroup());
+                        c = this._currentCode();
+                    }
+                    if (c === TokenCodes.LB) {
+                        expressions.push(this._parseActionOptions());
+                        c = this._currentCode();
+                    }
+                    if (c === TokenCodes.STRING) {
+                        expressions.push(new StringExpression(this._currentString()));
+                        c = this._nextCode();
+                    }
+                    while (c === TokenCodes.PIPE) {
+                        this._nextCode();
+                        expressions.push(this._parsePipe(expressions.pop()));
+                        c = this._currentCode();
+                    }
+                    if (~[ TokenCodes.RP, TokenCodes.RB ].indexOf(c)) {
+                        break;
+                    }
+                    if (!c || ~[ TokenCodes.SEMI_COLON, TokenCodes.COMA ].indexOf(c)) {
+                        break;
+                    }
+                    expressions.push(new JsExpression(this._currentString()));
+                    this._nextCode();
+                }
+                if (this._currentCode() === TokenCodes.SEMI_COLON) {
+                    this._nextCode();
+                }
+                return new ScriptExpression(new CollectionExpression(expressions));
+            };
+            Parser.prototype._parsePipe = function(expressions) {
+                var name, params;
+                name = this._currentString();
+                params = [];
+                this._nextCode();
+                return new ModifierExpression(name, this._parseParams(), expressions);
+            };
+            Parser.prototype._parseParams = function() {
+                return new ParamsExpression(this._parseParams2());
+            };
+            Parser.prototype._parseParams2 = function() {
+                var c, params;
+                this._expectCurrentCode(TokenCodes.LP);
+                params = [];
+                while (c = this._nextCode()) {
+                    if (c === TokenCodes.RP) {
+                        break;
+                    }
+                    params.push(this._parseReference());
+                    c = this._currentCode();
+                    if (c !== TokenCodes.COMA) {
+                        break;
+                    }
+                }
+                this._nextCode();
+                return params;
+            };
+            Parser.prototype._parseGroup = function() {
+                return new GroupExpression(this._parseParams2());
+            };
+            Parser.prototype._parseRef = function() {
+                var c, castAs, name, refs;
+                c = this._currentCode();
+                refs = [];
+                while (c === TokenCodes.VAR) {
+                    name = this._currentString();
+                    if ((c = this._nextCode()) === TokenCodes.LP) {
+                        refs.push(new FnExpression(name, this._parseParams()));
+                        c = this._currentCode();
+                    } else {
+                        refs.push(new RefExpression(name));
+                    }
+                    if (c === TokenCodes.DOT) {
+                        c = this._nextCode();
+                    }
+                }
+                if (c === TokenCodes.AS) {
+                    this._nextCode();
+                    castAs = this._currentString();
+                    this._nextCode();
+                }
+                return new RefPathExpression(refs, castAs);
+            };
+            return Parser;
+        }(BaseParser);
+        module.exports = Parser;
         return module.exports;
     });
     define("bindable/lib/object/dref.js", function(require, module, exports, __dirname, __filename) {
@@ -2187,580 +2194,6 @@
         })();
         return module.exports;
     });
-    define("paperclip/lib/clip/tokenizer.js", function(require, module, exports, __dirname, __filename) {
-        var BaseTokenizer, Codes, Tokenizer, key, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        BaseTokenizer = require("paperclip/lib/base/tokenizer.js");
-        Codes = function() {
-            function Codes() {}
-            Codes.OTHER = -1;
-            Codes.WORD = 256;
-            Codes.STRING = Codes.WORD + 1;
-            Codes.VAR = Codes.STRING + 1;
-            Codes.WS = Codes.VAR + 1;
-            Codes.NUMBER = Codes.WS + 1;
-            Codes.BOOL = Codes.NUMBER + 1;
-            Codes.AS = Codes.BOOL + 1;
-            Codes.OR = Codes.AS + 1;
-            Codes.DOLLAR = 36;
-            Codes.LP = 40;
-            Codes.RP = 41;
-            Codes.COMA = 44;
-            Codes.DOT = 46;
-            Codes.COLON = 58;
-            Codes.SEMI_COLON = 59;
-            Codes.AT = 64;
-            Codes.LB = 123;
-            Codes.PIPE = 124;
-            Codes.RB = 125;
-            Codes.byCodes = {};
-            Codes.key = function(code) {
-                var key;
-                for (key in Codes) {
-                    if (Codes[key] === code) {
-                        return key;
-                    }
-                }
-            };
-            return Codes;
-        }();
-        for (key in Codes) {
-            Codes.byCodes[Codes[key]] = Codes[key];
-        }
-        Tokenizer = function(_super) {
-            __extends(Tokenizer, _super);
-            function Tokenizer() {
-                _ref = Tokenizer.__super__.constructor.apply(this, arguments);
-                return _ref;
-            }
-            Tokenizer.prototype.codes = Codes;
-            Tokenizer.codes = Codes;
-            Tokenizer.prototype._next = function() {
-                var buffer, c, ccode, cscode, word;
-                if (this._s.isAZ() || (ccode = this._s.ccode()) === 36 || ccode === 95 || ccode === 64) {
-                    word = this._s.next(/[_$@a-zA-Z0-9]+/);
-                    if (/true|false/.test(word)) {
-                        return this._t(Codes.BOOL, word);
-                    }
-                    if (word === "as") {
-                        return this._t(Codes.AS, word);
-                    }
-                    return this._t(Codes.VAR, word);
-                } else if (ccode === 39 || ccode === 34) {
-                    this._s.skipWhitespace(false);
-                    buffer = [];
-                    while ((c = this._s.nextChar()) && !this._s.eof()) {
-                        cscode = this._s.ccode();
-                        if (cscode === 92) {
-                            buffer.push(this._s.nextChar());
-                            continue;
-                        }
-                        if (cscode === ccode) {
-                            break;
-                        }
-                        buffer.push(c);
-                    }
-                    this._s.skipWhitespace(true);
-                    return this._t(Codes.STRING, buffer.join(""));
-                } else if (this._s.is09()) {
-                    return this._t(Codes.NUMBER, this._s.nextNumber());
-                } else if (this._s.isWs()) {
-                    return this._t(Codes.WS, this._s.next(/[\s\r\n\t]+/));
-                } else if (ccode === 124 && this._s.peek(2) === "||") {
-                    this._s.nextChar();
-                    return this._t(Codes.OR, "||");
-                } else if (Codes.byCodes[ccode]) {
-                    return this._t(Codes.byCodes[ccode], this._s.cchar());
-                }
-            };
-            return Tokenizer;
-        }(BaseTokenizer);
-        module.exports = Tokenizer;
-        return module.exports;
-    });
-    define("paperclip/lib/base/parser.js", function(require, module, exports, __dirname, __filename) {
-        var Parser;
-        Parser = function() {
-            function Parser(_t) {
-                this._t = _t;
-            }
-            Parser.prototype.parse = function(source) {
-                this._source = source;
-                this._t.source(source);
-                return this._parse();
-            };
-            Parser.prototype._parse = function() {};
-            Parser.prototype._expectNextCode = function(code) {
-                if (this._t.next()[0] !== code) {
-                    return this._error();
-                }
-            };
-            Parser.prototype._expectCurrentCode = function(code) {
-                if (this._t.current[0] !== code) {
-                    return this._error();
-                }
-            };
-            Parser.prototype._nextCode = function() {
-                var _ref;
-                return (_ref = this._t.next()) != null ? _ref[0] : void 0;
-            };
-            Parser.prototype._currentCode = function() {
-                var _ref;
-                return (_ref = this._t.current) != null ? _ref[0] : void 0;
-            };
-            Parser.prototype._currentString = function() {
-                var _ref;
-                return (_ref = this._t.current) != null ? _ref[1] : void 0;
-            };
-            Parser.prototype._error = function() {
-                throw new Error('unexpected token in "' + this._source + '"');
-            };
-            return Parser;
-        }();
-        module.exports = Parser;
-        return module.exports;
-    });
-    define("paperclip/lib/clip/expressions/modifier.js", function(require, module, exports, __dirname, __filename) {
-        var ModifierExpression, base, modifiers, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        base = require("paperclip/lib/base/expression.js");
-        modifiers = require("paperclip/lib/clip/modifiers/index.js");
-        ModifierExpression = function(_super) {
-            __extends(ModifierExpression, _super);
-            ModifierExpression.prototype._type = "modifier";
-            function ModifierExpression(name, params, expression) {
-                this.name = name;
-                this.params = params;
-                this.expression = expression;
-                ModifierExpression.__super__.constructor.call(this);
-                this.addChild(this.params, this.expression);
-            }
-            ModifierExpression.prototype.toString = function() {
-                var buffer, p, params, _i, _len, _ref;
-                buffer = [];
-                if (modifiers[this.name]) {
-                    buffer.push("this.defaultModifiers");
-                } else {
-                    buffer.push("this.modifiers");
-                }
-                buffer.push("." + this.name + "(");
-                params = [ this.expression.toString() ];
-                _ref = this.params.items;
-                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                    p = _ref[_i];
-                    params.push(p.toString());
-                }
-                buffer.push(params.join(","), ")");
-                return buffer.join("");
-            };
-            return ModifierExpression;
-        }(base.Expression);
-        module.exports = ModifierExpression;
-        return module.exports;
-    });
-    define("paperclip/lib/clip/expressions/script.js", function(require, module, exports, __dirname, __filename) {
-        var ScriptExpression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        base = require("paperclip/lib/base/expression.js");
-        ScriptExpression = function(_super) {
-            __extends(ScriptExpression, _super);
-            ScriptExpression.prototype._type = "script";
-            function ScriptExpression(expressions) {
-                this.expressions = expressions;
-                ScriptExpression.__super__.constructor.call(this);
-                this.addChild(this.expressions);
-            }
-            ScriptExpression.prototype.toString = function() {
-                return this.expressions.toString();
-            };
-            return ScriptExpression;
-        }(base.Expression);
-        module.exports = ScriptExpression;
-        return module.exports;
-    });
-    define("paperclip/lib/clip/expressions/action.js", function(require, module, exports, __dirname, __filename) {
-        var ActionExpression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        base = require("paperclip/lib/base/expression.js");
-        ActionExpression = function(_super) {
-            __extends(ActionExpression, _super);
-            ActionExpression.prototype._type = "action";
-            function ActionExpression(name, options) {
-                this.name = name;
-                this.options = options;
-                ActionExpression.__super__.constructor.call(this);
-            }
-            ActionExpression.prototype.references = function() {
-                return this.options.references();
-            };
-            ActionExpression.prototype.toString = function() {
-                var buffer;
-                buffer = [ "{" ];
-                buffer.push("name:'" + this.name + "', ");
-                buffer.push("value:" + this.options.toString());
-                buffer.push("}");
-                return buffer.join("");
-            };
-            return ActionExpression;
-        }(base.Expression);
-        module.exports = ActionExpression;
-        return module.exports;
-    });
-    define("paperclip/lib/clip/expressions/actions.js", function(require, module, exports, __dirname, __filename) {
-        var ActionsExpression, CollectionExpression, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        CollectionExpression = require("paperclip/lib/base/collectionExpression.js");
-        ActionsExpression = function(_super) {
-            __extends(ActionsExpression, _super);
-            ActionsExpression.prototype._type = "actions";
-            function ActionsExpression(items) {
-                ActionsExpression.__super__.constructor.call(this, items);
-                this.actions = items;
-            }
-            ActionsExpression.prototype.toString = function() {
-                var action, actions, buffer, _i, _len, _ref;
-                buffer = [ "[" ];
-                actions = [];
-                _ref = this.actions;
-                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                    action = _ref[_i];
-                    actions.push(action.toString());
-                }
-                buffer.push(actions.join(","));
-                buffer.push("]");
-                return buffer.join("");
-            };
-            return ActionsExpression;
-        }(CollectionExpression);
-        module.exports = ActionsExpression;
-        return module.exports;
-    });
-    define("paperclip/lib/clip/expressions/options.js", function(require, module, exports, __dirname, __filename) {
-        var OptionsExpression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        base = require("paperclip/lib/base/expression.js");
-        OptionsExpression = function(_super) {
-            __extends(OptionsExpression, _super);
-            OptionsExpression.prototype._type = "options";
-            function OptionsExpression(items) {
-                this.items = items;
-                OptionsExpression.__super__.constructor.call(this);
-                this.addChild(items);
-            }
-            return OptionsExpression;
-        }(base.Expression);
-        module.exports = OptionsExpression;
-        return module.exports;
-    });
-    define("paperclip/lib/clip/expressions/ref.js", function(require, module, exports, __dirname, __filename) {
-        var RefExpression;
-        RefExpression = function() {
-            RefExpression.prototype._type = "ref";
-            function RefExpression(name) {
-                this._children = [];
-                if (name.substr(0, 1) === "@") {
-                    this.self = true;
-                    this.name = name.substr(1);
-                } else {
-                    this.name = name;
-                }
-            }
-            RefExpression.prototype.toString = function() {
-                return this.name;
-            };
-            return RefExpression;
-        }();
-        module.exports = RefExpression;
-        return module.exports;
-    });
-    define("paperclip/lib/clip/expressions/refPath.js", function(require, module, exports, __dirname, __filename) {
-        var CollectionExpression, RefPathExpression, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        CollectionExpression = require("paperclip/lib/base/collectionExpression.js");
-        RefPathExpression = function(_super) {
-            __extends(RefPathExpression, _super);
-            RefPathExpression.prototype._type = "refPath";
-            function RefPathExpression(items, castAs) {
-                this.castAs = castAs;
-                RefPathExpression.__super__.constructor.call(this, items);
-            }
-            RefPathExpression.prototype.toPathString = function() {
-                return this.items.join(".");
-            };
-            RefPathExpression.prototype.toString = function() {
-                var buffer, currentChain, part, self, _i, _len, _ref;
-                buffer = [ "this" ];
-                currentChain = [];
-                self = false;
-                if (this.castAs) {
-                    buffer.push(".castAs('" + this.castAs + "')");
-                }
-                _ref = this.items;
-                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                    part = _ref[_i];
-                    if (part._type === "fn") {
-                        this._pushRef(buffer, currentChain, self);
-                        buffer.push(".call('", part.name, "', [");
-                        buffer.push(part.params.toString(), "])");
-                        currentChain = [];
-                        self = false;
-                    } else {
-                        currentChain.push(part.name);
-                        self = self || part.self;
-                    }
-                }
-                this._pushRef(buffer, currentChain, self);
-                buffer.push(".value()");
-                return buffer.join("");
-            };
-            RefPathExpression.prototype._pushRef = function(buffer, chain, self) {
-                var command;
-                if (chain.length) {
-                    command = self ? "self" : "ref";
-                    return buffer.push("." + command + "('", chain.join("."), "')");
-                }
-            };
-            return RefPathExpression;
-        }(CollectionExpression);
-        module.exports = RefPathExpression;
-        return module.exports;
-    });
-    define("paperclip/lib/clip/expressions/fn.js", function(require, module, exports, __dirname, __filename) {
-        var FnExpression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        base = require("paperclip/lib/base/expression.js");
-        FnExpression = function(_super) {
-            __extends(FnExpression, _super);
-            FnExpression.prototype._type = "fn";
-            function FnExpression(name, params) {
-                this.name = name;
-                this.params = params;
-                FnExpression.__super__.constructor.call(this);
-                this.addChild(this.params);
-            }
-            return FnExpression;
-        }(base.Expression);
-        module.exports = FnExpression;
-        return module.exports;
-    });
-    define("paperclip/lib/clip/expressions/js.js", function(require, module, exports, __dirname, __filename) {
-        var JSExpression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        base = require("paperclip/lib/base/expression.js");
-        JSExpression = function(_super) {
-            __extends(JSExpression, _super);
-            JSExpression.prototype._type = "js";
-            function JSExpression(value) {
-                this.value = value;
-                JSExpression.__super__.constructor.call(this);
-            }
-            JSExpression.prototype.toString = function() {
-                return this.value;
-            };
-            return JSExpression;
-        }(base.Expression);
-        module.exports = JSExpression;
-        return module.exports;
-    });
-    define("paperclip/lib/clip/expressions/params.js", function(require, module, exports, __dirname, __filename) {
-        var CollectionExpression, ParamsExpression, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        CollectionExpression = require("paperclip/lib/base/collectionExpression.js");
-        ParamsExpression = function(_super) {
-            __extends(ParamsExpression, _super);
-            function ParamsExpression() {
-                _ref = ParamsExpression.__super__.constructor.apply(this, arguments);
-                return _ref;
-            }
-            ParamsExpression.prototype._type = "params";
-            ParamsExpression.prototype.toString = function() {
-                return this.items.map(function(item) {
-                    return item.toString();
-                }).join(",");
-            };
-            return ParamsExpression;
-        }(CollectionExpression);
-        module.exports = ParamsExpression;
-        return module.exports;
-    });
-    define("paperclip/lib/base/collectionExpression.js", function(require, module, exports, __dirname, __filename) {
-        var CollectionExpression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        base = require("paperclip/lib/base/expression.js");
-        CollectionExpression = function(_super) {
-            __extends(CollectionExpression, _super);
-            CollectionExpression.prototype._type = "collection";
-            function CollectionExpression(items) {
-                this.items = items;
-                CollectionExpression.__super__.constructor.call(this);
-                this.addChild.apply(this, this.items);
-            }
-            CollectionExpression.prototype.toString = function() {
-                return this.items.map(function(item) {
-                    return item.toString();
-                }).join("");
-            };
-            return CollectionExpression;
-        }(base.Expression);
-        module.exports = CollectionExpression;
-        return module.exports;
-    });
-    define("paperclip/lib/clip/expressions/string.js", function(require, module, exports, __dirname, __filename) {
-        var StringExpression, base;
-        base = require("paperclip/lib/base/expression.js");
-        StringExpression = function() {
-            StringExpression.prototype._type = "string";
-            function StringExpression(value) {
-                this.value = value;
-                this._children = [];
-            }
-            StringExpression.prototype.toString = function() {
-                return "'" + this.value.replace(/\'/g, "\\'").replace(/\n/g, "\\n") + "'";
-            };
-            return StringExpression;
-        }();
-        module.exports = StringExpression;
-        return module.exports;
-    });
-    define("paperclip/lib/clip/expressions/group.js", function(require, module, exports, __dirname, __filename) {
-        var GroupExpresion, ParamsExpression, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        ParamsExpression = require("paperclip/lib/clip/expressions/params.js");
-        GroupExpresion = function(_super) {
-            __extends(GroupExpresion, _super);
-            function GroupExpresion() {
-                _ref = GroupExpresion.__super__.constructor.apply(this, arguments);
-                return _ref;
-            }
-            GroupExpresion.prototype._type = "group";
-            GroupExpresion.prototype.toString = function() {
-                return "(" + GroupExpresion.__super__.toString.call(this) + ")";
-            };
-            return GroupExpresion;
-        }(ParamsExpression);
-        module.exports = GroupExpresion;
-        return module.exports;
-    });
     define("paperclip/lib/paper/template/tokenizer.js", function(require, module, exports, __dirname, __filename) {
         var BaseTokenizer, Codes, Tokenizer, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
             for (var key in parent) {
@@ -2808,6 +2241,48 @@
             return Tokenizer;
         }(BaseTokenizer);
         module.exports = Tokenizer;
+        return module.exports;
+    });
+    define("paperclip/lib/base/parser.js", function(require, module, exports, __dirname, __filename) {
+        var Parser;
+        Parser = function() {
+            function Parser(_t) {
+                this._t = _t;
+            }
+            Parser.prototype.parse = function(source) {
+                this._source = source;
+                this._t.source(source);
+                return this._parse();
+            };
+            Parser.prototype._parse = function() {};
+            Parser.prototype._expectNextCode = function(code) {
+                if (this._t.next()[0] !== code) {
+                    return this._error();
+                }
+            };
+            Parser.prototype._expectCurrentCode = function(code) {
+                if (this._t.current[0] !== code) {
+                    return this._error();
+                }
+            };
+            Parser.prototype._nextCode = function() {
+                var _ref;
+                return (_ref = this._t.next()) != null ? _ref[0] : void 0;
+            };
+            Parser.prototype._currentCode = function() {
+                var _ref;
+                return (_ref = this._t.current) != null ? _ref[0] : void 0;
+            };
+            Parser.prototype._currentString = function() {
+                var _ref;
+                return (_ref = this._t.current) != null ? _ref[1] : void 0;
+            };
+            Parser.prototype._error = function() {
+                throw new Error('unexpected token in "' + this._source + '"');
+            };
+            return Parser;
+        }();
+        module.exports = Parser;
         return module.exports;
     });
     define("paperclip/lib/paper/template/expressions/block.js", function(require, module, exports, __dirname, __filename) {
@@ -3382,6 +2857,538 @@
                 return new PoolParty(options);
             };
         }).call(this);
+        return module.exports;
+    });
+    define("paperclip/lib/clip/tokenizer.js", function(require, module, exports, __dirname, __filename) {
+        var BaseTokenizer, Codes, Tokenizer, key, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        BaseTokenizer = require("paperclip/lib/base/tokenizer.js");
+        Codes = function() {
+            function Codes() {}
+            Codes.OTHER = -1;
+            Codes.WORD = 256;
+            Codes.STRING = Codes.WORD + 1;
+            Codes.VAR = Codes.STRING + 1;
+            Codes.WS = Codes.VAR + 1;
+            Codes.NUMBER = Codes.WS + 1;
+            Codes.BOOL = Codes.NUMBER + 1;
+            Codes.AS = Codes.BOOL + 1;
+            Codes.OR = Codes.AS + 1;
+            Codes.DOLLAR = 36;
+            Codes.LP = 40;
+            Codes.RP = 41;
+            Codes.COMA = 44;
+            Codes.DOT = 46;
+            Codes.COLON = 58;
+            Codes.SEMI_COLON = 59;
+            Codes.AT = 64;
+            Codes.LB = 123;
+            Codes.PIPE = 124;
+            Codes.RB = 125;
+            Codes.byCodes = {};
+            Codes.key = function(code) {
+                var key;
+                for (key in Codes) {
+                    if (Codes[key] === code) {
+                        return key;
+                    }
+                }
+            };
+            return Codes;
+        }();
+        for (key in Codes) {
+            Codes.byCodes[Codes[key]] = Codes[key];
+        }
+        Tokenizer = function(_super) {
+            __extends(Tokenizer, _super);
+            function Tokenizer() {
+                _ref = Tokenizer.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            Tokenizer.prototype.codes = Codes;
+            Tokenizer.codes = Codes;
+            Tokenizer.prototype._next = function() {
+                var buffer, c, ccode, cscode, word;
+                if (this._s.isAZ() || (ccode = this._s.ccode()) === 36 || ccode === 95 || ccode === 64) {
+                    word = this._s.next(/[_$@a-zA-Z0-9]+/);
+                    if (/true|false/.test(word)) {
+                        return this._t(Codes.BOOL, word);
+                    }
+                    if (word === "as") {
+                        return this._t(Codes.AS, word);
+                    }
+                    return this._t(Codes.VAR, word);
+                } else if (ccode === 39 || ccode === 34) {
+                    this._s.skipWhitespace(false);
+                    buffer = [];
+                    while ((c = this._s.nextChar()) && !this._s.eof()) {
+                        cscode = this._s.ccode();
+                        if (cscode === 92) {
+                            buffer.push(this._s.nextChar());
+                            continue;
+                        }
+                        if (cscode === ccode) {
+                            break;
+                        }
+                        buffer.push(c);
+                    }
+                    this._s.skipWhitespace(true);
+                    return this._t(Codes.STRING, buffer.join(""));
+                } else if (this._s.is09()) {
+                    return this._t(Codes.NUMBER, this._s.nextNumber());
+                } else if (this._s.isWs()) {
+                    return this._t(Codes.WS, this._s.next(/[\s\r\n\t]+/));
+                } else if (ccode === 124 && this._s.peek(2) === "||") {
+                    this._s.nextChar();
+                    return this._t(Codes.OR, "||");
+                } else if (Codes.byCodes[ccode]) {
+                    return this._t(Codes.byCodes[ccode], this._s.cchar());
+                }
+            };
+            return Tokenizer;
+        }(BaseTokenizer);
+        module.exports = Tokenizer;
+        return module.exports;
+    });
+    define("paperclip/lib/clip/expressions/modifier.js", function(require, module, exports, __dirname, __filename) {
+        var ModifierExpression, base, modifiers, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        base = require("paperclip/lib/base/expression.js");
+        modifiers = require("paperclip/lib/clip/modifiers/index.js");
+        ModifierExpression = function(_super) {
+            __extends(ModifierExpression, _super);
+            ModifierExpression.prototype._type = "modifier";
+            function ModifierExpression(name, params, expression) {
+                this.name = name;
+                this.params = params;
+                this.expression = expression;
+                ModifierExpression.__super__.constructor.call(this);
+                this.addChild(this.params, this.expression);
+            }
+            ModifierExpression.prototype.toString = function() {
+                var buffer, p, params, _i, _len, _ref;
+                buffer = [];
+                if (modifiers[this.name]) {
+                    buffer.push("this.defaultModifiers");
+                } else {
+                    buffer.push("this.modifiers");
+                }
+                buffer.push("." + this.name + "(");
+                params = [ this.expression.toString() ];
+                _ref = this.params.items;
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                    p = _ref[_i];
+                    params.push(p.toString());
+                }
+                buffer.push(params.join(","), ")");
+                return buffer.join("");
+            };
+            return ModifierExpression;
+        }(base.Expression);
+        module.exports = ModifierExpression;
+        return module.exports;
+    });
+    define("paperclip/lib/clip/expressions/script.js", function(require, module, exports, __dirname, __filename) {
+        var ScriptExpression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        base = require("paperclip/lib/base/expression.js");
+        ScriptExpression = function(_super) {
+            __extends(ScriptExpression, _super);
+            ScriptExpression.prototype._type = "script";
+            function ScriptExpression(expressions) {
+                this.expressions = expressions;
+                ScriptExpression.__super__.constructor.call(this);
+                this.addChild(this.expressions);
+            }
+            ScriptExpression.prototype.toString = function() {
+                return this.expressions.toString();
+            };
+            return ScriptExpression;
+        }(base.Expression);
+        module.exports = ScriptExpression;
+        return module.exports;
+    });
+    define("paperclip/lib/clip/expressions/action.js", function(require, module, exports, __dirname, __filename) {
+        var ActionExpression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        base = require("paperclip/lib/base/expression.js");
+        ActionExpression = function(_super) {
+            __extends(ActionExpression, _super);
+            ActionExpression.prototype._type = "action";
+            function ActionExpression(name, options) {
+                this.name = name;
+                this.options = options;
+                ActionExpression.__super__.constructor.call(this);
+            }
+            ActionExpression.prototype.references = function() {
+                return this.options.references();
+            };
+            ActionExpression.prototype.toString = function() {
+                var buffer;
+                buffer = [ "{" ];
+                buffer.push("name:'" + this.name + "', ");
+                buffer.push("value:" + this.options.toString());
+                buffer.push("}");
+                return buffer.join("");
+            };
+            return ActionExpression;
+        }(base.Expression);
+        module.exports = ActionExpression;
+        return module.exports;
+    });
+    define("paperclip/lib/clip/expressions/actions.js", function(require, module, exports, __dirname, __filename) {
+        var ActionsExpression, CollectionExpression, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        CollectionExpression = require("paperclip/lib/base/collectionExpression.js");
+        ActionsExpression = function(_super) {
+            __extends(ActionsExpression, _super);
+            ActionsExpression.prototype._type = "actions";
+            function ActionsExpression(items) {
+                ActionsExpression.__super__.constructor.call(this, items);
+                this.actions = items;
+            }
+            ActionsExpression.prototype.toString = function() {
+                var action, actions, buffer, _i, _len, _ref;
+                buffer = [ "[" ];
+                actions = [];
+                _ref = this.actions;
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                    action = _ref[_i];
+                    actions.push(action.toString());
+                }
+                buffer.push(actions.join(","));
+                buffer.push("]");
+                return buffer.join("");
+            };
+            return ActionsExpression;
+        }(CollectionExpression);
+        module.exports = ActionsExpression;
+        return module.exports;
+    });
+    define("paperclip/lib/clip/expressions/options.js", function(require, module, exports, __dirname, __filename) {
+        var OptionsExpression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        base = require("paperclip/lib/base/expression.js");
+        OptionsExpression = function(_super) {
+            __extends(OptionsExpression, _super);
+            OptionsExpression.prototype._type = "options";
+            function OptionsExpression(items) {
+                this.items = items;
+                OptionsExpression.__super__.constructor.call(this);
+                this.addChild(items);
+            }
+            return OptionsExpression;
+        }(base.Expression);
+        module.exports = OptionsExpression;
+        return module.exports;
+    });
+    define("paperclip/lib/clip/expressions/ref.js", function(require, module, exports, __dirname, __filename) {
+        var RefExpression;
+        RefExpression = function() {
+            RefExpression.prototype._type = "ref";
+            function RefExpression(name) {
+                this._children = [];
+                if (name.substr(0, 1) === "@") {
+                    this.self = true;
+                    this.name = name.substr(1);
+                } else {
+                    this.name = name;
+                }
+            }
+            RefExpression.prototype.toString = function() {
+                return this.name;
+            };
+            return RefExpression;
+        }();
+        module.exports = RefExpression;
+        return module.exports;
+    });
+    define("paperclip/lib/clip/expressions/refPath.js", function(require, module, exports, __dirname, __filename) {
+        var CollectionExpression, RefPathExpression, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        CollectionExpression = require("paperclip/lib/base/collectionExpression.js");
+        RefPathExpression = function(_super) {
+            __extends(RefPathExpression, _super);
+            RefPathExpression.prototype._type = "refPath";
+            function RefPathExpression(items, castAs) {
+                this.castAs = castAs;
+                RefPathExpression.__super__.constructor.call(this, items);
+            }
+            RefPathExpression.prototype.toPathString = function() {
+                return this.items.join(".");
+            };
+            RefPathExpression.prototype.toString = function() {
+                var buffer, currentChain, part, self, _i, _len, _ref;
+                buffer = [ "this" ];
+                currentChain = [];
+                self = false;
+                if (this.castAs) {
+                    buffer.push(".castAs('" + this.castAs + "')");
+                }
+                _ref = this.items;
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                    part = _ref[_i];
+                    if (part._type === "fn") {
+                        this._pushRef(buffer, currentChain, self);
+                        buffer.push(".call('", part.name, "', [");
+                        buffer.push(part.params.toString(), "])");
+                        currentChain = [];
+                        self = false;
+                    } else {
+                        currentChain.push(part.name);
+                        self = self || part.self;
+                    }
+                }
+                this._pushRef(buffer, currentChain, self);
+                buffer.push(".value()");
+                return buffer.join("");
+            };
+            RefPathExpression.prototype._pushRef = function(buffer, chain, self) {
+                var command;
+                if (chain.length) {
+                    command = self ? "self" : "ref";
+                    return buffer.push("." + command + "('", chain.join("."), "')");
+                }
+            };
+            return RefPathExpression;
+        }(CollectionExpression);
+        module.exports = RefPathExpression;
+        return module.exports;
+    });
+    define("paperclip/lib/clip/expressions/fn.js", function(require, module, exports, __dirname, __filename) {
+        var FnExpression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        base = require("paperclip/lib/base/expression.js");
+        FnExpression = function(_super) {
+            __extends(FnExpression, _super);
+            FnExpression.prototype._type = "fn";
+            function FnExpression(name, params) {
+                this.name = name;
+                this.params = params;
+                FnExpression.__super__.constructor.call(this);
+                this.addChild(this.params);
+            }
+            return FnExpression;
+        }(base.Expression);
+        module.exports = FnExpression;
+        return module.exports;
+    });
+    define("paperclip/lib/clip/expressions/js.js", function(require, module, exports, __dirname, __filename) {
+        var JSExpression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        base = require("paperclip/lib/base/expression.js");
+        JSExpression = function(_super) {
+            __extends(JSExpression, _super);
+            JSExpression.prototype._type = "js";
+            function JSExpression(value) {
+                this.value = value;
+                JSExpression.__super__.constructor.call(this);
+            }
+            JSExpression.prototype.toString = function() {
+                return this.value;
+            };
+            return JSExpression;
+        }(base.Expression);
+        module.exports = JSExpression;
+        return module.exports;
+    });
+    define("paperclip/lib/clip/expressions/params.js", function(require, module, exports, __dirname, __filename) {
+        var CollectionExpression, ParamsExpression, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        CollectionExpression = require("paperclip/lib/base/collectionExpression.js");
+        ParamsExpression = function(_super) {
+            __extends(ParamsExpression, _super);
+            function ParamsExpression() {
+                _ref = ParamsExpression.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            ParamsExpression.prototype._type = "params";
+            ParamsExpression.prototype.toString = function() {
+                return this.items.map(function(item) {
+                    return item.toString();
+                }).join(",");
+            };
+            return ParamsExpression;
+        }(CollectionExpression);
+        module.exports = ParamsExpression;
+        return module.exports;
+    });
+    define("paperclip/lib/base/collectionExpression.js", function(require, module, exports, __dirname, __filename) {
+        var CollectionExpression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        base = require("paperclip/lib/base/expression.js");
+        CollectionExpression = function(_super) {
+            __extends(CollectionExpression, _super);
+            CollectionExpression.prototype._type = "collection";
+            function CollectionExpression(items) {
+                this.items = items;
+                CollectionExpression.__super__.constructor.call(this);
+                this.addChild.apply(this, this.items);
+            }
+            CollectionExpression.prototype.toString = function() {
+                return this.items.map(function(item) {
+                    return item.toString();
+                }).join("");
+            };
+            return CollectionExpression;
+        }(base.Expression);
+        module.exports = CollectionExpression;
+        return module.exports;
+    });
+    define("paperclip/lib/clip/expressions/string.js", function(require, module, exports, __dirname, __filename) {
+        var StringExpression, base;
+        base = require("paperclip/lib/base/expression.js");
+        StringExpression = function() {
+            StringExpression.prototype._type = "string";
+            function StringExpression(value) {
+                this.value = value;
+                this._children = [];
+            }
+            StringExpression.prototype.toString = function() {
+                return "'" + this.value.replace(/\'/g, "\\'").replace(/\n/g, "\\n") + "'";
+            };
+            return StringExpression;
+        }();
+        module.exports = StringExpression;
+        return module.exports;
+    });
+    define("paperclip/lib/clip/expressions/group.js", function(require, module, exports, __dirname, __filename) {
+        var GroupExpresion, ParamsExpression, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        ParamsExpression = require("paperclip/lib/clip/expressions/params.js");
+        GroupExpresion = function(_super) {
+            __extends(GroupExpresion, _super);
+            function GroupExpresion() {
+                _ref = GroupExpresion.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            GroupExpresion.prototype._type = "group";
+            GroupExpresion.prototype.toString = function() {
+                return "(" + GroupExpresion.__super__.toString.call(this) + ")";
+            };
+            return GroupExpresion;
+        }(ParamsExpression);
+        module.exports = GroupExpresion;
         return module.exports;
     });
     define("bindable/lib/collection/setters/factory.js", function(require, module, exports, __dirname, __filename) {
@@ -4829,14 +4836,6 @@
                     }
                     return _results;
                 }
-            };
-            Handler.prototype._bothWays = function() {
-                var refs;
-                refs = [];
-                if (this.clip.options.bothWays) {
-                    refs.push(this.clip.options.bothWays);
-                }
-                return refs;
             };
             return Handler;
         }(require("paperclip/lib/paper/dom/decor/handlers/base.js"));
