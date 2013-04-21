@@ -190,16 +190,10 @@ class Parser extends BaseParser
 
     params
 
-
-
   ###
   ###
 
   _parseGroup: () -> new GroupExpression @_parseParams2()
-
-
-
-
 
   ###
   ###
@@ -207,6 +201,7 @@ class Parser extends BaseParser
   _parseRef: () ->
     c = @_currentCode()
     refs = []
+    assign = null
     
 
     while c is TokenCodes.VAR
@@ -229,7 +224,11 @@ class Parser extends BaseParser
       @_nextCode()
 
 
+    if c is TokenCodes.ASSIGN
+      @_nextCode()
+      assign = @_parseReference()
 
-    new RefPathExpression refs, castAs
+
+    new RefPathExpression refs, castAs, assign
 
 module.exports = Parser

@@ -3,5 +3,6 @@ module.exports = {
   click: require("./click"),
   enter: require("./enter"),
   value: require("./value"),
-  base: require("./base")
+  base: require("./base"),
+  show: require("./show")
 }

@@ -4,8 +4,8 @@ Clip = pc.Clip,
 compile = Clip.compile;
 
 describe("clip", function() {
-  
 
+  
   it("can bind to a single value", function() {
     var clip = new Clip({
       script: compile("name")
@@ -170,4 +170,31 @@ describe("clip", function() {
 
     expect(clip.get("value")).to.be(5);
   });
+
+  it("can assign a value", function() {
+    var clip = new Clip({
+      data: { show: false },
+      watch: false,
+      script: compile("show = !show")
+    });
+
+    clip.update();
+    expect(clip.get("value")).to.be(true)
+    clip.update();
+    expect(clip.get("value")).to.be(false)
+  });
+
+
+  it("can assign multiple values", function() {
+    var clip = new Clip({
+      data: { name: "hello" },
+      script: compile("name2 = name3 = name + ' world!'")
+    });
+
+    expect(clip.data.get("name2")).to.be("hello world!")
+    expect(clip.data.get("name3")).to.be("hello world!");
+    clip.data.set("name", "blah!");
+    expect(clip.data.get("name2")).to.be("blah! world!")
+    expect(clip.data.get("name3")).to.be("blah! world!");
+  })
 })

@@ -4,7 +4,7 @@ class Handler extends require("./base")
     @$element = $(@element)
     @clip.bind("show").to @_show
 
-  _show: (value) -> 
+  _show: (value) => 
     @$element.css { "display": if value then "block" else "none" }
 
 

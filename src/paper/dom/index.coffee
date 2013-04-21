@@ -19,7 +19,8 @@ class DOM
           decor.dom = @
           decor.init()
           traverse = decor isnt false
-        return if traverse is false
+
+        return false if traverse is false
 
   ###
   ###

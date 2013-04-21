@@ -180,6 +180,13 @@ class ClipScripts
   watch: () ->
     for key of @_scripts
       @_scripts[key].watch()
+    @
+
+  update: () ->
+    for key of @_scripts
+      @_scripts[key].update()
+    @
+
 
   ###
   ###
@@ -189,7 +196,6 @@ class ClipScripts
       @_scripts[key].dispose()
 
     @_scripts = {}
-
 
 
   ###
@@ -202,7 +208,7 @@ class ClipScripts
 
   _bindScripts: (scripts) ->
     if typeof scripts is "function"
-      @_bindScript "value", scripts, true
+      @_bindScript "value", scripts
     else
       for scriptName of scripts
         @_bindScript scriptName, scripts[scriptName]
@@ -216,9 +222,6 @@ class ClipScripts
     @_scripts[name] = clipScript
     clipScript.on "change", (value) =>
       @clip.set name, value
-
-    if watch
-      clipScript.watch()
 
 
 
@@ -245,6 +248,10 @@ class Clip
 
   watch: () ->
     @scripts.watch()
+    @
+
+  update: () ->
+    @scripts.update()
     @
 
   dispose: () -> 
