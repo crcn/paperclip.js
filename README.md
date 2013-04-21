@@ -1,6 +1,7 @@
 
 
-Paperclip is a small declarative data-binding library.
+Paperclip is a declarative data-binding library.
+
 
 
 ### Examples
