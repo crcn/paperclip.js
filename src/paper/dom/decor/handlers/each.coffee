@@ -1,12 +1,23 @@
 bindable = require "bindable"
 
 class Element
+  
+  ###
+  ###
+
   constructor: (@el, @item, idKey, value) ->
     @[idKey] = value
 
 
 class Handler extends require("./base")
+  
+  ###
+  ###
+
   traverse: false
+
+  ###
+  ###
 
   init: () ->
     super()
@@ -20,9 +31,14 @@ class Handler extends require("./base")
     @clip.bind("each").to @_change
 
 
+  ###
+  ###
 
   _change: (value) =>
     @_source.reset value
+
+  ###
+  ###
 
   _watchSource: () ->
 
@@ -35,9 +51,15 @@ class Handler extends require("./base")
       remove: @_removeElement
     }
 
+  ###
+  ###
+
   _insertElement: (element) =>
     @$element.append element.el
     @dom.attach element.item, element.el
+
+  ###
+  ###
 
   _removeElement: (element) =>
     element.el.remove()

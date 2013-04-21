@@ -2,8 +2,8 @@ base = require "../../../base/expression"
 Clip = require "../../../clip"
 
 class Expression extends base.Expression
-  _type: "block"
-  constructor: (@value) ->
-  toString: () -> "pushBinding(#{Clip.compile(@value.toString())})"
+  _type       : "block"
+  constructor : (@value) ->
+  toString    : () -> "pushScript(#{Clip.compile(@value.toString())})"
 
 module.exports = Expression

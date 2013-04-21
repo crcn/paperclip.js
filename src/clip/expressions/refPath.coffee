@@ -1,14 +1,26 @@
 CollectionExpression = require "../../base/collectionExpression"
 
-
 class RefPathExpression extends CollectionExpression
+  
+  ###
+  ###
+
   _type: "refPath"
+
+  ###
+  ###
 
   constructor: (items, @castAs, @assign = "") ->
     super items
 
+  ###
+  ###
+
   toPathString: () ->
     @items.join(".")
+
+  ###
+  ###
 
   toString: () ->
     buffer = ["this"]
@@ -39,6 +51,8 @@ class RefPathExpression extends CollectionExpression
 
     buffer.join ""
 
+  ###
+  ###
 
   _pushRef: (buffer, chain, self) ->
     if chain.length

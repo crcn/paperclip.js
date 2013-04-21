@@ -1,4 +1,5 @@
-BaseTokenizer = require("../../base/tokenizer")
+
+BaseTokenizer = require "../../base/tokenizer"
 
 class Codes
   @OTHER  = -1
@@ -7,16 +8,25 @@ class Codes
   @CHAR   = @RM + 1  # anything other than blocks
 
 class Tokenizer extends BaseTokenizer
+  
+  ###
+  ###
+
+  @Codes: Codes
+
+  ###
+  ###
 
   constructor: () ->
     super()
     @_s.skipWhitespace false
 
-  @Codes: Codes
   
+  ###
+  ###
+
   _next: () ->
 
-    # 123
     if (ccode = @_s.cchar()) is "{"
       if @_s.peek(1) is "{"
         @_s.nextChar()

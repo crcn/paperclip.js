@@ -1,6 +1,3 @@
-# default modifiers
-
-
 module.exports = {
 
   uppercase: (value) -> 

@@ -1,28 +1,43 @@
-bindable = require "bindable"
-dref     = require "dref"
-events   = require "events"
+dref             = require "dref"
+events           = require "events"
+bindable         = require "bindable"
+findRefs         = require "./utils/findRefs"
 defaultModifiers = require "./modifiers"
-findRefs = require "./utils/findRefs"
 
 ###
  Reads a property chain 
 ###
 
 class PropertyChain
+  
+  ###
+  ###
 
   __isPropertyChain: true
+
+  ###
+  ###
 
   constructor: (@watcher) ->
     @_commands = []
     @clip = @watcher.clip
 
+  ###
+  ###
+
   ref: (path) ->
     @_commands.push { ref: path }
     @
 
+  ###
+  ###
+
   castAs: (name) ->
     @watcher.cast[name] = @
     @
+
+  ###
+  ###
 
   path: () ->
     path = []
@@ -31,19 +46,30 @@ class PropertyChain
 
     path.join(".")
 
+  ###
+  ###
 
   self: (path) ->
     @_self = true
     @ref path
     @
 
+  ###
+  ###
+
   call: (path, args) -> 
     @_commands.push { ref: path, args: args }
     @
 
+  ###
+  ###
+
   exec: () ->
     @currentValue = @value()
     @
+
+  ###
+  ###
 
   value: (value) ->
     hasValue = arguments.length
@@ -75,6 +101,9 @@ class PropertyChain
 
     return cv
 
+
+###
+###
 
 class ClipScript extends events.EventEmitter
 
@@ -137,13 +166,10 @@ class ClipScript extends events.EventEmitter
     @currentRefs = []
     ret
 
-
   castAs: (name) -> new PropertyChain(@).castAs name
   ref: (path) -> new PropertyChain(@).ref path
   self: (path) -> new PropertyChain(@).self path
   call: (path, args) -> new PropertyChain(@).call path, args
-
-
 
   ###
   ###
@@ -182,6 +208,9 @@ class ClipScripts
       @_scripts[key].watch()
     @
 
+  ###
+  ###
+
   update: () ->
     for key of @_scripts
       @_scripts[key].update()
@@ -196,7 +225,6 @@ class ClipScripts
       @_scripts[key].dispose()
 
     @_scripts = {}
-
 
   ###
   ###

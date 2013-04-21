@@ -2,12 +2,21 @@ CollectionExpression = require "../../base/collectionExpression"
 
 class ActionsExpression extends CollectionExpression
     
+  ###
+  ###
+
   _type: "actions"
+
+  ###
+  ###
 
   constructor: (items) ->
     super items
     @actions = items
 
+  ###
+  ###
+  
   toString: () ->
     buffer  = ["["]
     actions = []

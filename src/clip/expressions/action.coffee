@@ -1,15 +1,21 @@
 base = require "../../base/expression"
 
-
 class ActionExpression extends base.Expression
   
+  ###
+  ###
+
   _type: "action"
+
+  ###
+  ###
 
   constructor: (@name, @options) ->
     super()
 
-  references: () -> @options.references()
-    
+  ###
+  ###
+
   toString: () -> 
     buffer = ["{"]
 

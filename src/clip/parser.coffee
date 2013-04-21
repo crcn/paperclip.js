@@ -2,19 +2,19 @@ Tokenizer  = require "./tokenizer"
 TokenCodes = Tokenizer.codes 
 BaseParser = require "../base/parser"
 
-ModifierExpression   = require "./expressions/modifier"
-ScriptExpression     = require "./expressions/script"
-ActionExpression     = require "./expressions/action"
-ActionsExpression    = require "./expressions/actions"
-OptionsExpression    = require "./expressions/options"
-RefExpression        = require "./expressions/ref"
-RefPathExpression    = require "./expressions/refPath"
 FnExpression         = require "./expressions/fn"
 JsExpression         = require "./expressions/js"
-ParamsExpression     = require "./expressions/params"
-CollectionExpression = require "../base/collectionExpression"
-StringExpression     = require "./expressions/string"
+RefExpression        = require "./expressions/ref"
 GroupExpression      = require "./expressions/group"
+ParamsExpression     = require "./expressions/params"
+ScriptExpression     = require "./expressions/script"
+ActionExpression     = require "./expressions/action"
+StringExpression     = require "./expressions/string"
+ActionsExpression    = require "./expressions/actions"
+OptionsExpression    = require "./expressions/options"
+RefPathExpression    = require "./expressions/refPath"
+ModifierExpression   = require "./expressions/modifier"
+CollectionExpression = require "../base/collectionExpression"
 
 ###
  action: 
@@ -93,15 +93,10 @@ class Parser extends BaseParser
       ops.expression = @_parseActionOptions()
       options.push ops
 
-
-
     # get rid of RP
     @_nextCode()
 
     new OptionsExpression options
-
-
-
 
   ###
   ###
@@ -170,7 +165,6 @@ class Parser extends BaseParser
 
   _parseParams: () ->
     new ParamsExpression @_parseParams2()
-
 
   ###
   ###

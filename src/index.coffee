@@ -1,7 +1,6 @@
 Clip  = require "./clip"
 Paper = require "./paper"
 
-
 class Paperclip
 
   ###
@@ -18,14 +17,12 @@ class Paperclip
     dom.attach data, element
 
 
-
 module.exports = () -> new Paperclip()
 
 # clips compiled data-binding to observables
 module.exports.Clip     = Clip
 module.exports.Paper    = Paper
 module.exports.bindable = require "bindable"
-
 
 if typeof window isnt "undefined"
   window.paperclip = module.exports

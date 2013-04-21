@@ -1,12 +1,22 @@
 class Handler extends require("./base")
+  
+  ###
+  ###
+
   init: () ->
     super()
     @clip.bind("value").to @_onValueChange
     $(@element).bind "keyup change", @_onElementChange
 
+  ###
+  ###
+
   _onValueChange: (value) =>
     @element.value = @currentValue = value
 
+  ###
+  ###
+  
   _onElementChange: (event) =>
     value = @element.value
 

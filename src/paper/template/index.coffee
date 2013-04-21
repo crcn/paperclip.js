@@ -1,19 +1,28 @@
-Parser = require "./parser"
-Clip   = require "../../clip"
-events = require "events"
+Parser   = require "./parser"
+Clip     = require "../../clip"
+events   = require "events"
 bindable = require "bindable"
 
-parser = new Parser()
+###
+  watches for any changes in the template data
+###
 
-class TemplateBinding
+class TemplateScript
 
   ###
   ###
 
   constructor: (@renderer, @fn) ->
-    @clip = new Clip { script: @fn, data: @renderer._data, watch: true }
-    @clip.bind("value").watch(true).to(@update)
-    @value = @clip.get("value")
+
+    # clip into the renderer data with the function that binds to it.
+    @clip = new Clip { script: @fn, data: @renderer._data }
+
+    # bind to update, but ONLY bind on changes. This won't get fired if value
+    # isn't undefined.
+    @clip.bind("value").watch(true).to @update
+
+    # set the initial value
+    @value = @clip.get "value"
 
   ###
   ###
@@ -21,19 +30,24 @@ class TemplateBinding
   dispose: () ->
     @clip.dispose()
 
-
   ###
   ###
 
   update: (value) =>
     @value = value
+
+    # changed? update the renderer.
     @renderer.update()
 
   ###
   ###
 
-  toString: () -> @value
+  toString: () -> String @value
 
+
+###
+ Keeps track of each template block. E.g: hello {{craig}}, how are you?
+###
 
 class TemplateRenderer extends bindable.Object
 
@@ -42,9 +56,14 @@ class TemplateRenderer extends bindable.Object
 
   constructor: (@_data, @fn) ->
     super()
-    @buffer = []
+
+    @buffer   = []
     @bindings = []
+
+    # call the interpreted template.
+    # this function will call push, and pushScript
     @fn.call @
+
     @update()
 
   ###
@@ -57,6 +76,7 @@ class TemplateRenderer extends bindable.Object
     @bindings = []
 
   ###
+   pushes a regular string to the buffer
   ###
 
   push: (source) ->   
@@ -64,20 +84,23 @@ class TemplateRenderer extends bindable.Object
     @
 
   ###
+   pushes a bindable block (dynamically changes), to the string buffer
   ###
 
-  pushBinding: (script) ->
-    @buffer.push binding = new TemplateBinding @, script
+  pushScript: (script) ->
+    @buffer.push binding = new TemplateScript @, script
     @bindings.push binding
     @
 
   ###
+   updates the current text by stringifying the buffer
   ###
 
   update: () ->
     @set "text", @text = @render()
 
   ###
+   stringifies the buffer
   ###
 
   render: () -> @buffer.join ""
@@ -88,6 +111,8 @@ class TemplateRenderer extends bindable.Object
   toString: () -> @text
 
 
+parser = new Parser()
+
 class Template
 
   ###
@@ -96,12 +121,11 @@ class Template
   constructor: (source) -> 
     @fn = new Function "return " + parser.parse source 
 
-
   ###
   ###
 
   render: (data) ->
-    new TemplateRenderer(data, @fn)
+    new TemplateRenderer data, @fn
 
 
 module.exports = Template

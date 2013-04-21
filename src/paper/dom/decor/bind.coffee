@@ -1,9 +1,12 @@
-Template = require "../../template"
 Clip     = require "../../../clip"
+Template = require "../../template"
 handlers = require "./handlers"
 
 
 class Decorator
+  
+  ###
+  ###
 
   constructor: (@data, @element) ->
 
@@ -17,18 +20,24 @@ class Decorator
       @_handlers.push handler = new clazz script, @_clip, element
       @traverse = handler.traverse isnt false
 
-
+  ###
+  ###
 
   init: () ->
     for handler in @_handlers
       handler.dom = @dom
       handler.init?()
 
+  ###
+  ###
+
   _dataBind: (element) ->
     for attr in element.attributes
       return attr.value if attr.name is "data-bind"
     
-  
+  ###
+  ###
+
   @test: (element) -> 
     for attr in element.attributes
       return true if attr.name is "data-bind"

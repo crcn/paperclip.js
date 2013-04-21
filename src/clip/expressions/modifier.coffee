@@ -1,13 +1,22 @@
-base = require "../../base/expression"
+base      = require "../../base/expression"
 modifiers = require "../modifiers"
 
 class ModifierExpression extends base.Expression
   
+  ###
+  ###
+
   _type: "modifier"
+
+  ###
+  ###
 
   constructor: (@name, @params, @expression) -> 
     super()
     @addChild @params, @expression
+
+  ###
+  ###
 
   toString: () -> 
 

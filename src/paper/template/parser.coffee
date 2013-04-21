@@ -1,4 +1,4 @@
-Tokenizer = require "./tokenizer"
+Tokenizer  = require "./tokenizer"
 TokenCodes = Tokenizer.Codes
 BaseParser = require "../../base/parser"
 
@@ -14,27 +14,33 @@ class Parser extends BaseParser
   constructor: () ->
     @_t = new Tokenizer()
 
-
   ###
   ###
 
   _parse: () ->
     expressions = []
-
     @_nextCode()
 
+    # find ALL the expressions until we're at the end
     while @_t.current
       expressions.push @_parseExpression()
 
     new CollectionExpression expressions
 
+  ###
+  ###
+
+
   _parseExpression: () ->
+
+    # is it a {{ ? start of a template part
     if @_currentCode() is TokenCodes.LM
       return @_parseBlock()
     else
       return @_parseString()
 
   ###
+   parses a template block
   ###
 
   _parseBlock: () ->
@@ -45,7 +51,7 @@ class Parser extends BaseParser
     @_nextCode()
     while (c = @_currentCode()) isnt TokenCodes.RM and c
 
-      # don't parse embedded templates
+      # don't parse embedded templates, just skip them
       if c is TokenCodes.LM
         buffer.push "{{", @_parseBlock().value, "}}"
       else
@@ -58,6 +64,9 @@ class Parser extends BaseParser
 
     new BlockExpression buffer.join("")
 
+  ###
+   parses anything other than {{ }} blocks
+  ###
 
   _parseString: () ->
     buffer = [@_currentString()]
