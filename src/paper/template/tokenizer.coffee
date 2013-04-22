@@ -28,12 +28,12 @@ class Tokenizer extends BaseTokenizer
   _next: () ->
 
     if (ccode = @_s.cchar()) is "{"
-      if @_s.peek(2) is "{"
+      if @_s.peek(2) is "{{"
         @_s.nextChar()
         return @_t Codes.LM, "{{"
 
     else if (ccode = @_s.cchar()) is "}"
-      if @_s.peek(2) is "}"
+      if @_s.peek(2) is "}}"
         @_s.nextChar()
         return @_t Codes.RM, "}}"
 
