@@ -2849,25 +2849,19 @@
                 this.data = data;
                 this.attribute = attribute;
                 this.element = element;
-                this._elementChange = __bind(this._elementChange, this);
                 this._change = __bind(this._change, this);
                 this.name = attribute.name;
                 this._template = new Template(this.attribute.value);
                 this._renderer = this._template.render(this.data);
             }
             AttributeBinding.prototype.init = function() {
-                this._renderer.bind("text").to(this._change);
-                return $(this.element).bind("mouseup keydown keyup change", this._elementChange);
+                return this._renderer.bind("text").to(this._change);
             };
             AttributeBinding.prototype._change = function(value) {
-                return this.attribute.value = this.currentValue = value;
-            };
-            AttributeBinding.prototype._elementChange = function(event) {
-                var value;
                 if (this.name === "value") {
-                    return value = this.element.value;
+                    return this.element.value = value;
                 } else {
-                    return value = this.attribute.value;
+                    return $(this.element).attr(this.name, this.currentValue = value);
                 }
             };
             return AttributeBinding;
@@ -4980,23 +4974,26 @@
             Handler.prototype.init = function() {
                 Handler.__super__.init.call(this);
                 this.clip.bind("value").to(this._onValueChange);
-                return $(this.element).bind("keyup change", this._onElementChange);
+                return $(this.element).bind("keydown keyup change", this._onElementChange);
             };
             Handler.prototype._onValueChange = function(value) {
                 return this.element.value = this.currentValue = value;
             };
             Handler.prototype._onElementChange = function(event) {
-                var ref, value, _i, _len, _ref1, _results;
-                value = this.element.value;
-                if (this.clip.get("bothWays")) {
-                    _ref1 = this.script.references();
-                    _results = [];
-                    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-                        ref = _ref1[_i];
-                        _results.push(this.clip.data.set(ref.toPathString(), value));
+                var _this = this;
+                return setTimeout(function() {
+                    var ref, value, _i, _len, _ref1, _results;
+                    value = _this.element.value;
+                    if (_this.clip.get("bothWays")) {
+                        _ref1 = _this.script.references();
+                        _results = [];
+                        for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                            ref = _ref1[_i];
+                            _results.push(_this.clip.data.set(ref.toPathString(), value));
+                        }
+                        return _results;
                     }
-                    return _results;
-                }
+                }, 5);
             };
             return Handler;
         }(require("paperclip/lib/paper/dom/decor/handlers/base.js"));
@@ -5130,6 +5127,44 @@
             return Handler;
         }(require("paperclip/lib/paper/dom/decor/handlers/base.js"));
         module.exports = Handler;
+        return module.exports;
+    });
+    define("bindable/lib/collection/setters/base.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var utils;
+            utils = require("bindable/lib/core/utils.js");
+            module.exports = function() {
+                function _Class(binding, target) {
+                    this.binding = binding;
+                    this.target = target;
+                    this._transformer = binding.transform();
+                    this._filter = binding.filter();
+                    this.init();
+                }
+                _Class.prototype.init = function() {};
+                _Class.prototype.dispose = function() {};
+                _Class.prototype.change = function(event, item) {
+                    var _this = this;
+                    if (this._filter) {
+                        if (!this._filter(item)) {
+                            return;
+                        }
+                    }
+                    return this.__transform("to", item, function(err, item) {
+                        if (err) {
+                            throw err;
+                        }
+                        return _this._change(event, item);
+                    });
+                };
+                _Class.prototype._change = function(event, item) {};
+                _Class.prototype.bothWays = function() {};
+                _Class.prototype.__transform = function(method, value, next) {
+                    return utils.tryTransform(this._transformer, method, value, next);
+                };
+                return _Class;
+            }();
+        }).call(this);
         return module.exports;
     });
     define("underscore/underscore.js", function(require, module, exports, __dirname, __filename) {
@@ -5977,44 +6012,6 @@
                     return this._wrapped;
                 }
             });
-        }).call(this);
-        return module.exports;
-    });
-    define("bindable/lib/collection/setters/base.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var utils;
-            utils = require("bindable/lib/core/utils.js");
-            module.exports = function() {
-                function _Class(binding, target) {
-                    this.binding = binding;
-                    this.target = target;
-                    this._transformer = binding.transform();
-                    this._filter = binding.filter();
-                    this.init();
-                }
-                _Class.prototype.init = function() {};
-                _Class.prototype.dispose = function() {};
-                _Class.prototype.change = function(event, item) {
-                    var _this = this;
-                    if (this._filter) {
-                        if (!this._filter(item)) {
-                            return;
-                        }
-                    }
-                    return this.__transform("to", item, function(err, item) {
-                        if (err) {
-                            throw err;
-                        }
-                        return _this._change(event, item);
-                    });
-                };
-                _Class.prototype._change = function(event, item) {};
-                _Class.prototype.bothWays = function() {};
-                _Class.prototype.__transform = function(method, value, next) {
-                    return utils.tryTransform(this._transformer, method, value, next);
-                };
-                return _Class;
-            }();
         }).call(this);
         return module.exports;
     });
