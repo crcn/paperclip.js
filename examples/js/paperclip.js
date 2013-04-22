@@ -202,9 +202,6 @@
                 this.currentRefs = [];
                 return ret;
             };
-            ClipScript.prototype.castAs = function(name) {
-                return (new PropertyChain(this)).castAs(name);
-            };
             ClipScript.prototype.ref = function(path) {
                 return (new PropertyChain(this)).ref(path);
             };
@@ -213,6 +210,9 @@
             };
             ClipScript.prototype.call = function(path, args) {
                 return (new PropertyChain(this)).call(path, args);
+            };
+            ClipScript.prototype.castAs = function(name) {
+                return (new PropertyChain(this)).castAs(name);
             };
             ClipScript.prototype._watch = function(path, target) {
                 if (!this.__watch) {
@@ -616,7 +616,7 @@
                 var expression, script, scripts, _i, _len, _ref;
                 expression = this._parser.parse(source);
                 scripts = {};
-                if (expression._type === "script") {
+                if (expression._type !== "actions") {
                     return this._getScript(expression);
                 }
                 _ref = expression.items;
@@ -2648,6 +2648,18 @@
                 OptionsExpression.__super__.constructor.call(this);
                 this.addChild(items);
             }
+            OptionsExpression.prototype.toString = function() {
+                var buffer, item, params, _i, _len, _ref;
+                buffer = [ "{" ];
+                params = [];
+                _ref = this.items;
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                    item = _ref[_i];
+                    params.push("'" + item.name + "':" + item.expression);
+                }
+                buffer.push(params.join(","), "}");
+                return buffer.join("");
+            };
             return OptionsExpression;
         }(base.Expression);
         module.exports = OptionsExpression;
@@ -3340,32 +3352,6 @@
         }).call(this);
         return module.exports;
     });
-    define("bindable/lib/collection/setters/factory.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var CollectionSetter, FnSetter, ObjSetter;
-            FnSetter = require("bindable/lib/collection/setters/fn.js");
-            ObjSetter = require("bindable/lib/collection/setters/object.js");
-            CollectionSetter = require("bindable/lib/collection/setters/collection.js");
-            module.exports = function() {
-                function _Class() {}
-                _Class.prototype.createSetter = function(binding, target) {
-                    if (!target) {
-                        return null;
-                    }
-                    if (typeof target === "function") {
-                        return new FnSetter(binding, target);
-                    } else if (target.__isCollection) {
-                        return new CollectionSetter(binding, target);
-                    } else if (target.insert || target.update || target.remove || target.replace) {
-                        return new ObjSetter(binding, target);
-                    }
-                    return null;
-                };
-                return _Class;
-            }();
-        }).call(this);
-        return module.exports;
-    });
     define("poolparty/lib/index.js", function(require, module, exports, __dirname, __filename) {
         (function() {
             var PoolParty, __bind = function(fn, me) {
@@ -3445,6 +3431,32 @@
         }).call(this);
         return module.exports;
     });
+    define("bindable/lib/collection/setters/factory.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var CollectionSetter, FnSetter, ObjSetter;
+            FnSetter = require("bindable/lib/collection/setters/fn.js");
+            ObjSetter = require("bindable/lib/collection/setters/object.js");
+            CollectionSetter = require("bindable/lib/collection/setters/collection.js");
+            module.exports = function() {
+                function _Class() {}
+                _Class.prototype.createSetter = function(binding, target) {
+                    if (!target) {
+                        return null;
+                    }
+                    if (typeof target === "function") {
+                        return new FnSetter(binding, target);
+                    } else if (target.__isCollection) {
+                        return new CollectionSetter(binding, target);
+                    } else if (target.insert || target.update || target.remove || target.replace) {
+                        return new ObjSetter(binding, target);
+                    }
+                    return null;
+                };
+                return _Class;
+            }();
+        }).call(this);
+        return module.exports;
+    });
     define("paperclip/lib/base/tokenizer.js", function(require, module, exports, __dirname, __filename) {
         var Tokenizer, strscan;
         strscan = require("strscanner/lib/index.js");
@@ -3519,12 +3531,14 @@
     });
     define("paperclip/lib/paper/dom/decor/handlers/index.js", function(require, module, exports, __dirname, __filename) {
         module.exports = {
+            css: require("paperclip/lib/paper/dom/decor/handlers/css.js"),
+            base: require("paperclip/lib/paper/dom/decor/handlers/base.js"),
+            show: require("paperclip/lib/paper/dom/decor/handlers/show.js"),
             each: require("paperclip/lib/paper/dom/decor/handlers/each.js"),
             click: require("paperclip/lib/paper/dom/decor/handlers/click.js"),
             enter: require("paperclip/lib/paper/dom/decor/handlers/enter.js"),
             value: require("paperclip/lib/paper/dom/decor/handlers/value.js"),
-            base: require("paperclip/lib/paper/dom/decor/handlers/base.js"),
-            show: require("paperclip/lib/paper/dom/decor/handlers/show.js"),
+            style: require("paperclip/lib/paper/dom/decor/handlers/style.js"),
             disable: require("paperclip/lib/paper/dom/decor/handlers/disable.js"),
             checked: require("paperclip/lib/paper/dom/decor/handlers/checked.js")
         };
@@ -4673,6 +4687,122 @@
         };
         return module.exports;
     });
+    define("paperclip/lib/paper/dom/decor/handlers/css.js", function(require, module, exports, __dirname, __filename) {
+        var Handler, _ref, __bind = function(fn, me) {
+            return function() {
+                return fn.apply(me, arguments);
+            };
+        }, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        Handler = function(_super) {
+            __extends(Handler, _super);
+            function Handler() {
+                this._updateCss = __bind(this._updateCss, this);
+                _ref = Handler.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            Handler.prototype.init = function() {
+                Handler.__super__.init.call(this);
+                this._currentClasses = {};
+                this.$element = $(this.element);
+                return this.clip.bind("css").to(this._updateCss);
+            };
+            Handler.prototype._updateCss = function(classes) {
+                var className, useClass, _results;
+                _results = [];
+                for (className in classes) {
+                    useClass = classes[className];
+                    if (useClass) {
+                        if (!this._currentClasses[className]) {
+                            this._currentClasses[className] = 1;
+                            _results.push(this.$element.addClass(className));
+                        } else {
+                            _results.push(void 0);
+                        }
+                    } else {
+                        if (this._currentClasses[className]) {
+                            delete this._currentClasses[className];
+                            _results.push(this.$element.removeClass(className));
+                        } else {
+                            _results.push(void 0);
+                        }
+                    }
+                }
+                return _results;
+            };
+            return Handler;
+        }(require("paperclip/lib/paper/dom/decor/handlers/base.js"));
+        module.exports = Handler;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/dom/decor/handlers/base.js", function(require, module, exports, __dirname, __filename) {
+        var Handler;
+        Handler = function() {
+            function Handler(script, clip, element) {
+                this.script = script;
+                this.clip = clip;
+                this.element = element;
+            }
+            Handler.prototype.init = function() {
+                if (this.watch !== false) {
+                    return this.script.watch();
+                }
+            };
+            return Handler;
+        }();
+        module.exports = Handler;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/dom/decor/handlers/show.js", function(require, module, exports, __dirname, __filename) {
+        var Handler, _ref, __bind = function(fn, me) {
+            return function() {
+                return fn.apply(me, arguments);
+            };
+        }, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        Handler = function(_super) {
+            __extends(Handler, _super);
+            function Handler() {
+                this._show = __bind(this._show, this);
+                _ref = Handler.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            Handler.prototype.init = function() {
+                Handler.__super__.init.call(this);
+                this.$element = $(this.element);
+                this.clip.bind("show").to(this._show);
+                return this._show(this.clip.get("show"));
+            };
+            Handler.prototype._show = function(value) {
+                return this.$element.css({
+                    display: value ? "block" : "none"
+                });
+            };
+            return Handler;
+        }(require("paperclip/lib/paper/dom/decor/handlers/base.js"));
+        module.exports = Handler;
+        return module.exports;
+    });
     define("paperclip/lib/paper/dom/decor/handlers/each.js", function(require, module, exports, __dirname, __filename) {
         var Element, Handler, bindable, _ref, __bind = function(fn, me) {
             return function() {
@@ -4873,25 +5003,7 @@
         module.exports = Handler;
         return module.exports;
     });
-    define("paperclip/lib/paper/dom/decor/handlers/base.js", function(require, module, exports, __dirname, __filename) {
-        var Handler;
-        Handler = function() {
-            function Handler(script, clip, element) {
-                this.script = script;
-                this.clip = clip;
-                this.element = element;
-            }
-            Handler.prototype.init = function() {
-                if (this.watch !== false) {
-                    return this.script.watch();
-                }
-            };
-            return Handler;
-        }();
-        module.exports = Handler;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/dom/decor/handlers/show.js", function(require, module, exports, __dirname, __filename) {
+    define("paperclip/lib/paper/dom/decor/handlers/style.js", function(require, module, exports, __dirname, __filename) {
         var Handler, _ref, __bind = function(fn, me) {
             return function() {
                 return fn.apply(me, arguments);
@@ -4911,20 +5023,30 @@
         Handler = function(_super) {
             __extends(Handler, _super);
             function Handler() {
-                this._show = __bind(this._show, this);
+                this._updateStyle = __bind(this._updateStyle, this);
                 _ref = Handler.__super__.constructor.apply(this, arguments);
                 return _ref;
             }
             Handler.prototype.init = function() {
                 Handler.__super__.init.call(this);
+                this._currentStyles = {};
                 this.$element = $(this.element);
-                this.clip.bind("show").to(this._show);
-                return this._show(this.clip.get("show"));
+                return this.clip.bind("style").to(this._updateStyle);
             };
-            Handler.prototype._show = function(value) {
-                return this.$element.css({
-                    display: value ? "block" : "none"
-                });
+            Handler.prototype._updateStyle = function(styles) {
+                var hasNew, name, newStyles, style;
+                newStyles = {};
+                hasNew = false;
+                for (name in styles) {
+                    style = styles[name];
+                    if (style !== this._currentStyles[name]) {
+                        newStyles[name] = this._currentStyles[name] = style;
+                        hasNew = true;
+                    }
+                }
+                if (hasNew) {
+                    return this.$element.css(newStyles);
+                }
             };
             return Handler;
         }(require("paperclip/lib/paper/dom/decor/handlers/base.js"));

@@ -3,31 +3,17 @@
     <script type="text/javascript" src="/js/paperclip.js"></script>
     <script type="text/javascript" src="/js/jquery-1.9.1.js"></script>
 
-    <style type="text/css">
-      .black {
-        color: #000;
-      }
-      .red {
-        color: red;
-      }
-      .yellow {
-        color: yellow;
-      }
-      .green {
-        color: green;
-      }
-    </style>
   </head>
   <body>
     <div id="application">
-        <h1 data-bind="css:{red: count > 0, yellow: count > 10, green: count > 20, black: count == 0}">
+        <h1 data-bind="style:{color: count < 10 ? 'red' : 'green' }">
           T Minus {{count}}
         </h1>
     </div>
 
     <script type="text/javascript">
       pc = paperclip();
-      bindable = new paperclip.bindable.Object({ count: 30 });
+      bindable = new paperclip.bindable.Object({ count: 15 });
 
       setInterval(function() {
         bindable.set("count", Math.max(0, bindable.get("count") - 1))

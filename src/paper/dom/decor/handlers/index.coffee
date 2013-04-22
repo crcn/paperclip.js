@@ -1,10 +1,11 @@
-module.exports = {
-  each: require("./each"),
-  click: require("./click"),
-  enter: require("./enter"),
-  value: require("./value"),
-  base: require("./base"),
-  show: require("./show"),
-  disable: require("./disable")
-  checked: require("./checked")
-}
+module.exports = 
+  css     : require("./css")
+  base    : require("./base")
+  show    : require("./show")
+  each    : require("./each")
+  click   : require("./click")
+  enter   : require("./enter")
+  value   : require("./value")
+  style   : require("./style")
+  disable : require("./disable")
+  checked : require("./checked")
