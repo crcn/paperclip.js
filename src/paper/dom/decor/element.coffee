@@ -15,22 +15,16 @@ class AttributeBinding
 
   init: () ->
     @_renderer.bind("text").to @_change
-    $(@element).bind "mouseup keydown keyup change", @_elementChange
 
   ###
   ###
 
   _change: (value) =>
-    @attribute.value = @currentValue = value
-
-  ###
-  ###
-
-  _elementChange: (event) =>
     if @name is "value"
-      value = @element.value
+      @element.value = value
     else
-      value = @attribute.value
+      $(@element).attr(@name, @currentValue = value)
+
 
 
 class Decorator
@@ -52,7 +46,7 @@ class Decorator
 
   ###
   ###
-  
+
   @test: (element) ->
     for attr in element.attributes
       return true if !!~String(attr.value).indexOf "{{"

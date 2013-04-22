@@ -5,10 +5,10 @@
   </head>
   <body>
     <div id="application">
-        Name: <input type="text" data-bind="value:name;bothWays:true"></input>
+        Name: <input type="text" name="test" data-bind="value:name;bothWays:true"></input>
         Last: <input type="text" data-bind="value:last;bothWays:true"></input>
         Age: <input type="text" data-bind="value:age;bothWays:true"></input>
-        <input type="text" value="{{name}}"></input>
+        <input name="test2" type="text" value="{{name}}"></input>
 
         <h1>First Name: {{name}}</h1>
         <h1>Last Name: {{last}}</h1>
