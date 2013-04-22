@@ -1,5 +1,5 @@
-Parser   = require "./parser"
-Clip     = require "../../clip"
+Parser   = require "../translate/template/parser"
+Clip     = require "../clip"
 events   = require "events"
 bindable = require "bindable"
 

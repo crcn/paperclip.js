@@ -2,4 +2,4 @@
 exports.DOM      = require "./dom"
 
 # parses templates ~ hello {{name}} {{last}}!
-exports.Template = require "../translate/template"
+exports.Template = require "./template"

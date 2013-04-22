@@ -1,4 +1,4 @@
-Template = require "../../../translate/template"
+Template = require "../../template"
 
 class Decorator
   

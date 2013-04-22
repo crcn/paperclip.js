@@ -1,5 +1,5 @@
 Clip     = require "../../../clip"
-Template = require "../../../translate/template"
+Template = require "../../template"
 handlers = require "./handlers"
 
 
