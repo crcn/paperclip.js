@@ -52,7 +52,7 @@ class Parser extends BaseParser
     while (c = @_currentCode()) isnt TokenCodes.RM and c
 
       # don't parse embedded templates, just skip them
-      if c is TokenCodes.LM
+      if c is TokenCodes.LM 
         buffer.push "{{", @_parseBlock().value, "}}"
       else
         buffer.push @_currentString()
