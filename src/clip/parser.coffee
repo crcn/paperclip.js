@@ -33,6 +33,7 @@ class Parser extends BaseParser
   ###
 
   _parse: () ->
+
     switch @_nextCode()
       when TokenCodes.VAR then return @_parseActionsOrOptions()
       when TokenCodes.LB then return @_parseMultiOptions()
@@ -82,7 +83,7 @@ class Parser extends BaseParser
 
 
     while c and (c = @_currentCode()) isnt TokenCodes.RB
-
+    
       @_nextCode()
 
       ops = { name: @_currentString() }

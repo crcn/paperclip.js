@@ -15,6 +15,18 @@ class OptionsExpression extends base.Expression
     @addChild items
 
 
+  toString: () ->
+    buffer = ["{"]
+    params = []
+
+
+    for item in @items
+      params.push "'#{item.name}':#{item.expression}"
+
+    buffer.push params.join(","), "}"
+
+    buffer.join ""
+
 
 
 module.exports = OptionsExpression

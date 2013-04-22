@@ -196,5 +196,27 @@ describe("clip", function() {
     clip.data.set("name", "blah!");
     expect(clip.data.get("name2")).to.be("blah! world!")
     expect(clip.data.get("name3")).to.be("blah! world!");
-  })
+  });
+
+
+  it("can bind to an object", function() {
+    var clip = new Clip({
+      data: { name: {first:"craig",last:"condon"} },
+      script: compile("{name:{first:name.first,last:name.last}}")
+    });
+
+    expect(clip.get("value").name.first).to.be("craig");
+    expect(clip.get("value").name.last).to.be("condon");
+    clip.data.set("name.last", "blah");
+    expect(clip.get("value").name.last).to.be("blah");
+    clip.data.set("name", {first:"a", last:"b"});
+    expect(clip.get("value").name.first).to.be("a");
+    expect(clip.get("value").name.last).to.be("b");
+    clip.data.set("name", {first:"c" });
+    expect(clip.get("value").name.first).to.be("c");
+    expect(clip.get("value").name.last).to.be(undefined);
+
+
+
+  });
 })

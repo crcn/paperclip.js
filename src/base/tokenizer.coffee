@@ -1,6 +1,5 @@
 strscan = require "strscanner"
 
-
 ###
 
 1. check if word. If word, then eval until /}|,/
@@ -10,7 +9,6 @@ value = parse("name")
 
 class Tokenizer
   
-
   ###
   ###
 
@@ -27,7 +25,6 @@ class Tokenizer
     @putBack()
     @current = c
     next
-
 
   ###
   ###
@@ -54,10 +51,11 @@ class Tokenizer
     # next, or other
     @_next() or @_t(-1, @_s.cchar())
 
+  ###
+  ###
+  
   _next: () ->
     # OVERRIDE ME!
-
-
 
   ###
   ###

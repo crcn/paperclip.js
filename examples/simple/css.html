@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <script type="text/javascript" src="/js/paperclip.js"></script>
+    <script type="text/javascript" src="/js/jquery-1.9.1.js"></script>
+
+    <style type="text/css">
+      .yellow {
+        color: yellow;
+      }
+      .green {
+        color: green;
+      }
+      .red {
+        color: red;
+      }
+      .black {
+        color: #000;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div id="application">
+        <h1 data-bind="css:{green: count > 20, yellow: count > 10, red: count > 0, black: count == 0}">
+          T Minus {{count}}
+        </h1>
+    </div>
+
+    <script type="text/javascript">
+      pc = paperclip();
+      bindable = new paperclip.bindable.Object({ count: 30 });
+
+      setTimeout(function() {
+        bindable.set("count", Math.min(0, bindable.get("count") - 1))
+      }, 500);
+
+      pc.attach(bindable, $("#application"));
+    </script>
+  </body>
+</html>

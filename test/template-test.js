@@ -4,6 +4,7 @@ expect = require("expect.js");
 
 describe("template", function() {
   
+  
   it("it can parse a simple template", function() {
     var template = new Template("hello {{name}}, you are {{age}} years old!"),
     obj;

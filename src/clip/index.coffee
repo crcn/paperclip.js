@@ -166,10 +166,10 @@ class ClipScript extends events.EventEmitter
     @currentRefs = []
     ret
 
-  castAs: (name) -> new PropertyChain(@).castAs name
   ref: (path) -> new PropertyChain(@).ref path
   self: (path) -> new PropertyChain(@).self path
   call: (path, args) -> new PropertyChain(@).call path, args
+  castAs: (name) -> new PropertyChain(@).castAs name
 
   ###
   ###

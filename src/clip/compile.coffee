@@ -15,7 +15,7 @@ class Compiler
     expression = @_parser.parse source
     scripts = {}
 
-    return @_getScript(expression) if expression._type is "script"
+    return @_getScript(expression) if expression._type isnt "actions"
 
     for script in expression.items
       scripts[script.name] = @_getScript script.options
