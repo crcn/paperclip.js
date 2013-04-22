@@ -7,10 +7,9 @@ JsExpression         = require "./expressions/js"
 RefExpression        = require "./expressions/ref"
 GroupExpression      = require "./expressions/group"
 ParamsExpression     = require "./expressions/params"
-ScriptExpression     = require "./expressions/script"
-ActionExpression     = require "./expressions/action"
 StringExpression     = require "./expressions/string"
-ActionsExpression    = require "./expressions/actions"
+ScriptExpression     = require "./expressions/script"
+ScriptsExpression    = require "./expressions/scripts"
 OptionsExpression    = require "./expressions/options"
 RefPathExpression    = require "./expressions/refPath"
 ModifierExpression   = require "./expressions/modifier"
@@ -33,11 +32,8 @@ class Parser extends BaseParser
   ###
 
   _parse: () ->
-
-    switch @_nextCode()
-      when TokenCodes.VAR then return @_parseActionsOrOptions()
-      when TokenCodes.LB then return @_parseMultiOptions()
-      else @_parseReference()
+    @_nextCode()
+    @_parseActionsOrOptions()
 
   ###
   ###
@@ -47,7 +43,7 @@ class Parser extends BaseParser
 
     # not a colon? actions aren't provided
     if not (pn = @_t.peekNext()) or pn[0] isnt TokenCodes.COLON
-      return @_parseActionOptions()
+      return new ScriptExpression undefined, @_parseActionOptions()
 
 
     while @_t.current
@@ -55,7 +51,7 @@ class Parser extends BaseParser
       if @_currentCode() is TokenCodes.SEMI_COLON
         @_nextCode()
     
-    new ActionsExpression actions
+    new ScriptsExpression actions
 
   ###
   ###
@@ -64,7 +60,7 @@ class Parser extends BaseParser
     name = @_currentString()
     @_expectNextCode TokenCodes.COLON
     @_nextCode()
-    new ActionExpression name, @_parseActionOptions()
+    new ScriptExpression name, @_parseActionOptions()
 
   ###
   ###
@@ -105,7 +101,7 @@ class Parser extends BaseParser
   _parseReference: () ->
 
     # references to watch
-    expressions    = []
+    expressions   = []
     modifiers     = []
 
 
@@ -149,7 +145,7 @@ class Parser extends BaseParser
     if @_currentCode() is TokenCodes.SEMI_COLON
       @_nextCode()
 
-    new ScriptExpression new CollectionExpression(expressions)
+    new CollectionExpression(expressions)
 
   ###
    filter item.name > 5, test;
@@ -226,4 +222,4 @@ class Parser extends BaseParser
 
     new RefPathExpression refs, castAs, assign
 
-module.exports = Parser
+module.exports = new Parser()

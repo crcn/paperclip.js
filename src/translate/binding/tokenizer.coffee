@@ -68,28 +68,8 @@ class Tokenizer extends BaseTokenizer
       return @_t Codes.VAR, word
 
     # string?
-    else if ccode is 39 or ccode is 34
-
-      @_s.skipWhitespace false
-
-      buffer = []
-      while ((c = @_s.nextChar()) and not @_s.eof())
-
-
-        cscode = @_s.ccode()
-
-        # skip the next char if escaped (\)
-        if cscode is 92 
-          buffer.push @_s.nextChar()
-          continue
-
-        if cscode is ccode
-          break
-
-        buffer.push c
-
-      @_s.skipWhitespace true
-      return @_t Codes.STRING, buffer.join("")
+    else if (t = @_tstring(Codes.STRING))
+      return t
 
     else if @_s.is09()
       return @_t Codes.NUMBER, @_s.nextNumber()

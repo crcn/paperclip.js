@@ -5,7 +5,7 @@ class ActionsExpression extends CollectionExpression
   ###
   ###
 
-  _type: "actions"
+  _type: "scripts"
 
   ###
   ###
@@ -18,15 +18,14 @@ class ActionsExpression extends CollectionExpression
   ###
   
   toString: () ->
-    buffer  = ["["]
-    actions = []
+    buffer = ["{"]
+    params = []
 
     for action in @actions
-      actions.push action.toString()
+      params.push "'#{action.name}': #{action.toString()}"
 
-    buffer.push actions.join ","
+    buffer.push params.join(","), "}"
 
-    buffer.push "]"
 
     buffer.join ""
 

@@ -1,4 +1,4 @@
-Parser = require "../translate/binding/parser"
+parser = require "../translate/binding/parser"
 
 class Compiler
 
@@ -6,7 +6,7 @@ class Compiler
   ###
 
   constructor: () ->
-    @_parser = new Parser()
+    @_parser = parser
 
   ###
   ###
@@ -14,21 +14,9 @@ class Compiler
   compile: (source) ->
     expression = @_parser.parse source
     scripts = {}
+    fn = new Function(" return " + String(expression))
+    fn.call()
 
-    return @_getScript(expression) if expression._type isnt "actions"
-
-    for script in expression.items
-      scripts[script.name] = @_getScript script.options
-    scripts
-
-  ###
-  ###
-
-  _getScript: (expression, source) -> 
-    fn = new Function "return #{expression}"
-    fn.expression = expression
-    fn.source = source
-    fn
 
 
 compiler = new Compiler()

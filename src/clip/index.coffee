@@ -1,7 +1,6 @@
 dref             = require "dref"
 events           = require "events"
 bindable         = require "bindable"
-findRefs         = require "./utils/findRefs"
 defaultModifiers = require "./modifiers"
 
 ###
@@ -130,7 +129,7 @@ class ClipScript extends events.EventEmitter
   ###
 
   update: () =>
-    newValue = @script.call @
+    newValue = @script.fn.call @
     return newValue if newValue is @value
     @emit "change", @value = newValue
     newValue
@@ -148,23 +147,10 @@ class ClipScript extends events.EventEmitter
 
   references: () ->  
     # will happen with inline bindings
-    return [] if not @script.expression 
-    findRefs @script.expression
-
+    return [] if not @script.refs 
 
   ###
   ###
-
-  modify: (modifier, args) ->
-    @currentRefs = args.filter (arg) -> arg.__isPropertyChain
-    ret = modifier.apply @, args.map (arg) ->
-      if arg.__isPropertyChain 
-        arg.value()
-      else
-        arg
-
-    @currentRefs = []
-    ret
 
   ref: (path) -> new PropertyChain(@).ref path
   self: (path) -> new PropertyChain(@).self path
@@ -235,7 +221,7 @@ class ClipScripts
   ###
 
   _bindScripts: (scripts) ->
-    if typeof scripts is "function"
+    if scripts.fn
       @_bindScript "value", scripts
     else
       for scriptName of scripts
@@ -267,6 +253,7 @@ class Clip
     @data = new bindable.Object options.data  or {}
     @modifiers = options.modifiers or {}
     scripts = @options.scripts or @options.script
+
 
     if scripts
       @scripts = new ClipScripts @, scripts

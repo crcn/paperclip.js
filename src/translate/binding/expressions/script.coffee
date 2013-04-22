@@ -1,6 +1,19 @@
 base = require "../../base/expression"
+_    = require "underscore"
 
-class ScriptExpression extends base.Expression
+findRefs = (expr, refs = []) ->
+  
+  if expr._type is "refPath"
+    refs.push expr
+
+
+  for child in expr._children?
+    findRefs child, refs
+
+  refs
+
+
+class ActionExpression extends base.Expression
   
   ###
   ###
@@ -10,14 +23,17 @@ class ScriptExpression extends base.Expression
   ###
   ###
 
-  constructor: (@expressions) ->
+  constructor: (@name, @options) ->
     super()
-    @addChild @expressions
 
   ###
   ###
 
-  toString: () ->
-    @expressions.toString()
+  toString: () -> 
+    refs      = _.uniq findRefs(@options).map((ref) -> "'" + (ref.toPathString()) + "'" )
+    refBuffer = ["[", refs.join(","), "]"].join("")
 
-module.exports = ScriptExpression
+    "{ fn: function(){ return #{@options.toString()} }, refs: #{refBuffer} }"
+
+
+module.exports = ActionExpression

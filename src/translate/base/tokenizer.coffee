@@ -53,6 +53,37 @@ class Tokenizer
 
   ###
   ###
+
+  _tstring: (code) ->
+    ccode = @_s.ccode()
+    if ccode is 39 or ccode is 34
+
+      skip = @_s.skipWhitespace()
+      @_s.skipWhitespace false
+
+      buffer = []
+      while ((c = @_s.nextChar()) and not @_s.eof())
+
+
+        cscode = @_s.ccode()
+
+        # skip the next char if escaped (\)
+        if cscode is 92 
+          buffer.push @_s.nextChar()
+          continue
+
+        if cscode is ccode
+          break
+
+        buffer.push c
+
+      @_s.skipWhitespace skip
+      return @_t code, buffer.join("")
+
+    return false
+
+  ###
+  ###
   
   _next: () ->
     # OVERRIDE ME!

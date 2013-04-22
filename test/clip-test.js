@@ -4,7 +4,6 @@ Clip = pc.Clip,
 compile = Clip.compile;
 
 describe("clip", function() {
-
   
   it("can bind to a single value", function() {
     var clip = new Clip({

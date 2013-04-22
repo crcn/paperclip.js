@@ -1,4 +1,3 @@
-
 BaseTokenizer = require "../base/tokenizer"
 
 class Codes
