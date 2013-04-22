@@ -7,7 +7,14 @@ Basically, templates would be generated on the backend, and served to the front-
 
     <!-- note - if 'include' is a referenct to an object, then it will be dynamically loaded, 
     otherwise the secion processor will load the template when it's compiled -->
-    {{section:{name:'person',include:'/person.html',model:person}}}
+    {{ 
+        section: {
+          name    : 'person',
+          model   : person,
+          include : '/person.html'
+        }
+    }}
+
   {{/}}
 
 </div>
@@ -38,7 +45,7 @@ var el = element("div").
           model(function(){ return this.ref("person"); }).
           element("div").
           children(
-            text().push("Hello World!")
+            text().push("Hello World!")te
           )
       )
     )
