@@ -6,7 +6,7 @@ all:
 
 
 browser:
-	sardines ./lib/index.js -o ./build/paperclip.js
+	sardines ./lib/index.js -o ./build/paperclip.js -p browser
 
 min:
 	closure-compiler --js ./build/paperclip.js --js_output_file ./build/paperclip.min.js
