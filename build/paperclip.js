@@ -1356,7 +1356,7 @@
         return module.exports;
     });
     define("paperclip/lib/translate/binding/parser.js", function(require, module, exports, __dirname, __filename) {
-        var BaseParser, CollectionExpression, FnExpression, GroupExpression, JsExpression, ModifierExpression, OptionsExpression, ParamsExpression, Parser, RefExpression, RefPathExpression, ScriptExpression, ScriptsExpression, StringExpression, TokenCodes, Tokenizer, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+        var BaseParser, CollectionExpression, FnExpression, GroupExpression, JsExpression, ModifierExpression, OptionExpression, OptionsExpression, ParamsExpression, Parser, RefExpression, RefPathExpression, ScriptExpression, ScriptsExpression, StringExpression, TokenCodes, Tokenizer, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
             for (var key in parent) {
                 if (__hasProp.call(parent, key)) child[key] = parent[key];
             }
@@ -1378,6 +1378,7 @@
         ParamsExpression = require("paperclip/lib/translate/binding/expressions/params.js");
         StringExpression = require("paperclip/lib/translate/binding/expressions/string.js");
         ScriptExpression = require("paperclip/lib/translate/binding/expressions/script.js");
+        OptionExpression = require("paperclip/lib/translate/binding/expressions/option.js");
         ScriptsExpression = require("paperclip/lib/translate/binding/expressions/scripts.js");
         OptionsExpression = require("paperclip/lib/translate/binding/expressions/options.js");
         RefPathExpression = require("paperclip/lib/translate/binding/expressions/refPath.js");
@@ -1422,18 +1423,15 @@
                 }
             };
             Parser.prototype._parseMultiOptions = function() {
-                var c, ops, options;
+                var c, name, options;
                 c = this._currentCode();
                 options = [];
                 while (c && (c = this._currentCode()) !== TokenCodes.RB) {
                     this._nextCode();
-                    ops = {
-                        name: this._currentString()
-                    };
+                    name = this._currentString();
                     this._expectNextCode(TokenCodes.COLON);
                     this._nextCode();
-                    ops.expression = this._parseActionOptions();
-                    options.push(ops);
+                    options.push(new OptionExpression(name, this._parseActionOptions()));
                 }
                 this._nextCode();
                 return new OptionsExpression(options);
@@ -2475,7 +2473,7 @@
             if (expr._type === "refPath") {
                 refs.push(expr);
             }
-            _ref = expr._children != null;
+            _ref = expr._children;
             for (_i = 0, _len = _ref.length; _i < _len; _i++) {
                 child = _ref[_i];
                 findRefs(child, refs);
@@ -2501,6 +2499,37 @@
             return ActionExpression;
         }(base.Expression);
         module.exports = ActionExpression;
+        return module.exports;
+    });
+    define("paperclip/lib/translate/binding/expressions/option.js", function(require, module, exports, __dirname, __filename) {
+        var OptionExpression, base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        base = require("paperclip/lib/translate/base/expression.js");
+        OptionExpression = function(_super) {
+            __extends(OptionExpression, _super);
+            OptionExpression.prototype._type = "option";
+            function OptionExpression(name, expression) {
+                this.name = name;
+                this.expression = expression;
+                OptionExpression.__super__.constructor.call(this);
+                this.addChild(expression);
+            }
+            OptionExpression.prototype.toString = function() {
+                return "'" + this.name + "':" + this.expression;
+            };
+            return OptionExpression;
+        }(base.Expression);
+        module.exports = OptionExpression;
         return module.exports;
     });
     define("paperclip/lib/translate/binding/expressions/scripts.js", function(require, module, exports, __dirname, __filename) {
@@ -2561,19 +2590,10 @@
             function OptionsExpression(items) {
                 this.items = items;
                 OptionsExpression.__super__.constructor.call(this);
-                this.addChild(items);
+                this.addChild.apply(this, items);
             }
             OptionsExpression.prototype.toString = function() {
-                var buffer, item, params, _i, _len, _ref;
-                buffer = [ "{" ];
-                params = [];
-                _ref = this.items;
-                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                    item = _ref[_i];
-                    params.push("'" + item.name + "':" + item.expression);
-                }
-                buffer.push(params.join(","), "}");
-                return buffer.join("");
+                return "{" + this.items.join(",") + "}";
             };
             return OptionsExpression;
         }(base.Expression);
