@@ -1,4 +1,4 @@
-Parser = require "./parser"
+Parser = require "../translate/binding/parser"
 
 class Compiler
 

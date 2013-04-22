@@ -1,4 +1,4 @@
-Template = require "../../template"
+Template = require "../../../translate/template"
 
 class Decorator
   
@@ -27,7 +27,7 @@ class Decorator
 
   ###
   ###
-  
+
   @test: (element) -> !!~element.nodeValue.indexOf "{{"
 
 

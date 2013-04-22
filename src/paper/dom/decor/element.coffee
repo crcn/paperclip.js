@@ -1,4 +1,4 @@
-Template = require "../../template"
+Template = require "../../../translate/template"
 
 class AttributeBinding
   

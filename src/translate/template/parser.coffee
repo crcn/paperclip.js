@@ -1,6 +1,6 @@
 Tokenizer  = require "./tokenizer"
 TokenCodes = Tokenizer.Codes
-BaseParser = require "../../base/parser"
+BaseParser = require "../base/parser"
 
 BlockExpression      = require "./expressions/block"
 StringExpression     = require "./expressions/string"

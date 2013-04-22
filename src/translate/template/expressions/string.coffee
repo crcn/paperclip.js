@@ -1,4 +1,4 @@
-base = require "../../../base/expression"
+base = require "../../base/expression"
 
 class Expression extends base.Expression
   _type       : "string"

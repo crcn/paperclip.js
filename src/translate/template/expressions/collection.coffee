@@ -1,4 +1,4 @@
-CollectionExpression = require "../../../base/collectionExpression"
+CollectionExpression = require "../../base/collectionExpression"
 
 class Expression extends CollectionExpression
   

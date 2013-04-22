@@ -1,4 +1,4 @@
-base = require "../../../base/expression"
+base = require "../../base/expression"
 Clip = require "../../../clip"
 
 class Expression extends base.Expression

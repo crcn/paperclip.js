@@ -1,5 +1,5 @@
 base      = require "../../base/expression"
-modifiers = require "../modifiers"
+modifiers = require "../../../clip/modifiers"
 
 class ModifierExpression extends base.Expression
   

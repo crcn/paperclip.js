@@ -1,5 +1,5 @@
 
-BaseTokenizer = require "../../base/tokenizer"
+BaseTokenizer = require "../base/tokenizer"
 
 class Codes
   @OTHER  = -1

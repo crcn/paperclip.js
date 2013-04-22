@@ -1,4 +1,4 @@
-BaseTokenizer = require("../base/tokenizer")
+BaseTokenizer = require "../base/tokenizer"
 
 class Codes
 
