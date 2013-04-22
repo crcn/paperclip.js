@@ -9,6 +9,7 @@ GroupExpression      = require "./expressions/group"
 ParamsExpression     = require "./expressions/params"
 StringExpression     = require "./expressions/string"
 ScriptExpression     = require "./expressions/script"
+OptionExpression     = require "./expressions/option"
 ScriptsExpression    = require "./expressions/scripts"
 OptionsExpression    = require "./expressions/options"
 RefPathExpression    = require "./expressions/refPath"
@@ -82,13 +83,12 @@ class Parser extends BaseParser
     
       @_nextCode()
 
-      ops = { name: @_currentString() }
+      name = @_currentString()
 
       @_expectNextCode TokenCodes.COLON
 
       @_nextCode()
-      ops.expression = @_parseActionOptions()
-      options.push ops
+      options.push new OptionExpression name, @_parseActionOptions()
 
     # get rid of RP
     @_nextCode()

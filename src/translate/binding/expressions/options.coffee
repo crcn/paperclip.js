@@ -12,20 +12,10 @@ class OptionsExpression extends base.Expression
 
   constructor: (@items) ->
     super()
-    @addChild items
+    @addChild items...
 
 
-  toString: () ->
-    buffer = ["{"]
-    params = []
-
-
-    for item in @items
-      params.push "'#{item.name}':#{item.expression}"
-
-    buffer.push params.join(","), "}"
-
-    buffer.join ""
+  toString: () -> "{#{@items.join(",")}}"
 
 
 

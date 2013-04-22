@@ -2,12 +2,11 @@ base = require "../../base/expression"
 _    = require "underscore"
 
 findRefs = (expr, refs = []) ->
-  
+    
   if expr._type is "refPath"
     refs.push expr
 
-
-  for child in expr._children?
+  for child in expr._children
     findRefs child, refs
 
   refs
