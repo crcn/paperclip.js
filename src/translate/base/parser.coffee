@@ -39,6 +39,11 @@ class Parser
   ###
   ###
 
+  _nextString: () -> @_t.next()?[1]
+
+  ###
+  ###
+
   _currentCode: () -> @_t.current?[0]
 
   ###

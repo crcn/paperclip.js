@@ -9,16 +9,24 @@ BaseTokenizer = require "../base/tokenizer"
 class Codes
 
   @OTHER   = -1
-  @WORD    =  0 
-  @STAG    =  @WORD   + 1 # <
-  @ETAG    =  @STAG   + 1 # </ or />
-  @EQ      =  @ETAG   + 1 # ''
-  @STRING  =  @EQ     + 1 # 
-  @LM      =  @STRING + 1 # {{
-  @RM      =  @LM     + 1 # }}
-  @BLOCK   =  @RM     + 1 
-  @CHAR    =  @BLOCK  + 1
-  @COMMENT =  @CHAR   + 1
+  @WORD    =  2
+  @LT      =  @WORD    << 1 # <
+  @GT      =  @LT      << 1 # >
+  @ETNC    =  @GT      << 1 # />
+  @BS      =  @ETNC    << 1 # /
+  @EQ      =  @BS      << 1 # ''
+  @STRING  =  @EQ      << 1 # 
+  @LM      =  @STRING  << 1 # {{
+  @RM      =  @LM      << 1 # }}
+  @EBLOCK  =  @RM      << 1 # }}
+  @QUOTE   =  @EBLOCK  << 1 # {{/}}
+  @ETAG    =  @QUOTE   << 1 # </tag>
+  @BLOCK   =  @ETAG    << 1 
+  @CHAR    =  @BLOCK   << 1
+  @COMMENT =  @CHAR    << 1
+  @HASH    =  @COMMENT << 1 # #
+  @WS      =  @HASH    << 1 # #
+
 
 
 
@@ -42,41 +50,53 @@ class Tokenizer extends BaseTokenizer
 
   _next: () ->
 
+
     if @_s.isAZ()
-      return @_t Codes.WORD, @_s.next /[a-zA-Z0-9]+/
+      return @_t Codes.WORD, @_s.next /[$_\-a-zA-Z0-9]+/
 
     if (cchar = @_s.cchar()) is "<"
 
       if @_s.peek(4) is "<!--"
         @_s.skip(4)
-        buffer = []
         while (cchar = @_s.cchar()) and cchar
           if cchar is "-"
             if @_s.peek(3) is "-->"
               @_s.skip(3)
               break
 
-          console.log cchar
-          buffer.push cchar
           @_s.nextChar()
 
-        return @_t Codes.COMMENT, buffer.join ""
-      else if @_s.peek(2) is "</"
-        @_s.skip(1)
-        return @_t Codes.ETAG, "</"
+        # skip
+        return @_next()
+      else  
+
+        if @_s.peek(2) is "</"
+          word = @_s.next /[a-zA-Z0-9]+/
+          @_s.skip(1)
+          return @_t Codes.ETAG, word
+
+        return @_t Codes.LT, "<"
 
     else if cchar is "/"
       if @_s.peek(2) is "/>"
         @_s.skip(1)
-        return @_t Codes.ETAG, "/>"
+        return @_t Codes.ETNC, "/>"
+
+      return @_t Codes.BS, "/"
 
     else if cchar is ">"
-      return @_t Codes.ETAG, ">"
+      return @_t Codes.GT, ">"
 
-    else if (t = @_tstring(Codes.STRING))
-      return t
+
+    else if @_s.isWs()
+      @_s.next /[\s\r\n\t]+/
+      return @_t Codes.WS, " "
 
     else if cchar is "{"
+      if @_s.peek(5) is "{{/}}"
+        @_s.skip(5)
+        return @_t Codes.EBLOCK, "{{/}}"
+
       if @_s.peek(2) is "{{"
         @_s.nextChar()
         return @_t Codes.LM, "{{"
@@ -85,6 +105,15 @@ class Tokenizer extends BaseTokenizer
       if @_s.peek(2) is "}}"
         @_s.nextChar()
         return @_t Codes.RM, "}}"
+
+    else if cchar is "="
+      return @_t Codes.EQ, "="
+
+    else if cchar is "\""
+      return @_t Codes.QUOTE, "\""
+
+    else if cchar is "#"
+      return @_t Codes.HASH, "#"
 
 
     return @_t Codes.CHAR, @_s.cchar()
