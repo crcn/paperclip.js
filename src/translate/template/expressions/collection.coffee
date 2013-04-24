@@ -1,12 +1,5 @@
-CollectionExpression = require "../../base/collectionExpression"
-
-class Expression extends CollectionExpression
+class Expression extends require("../../base/collectionExpression")
   
-  toString: () ->
-    command = ["this"]
-    for item in @items
-      command.push item.toString()
-
-    command.join(".")
+  toString: () -> "[#{@items.join(',')}]"
 
 module.exports = Expression

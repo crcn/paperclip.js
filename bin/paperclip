@@ -1,0 +1,29 @@
+#!/usr/bin/env node
+var argv = require('optimist').
+usage('Usage: $0 -i [paperclip_template_file] -o [js_file]').
+demand(['i','o']).
+alias('i', 'input').
+alias('o', 'output').
+describe('p', 'pretty-print template output').
+describe('i', 'paperclip template source').
+describe('o', 'paperclip template output (js file)').
+argv,
+path = require("path"),
+parser = require("../lib/translate/template/parser"),
+formatter = require("../lib/translate/template/formatter"),
+fs = require("fs");
+
+
+
+function _path(value) {
+  return value.substr(0, 1) == "." ? path.join(process.cwd(), value) : value;
+}
+
+
+var tpl = parser.parse(fs.readFileSync(_path(argv.i), "utf8"));
+
+if(argv.p) {
+  tpl = formatter.format(tpl);
+}
+
+fs.writeFileSync(_path(argv.o), tpl, "utf8");

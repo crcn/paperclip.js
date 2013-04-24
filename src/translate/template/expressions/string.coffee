@@ -1,8 +1,17 @@
-base = require "../../base/expression"
+class StringExpression extends require("./base")
+    
+  _type: "string"
+  
+  ###
+  ###
 
-class Expression extends base.Expression
-  _type       : "string"
-  constructor : (@value) ->
-  toString    : () -> "push('#{@value.replace(/\'/g,"\\'").replace(/\n/g,"\\n")}')"
+  constructor: (@value) ->
+    super()
 
-module.exports = Expression
+  ###
+  ###
+
+  toString: () -> "'#{@value.replace(/'/g,"\\'").replace(/\n/g, "\\n")}'"
+
+
+module.exports = StringExpression
