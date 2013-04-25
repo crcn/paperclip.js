@@ -1,19 +1,22 @@
 async = require("async")
 base  = require("./base")
+ClippedBuffer = require("../../clip/buffer")
 
 class AttributeBinding extends require("./base")
 
   ###
   ###
 
-  constructor: (@name, @buffer) ->
-    
+  constructor: (@name, buffer) ->
+    @clippedBuffer = new ClippedBuffer buffer
+
 
   ###
   ###
 
   write: (info, callback) ->
-    info.buffer.push " #{@name}=\"value\""
+    @clippedBuffer.data info.data
+    info.buffer.push " #{@name}=\"#{@clippedBuffer.text}\""
     callback()
 
 
