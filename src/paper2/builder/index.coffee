@@ -1,6 +1,5 @@
-Base           = require "./base"
 bindable       = require "bindable"
-Html           = require "./html"
+Html           = require "./nodes/html"
 
 class Builder
 

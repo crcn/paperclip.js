@@ -1,4 +1,4 @@
-Clip = require "../../clip"
+Clip = require "../../../clip"
 utils = require "./utils"
 
 class TextBinding extends require("./base")

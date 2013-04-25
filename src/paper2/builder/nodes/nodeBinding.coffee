@@ -1,5 +1,5 @@
 async = require("async")
-ClippedBuffer = require("../../clip/buffer")
+ClippedBuffer = require("../../../clip/buffer")
 Base = require "./base"
 utils = require "./utils"
 
@@ -45,7 +45,6 @@ class NodeBinding extends Base
 
     if options.children
       @addChild options.children
-
 
   ###
   ###

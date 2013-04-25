@@ -13,7 +13,7 @@ class Base
    binds element rep to this node
   ###
 
-  bind: (element) ->
+  bind: (@elements) ->
 
   ###
    writes HTML to the DOM
