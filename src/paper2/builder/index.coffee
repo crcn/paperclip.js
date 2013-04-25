@@ -1,59 +1,24 @@
 Base           = require "./base"
-async          = require "async"
-String         = require "./string"
 bindable       = require "bindable"
-NodeBinding    = require "./nodeBinding"
-TextBinding    = require "./textBinding"
-BlockBinding   = require "./blockBinding"
+Html           = require "./html"
 
-class Builder extends require("./base")
+class Builder
 
   ###
   ###
 
   constructor: (@factory) ->
-    super()
 
   ###
   ###
 
-  build: () -> 
-    @factory.call @
-    @
-
-
-
-  ### 
-   just an html buffer
-  ###
-
-  html: (content) -> 
-    @addChild new String content
-    @
+  build: () -> @factory.call @
 
   ###
-   Node which has a binding
   ###
 
-  nodeBinding: (name, options) -> 
-    @addChild new NodeBinding name, options
-    @
+  create: () -> new Html()
 
-  ###
-   binding with children
-  ###
-
-  blockBinding: (name, children) -> 
-    @addChild new BlockBinding name, children
-    @
-
-  ###
-    single-line text binding 
-  ###
-
-  textBinding: (binding) -> 
-    @addChild new TextBinding binding
-    @
 
 
 
@@ -61,5 +26,12 @@ module.exports = Builder
 
 b = new Builder require("../../../test")
 node = b.build()
-node.write { data: new bindable.Object({name:"craig"}), buffer: [] }, (err, content) ->
+
+# 1. Load the template initially
+# 2. map (scan DOM)
+# 3. find bindings
+
+node.write { data: new bindable.Object({ first: { name: "craig" } }), buffer: [] }, (err, content) ->
   console.log JSON.stringify content, null, 2
+
+

@@ -254,12 +254,15 @@ class Clip
     @modifiers = options.modifiers or {}
     scripts = @options.scripts or @options.script
 
-
     if scripts
       @scripts = new ClipScripts @, scripts
 
     if options.watch isnt false
       @watch()
+
+  reset: (data) ->
+    @data.reset data
+    @
 
   watch: () ->
     @scripts.watch()

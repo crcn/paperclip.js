@@ -1,4 +1,9 @@
-class String extends require("./base")
+class StringBuilder extends require("./base")
+    
+  ###
+  ###
+  
+  type: "string"
 
   ###
   ###
@@ -14,4 +19,11 @@ class String extends require("./base")
     info.buffer.push @_buffer
     callback()
 
-module.exports = String
+  ###
+  ###
+
+  clone: () -> new StringBuilder @_buffer
+
+
+
+module.exports = StringBuilder

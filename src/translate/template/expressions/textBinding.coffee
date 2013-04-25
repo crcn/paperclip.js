@@ -18,7 +18,7 @@ class TextBindingExpression extends require("./base")
   ###
   ###
 
-  toJsString: () -> "this.#{@toMethodString()}"
+  toJsString: () -> @binding
 
 
   ###

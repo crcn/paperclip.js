@@ -5,14 +5,14 @@ class Bindable extends require("./base")
   ###
   ###
 
-  _writeHead: (info, callback) ->
-    info.buffer.push "<!--sbnd:#{++pcid}-->"
+  _bindingStart: (info) ->
+    info.buffer.push "<!--sbnd:#{@_pcid = ++pcid}-->"
 
   ###
   ###
 
-  _writeTail: (info, callback) ->
-    info.buffer.push "<!--ebnd:#{++pcid}-->"
+  _bindingEnd: (info, callback) ->
+    info.buffer.push "<!--ebnd:#{@_pcid}-->"
 
 
 module.exports = Bindable

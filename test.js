@@ -1,14 +1,26 @@
 module.exports = function() {
-    return this.nodeBinding("div", {
+    return this.create().nodeBinding("div", {
         attrs: {
             id: [ "test" ],
-            "class": [ this.textBinding({
+            "class": [ "hello ", {
                 fn: function() {
-                    return this.ref("class").value();
+                    return this.ref("first.name").value();
                 },
-                refs: [ "class" ]
-            }) ]
+                refs: [ "first.name" ]
+            } ]
         },
-        children: this.html("hello! ")
+        children: this.create().blockBinding({
+            each: {
+                fn: function() {
+                    return this.ref("people").value();
+                },
+                refs: [ "people" ]
+            }
+        }, this.create().html("hello ").textBinding({
+            fn: function() {
+                return this.ref("first.name").value();
+            },
+            refs: [ "first.name" ]
+        }))
     });
 };

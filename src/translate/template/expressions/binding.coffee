@@ -24,6 +24,6 @@ class Binding extends require("./base")
   ###
   ###
 
-  toMethodString: () -> "blockBinding(#{@script}, this.html('#{@children.toString()}'))"
+  toMethodString: () -> "blockBinding(#{@script}, this.create().html('#{@children.toString()}'))"
 
 module.exports = Binding

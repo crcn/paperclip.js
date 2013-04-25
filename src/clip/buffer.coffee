@@ -1,4 +1,5 @@
 bindable = require "bindable"
+Clip = require "./index"
 
 ###
   watches for any changes in the template data
@@ -28,7 +29,7 @@ class ClippedBufferPart
   ###
 
   update: () ->
-    @clip.data = @clippedBuffer.data
+    @clip.reset @clippedBuffer._data
     @clip.update()
 
 
@@ -67,7 +68,7 @@ class ClippedBuffer extends bindable.Object
     @_data    = {}
 
     for bufferPart in buffer
-      if typeof bufferPart.fn
+      if bufferPart.fn
         @buffer.push binding = new ClippedBufferPart @, bufferPart
         @bindings.push binding
       else
@@ -76,7 +77,7 @@ class ClippedBuffer extends bindable.Object
   ###
   ###
 
-  data: (data = {}) ->
+  reset: (data = {}) ->
     @_data = data
     @update()
 

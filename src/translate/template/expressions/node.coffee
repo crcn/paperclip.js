@@ -10,7 +10,7 @@ class NodeExpression extends require("./base")
 
     if attributes
       @addChild @attributes
-      
+        
     if children
       @addChild @children
 
@@ -28,7 +28,7 @@ class NodeExpression extends require("./base")
       options.push " attrs: #{@attributes.toJsString()} "
 
     if @children
-      options.push " children: this.html('#{@children.toString()}') "
+      options.push " children: this.create().html('#{@children.toString()}') "
 
     if options.length
       buffer.push ", {#{options}}"

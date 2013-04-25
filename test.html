@@ -1,3 +1,5 @@
-<div id="test" class="{{class}}">
-  hello!
+<div id="test" class="hello {{first.name}}">
+  {{#each:people}}
+    hello {{first.name}}
+  {{/}}
 </div>

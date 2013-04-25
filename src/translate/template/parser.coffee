@@ -198,8 +198,6 @@ class Parser extends BaseParser
     @_nextCode()
 
     new BindingExpression script, new CollectionExpression children
-
-
     
   ###
   ###
