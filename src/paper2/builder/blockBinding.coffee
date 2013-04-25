@@ -23,10 +23,16 @@ class BlockBinding extends require("./bindable")
   ###
   ###
 
+  _writeChildren: (info, callback) ->
+    # TODO - wrap each child item in a comment tag (bindable)
+    callback()
+
+  ###
+  ###
+
   _writeTail: (info, callback) ->
     @_bindingEnd info
     callback()
-
 
   ###
   ###

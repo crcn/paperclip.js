@@ -17,7 +17,8 @@ class Builder
   ###
   ###
 
-  create: () -> new Html()
+  create: () -> 
+    new Html()
 
 
 
@@ -27,9 +28,9 @@ module.exports = Builder
 b = new Builder require("../../../test")
 node = b.build()
 
-# 1. Load the template initially
-# 2. map (scan DOM)
-# 3. find bindings
+# 1. Load the template initially - this should also include all the modules
+# 2. scan the dom, and map each bound element (next sibling until end) to their rep
+
 
 node.write { data: new bindable.Object({ first: { name: "craig" } }), buffer: [] }, (err, content) ->
   console.log JSON.stringify content, null, 2

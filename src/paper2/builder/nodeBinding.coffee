@@ -4,7 +4,6 @@ Base = require "./base"
 
 class AttributeBinding extends Base
   
-
   ###
   ###
 
@@ -17,7 +16,8 @@ class AttributeBinding extends Base
 
   write: (info, callback) ->
     @clippedBuffer.reset info.data
-    info.buffer.push " #{@name}=\"#{@clippedBuffer.text}\""
+    if @clippedBuffer.text.length
+      info.buffer.push " #{@name}=\"#{@clippedBuffer.text}\""
     callback()
 
 
