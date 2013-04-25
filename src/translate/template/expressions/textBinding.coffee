@@ -1,6 +1,8 @@
-class TextBindingExpression extends require("./collection")
+class TextBindingExpression extends require("./base")
   
   _type: "textBinding"
+  _method: "textBinding"
+  _binding: true
 
   ###
   ###
@@ -11,7 +13,18 @@ class TextBindingExpression extends require("./collection")
   ###
   ###
 
-  toString: () -> "#{@binding}"
+  toString: () -> "').#{@toMethodString()}.html('"
+
+  ###
+  ###
+
+  toJsString: () -> "this.#{@toMethodString()}"
+
+
+  ###
+  ###
+
+  toMethodString: () -> "textBinding(#{@binding})"
 
 
 module.exports = TextBindingExpression

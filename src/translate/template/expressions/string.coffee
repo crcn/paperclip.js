@@ -11,7 +11,13 @@ class StringExpression extends require("./base")
   ###
   ###
 
-  toString: () -> "'#{@value.replace(/'/g,"\\'").replace(/\n/g, "\\n")}'"
+  toString: () -> "#{@value.replace(/'/g,"\\'").replace(/\n/g, "\\n")}"
+
+
+  ###
+  ###
+
+  toJsString: () -> "'#{@toString()}'"
 
 
 module.exports = StringExpression

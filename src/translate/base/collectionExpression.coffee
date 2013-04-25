@@ -16,7 +16,14 @@ class CollectionExpression extends base.Expression
 
   ###
   ###
-  toString: () -> @items.map((item) -> item.toString()).join("")
+
+  toString: () -> @map "toString", ""
+
+  ###
+  ###
+
+  map: (method, join = "") ->
+    @items.map((item) -> item[method].call(item)).join join
 
 
 module.exports = CollectionExpression

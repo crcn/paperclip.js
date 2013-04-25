@@ -8,8 +8,10 @@ class Formatter
   ###
 
   format: (source) ->
-    ast = jsp.parse String source
-    pro.gen_code ast, { beautify: true }
+
+    # dirty as shit, but gets rid of blank .html('')
+    ast = jsp.parse String(source).replace(/\.push\(\'\'\)/g,"").replace(/\.html\(\'\'\)/g,"")
+    source = pro.gen_code ast, { beautify: true }
 
 
 

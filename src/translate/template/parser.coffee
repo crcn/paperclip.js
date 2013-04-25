@@ -197,7 +197,7 @@ class Parser extends BaseParser
     # each {{/}}
     @_nextCode()
 
-    new BindingExpression script, children
+    new BindingExpression script, new CollectionExpression children
 
 
     

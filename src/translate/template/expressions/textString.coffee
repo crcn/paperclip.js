@@ -1,4 +1,4 @@
-class TextStringExpression extends require("./collection")
+class TextStringExpression extends require("./base")
   
   _type: "textString"
 
@@ -7,6 +7,12 @@ class TextStringExpression extends require("./collection")
 
   constructor: (@value) ->
     super()
+
+  ###
+  ###
+
+  toJsString: () -> 
+    @value.toJsString()
 
   ###
   ###

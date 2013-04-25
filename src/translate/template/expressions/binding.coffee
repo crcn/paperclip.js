@@ -8,11 +8,22 @@ class Binding extends require("./base")
 
   constructor: (@script, @children) ->
     super()
-    @addChild @children...
+    @addChild @children
 
   ###
   ###
 
-  toString: () -> "this.binding(#{@script}, #{@children.join(",")})"
+  toJsString: () -> "this.#{@toMethodString()}"
+
+  ###
+  ###
+
+  toString: () -> "').#{@toMethodString()}.html('"
+
+
+  ###
+  ###
+
+  toMethodString: () -> "blockBinding(#{@script}, this.html('#{@children.toString()}'))"
 
 module.exports = Binding

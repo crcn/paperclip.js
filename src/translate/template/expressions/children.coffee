@@ -11,7 +11,12 @@ class ChildrenExpression extends require("./collection")
   ###
   ###
 
-  toString: () -> 
+  toJsString: () -> 
     "{ children: #{super()} }"
+
+  ###
+  ###
+
+  toString: () -> @items.join ""
 
 module.exports = ChildrenExpression

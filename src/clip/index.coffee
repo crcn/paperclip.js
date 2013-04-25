@@ -286,4 +286,3 @@ class Clip
 
 module.exports = Clip
 module.exports.modifiers = defaultModifiers
-module.exports.compile   = require "./compile"

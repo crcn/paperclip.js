@@ -12,7 +12,10 @@ class TextExpression extends require("./base")
   ###
   ###
 
-  toString: () -> "this.text(#{@buffer})"
+  toJsString: () -> "this.text(#{@buffer})"
+
+  toString: () -> 
+    @buffer.items.join("")
 
 
 module.exports = TextExpression

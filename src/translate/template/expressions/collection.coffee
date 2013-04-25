@@ -1,5 +1,5 @@
 class Expression extends require("../../base/collectionExpression")
   
-  toString: () -> "[#{@items.join(',')}]"
+  toJsString: () -> "[#{@map('toJsString',',')}]"
 
 module.exports = Expression
