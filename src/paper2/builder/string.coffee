@@ -1,9 +1,9 @@
 class StringBuilder extends require("./base")
-    
-  ###
-  ###
   
-  type: "string"
+  ###
+  ###
+
+  name: "string"
 
   ###
   ###
@@ -11,13 +11,12 @@ class StringBuilder extends require("./base")
   constructor: (buffer = "") -> 
     @_buffer = buffer
 
-
   ###
   ###
 
-  write: (info, callback) ->
+  _writeHead: (info, callback) ->
     info.buffer.push @_buffer
-    callback()
+    super info, callback
 
   ###
   ###

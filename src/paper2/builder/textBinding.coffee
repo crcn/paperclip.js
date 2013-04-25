@@ -1,12 +1,13 @@
 Clip = require "../../clip"
+utils = require "./utils"
 
-class TextBinding extends require("./bindable")
-  
+class TextBinding extends require("./base")
+    
   ###
   ###
 
-  type: "text"
-  
+  name: "textBinding"
+
   ###
   ###
 
@@ -18,7 +19,7 @@ class TextBinding extends require("./bindable")
   ###
 
   _writeHead: (info, callback) ->
-    @_bindingStart info
+    utils.startBindingBlock @, info
     @clip.reset info.data
     @clip.update()
     v = @clip.get("value")
@@ -31,8 +32,9 @@ class TextBinding extends require("./bindable")
   ###
 
   _writeTail: (info, callback) ->
-    @_bindingEnd info
+    utils.endBindingBlock @, info
     callback()
+
 
   ###
   ###

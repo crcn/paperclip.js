@@ -1,6 +1,7 @@
 async = require("async")
 ClippedBuffer = require("../../clip/buffer")
 Base = require "./base"
+utils = require "./utils"
 
 class AttributeBinding extends Base
   
@@ -8,25 +9,26 @@ class AttributeBinding extends Base
   ###
 
   constructor: (@name, buffer) ->
+    super()
     @clippedBuffer = new ClippedBuffer buffer
 
 
   ###
   ###
 
-  write: (info, callback) ->
+  load: (info, callback) ->
     @clippedBuffer.reset info.data
     if @clippedBuffer.text.length
       info.buffer.push " #{@name}=\"#{@clippedBuffer.text}\""
     callback()
 
 
-class NodeBinding extends require("./bindable")
+class NodeBinding extends Base
 
   ###
   ###
 
-  type: "node"
+  name: "nodeBinding"
 
   ###
   ###
@@ -44,14 +46,15 @@ class NodeBinding extends require("./bindable")
     if options.children
       @addChild options.children
 
+
   ###
   ###
 
   _writeHead: (info, callback) ->
-    @_bindingStart info
     info.buffer.push "<#{@name}"
+    utils.startBindingBlock @, info
       
-    Base.writeEachItem @attrs, info, () ->
+    Base.loadEachItem @attrs, info, () ->
       info.buffer.push ">"
       callback()
 
@@ -60,8 +63,8 @@ class NodeBinding extends require("./bindable")
 
   _writeTail: (info, callback) ->
     info.buffer.push "</#{@name}>"
-    @_bindingEnd info
-    callback()
+    utils.endBindingBlock @, info
+    super info, callback
 
   ###
   ###

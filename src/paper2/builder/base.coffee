@@ -1,4 +1,5 @@
 async = require "async"
+pcid = 0
 
 class Base
 
@@ -9,20 +10,24 @@ class Base
     @_children = []
 
   ###
+   binds element rep to this node
   ###
 
-  load: (info, callback) ->
-
+  bind: (element) ->
 
   ###
+   writes HTML to the DOM
   ###
 
-  write: (info, callback) -> 
+  load: (info, callback) -> 
+
+    # TODO - load modules here.
+    info.nodes[pcid] = @
 
     @_writeHead info, (err) =>
       return callback(err) if err?
 
-      @_writeChildren info, (err) =>
+      @_loadChildren info, (err) =>
         return callback(err) if err?
         
         @_writeTail info, (err) -> 
@@ -37,8 +42,8 @@ class Base
   ###
   ###
 
-  _writeChildren: (info, callback) -> 
-    Base.writeEachItem @_children, info, callback
+  _loadChildren: (info, callback) -> 
+    Base.loadEachItem @_children or [], info, callback
 
   ###
   ###
@@ -59,12 +64,13 @@ class Base
   ###
   ###
 
-  @writeEachItem: (source, info, callback) ->
+  @loadEachItem: (source, info, callback) ->
     async.eachSeries source, ((child, next) ->
-      child.write info, next
+      child.load info, next
     ), callback
 
   ###
+   used mostly for block bindings
   ###
 
   @cloneEach: (source) ->
@@ -72,6 +78,6 @@ class Base
     for item in source
       items.push item.clone()
     items
-    
+
 
 module.exports = Base

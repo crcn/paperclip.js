@@ -1,6 +1,7 @@
-base = require "./base"
+Base = require "./base"
+utils = require "./utils"
 
-class BlockBinding extends require("./bindable")
+class BlockBinding extends Base
   
   ###
   ###
@@ -17,7 +18,14 @@ class BlockBinding extends require("./bindable")
   ###
 
   _writeHead: (info, callback) ->
-    @_bindingStart info
+    utils.startBindingBlock @, info
+    callback()
+    
+  ###
+  ###
+
+  _writeTail: (info, callback) ->
+    utils.endBindingBlock @, info
     callback()
 
   ###
@@ -30,14 +38,7 @@ class BlockBinding extends require("./bindable")
   ###
   ###
 
-  _writeTail: (info, callback) ->
-    @_bindingEnd info
-    callback()
-
-  ###
-  ###
-
-  clone: () -> new BlockBinding @script, base.cloneEach @children
+  clone: () -> new BlockBinding @script, Base.cloneEach @children
 
 
   

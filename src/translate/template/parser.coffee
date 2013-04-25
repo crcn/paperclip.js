@@ -145,7 +145,7 @@ class Parser extends BaseParser
   ###
 
   _parseText: () ->
-    @_parseTextUntil TokenCodes.EBLOCK | TokenCodes.LT | TokenCodes.ETAG
+    @_parseTextUntil TokenCodes.EBLOCK | TokenCodes.SBLOCK | TokenCodes.LT | TokenCodes.ETAG
 
 
   ###
