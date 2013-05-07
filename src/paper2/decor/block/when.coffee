@@ -10,10 +10,6 @@
 
 class BlockDecor extends require("./base")
   
-  ###
-  ###
-
-  @scriptName: "when"
 
   ###
   ###

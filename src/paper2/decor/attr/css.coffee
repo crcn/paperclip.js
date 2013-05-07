@@ -1,11 +1,9 @@
-class Handler extends require("./base")
+class CssDecor extends require("./dataBind")
 
-  
-  
   ###
   ###
 
-  init: () ->
+  bind: () ->
     super()
     @_currentClasses = {}
     @$element = $(@element)
@@ -27,4 +25,4 @@ class Handler extends require("./base")
           @$element.removeClass className
 
 
-module.exports = Handler
+module.exports = CssDecor

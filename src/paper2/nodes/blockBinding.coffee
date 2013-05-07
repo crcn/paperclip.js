@@ -27,6 +27,15 @@ class BlockChild extends require("./bindable")
   ###
   ###
 
+  dispose: () ->
+    super()
+    @content.dispose()
+    @
+
+
+  ###
+  ###
+
   load: (context, callback) ->
     return super context, callback if not @with
     super context.child(@with), callback
@@ -59,6 +68,15 @@ class BlockBinding extends require("./bindable")
     super()
     @clip.watch()
     @_decor.bind()
+
+  ###
+  ###
+
+  dispose: () ->
+    @clip.dispose()
+    @_decor.dispose()
+    super()
+
 
   ###
   ###

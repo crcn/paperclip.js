@@ -18,6 +18,15 @@ class Collection
   ###
   ###
 
+  dispose: () ->
+    @clip?.dispose()
+    for item in @_items
+      item.dispose()
+
+
+  ###
+  ###
+
   load: (context, callback) -> 
     @clip?.reset context, false
     async.eachSeries @_items, ((decor, next) ->

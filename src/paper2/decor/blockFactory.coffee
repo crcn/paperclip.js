@@ -1,21 +1,16 @@
 DecorCollection = require "./collection"
 
-blockDecorators = {}
+blockDecorators = 
+  html: require("./block/html")
+  block: require("./block/block")
+  when: require("./block/when")
+  with: require("./block/with")
+  each: require("./block/each")
+  value: require("./block/value")
+  template: require("./block/template")
+  component: require("./block/template")
 
 
-decor = [
-  require("./block/html"),
-  require("./block/block"),
-  require("./block/when"),
-  require("./block/with"),
-  require("./block/each"), 
-  require("./block/value"),
-  require("./block/template"),
-  require("./block/component")
-]
-
-for BlockDecor in decor
-  blockDecorators[BlockDecor.scriptName] = BlockDecor
 
 class Factory
 
@@ -27,7 +22,7 @@ class Factory
     decor = new DecorCollection()
     for scriptName in node.clip.scripts.names
       if bd = blockDecorators[scriptName]
-        decor.push new bd node
+        decor.push new bd node, scriptName
 
     decor
 

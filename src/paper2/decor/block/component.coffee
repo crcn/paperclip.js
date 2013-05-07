@@ -7,10 +7,6 @@
 
 class ComponentDecor extends require("./base")
   
-  ###
-  ###
-
-  @scriptName: "component"
 
   ###
   ###

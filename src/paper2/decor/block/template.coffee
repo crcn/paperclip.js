@@ -10,11 +10,6 @@ class TemplateDecor extends require("./base")
   ###
   ###
 
-  @scriptName: "template"
-
-  ###
-  ###
-
   load: (context, callback) ->
     context.internal.set("template.#{@clip.get("template.name") or @clip.get("template")}", @)
     callback()

@@ -13,6 +13,9 @@
       addFriend: function(friend) {
         data.friends.push(friend);
       },
+      drinkBeer: function() {
+        context.set("beersDrunk", (context.get("beersDrunk") || 0) + 1)
+      },
       address: {
         city: "San Francisco",
         zip: 94102

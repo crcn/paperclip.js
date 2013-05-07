@@ -26,7 +26,9 @@ class Base
   ###
 
   dispose: () ->
-    @section.dispose()
+    @section?.dispose()
+    for child in @children or []
+      child.dispose()
 
   ###
   ###

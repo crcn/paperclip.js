@@ -1,9 +1,9 @@
-class Handler extends require("./base")
-
+class ShowDecor extends require("./dataBind")
+  
   ###
   ###
   
-  init: () ->
+  bind: () ->
     super()
     @$element = $(@element)
     @clip.bind("show").to @_show
@@ -16,4 +16,4 @@ class Handler extends require("./base")
     @$element.css { "display": if value then "block" else "none" }
 
 
-module.exports = Handler
+module.exports = ShowDecor

@@ -1,9 +1,4 @@
 class EnterDecor extends require("./dataBind")
-    
-  ###
-  ###
-
-  @scriptName: "enter"
 
   ###
   ###

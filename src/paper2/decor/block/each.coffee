@@ -8,10 +8,6 @@ pilot   = require "pilot-block"
 
 class EachDecor extends require("./base")
 
-  ###
-  ###
-
-  @scriptName: "each"
 
   ###
   ###

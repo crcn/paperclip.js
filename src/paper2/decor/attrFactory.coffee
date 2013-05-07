@@ -2,17 +2,16 @@ Collection = require "./collection"
 ClippedBuffer = require("../../clip/buffer")
 Clip = require("../../clip")
 
-attrDecorators = {}
+attrDecorators = 
+  value: require("./attr/value")
+  click: require("./attr/click")
+  enter: require("./attr/enter")
+  css: require("./attr/css")
+  disable: require("./attr/disable")
+  style: require("./attr/style")
+  show: require("./attr/show")
 
-decor = [
-  require("./attr/value"),
-  require("./attr/click"),
-  require("./attr/enter")
-]
 
-
-for AttrDecor in decor
-  attrDecorators[AttrDecor.scriptName] = AttrDecor
 
 DataBindDecor = require("./attr/dataBind")
 TextAttrBinding = require("./attr/text")

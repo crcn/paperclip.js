@@ -2,11 +2,6 @@ class ValueDecor extends require("./base")
   
   ###
   ###
-  
-  @scriptName: "value"
-
-  ###
-  ###
 
   load: (context, callback) ->
     v = @clip.get("value")

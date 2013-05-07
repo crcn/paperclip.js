@@ -108,6 +108,37 @@ module.exports = function(paper) {
             },
             refs: [ "friend.name" ]
         }).html(" <br/> ");
+    }).html(" ").nodeBinding("input", {
+        attrs: {
+            type: [ "submit" ],
+            "data-bind": [ {
+                disable: {
+                    fn: function() {
+                        return this.ref("age").value() < 21;
+                    },
+                    refs: [ "age" ]
+                },
+                click: {
+                    fn: function() {
+                        return this.call("drinkBeer", []).value();
+                    },
+                    refs: [ "[object Object]" ]
+                }
+            } ],
+            value: [ "drink beer" ]
+        }
+    }).html("<br/> ").nodeBinding("div", {
+        attrs: {
+            "data-bind": [ {
+                show: {
+                    fn: function() {
+                        return this.ref("age").value() > 21;
+                    },
+                    refs: [ "age" ]
+                }
+            } ]
+        },
+        children: paper.create().html(" You're over 20! (data-bind:show) ")
     }).html(" ").blockBinding({
         when: {
             fn: function() {
@@ -116,7 +147,12 @@ module.exports = function(paper) {
             refs: [ "age" ]
         }
     }, function() {
-        return paper.create().html(" Yippe! You're over 20! ");
+        return paper.create().html(" Yippe! You're over 20! <br/> Beers drunk: ").textBinding({
+            fn: function() {
+                return this.ref("beersDrunk").value() || 0;
+            },
+            refs: [ "beersDrunk" ]
+        }).html("<br/> ");
     }).html(" Current Address: <br/> ").blockBinding({
         "with": {
             fn: function() {

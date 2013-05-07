@@ -1,9 +1,10 @@
-class Handler extends require("./base")
+class StyleDecor extends require("./dataBind")
+
   
   ###
   ###
 
-  init: () ->
+  bind: () ->
     super()
     @_currentStyles = {}
     @$element = $(@element)
@@ -27,4 +28,4 @@ class Handler extends require("./base")
       @$element.css newStyles
 
 
-module.exports = Handler
+module.exports = StyleDecor

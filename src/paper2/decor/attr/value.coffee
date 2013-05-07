@@ -1,11 +1,6 @@
 _ = require "underscore"
 
 class ValueDecor extends require("./dataBind")
-  
-  ###
-  ###
-
-  @scriptName: "value"
 
   ###
   ###

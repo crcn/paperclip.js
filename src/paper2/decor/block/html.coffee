@@ -1,10 +1,6 @@
 # HTML section for 
 class HtmlDecor extends require("./base")
   
-  ###
-  ###
-
-  @scriptName: "html"
 
   ###
   ###

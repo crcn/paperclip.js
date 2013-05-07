@@ -3,8 +3,8 @@ class NodeDecor
   ###
   ###
 
-  constructor: (@node) ->
-    @script = node.clip.script(@constructor.scriptName)
+  constructor: (@node, @scriptName) ->
+    @script = node.clip.script(@scriptName)
     @clip   = node.clip
 
 
@@ -17,7 +17,12 @@ class NodeDecor
   ###
 
   bind: () -> 
-    @clip.bind(@constructor.scriptName).watch(true).to @_onChange
+    @clip.bind(@scriptName).watch(true).to @_onChange
+
+  ###
+  ###
+
+  dispose: () ->
 
 
   ###

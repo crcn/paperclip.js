@@ -16,9 +16,17 @@ Your Friends: <br />
   <a href="#" data-bind="{{click:friend.remove()}}">x</a> {{friend.name}} <br />
 {{/}}
 
+<input type="submit" data-bind="{{disable:age<21;click:drinkBeer()}}" value="drink beer" /><br />
+
+
+
+<div data-bind="{{show:age > 21}}">
+  You're over 20! (data-bind:show)
+</div>
 
 {{#when:age > 20}}
-  Yippe! You're over 20!
+  Yippe! You're over 20! <br />
+  Beers drunk: {{beersDrunk||0}}<br />
 {{/}}
 
 

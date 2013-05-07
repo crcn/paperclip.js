@@ -2,11 +2,6 @@ class ClickDecor extends require("./dataBind")
 
   ###
   ###
-
-  @scriptName: "click"
-  
-  ###
-  ###
   
   watch: false
 
