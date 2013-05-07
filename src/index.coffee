@@ -1,5 +1,5 @@
 Clip  = require "./clip"
-paper = require "./paper2"
+paper = require "./paper"
 
 
 # clips compiled data-binding to observables

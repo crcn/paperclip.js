@@ -1,11 +1,10 @@
-class Handler extends require("./base")
+class CheckedDecor extends require("./dataBind")
   
   ###
   ###
 
-  init: () ->
+  bind: () ->
     super()
-    @$element = $(@element)
     @clip.bind("checked").to @_show
 
   ###
@@ -15,4 +14,4 @@ class Handler extends require("./base")
     @element.checked = value
 
 
-module.exports = Handler
+module.exports = CheckedDecor

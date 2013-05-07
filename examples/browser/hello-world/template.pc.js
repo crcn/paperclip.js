@@ -45,12 +45,26 @@ module.exports = function(paper) {
             return this.ref("age").value() || 0;
         },
         refs: [ "age" ]
-    }).html(" years old, therefore you <b>").textBinding({
-        fn: function() {
-            return this.ref("age").value() > 20 ? "can" : "cannot";
+    }).html(" years old, therefore you ").nodeBinding("b", {
+        attrs: {
+            "data-bind": [ {
+                style: {
+                    fn: function() {
+                        return {
+                            color: this.ref("age").value() > 20 ? "green" : "red"
+                        };
+                    },
+                    refs: [ "age" ]
+                }
+            } ]
         },
-        refs: [ "age" ]
-    }).html("</b> drink! </span> <br/> ").nodeBinding("input", {
+        children: paper.create().textBinding({
+            fn: function() {
+                return this.ref("age").value() > 20 ? "can" : "cannot";
+            },
+            refs: [ "age" ]
+        })
+    }).html(" drink! </span> <br/> ").nodeBinding("input", {
         attrs: {
             type: [ "text" ],
             "data-bind": [ {

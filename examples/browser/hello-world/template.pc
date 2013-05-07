@@ -2,7 +2,7 @@ Name: <input type="text" data-bind="{{value:name;bothWays:true}}" /> <br />
 Age: <input type="text" data-bind="{{value:age;bothWays:true}}" /> <br />
 
 <span>
-  hello {{name}}, you are {{age||0}} years old, therefore you <b>{{age > 20 ? "can" : "cannot"}}</b> 
+  hello {{name}}, you are {{age||0}} years old, therefore you <b data-bind="{{style:{color:age>20?'green':'red'}}}">{{age > 20 ? "can" : "cannot"}}</b> 
  drink!
 </span>
 

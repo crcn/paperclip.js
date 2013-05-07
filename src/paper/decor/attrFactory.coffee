@@ -10,6 +10,7 @@ attrDecorators =
   click   : require("./attr/click")
   enter   : require("./attr/enter")
   disable : require("./attr/disable")
+  checked : require("./attr/checked")
 
 
 
