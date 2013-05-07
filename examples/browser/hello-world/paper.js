@@ -195,7 +195,37 @@
                     } ],
                     value: [ "drink beer" ]
                 }
-            }).html("<br/> ").nodeBinding("div", {
+            }).html("<br/> <select> <option>Select a friend</option> ").blockBinding({
+                each: {
+                    fn: function() {
+                        return this.ref("friends").value();
+                    },
+                    refs: [ "friends" ]
+                },
+                as: {
+                    fn: function() {
+                        return "friend";
+                    },
+                    refs: []
+                }
+            }, function() {
+                return paper.create().html(" ").nodeBinding("option", {
+                    attrs: {
+                        value: [ {
+                            fn: function() {
+                                return this.ref("friend.name").value();
+                            },
+                            refs: [ "friend.name" ]
+                        } ]
+                    },
+                    children: paper.create().textBinding({
+                        fn: function() {
+                            return this.ref("friend.name").value();
+                        },
+                        refs: [ "friend.name" ]
+                    })
+                }).html(" ");
+            }).html("</select> ").nodeBinding("div", {
                 attrs: {
                     "data-bind": [ {
                         show: {
@@ -2888,6 +2918,84 @@
         })();
         return module.exports;
     });
+    define("paperclip/lib/paper/decor/blockFactory.js", function(require, module, exports, __dirname, __filename) {
+        var DecorCollection, Factory, blockDecorators;
+        DecorCollection = require("paperclip/lib/paper/decor/collection.js");
+        blockDecorators = {
+            html: require("paperclip/lib/paper/decor/block/html.js"),
+            when: require("paperclip/lib/paper/decor/block/when.js"),
+            "with": require("paperclip/lib/paper/decor/block/with.js"),
+            each: require("paperclip/lib/paper/decor/block/each.js"),
+            value: require("paperclip/lib/paper/decor/block/value.js"),
+            block: require("paperclip/lib/paper/decor/block/block.js"),
+            template: require("paperclip/lib/paper/decor/block/template.js"),
+            view: require("paperclip/lib/paper/decor/block/view.js")
+        };
+        Factory = function() {
+            function Factory() {}
+            Factory.prototype.getDecor = function(node) {
+                var bd, decor, scriptName, _i, _len, _ref;
+                decor = new DecorCollection;
+                _ref = node.clip.scripts.names;
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                    scriptName = _ref[_i];
+                    if (bd = blockDecorators[scriptName]) {
+                        decor.push(new bd(node, scriptName));
+                    }
+                }
+                return decor;
+            };
+            return Factory;
+        }();
+        module.exports = new Factory;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/nodes/bindable.js", function(require, module, exports, __dirname, __filename) {
+        var BindableNode, pilot, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        pilot = require("pilot-block/lib/index.js");
+        BindableNode = function(_super) {
+            __extends(BindableNode, _super);
+            function BindableNode() {
+                _ref = BindableNode.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            BindableNode.prototype.bind = function() {
+                BindableNode.__super__.bind.call(this);
+                this.section = pilot.section(this.id);
+                return this;
+            };
+            BindableNode.prototype._writeHead = function(context, callback) {
+                this._writeStartBlock(context);
+                return BindableNode.__super__._writeHead.call(this, context, callback);
+            };
+            BindableNode.prototype._writeStartBlock = function(context) {
+                var pcid;
+                context.internal.set("pcid", pcid = (context.internal.get("pcid") || 0) + 1);
+                return context.buffer.push("<!--spc:" + (this.id = pcid) + "-->");
+            };
+            BindableNode.prototype._writeTail = function(context, callback) {
+                this._writeEndBlock(context);
+                return BindableNode.__super__._writeTail.call(this, context, callback);
+            };
+            BindableNode.prototype._writeEndBlock = function(context) {
+                return context.buffer.push("<!--epc:" + this.id + "-->");
+            };
+            return BindableNode;
+        }(require("paperclip/lib/paper/nodes/base.js"));
+        module.exports = BindableNode;
+        return module.exports;
+    });
     define("async/lib/async.js", function(require, module, exports, __dirname, __filename) {
         (function() {
             var async = {};
@@ -3888,84 +3996,6 @@
         module.exports = new Factory;
         return module.exports;
     });
-    define("paperclip/lib/paper/nodes/bindable.js", function(require, module, exports, __dirname, __filename) {
-        var BindableNode, pilot, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        pilot = require("pilot-block/lib/index.js");
-        BindableNode = function(_super) {
-            __extends(BindableNode, _super);
-            function BindableNode() {
-                _ref = BindableNode.__super__.constructor.apply(this, arguments);
-                return _ref;
-            }
-            BindableNode.prototype.bind = function() {
-                BindableNode.__super__.bind.call(this);
-                this.section = pilot.section(this.id);
-                return this;
-            };
-            BindableNode.prototype._writeHead = function(context, callback) {
-                this._writeStartBlock(context);
-                return BindableNode.__super__._writeHead.call(this, context, callback);
-            };
-            BindableNode.prototype._writeStartBlock = function(context) {
-                var pcid;
-                context.internal.set("pcid", pcid = (context.internal.get("pcid") || 0) + 1);
-                return context.buffer.push("<!--spc:" + (this.id = pcid) + "-->");
-            };
-            BindableNode.prototype._writeTail = function(context, callback) {
-                this._writeEndBlock(context);
-                return BindableNode.__super__._writeTail.call(this, context, callback);
-            };
-            BindableNode.prototype._writeEndBlock = function(context) {
-                return context.buffer.push("<!--epc:" + this.id + "-->");
-            };
-            return BindableNode;
-        }(require("paperclip/lib/paper/nodes/base.js"));
-        module.exports = BindableNode;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/decor/blockFactory.js", function(require, module, exports, __dirname, __filename) {
-        var DecorCollection, Factory, blockDecorators;
-        DecorCollection = require("paperclip/lib/paper/decor/collection.js");
-        blockDecorators = {
-            html: require("paperclip/lib/paper/decor/block/html.js"),
-            when: require("paperclip/lib/paper/decor/block/when.js"),
-            "with": require("paperclip/lib/paper/decor/block/with.js"),
-            each: require("paperclip/lib/paper/decor/block/each.js"),
-            value: require("paperclip/lib/paper/decor/block/value.js"),
-            block: require("paperclip/lib/paper/decor/block/block.js"),
-            template: require("paperclip/lib/paper/decor/block/template.js"),
-            view: require("paperclip/lib/paper/decor/block/view.js")
-        };
-        Factory = function() {
-            function Factory() {}
-            Factory.prototype.getDecor = function(node) {
-                var bd, decor, scriptName, _i, _len, _ref;
-                decor = new DecorCollection;
-                _ref = node.clip.scripts.names;
-                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                    scriptName = _ref[_i];
-                    if (bd = blockDecorators[scriptName]) {
-                        decor.push(new bd(node, scriptName));
-                    }
-                }
-                return decor;
-            };
-            return Factory;
-        }();
-        module.exports = new Factory;
-        return module.exports;
-    });
     define("bindable/lib/object/setters/fn.js", function(require, module, exports, __dirname, __filename) {
         (function() {
             var Base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
@@ -4360,6 +4390,383 @@
             return Collection;
         }();
         module.exports = Collection;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/decor/block/html.js", function(require, module, exports, __dirname, __filename) {
+        var HtmlDecor, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        HtmlDecor = function(_super) {
+            __extends(HtmlDecor, _super);
+            function HtmlDecor() {
+                _ref = HtmlDecor.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            HtmlDecor.prototype.load = function(context, callback) {
+                var html;
+                html = this.clip.get("html");
+                if (html == null) {
+                    return callback();
+                }
+                if (typeof html === "string") {
+                    context.buffer.push(html);
+                    return callback();
+                } else {
+                    this.child = html.createContent();
+                    return this.child.load(context, callback);
+                }
+            };
+            HtmlDecor.prototype.bind = function() {
+                HtmlDecor.__super__.bind.call(this);
+                return this.child.bind();
+            };
+            HtmlDecor.prototype.dispose = function() {
+                HtmlDecor.__super__.dispose.call(this);
+                return this.child.dispose();
+            };
+            return HtmlDecor;
+        }(require("paperclip/lib/paper/decor/block/base.js"));
+        module.exports = HtmlDecor;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/decor/block/when.js", function(require, module, exports, __dirname, __filename) {
+        var BlockDecor, _ref, __bind = function(fn, me) {
+            return function() {
+                return fn.apply(me, arguments);
+            };
+        }, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        BlockDecor = function(_super) {
+            __extends(BlockDecor, _super);
+            function BlockDecor() {
+                this._onChange = __bind(this._onChange, this);
+                _ref = BlockDecor.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            BlockDecor.prototype.load = function(context, callback) {
+                this.context = context;
+                if (this.clip.get("when")) {
+                    this.child = this.node.createContent();
+                    return this.child.load(context, callback);
+                } else {
+                    return callback();
+                }
+            };
+            BlockDecor.prototype.bind = function() {
+                BlockDecor.__super__.bind.call(this);
+                return this.child.bind();
+            };
+            BlockDecor.prototype._onChange = function(value) {
+                if (value) {
+                    return this.child = this.node.createContent().attach(this.node, this.context).bind();
+                } else {
+                    return this.child.dispose();
+                }
+            };
+            return BlockDecor;
+        }(require("paperclip/lib/paper/decor/block/base.js"));
+        module.exports = BlockDecor;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/decor/block/with.js", function(require, module, exports, __dirname, __filename) {
+        var BlockDecor, _ref, __bind = function(fn, me) {
+            return function() {
+                return fn.apply(me, arguments);
+            };
+        }, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        BlockDecor = function(_super) {
+            __extends(BlockDecor, _super);
+            function BlockDecor() {
+                this._onChange = __bind(this._onChange, this);
+                _ref = BlockDecor.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            BlockDecor.scriptName = "with";
+            BlockDecor.prototype.load = function(context, callback) {
+                this.context = context;
+                this.child = this.node.createContent();
+                return this.child.load(this._childContext(context), callback);
+            };
+            BlockDecor.prototype._childContext = function(context) {
+                return context.child(this.clip.get("with"));
+            };
+            BlockDecor.prototype.bind = function() {
+                BlockDecor.__super__.bind.call(this);
+                return this.child.bind();
+            };
+            BlockDecor.prototype._onChange = function(value) {
+                return this.child.context.reset(value);
+            };
+            return BlockDecor;
+        }(require("paperclip/lib/paper/decor/block/base.js"));
+        module.exports = BlockDecor;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/decor/block/each.js", function(require, module, exports, __dirname, __filename) {
+        var EachDecor, async, pilot, __bind = function(fn, me) {
+            return function() {
+                return fn.apply(me, arguments);
+            };
+        }, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        async = require("async/lib/async.js");
+        pilot = require("pilot-block/lib/index.js");
+        EachDecor = function(_super) {
+            __extends(EachDecor, _super);
+            function EachDecor() {
+                this._remove = __bind(this._remove, this);
+                this._insert = __bind(this._insert, this);
+                EachDecor.__super__.constructor.apply(this, arguments);
+            }
+            EachDecor.prototype.bind = function() {
+                var child, _i, _len, _ref, _ref1;
+                EachDecor.__super__.bind.call(this);
+                _ref = this.children;
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                    child = _ref[_i];
+                    child.bind();
+                }
+                if ((_ref1 = this.script.value) != null ? _ref1.source : void 0) {
+                    this._ignoreInsert = true;
+                    this.script.value.bind({
+                        insert: this._insert,
+                        remove: this._remove
+                    });
+                    return this._ignoreInsert = false;
+                }
+            };
+            EachDecor.prototype.load = function(context, callback) {
+                var item, source, _i, _len, _ref;
+                this.context = context;
+                this.children = [];
+                this.itemName = source = ((_ref = this.script.value) != null ? _ref.source : void 0) ? this.script.value.source() : this.script.value || [];
+                for (_i = 0, _len = source.length; _i < _len; _i++) {
+                    item = source[_i];
+                    this.children.push(this._createChild(item));
+                }
+                return async.eachSeries(this.children, function(child, next) {
+                    return child.load(context, next);
+                }, callback);
+            };
+            EachDecor.prototype._createChild = function(item) {
+                var data, node;
+                data = {};
+                data[this.node.clip.get("as") || "item"] = item;
+                node = this.node.createContent(data);
+                node.item = item;
+                return node;
+            };
+            EachDecor.prototype._insert = function(item) {
+                var node;
+                if (this._ignoreInsert) {
+                    return;
+                }
+                this.children.push(node = this._createChild(item));
+                return node.attach(this.node, this.context);
+            };
+            EachDecor.prototype._remove = function(item) {
+                var child, i, _i, _len, _ref, _results;
+                _ref = this.children;
+                _results = [];
+                for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+                    child = _ref[i];
+                    if (child.item === item) {
+                        this.children.splice(i, 1);
+                        child.dispose();
+                        break;
+                    } else {
+                        _results.push(void 0);
+                    }
+                }
+                return _results;
+            };
+            return EachDecor;
+        }(require("paperclip/lib/paper/decor/block/base.js"));
+        module.exports = EachDecor;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/decor/block/value.js", function(require, module, exports, __dirname, __filename) {
+        var ValueDecor, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        ValueDecor = function(_super) {
+            __extends(ValueDecor, _super);
+            function ValueDecor() {
+                _ref = ValueDecor.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            ValueDecor.prototype.load = function(context, callback) {
+                var v;
+                v = this.clip.get("value");
+                if (v != null) {
+                    context.buffer.push(v);
+                }
+                return callback();
+            };
+            ValueDecor.prototype._onChange = function(value) {
+                return this.node.section.html(value);
+            };
+            return ValueDecor;
+        }(require("paperclip/lib/paper/decor/block/base.js"));
+        module.exports = ValueDecor;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/decor/block/block.js", function(require, module, exports, __dirname, __filename) {
+        var BlockDecor, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        BlockDecor = function(_super) {
+            __extends(BlockDecor, _super);
+            function BlockDecor() {
+                _ref = BlockDecor.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            BlockDecor.prototype.load = function(context, callback) {
+                context.set(this.clip.get("block"), this.node);
+                return callback();
+            };
+            return BlockDecor;
+        }(require("paperclip/lib/paper/decor/block/base.js"));
+        module.exports = BlockDecor;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/decor/block/template.js", function(require, module, exports, __dirname, __filename) {
+        var TemplateDecor, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        TemplateDecor = function(_super) {
+            __extends(TemplateDecor, _super);
+            function TemplateDecor() {
+                _ref = TemplateDecor.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            TemplateDecor.prototype.load = function(context, callback) {
+                context.internal.set("template." + (this.clip.get("template.name") || this.clip.get("template")), this);
+                return callback();
+            };
+            return TemplateDecor;
+        }(require("paperclip/lib/paper/decor/block/base.js"));
+        module.exports = TemplateDecor;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/decor/block/view.js", function(require, module, exports, __dirname, __filename) {
+        var ViewDecor, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        ViewDecor = function(_super) {
+            __extends(ViewDecor, _super);
+            function ViewDecor() {
+                _ref = ViewDecor.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            ViewDecor.prototype.bind = function() {
+                ViewDecor.__super__.bind.call(this);
+                return this.child.bind();
+            };
+            ViewDecor.prototype.dispose = function() {
+                ViewDecor.__super__.dispose.call(this);
+                return this.child.dispose();
+            };
+            ViewDecor.prototype.load = function(context, callback) {
+                var child, onContentLoad, tpl, tplName, wth, _this = this;
+                tplName = "template." + (this.clip.get("view.name") || this.clip.get("view"));
+                wth = this.clip.get("view.item") || void 0;
+                tpl = context.internal.get(tplName);
+                if (!tpl) {
+                    return callback();
+                }
+                child = context.child().detachBuffer();
+                onContentLoad = function() {
+                    child.set("content", child.buffer.join(""));
+                    child.attachBuffer();
+                    _this.child = tpl.node.createContent();
+                    return _this.child.load(child.child(wth), callback);
+                };
+                if (this.node.content) {
+                    return this.node.content.load(child, onContentLoad);
+                } else {
+                    return onContentLoad();
+                }
+            };
+            return ViewDecor;
+        }(require("paperclip/lib/paper/decor/block/base.js"));
+        module.exports = ViewDecor;
         return module.exports;
     });
     define("paperclip/lib/paper/decor/attr/css.js", function(require, module, exports, __dirname, __filename) {
@@ -4812,383 +5219,6 @@
         module.exports = TextBinding;
         return module.exports;
     });
-    define("paperclip/lib/paper/decor/block/html.js", function(require, module, exports, __dirname, __filename) {
-        var HtmlDecor, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        HtmlDecor = function(_super) {
-            __extends(HtmlDecor, _super);
-            function HtmlDecor() {
-                _ref = HtmlDecor.__super__.constructor.apply(this, arguments);
-                return _ref;
-            }
-            HtmlDecor.prototype.load = function(context, callback) {
-                var html;
-                html = this.clip.get("html");
-                if (html == null) {
-                    return callback();
-                }
-                if (typeof html === "string") {
-                    context.buffer.push(html);
-                    return callback();
-                } else {
-                    this.child = html.createContent();
-                    return this.child.load(context, callback);
-                }
-            };
-            HtmlDecor.prototype.bind = function() {
-                HtmlDecor.__super__.bind.call(this);
-                return this.child.bind();
-            };
-            HtmlDecor.prototype.dispose = function() {
-                HtmlDecor.__super__.dispose.call(this);
-                return this.child.dispose();
-            };
-            return HtmlDecor;
-        }(require("paperclip/lib/paper/decor/block/base.js"));
-        module.exports = HtmlDecor;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/decor/block/when.js", function(require, module, exports, __dirname, __filename) {
-        var BlockDecor, _ref, __bind = function(fn, me) {
-            return function() {
-                return fn.apply(me, arguments);
-            };
-        }, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        BlockDecor = function(_super) {
-            __extends(BlockDecor, _super);
-            function BlockDecor() {
-                this._onChange = __bind(this._onChange, this);
-                _ref = BlockDecor.__super__.constructor.apply(this, arguments);
-                return _ref;
-            }
-            BlockDecor.prototype.load = function(context, callback) {
-                this.context = context;
-                if (this.clip.get("when")) {
-                    this.child = this.node.createContent();
-                    return this.child.load(context, callback);
-                } else {
-                    return callback();
-                }
-            };
-            BlockDecor.prototype.bind = function() {
-                BlockDecor.__super__.bind.call(this);
-                return this.child.bind();
-            };
-            BlockDecor.prototype._onChange = function(value) {
-                if (value) {
-                    return this.child = this.node.createContent().attach(this.node, this.context).bind();
-                } else {
-                    return this.child.dispose();
-                }
-            };
-            return BlockDecor;
-        }(require("paperclip/lib/paper/decor/block/base.js"));
-        module.exports = BlockDecor;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/decor/block/with.js", function(require, module, exports, __dirname, __filename) {
-        var BlockDecor, _ref, __bind = function(fn, me) {
-            return function() {
-                return fn.apply(me, arguments);
-            };
-        }, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        BlockDecor = function(_super) {
-            __extends(BlockDecor, _super);
-            function BlockDecor() {
-                this._onChange = __bind(this._onChange, this);
-                _ref = BlockDecor.__super__.constructor.apply(this, arguments);
-                return _ref;
-            }
-            BlockDecor.scriptName = "with";
-            BlockDecor.prototype.load = function(context, callback) {
-                this.context = context;
-                this.child = this.node.createContent();
-                return this.child.load(this._childContext(context), callback);
-            };
-            BlockDecor.prototype._childContext = function(context) {
-                return context.child(this.clip.get("with"));
-            };
-            BlockDecor.prototype.bind = function() {
-                BlockDecor.__super__.bind.call(this);
-                return this.child.bind();
-            };
-            BlockDecor.prototype._onChange = function(value) {
-                return this.child.context.reset(value);
-            };
-            return BlockDecor;
-        }(require("paperclip/lib/paper/decor/block/base.js"));
-        module.exports = BlockDecor;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/decor/block/each.js", function(require, module, exports, __dirname, __filename) {
-        var EachDecor, async, pilot, __bind = function(fn, me) {
-            return function() {
-                return fn.apply(me, arguments);
-            };
-        }, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        async = require("async/lib/async.js");
-        pilot = require("pilot-block/lib/index.js");
-        EachDecor = function(_super) {
-            __extends(EachDecor, _super);
-            function EachDecor() {
-                this._remove = __bind(this._remove, this);
-                this._insert = __bind(this._insert, this);
-                EachDecor.__super__.constructor.apply(this, arguments);
-            }
-            EachDecor.prototype.bind = function() {
-                var child, _i, _len, _ref, _ref1;
-                EachDecor.__super__.bind.call(this);
-                _ref = this.children;
-                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                    child = _ref[_i];
-                    child.bind();
-                }
-                if ((_ref1 = this.script.value) != null ? _ref1.source : void 0) {
-                    this._ignoreInsert = true;
-                    this.script.value.bind({
-                        insert: this._insert,
-                        remove: this._remove
-                    });
-                    return this._ignoreInsert = false;
-                }
-            };
-            EachDecor.prototype.load = function(context, callback) {
-                var item, source, _i, _len, _ref;
-                this.context = context;
-                this.children = [];
-                this.itemName = source = ((_ref = this.script.value) != null ? _ref.source : void 0) ? this.script.value.source() : this.script.value || [];
-                for (_i = 0, _len = source.length; _i < _len; _i++) {
-                    item = source[_i];
-                    this.children.push(this._createChild(item));
-                }
-                return async.eachSeries(this.children, function(child, next) {
-                    return child.load(context, next);
-                }, callback);
-            };
-            EachDecor.prototype._createChild = function(item) {
-                var data, node;
-                data = {};
-                data[this.node.clip.get("as") || "item"] = item;
-                node = this.node.createContent(data);
-                node.item = item;
-                return node;
-            };
-            EachDecor.prototype._insert = function(item) {
-                var node;
-                if (this._ignoreInsert) {
-                    return;
-                }
-                this.children.push(node = this._createChild(item));
-                return node.attach(this.node, this.context);
-            };
-            EachDecor.prototype._remove = function(item) {
-                var child, i, _i, _len, _ref, _results;
-                _ref = this.children;
-                _results = [];
-                for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-                    child = _ref[i];
-                    if (child.item === item) {
-                        this.children.splice(i, 1);
-                        child.dispose();
-                        break;
-                    } else {
-                        _results.push(void 0);
-                    }
-                }
-                return _results;
-            };
-            return EachDecor;
-        }(require("paperclip/lib/paper/decor/block/base.js"));
-        module.exports = EachDecor;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/decor/block/value.js", function(require, module, exports, __dirname, __filename) {
-        var ValueDecor, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        ValueDecor = function(_super) {
-            __extends(ValueDecor, _super);
-            function ValueDecor() {
-                _ref = ValueDecor.__super__.constructor.apply(this, arguments);
-                return _ref;
-            }
-            ValueDecor.prototype.load = function(context, callback) {
-                var v;
-                v = this.clip.get("value");
-                if (v != null) {
-                    context.buffer.push(v);
-                }
-                return callback();
-            };
-            ValueDecor.prototype._onChange = function(value) {
-                return this.node.section.html(value);
-            };
-            return ValueDecor;
-        }(require("paperclip/lib/paper/decor/block/base.js"));
-        module.exports = ValueDecor;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/decor/block/block.js", function(require, module, exports, __dirname, __filename) {
-        var BlockDecor, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        BlockDecor = function(_super) {
-            __extends(BlockDecor, _super);
-            function BlockDecor() {
-                _ref = BlockDecor.__super__.constructor.apply(this, arguments);
-                return _ref;
-            }
-            BlockDecor.prototype.load = function(context, callback) {
-                context.set(this.clip.get("block"), this.node);
-                return callback();
-            };
-            return BlockDecor;
-        }(require("paperclip/lib/paper/decor/block/base.js"));
-        module.exports = BlockDecor;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/decor/block/template.js", function(require, module, exports, __dirname, __filename) {
-        var TemplateDecor, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        TemplateDecor = function(_super) {
-            __extends(TemplateDecor, _super);
-            function TemplateDecor() {
-                _ref = TemplateDecor.__super__.constructor.apply(this, arguments);
-                return _ref;
-            }
-            TemplateDecor.prototype.load = function(context, callback) {
-                context.internal.set("template." + (this.clip.get("template.name") || this.clip.get("template")), this);
-                return callback();
-            };
-            return TemplateDecor;
-        }(require("paperclip/lib/paper/decor/block/base.js"));
-        module.exports = TemplateDecor;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/decor/block/view.js", function(require, module, exports, __dirname, __filename) {
-        var ViewDecor, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        ViewDecor = function(_super) {
-            __extends(ViewDecor, _super);
-            function ViewDecor() {
-                _ref = ViewDecor.__super__.constructor.apply(this, arguments);
-                return _ref;
-            }
-            ViewDecor.prototype.bind = function() {
-                ViewDecor.__super__.bind.call(this);
-                return this.child.bind();
-            };
-            ViewDecor.prototype.dispose = function() {
-                ViewDecor.__super__.dispose.call(this);
-                return this.child.dispose();
-            };
-            ViewDecor.prototype.load = function(context, callback) {
-                var child, onContentLoad, tpl, tplName, wth, _this = this;
-                tplName = "template." + (this.clip.get("view.name") || this.clip.get("view"));
-                wth = this.clip.get("view.item") || void 0;
-                tpl = context.internal.get(tplName);
-                if (!tpl) {
-                    return callback();
-                }
-                child = context.child().detachBuffer();
-                onContentLoad = function() {
-                    child.set("content", child.buffer.join(""));
-                    child.attachBuffer();
-                    _this.child = tpl.node.createContent();
-                    return _this.child.load(child.child(wth), callback);
-                };
-                if (this.node.content) {
-                    return this.node.content.load(child, onContentLoad);
-                } else {
-                    return onContentLoad();
-                }
-            };
-            return ViewDecor;
-        }(require("paperclip/lib/paper/decor/block/base.js"));
-        module.exports = ViewDecor;
-        return module.exports;
-    });
     define("bindable/lib/object/setters/base.js", function(require, module, exports, __dirname, __filename) {
         (function() {
             var utils;
@@ -5372,6 +5402,36 @@
                 return _Class;
             }(require("bindable/lib/collection/setters/base.js"));
         }).call(this);
+        return module.exports;
+    });
+    define("paperclip/lib/paper/decor/block/base.js", function(require, module, exports, __dirname, __filename) {
+        var NodeDecor, __bind = function(fn, me) {
+            return function() {
+                return fn.apply(me, arguments);
+            };
+        };
+        NodeDecor = function() {
+            function NodeDecor(node, scriptName) {
+                this.node = node;
+                this.scriptName = scriptName;
+                this._onChange = __bind(this._onChange, this);
+                this.script = node.clip.script(this.scriptName);
+                this.clip = node.clip;
+            }
+            NodeDecor.prototype.load = function(context, callback) {
+                return callback();
+            };
+            NodeDecor.prototype.bind = function() {
+                return this.clip.bind(this.scriptName).watch(true).to(this._onChange);
+            };
+            NodeDecor.prototype.dispose = function() {};
+            NodeDecor.prototype._onChange = function(value) {};
+            NodeDecor.test = function(node) {
+                return false;
+            };
+            return NodeDecor;
+        }();
+        module.exports = NodeDecor;
         return module.exports;
     });
     define("underscore/underscore.js", function(require, module, exports, __dirname, __filename) {
@@ -6237,36 +6297,6 @@
             return BaseDecor;
         }();
         module.exports = BaseDecor;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/decor/block/base.js", function(require, module, exports, __dirname, __filename) {
-        var NodeDecor, __bind = function(fn, me) {
-            return function() {
-                return fn.apply(me, arguments);
-            };
-        };
-        NodeDecor = function() {
-            function NodeDecor(node, scriptName) {
-                this.node = node;
-                this.scriptName = scriptName;
-                this._onChange = __bind(this._onChange, this);
-                this.script = node.clip.script(this.scriptName);
-                this.clip = node.clip;
-            }
-            NodeDecor.prototype.load = function(context, callback) {
-                return callback();
-            };
-            NodeDecor.prototype.bind = function() {
-                return this.clip.bind(this.scriptName).watch(true).to(this._onChange);
-            };
-            NodeDecor.prototype.dispose = function() {};
-            NodeDecor.prototype._onChange = function(value) {};
-            NodeDecor.test = function(node) {
-                return false;
-            };
-            return NodeDecor;
-        }();
-        module.exports = NodeDecor;
         return module.exports;
     });
     define("bindable/lib/collection/setters/base.js", function(require, module, exports, __dirname, __filename) {

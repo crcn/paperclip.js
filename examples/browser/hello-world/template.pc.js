@@ -146,7 +146,37 @@ module.exports = function(paper) {
             } ],
             value: [ "drink beer" ]
         }
-    }).html("<br/> ").nodeBinding("div", {
+    }).html("<br/> <select> <option>Select a friend</option> ").blockBinding({
+        each: {
+            fn: function() {
+                return this.ref("friends").value();
+            },
+            refs: [ "friends" ]
+        },
+        as: {
+            fn: function() {
+                return "friend";
+            },
+            refs: []
+        }
+    }, function() {
+        return paper.create().html(" ").nodeBinding("option", {
+            attrs: {
+                value: [ {
+                    fn: function() {
+                        return this.ref("friend.name").value();
+                    },
+                    refs: [ "friend.name" ]
+                } ]
+            },
+            children: paper.create().textBinding({
+                fn: function() {
+                    return this.ref("friend.name").value();
+                },
+                refs: [ "friend.name" ]
+            })
+        }).html(" ");
+    }).html("</select> ").nodeBinding("div", {
         attrs: {
             "data-bind": [ {
                 show: {
