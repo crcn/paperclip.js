@@ -2,6 +2,10 @@ uglify = require "uglify-js"
 jsp    = uglify.parser
 pro    = uglify.uglify
 
+###
+  Beautifies javascript
+###
+
 class Formatter
 
   ###
