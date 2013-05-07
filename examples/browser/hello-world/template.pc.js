@@ -111,11 +111,30 @@ module.exports = function(paper) {
     }).html(" ").blockBinding({
         when: {
             fn: function() {
-                return this.ref("age").value() > 21;
+                return this.ref("age").value() > 20;
             },
             refs: [ "age" ]
         }
     }, function() {
-        return paper.create().html(" Yippe! You're over 21! ");
+        return paper.create().html(" Yippe! You're over 20! ");
+    }).html(" Current Address: <br/> ").blockBinding({
+        "with": {
+            fn: function() {
+                return this.ref("address").value();
+            },
+            refs: [ "address" ]
+        }
+    }, function() {
+        return paper.create().html(" ").textBinding({
+            fn: function() {
+                return this.ref("city").value();
+            },
+            refs: [ "city" ]
+        }).html(" ").textBinding({
+            fn: function() {
+                return this.ref("zip").value();
+            },
+            refs: [ "zip" ]
+        }).html(" ");
     }).html(" ");
 };

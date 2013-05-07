@@ -17,7 +17,14 @@ Your Friends: <br />
 {{/}}
 
 
-{{#when:age > 21}}
-Yippe! You're over 21!
+{{#when:age > 20}}
+  Yippe! You're over 20!
+{{/}}
+
+
+Current Address: <br />
+
+{{#with:address}}
+  {{city}} {{zip}}
 {{/}}
 

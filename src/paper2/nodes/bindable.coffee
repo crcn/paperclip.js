@@ -6,8 +6,9 @@ class BindableNode extends require("./base")
   ###
 
   bind: () ->
-    @section = pilot.section @id
     super()
+    @section = pilot.section @id
+    @
 
 
   ###

@@ -12,8 +12,19 @@
       age: 23,
       addFriend: function(friend) {
         data.friends.push(friend);
+      },
+      address: {
+        city: "San Francisco",
+        zip: 94102
       }
-    }
+    };
+
+    setTimeout(function() {
+      context.set("address", {
+        city: "Minneapolis",
+        zip: 55378
+      })
+    }, 1000);
 
     data.friends = new paper.bindable.Collection([], "name");
     data.friends.transform().map(friend)

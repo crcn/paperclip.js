@@ -71,8 +71,6 @@ class EachDecor extends require("./base")
     node.attach @node, @context
 
 
-
-
   ###
   ###
 
@@ -80,7 +78,7 @@ class EachDecor extends require("./base")
     for child, i in @children
       if child.item is item
         @children.splice(i, 1)
-        child.section.dispose()
+        child.dispose()
         break
 
 

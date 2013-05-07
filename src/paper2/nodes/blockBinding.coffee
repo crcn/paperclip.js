@@ -22,6 +22,7 @@ class BlockChild extends require("./bindable")
   bind: () ->
     super()
     @content.bind()
+    @
 
   ###
   ###

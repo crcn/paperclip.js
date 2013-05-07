@@ -20,7 +20,13 @@ class Base
   bind: () ->
     for child in @children or []
       child.bind()
+    @
 
+  ###
+  ###
+
+  dispose: () ->
+    @section.dispose()
 
   ###
   ###
@@ -45,16 +51,18 @@ class Base
    writes HTML to the DOM
   ###
 
-  load: (info, callback) ->  
+  load: (@context, callback) ->  
 
-    @_writeHead info, (err) =>
+    @_writeHead context, (err) =>
       return callback(err) if err?
 
-      @_loadChildren info, (err) =>
+      @_loadChildren context, (err) =>
         return callback(err) if err?
         
-        @_writeTail info, (err) -> 
-          return callback err, info
+        @_writeTail context, (err) -> 
+          return callback err, context
+
+    @
 
   ###
   ###

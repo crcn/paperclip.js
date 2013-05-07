@@ -7,6 +7,7 @@ decor = [
   require("./block/html"),
   require("./block/block"),
   require("./block/when"),
+  require("./block/with"),
   require("./block/each"), 
   require("./block/value"),
   require("./block/template"),

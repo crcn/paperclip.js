@@ -28,11 +28,18 @@ class BlockDecor extends require("./base")
   ###
   ###
 
+  bind: () ->
+    super()
+    @child.bind()
+
+  ###
+  ###
+
   _onChange: (value) =>
     if value
-      @node.createContent().attach @node, @context
+      @child = @node.createContent().attach(@node, @context).bind()
     else
-      @node.section.html("")
+      @child.dispose()
       
 
 

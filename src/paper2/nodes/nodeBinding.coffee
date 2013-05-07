@@ -46,6 +46,7 @@ class NodeBinding extends require("./bindable")
   bind: () =>
     super()
     @_decor.bind()
+    @
 
   ###
   ###
