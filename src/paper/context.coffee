@@ -8,6 +8,7 @@ class Context extends bindable.Object
 
   constructor: (data, @parent) ->
     super data
+    @set "this", @
 
     # the root context
     @root     = @parent?.root or @
@@ -23,6 +24,17 @@ class Context extends bindable.Object
   ###
 
   get: (key) -> super(key) ? @parent?.get(key)
+
+  ###
+  ###
+
+
+  ###
+  bind: (key) ->
+    return super(key) if (typeof key isnt "string") or @has(key)
+    if @has(key)
+      @parent?.bind key
+  ###
 
   ###
   ###

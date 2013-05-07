@@ -15,14 +15,6 @@ class TemplateDecor extends require("./base")
     callback()
 
 
-  ###
-  ###
-
-
-  write: (context, callback) ->
-    @node.content.load context, callback
-
-
 
   
 

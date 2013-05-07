@@ -37,9 +37,9 @@ module.exports = function(paper) {
         }
     }).html(" <br/> <span> hello ").textBinding({
         fn: function() {
-            return this.ref("name").value();
+            return this.ref("this.name").value();
         },
-        refs: [ "name" ]
+        refs: [ "this.name" ]
     }).html(", you are ").textBinding({
         fn: function() {
             return this.ref("age").value() || 0;
@@ -186,5 +186,41 @@ module.exports = function(paper) {
             },
             refs: [ "zip" ]
         }).html(" ");
+    }).html(" <br/> ").blockBinding({
+        template: {
+            fn: function() {
+                return "test";
+            },
+            refs: []
+        }
+    }, function() {
+        return paper.create().html(" hello component ").textBinding({
+            fn: function() {
+                return this.ref("name").value();
+            },
+            refs: [ "name" ]
+        }).html("! <br/> ");
+    }).html(" ").textBinding({
+        component: {
+            fn: function() {
+                return {
+                    name: "test",
+                    item: this.ref("this").value()
+                };
+            },
+            refs: [ "this" ]
+        }
+    }).html(" ").textBinding({
+        component: {
+            fn: function() {
+                return {
+                    name: "test",
+                    item: {
+                        name: "john"
+                    }
+                };
+            },
+            refs: []
+        }
     }).html(" ");
 };

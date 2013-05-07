@@ -8,7 +8,7 @@ blockDecorators =
   value     : require("./block/value")
   block     : require("./block/block")
   template  : require("./block/template")
-  component : require("./block/template")
+  component : require("./block/component")
 
 
 

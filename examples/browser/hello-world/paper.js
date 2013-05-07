@@ -86,9 +86,9 @@
                 }
             }).html(" <br/> <span> hello ").textBinding({
                 fn: function() {
-                    return this.ref("name").value();
+                    return this.ref("this.name").value();
                 },
-                refs: [ "name" ]
+                refs: [ "this.name" ]
             }).html(", you are ").textBinding({
                 fn: function() {
                     return this.ref("age").value() || 0;
@@ -235,6 +235,42 @@
                     },
                     refs: [ "zip" ]
                 }).html(" ");
+            }).html(" <br/> ").blockBinding({
+                template: {
+                    fn: function() {
+                        return "test";
+                    },
+                    refs: []
+                }
+            }, function() {
+                return paper.create().html(" hello component ").textBinding({
+                    fn: function() {
+                        return this.ref("name").value();
+                    },
+                    refs: [ "name" ]
+                }).html("! <br/> ");
+            }).html(" ").textBinding({
+                component: {
+                    fn: function() {
+                        return {
+                            name: "test",
+                            item: this.ref("this").value()
+                        };
+                    },
+                    refs: [ "this" ]
+                }
+            }).html(" ").textBinding({
+                component: {
+                    fn: function() {
+                        return {
+                            name: "test",
+                            item: {
+                                name: "john"
+                            }
+                        };
+                    },
+                    refs: []
+                }
             }).html(" ");
         };
         return module.exports;
@@ -568,236 +604,6 @@
         }).call(this);
         return module.exports;
     });
-    define("dref/lib/index.js", function(require, module, exports, __dirname, __filename) {
-        var _gss = global._gss = global._gss || [], type = require("type-component/index.js");
-        var _gs = function(context) {
-            for (var i = _gss.length; i--; ) {
-                var gs = _gss[i];
-                if (gs.test(context)) {
-                    return gs;
-                }
-            }
-        };
-        var _length = function(context) {
-            var gs = _gs(context);
-            return gs ? gs.length(context) : context.length;
-        };
-        var _get = function(context, key) {
-            var gs = _gs(context);
-            return gs ? gs.get(context, key) : context[key];
-        };
-        var _set = function(context, key, value) {
-            var gs = _gs(context);
-            return gs ? gs.set(context, key, value) : context[key] = value;
-        };
-        var _findValues = function(keyParts, target, create, index, values) {
-            if (!values) {
-                keyParts = (type(keyParts) === "array" ? keyParts : keyParts.split(".")).filter(function(part) {
-                    return !!part.length;
-                });
-                values = [];
-                index = 0;
-            }
-            var ct, j, kp, i = index, n = keyParts.length, pt = target;
-            for (; i < n; i++) {
-                kp = keyParts[i];
-                ct = _get(pt, kp);
-                if (kp == "$") {
-                    for (j = _length(pt); j--; ) {
-                        _findValues(keyParts, _get(pt, j), create, i + 1, values);
-                    }
-                    return values;
-                } else if (ct == undefined || ct == null) {
-                    if (!create) return values;
-                    _set(pt, kp, {});
-                    ct = _get(pt, kp);
-                }
-                pt = ct;
-            }
-            if (ct) {
-                values.push(ct);
-            } else {
-                values.push(pt);
-            }
-            return values;
-        };
-        var getValue = function(target, key) {
-            key = String(key);
-            var values = _findValues(key, target);
-            return key.indexOf(".$.") == -1 ? values[0] : values;
-        };
-        var setValue = function(target, key, newValue) {
-            key = String(key);
-            var keyParts = key.split("."), keySet = keyParts.pop();
-            if (keySet == "$") {
-                keySet = keyParts.pop();
-            }
-            var values = _findValues(keyParts, target, true);
-            for (var i = values.length; i--; ) {
-                _set(values[i], keySet, newValue);
-            }
-        };
-        exports.get = getValue;
-        exports.set = setValue;
-        exports.use = function(gs) {
-            _gss.push(gs);
-        };
-        return module.exports;
-    });
-    define("events/index.js", function(require, module, exports, __dirname, __filename) {
-        var isArray = Array.isArray;
-        function EventEmitter() {}
-        exports.EventEmitter = EventEmitter;
-        var defaultMaxListeners = 100;
-        EventEmitter.prototype.setMaxListeners = function(n) {
-            if (!this._events) this._events = {};
-            this._events.maxListeners = n;
-        };
-        EventEmitter.prototype.emit = function() {
-            var type = arguments[0];
-            if (type === "error") {
-                if (!this._events || !this._events.error || isArray(this._events.error) && !this._events.error.length) {
-                    if (arguments[1] instanceof Error) {
-                        throw arguments[1];
-                    } else {
-                        throw new Error("Uncaught, unspecified 'error' event.");
-                    }
-                    return false;
-                }
-            }
-            if (!this._events) return false;
-            var handler = this._events[type];
-            if (!handler) return false;
-            if (typeof handler == "function") {
-                switch (arguments.length) {
-                  case 1:
-                    handler.call(this);
-                    break;
-                  case 2:
-                    handler.call(this, arguments[1]);
-                    break;
-                  case 3:
-                    handler.call(this, arguments[1], arguments[2]);
-                    break;
-                  default:
-                    var l = arguments.length;
-                    var args = new Array(l - 1);
-                    for (var i = 1; i < l; i++) args[i - 1] = arguments[i];
-                    handler.apply(this, args);
-                }
-                return true;
-            } else if (isArray(handler)) {
-                var l = arguments.length;
-                var args = new Array(l - 1);
-                for (var i = 1; i < l; i++) args[i - 1] = arguments[i];
-                var listeners = handler.slice();
-                for (var i = 0, l = listeners.length; i < l; i++) {
-                    listeners[i].apply(this, args);
-                }
-                return true;
-            } else {
-                return false;
-            }
-        };
-        EventEmitter.prototype.addListener = function(type, listener) {
-            if ("function" !== typeof listener) {
-                throw new Error("addListener only takes instances of Function");
-            }
-            if (!this._events) this._events = {};
-            this.emit("newListener", type, listener);
-            if (!this._events[type]) {
-                this._events[type] = listener;
-            } else if (isArray(this._events[type])) {
-                this._events[type].push(listener);
-                if (!this._events[type].warned) {
-                    var m;
-                    if (this._events.maxListeners !== undefined) {
-                        m = this._events.maxListeners;
-                    } else {
-                        m = defaultMaxListeners;
-                    }
-                    if (m && m > 0 && this._events[type].length > m) {
-                        this._events[type].warned = true;
-                        console.error("(node) warning: possible EventEmitter memory " + "leak detected. %d listeners added. " + "Use emitter.setMaxListeners() to increase limit.", this._events[type].length);
-                        console.trace();
-                    }
-                }
-            } else {
-                this._events[type] = [ this._events[type], listener ];
-            }
-            return this;
-        };
-        EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-        EventEmitter.prototype.once = function(type, listener) {
-            if ("function" !== typeof listener) {
-                throw new Error(".once only takes instances of Function");
-            }
-            var self = this;
-            function g() {
-                self.removeListener(type, g);
-                listener.apply(this, arguments);
-            }
-            g.listener = listener;
-            self.on(type, g);
-            return this;
-        };
-        EventEmitter.prototype.removeListener = function(type, listener) {
-            if ("function" !== typeof listener) {
-                throw new Error("removeListener only takes instances of Function");
-            }
-            if (!this._events || !this._events[type]) return this;
-            var list = this._events[type];
-            if (isArray(list)) {
-                var position = -1;
-                for (var i = 0, length = list.length; i < length; i++) {
-                    if (list[i] === listener || list[i].listener && list[i].listener === listener) {
-                        position = i;
-                        break;
-                    }
-                }
-                if (position < 0) return this;
-                list.splice(position, 1);
-                if (list.length == 0) delete this._events[type];
-            } else if (list === listener || list.listener && list.listener === listener) {
-                delete this._events[type];
-            }
-            return this;
-        };
-        EventEmitter.prototype.removeAllListeners = function(type) {
-            if (arguments.length === 0) {
-                this._events = {};
-                return this;
-            }
-            if (type && this._events && this._events[type]) this._events[type] = null;
-            return this;
-        };
-        EventEmitter.prototype.listeners = function(type) {
-            if (!this._events) this._events = {};
-            if (!this._events[type]) this._events[type] = [];
-            if (!isArray(this._events[type])) {
-                this._events[type] = [ this._events[type] ];
-            }
-            return this._events[type];
-        };
-        return module.exports;
-    });
-    define("paperclip/lib/clip/modifiers/index.js", function(require, module, exports, __dirname, __filename) {
-        module.exports = {
-            uppercase: function(value) {
-                return String(value).toUpperCase();
-            },
-            lowercase: function(value) {
-                return String(value).toLowerCase();
-            },
-            json: function(value, count, delimiter) {
-                return JSON.stringify.apply(JSON, arguments);
-            },
-            replace: function(value, newValue) {
-                return newValue;
-            }
-        };
-        return module.exports;
-    });
     define("paperclip/lib/paper/context.js", function(require, module, exports, __dirname, __filename) {
         var Context, bindable, pilot, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
             for (var key in parent) {
@@ -819,6 +625,7 @@
                 var _ref, _ref1;
                 this.parent = parent;
                 Context.__super__.constructor.call(this, data);
+                this.set("this", this);
                 this.root = ((_ref = this.parent) != null ? _ref.root : void 0) || this;
                 this.buffer = ((_ref1 = this.parent) != null ? _ref1.buffer : void 0) || [];
                 this.internal = this.root.internal || new bindable.Object;
@@ -1130,6 +937,236 @@
         module.exports.dictionary = createDictionary;
         module.exports.type = "operator";
         module.exports.factory = structrFactory;
+        return module.exports;
+    });
+    define("dref/lib/index.js", function(require, module, exports, __dirname, __filename) {
+        var _gss = global._gss = global._gss || [], type = require("type-component/index.js");
+        var _gs = function(context) {
+            for (var i = _gss.length; i--; ) {
+                var gs = _gss[i];
+                if (gs.test(context)) {
+                    return gs;
+                }
+            }
+        };
+        var _length = function(context) {
+            var gs = _gs(context);
+            return gs ? gs.length(context) : context.length;
+        };
+        var _get = function(context, key) {
+            var gs = _gs(context);
+            return gs ? gs.get(context, key) : context[key];
+        };
+        var _set = function(context, key, value) {
+            var gs = _gs(context);
+            return gs ? gs.set(context, key, value) : context[key] = value;
+        };
+        var _findValues = function(keyParts, target, create, index, values) {
+            if (!values) {
+                keyParts = (type(keyParts) === "array" ? keyParts : keyParts.split(".")).filter(function(part) {
+                    return !!part.length;
+                });
+                values = [];
+                index = 0;
+            }
+            var ct, j, kp, i = index, n = keyParts.length, pt = target;
+            for (; i < n; i++) {
+                kp = keyParts[i];
+                ct = _get(pt, kp);
+                if (kp == "$") {
+                    for (j = _length(pt); j--; ) {
+                        _findValues(keyParts, _get(pt, j), create, i + 1, values);
+                    }
+                    return values;
+                } else if (ct == undefined || ct == null) {
+                    if (!create) return values;
+                    _set(pt, kp, {});
+                    ct = _get(pt, kp);
+                }
+                pt = ct;
+            }
+            if (ct) {
+                values.push(ct);
+            } else {
+                values.push(pt);
+            }
+            return values;
+        };
+        var getValue = function(target, key) {
+            key = String(key);
+            var values = _findValues(key, target);
+            return key.indexOf(".$.") == -1 ? values[0] : values;
+        };
+        var setValue = function(target, key, newValue) {
+            key = String(key);
+            var keyParts = key.split("."), keySet = keyParts.pop();
+            if (keySet == "$") {
+                keySet = keyParts.pop();
+            }
+            var values = _findValues(keyParts, target, true);
+            for (var i = values.length; i--; ) {
+                _set(values[i], keySet, newValue);
+            }
+        };
+        exports.get = getValue;
+        exports.set = setValue;
+        exports.use = function(gs) {
+            _gss.push(gs);
+        };
+        return module.exports;
+    });
+    define("events/index.js", function(require, module, exports, __dirname, __filename) {
+        var isArray = Array.isArray;
+        function EventEmitter() {}
+        exports.EventEmitter = EventEmitter;
+        var defaultMaxListeners = 100;
+        EventEmitter.prototype.setMaxListeners = function(n) {
+            if (!this._events) this._events = {};
+            this._events.maxListeners = n;
+        };
+        EventEmitter.prototype.emit = function() {
+            var type = arguments[0];
+            if (type === "error") {
+                if (!this._events || !this._events.error || isArray(this._events.error) && !this._events.error.length) {
+                    if (arguments[1] instanceof Error) {
+                        throw arguments[1];
+                    } else {
+                        throw new Error("Uncaught, unspecified 'error' event.");
+                    }
+                    return false;
+                }
+            }
+            if (!this._events) return false;
+            var handler = this._events[type];
+            if (!handler) return false;
+            if (typeof handler == "function") {
+                switch (arguments.length) {
+                  case 1:
+                    handler.call(this);
+                    break;
+                  case 2:
+                    handler.call(this, arguments[1]);
+                    break;
+                  case 3:
+                    handler.call(this, arguments[1], arguments[2]);
+                    break;
+                  default:
+                    var l = arguments.length;
+                    var args = new Array(l - 1);
+                    for (var i = 1; i < l; i++) args[i - 1] = arguments[i];
+                    handler.apply(this, args);
+                }
+                return true;
+            } else if (isArray(handler)) {
+                var l = arguments.length;
+                var args = new Array(l - 1);
+                for (var i = 1; i < l; i++) args[i - 1] = arguments[i];
+                var listeners = handler.slice();
+                for (var i = 0, l = listeners.length; i < l; i++) {
+                    listeners[i].apply(this, args);
+                }
+                return true;
+            } else {
+                return false;
+            }
+        };
+        EventEmitter.prototype.addListener = function(type, listener) {
+            if ("function" !== typeof listener) {
+                throw new Error("addListener only takes instances of Function");
+            }
+            if (!this._events) this._events = {};
+            this.emit("newListener", type, listener);
+            if (!this._events[type]) {
+                this._events[type] = listener;
+            } else if (isArray(this._events[type])) {
+                this._events[type].push(listener);
+                if (!this._events[type].warned) {
+                    var m;
+                    if (this._events.maxListeners !== undefined) {
+                        m = this._events.maxListeners;
+                    } else {
+                        m = defaultMaxListeners;
+                    }
+                    if (m && m > 0 && this._events[type].length > m) {
+                        this._events[type].warned = true;
+                        console.error("(node) warning: possible EventEmitter memory " + "leak detected. %d listeners added. " + "Use emitter.setMaxListeners() to increase limit.", this._events[type].length);
+                        console.trace();
+                    }
+                }
+            } else {
+                this._events[type] = [ this._events[type], listener ];
+            }
+            return this;
+        };
+        EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+        EventEmitter.prototype.once = function(type, listener) {
+            if ("function" !== typeof listener) {
+                throw new Error(".once only takes instances of Function");
+            }
+            var self = this;
+            function g() {
+                self.removeListener(type, g);
+                listener.apply(this, arguments);
+            }
+            g.listener = listener;
+            self.on(type, g);
+            return this;
+        };
+        EventEmitter.prototype.removeListener = function(type, listener) {
+            if ("function" !== typeof listener) {
+                throw new Error("removeListener only takes instances of Function");
+            }
+            if (!this._events || !this._events[type]) return this;
+            var list = this._events[type];
+            if (isArray(list)) {
+                var position = -1;
+                for (var i = 0, length = list.length; i < length; i++) {
+                    if (list[i] === listener || list[i].listener && list[i].listener === listener) {
+                        position = i;
+                        break;
+                    }
+                }
+                if (position < 0) return this;
+                list.splice(position, 1);
+                if (list.length == 0) delete this._events[type];
+            } else if (list === listener || list.listener && list.listener === listener) {
+                delete this._events[type];
+            }
+            return this;
+        };
+        EventEmitter.prototype.removeAllListeners = function(type) {
+            if (arguments.length === 0) {
+                this._events = {};
+                return this;
+            }
+            if (type && this._events && this._events[type]) this._events[type] = null;
+            return this;
+        };
+        EventEmitter.prototype.listeners = function(type) {
+            if (!this._events) this._events = {};
+            if (!this._events[type]) this._events[type] = [];
+            if (!isArray(this._events[type])) {
+                this._events[type] = [ this._events[type] ];
+            }
+            return this._events[type];
+        };
+        return module.exports;
+    });
+    define("paperclip/lib/clip/modifiers/index.js", function(require, module, exports, __dirname, __filename) {
+        module.exports = {
+            uppercase: function(value) {
+                return String(value).toUpperCase();
+            },
+            lowercase: function(value) {
+                return String(value).toLowerCase();
+            },
+            json: function(value, count, delimiter) {
+                return JSON.stringify.apply(JSON, arguments);
+            },
+            replace: function(value, newValue) {
+                return newValue;
+            }
+        };
         return module.exports;
     });
     define("bindable/lib/object/binding.js", function(require, module, exports, __dirname, __filename) {
@@ -1742,28 +1779,6 @@
         }).call(this);
         return module.exports;
     });
-    define("type-component/index.js", function(require, module, exports, __dirname, __filename) {
-        var toString = Object.prototype.toString;
-        module.exports = function(val) {
-            switch (toString.call(val)) {
-              case "[object Function]":
-                return "function";
-              case "[object Date]":
-                return "date";
-              case "[object RegExp]":
-                return "regexp";
-              case "[object Arguments]":
-                return "arguments";
-              case "[object Array]":
-                return "array";
-            }
-            if (val === null) return "null";
-            if (val === undefined) return "undefined";
-            if (val === Object(val)) return "object";
-            return typeof val;
-        };
-        return module.exports;
-    });
     define("paperclip/lib/paper/nodes/nodeBinding.js", function(require, module, exports, __dirname, __filename) {
         var AttributeBinding, Base, ClippedBuffer, NodeBinding, async, attrFactory, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
             for (var key in parent) {
@@ -2308,6 +2323,28 @@
                 _results.push(element.removeChild(element.childNodes[0]));
             }
             return _results;
+        };
+        return module.exports;
+    });
+    define("type-component/index.js", function(require, module, exports, __dirname, __filename) {
+        var toString = Object.prototype.toString;
+        module.exports = function(val) {
+            switch (toString.call(val)) {
+              case "[object Function]":
+                return "function";
+              case "[object Date]":
+                return "date";
+              case "[object RegExp]":
+                return "regexp";
+              case "[object Arguments]":
+                return "arguments";
+              case "[object Array]":
+                return "array";
+            }
+            if (val === null) return "null";
+            if (val === undefined) return "undefined";
+            if (val === Object(val)) return "object";
+            return typeof val;
         };
         return module.exports;
     });
@@ -3868,7 +3905,7 @@
             value: require("paperclip/lib/paper/decor/block/value.js"),
             block: require("paperclip/lib/paper/decor/block/block.js"),
             template: require("paperclip/lib/paper/decor/block/template.js"),
-            component: require("paperclip/lib/paper/decor/block/template.js")
+            component: require("paperclip/lib/paper/decor/block/component.js")
         };
         Factory = function() {
             function Factory() {}
@@ -5045,12 +5082,63 @@
                 context.internal.set("template." + (this.clip.get("template.name") || this.clip.get("template")), this);
                 return callback();
             };
-            TemplateDecor.prototype.write = function(context, callback) {
-                return this.node.content.load(context, callback);
-            };
             return TemplateDecor;
         }(require("paperclip/lib/paper/decor/block/base.js"));
         module.exports = TemplateDecor;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/decor/block/component.js", function(require, module, exports, __dirname, __filename) {
+        var ComponentDecor, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        ComponentDecor = function(_super) {
+            __extends(ComponentDecor, _super);
+            function ComponentDecor() {
+                _ref = ComponentDecor.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            ComponentDecor.prototype.bind = function() {
+                ComponentDecor.__super__.bind.call(this);
+                this.child.bind();
+                return console.log("BIND");
+            };
+            ComponentDecor.prototype.dispose = function() {
+                ComponentDecor.__super__.dispose.call(this);
+                return this.child.dispose();
+            };
+            ComponentDecor.prototype.load = function(context, callback) {
+                var child, onContentLoad, tpl, tplName, wth, _this = this;
+                tplName = "template." + (this.clip.get("component.name") || this.clip.get("component"));
+                wth = this.clip.get("component.item") || void 0;
+                tpl = context.internal.get(tplName);
+                if (!tpl) {
+                    return callback();
+                }
+                child = context.child().detachBuffer();
+                onContentLoad = function() {
+                    child.set("content", child.buffer.join(""));
+                    child.attachBuffer();
+                    _this.child = tpl.node.createContent();
+                    return _this.child.load(child.child(wth), callback);
+                };
+                if (this.node.content) {
+                    return this.node.content.load(child, onContentLoad);
+                } else {
+                    return onContentLoad();
+                }
+            };
+            return ComponentDecor;
+        }(require("paperclip/lib/paper/decor/block/base.js"));
+        module.exports = ComponentDecor;
         return module.exports;
     });
     define("bindable/lib/object/setters/base.js", function(require, module, exports, __dirname, __filename) {
