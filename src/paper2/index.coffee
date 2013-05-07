@@ -9,7 +9,7 @@ class Paper
   ###
 
   constructor: (@factory) ->
-    @node = @factory.call @
+    @node = @factory @
 
   ###
   ###
@@ -24,18 +24,13 @@ class Paper
     @load context, (err, context) =>
       return callback(err) if err?
 
-
       # set the inner html of the target
       element.innerHTML = context.buffer.join("")
-
 
       # scan the element for sections
       pilot.update element
 
-
-      # attach the sections to their rightful binding
-      for binding in context.bindings
-        binding.bind(pilot.section(binding.id))
+      @node.bind()
 
       callback null, context
 

@@ -1,4 +1,4 @@
-async        = require "async"
+async  = require "async"
 
 class Base
 
@@ -7,6 +7,13 @@ class Base
 
   constructor: () ->
     @children = []
+
+  ###
+  ###
+
+  bind: () ->
+    for child in @children or []
+      child.bind()
 
 
   ###

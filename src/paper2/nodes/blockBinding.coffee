@@ -12,10 +12,8 @@ class BlockBinding extends require("./bindable")
   ###
   ###
 
-  constructor: (@script, @content) ->
+  constructor: (@script, @contentFactory) ->
     super()
-    if @content
-      @addChild content
     @clip = new Clip { script: script, watch: false }
     @_decor = decorFactory.getDecor @
 
@@ -23,8 +21,8 @@ class BlockBinding extends require("./bindable")
   ###
   ###
 
-  bind: (@section) -> 
-    super section
+  bind: () -> 
+    super()
     @clip.watch()
     @_decor.bind()
 

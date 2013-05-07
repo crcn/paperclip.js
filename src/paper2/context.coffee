@@ -13,22 +13,10 @@ class Context extends bindable.Object
     @root     = @parent?.root or @
 
     # the buffer on initial load
-    @buffer   = @root.buffer or []
+    @buffer   = @parent?.buffer or []
 
     # internal data such as defined templates
     @internal = @root.internal or new bindable.Object()
-
-
-    if @root is @
-      @bindings = []
-
-
-  ###
-  ###
-
-  addBinding: (binding) ->
-    @root.bindings.push binding
-
 
 
   ###

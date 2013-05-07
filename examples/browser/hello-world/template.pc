@@ -1,1 +1,18 @@
-hello {{name}}, you are {{age||0}} years old, therefore you {{age > 20 ? "can" : "cannot"}} drink!
+Name: <input type="text" data-bind="{{value:name;bothWays:true}}" /> <br />
+Age: <input type="text" data-bind="{{value:age;bothWays:true}}" /> <br />
+
+<span>
+  hello {{name}}, you are {{age||0}} years old, therefore you <b>{{age > 20 ? "can" : "cannot"}}</b> 
+ drink!
+</span>
+
+
+
+<br />
+
+<input type="text" data-bind="{{value:currentFriend || "";bothWays:true;enter:currentFriend = "" || addFriend(currentFriend)}}" placeholder="Add a friend"></input> <br />
+Your Friends: <br />
+{{#each:friends;as:"friend"}}
+  <a href="#" data-bind="{{click:friend.remove()}}">x</a> {{friend.name}} <br />
+{{/}}
+

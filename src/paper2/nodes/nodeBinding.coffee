@@ -1,6 +1,7 @@
 async = require("async")
 ClippedBuffer = require("../../clip/buffer")
 Base = require "./base"
+attrFactory = require("../decor/attrFactory")
 
 class AttributeBinding extends Base
   
@@ -21,7 +22,7 @@ class AttributeBinding extends Base
     callback()
 
 
-class NodeBinding extends Base
+class NodeBinding extends require("./bindable")
 
   ###
   ###
@@ -33,13 +34,8 @@ class NodeBinding extends Base
 
   constructor: (@name, @options = {}) ->
     super()
-    attrs   = options.attrs or {}
-
-    attrsArray = []
-    for key of attrs
-      attrsArray.push new AttributeBinding key, attrs[key]
-
-    @attrs = attrsArray
+    @attributes   = options.attrs or {}
+    @_decor = attrFactory.getDecor @
 
     if options.children
       @addChild options.children
@@ -47,19 +43,33 @@ class NodeBinding extends Base
   ###
   ###
 
-  _writeHead: (info, callback) ->
-    info.buffer.push "<#{@name}"
-      
-    Base.loadEachItem @attrs, info, () ->
-      info.buffer.push ">"
-      callback()
+  bind: () =>
+    super()
+    @_decor.bind()
 
   ###
   ###
 
-  _writeTail: (info, callback) ->
-    info.buffer.push "</#{@name}>"
-    super info, callback
+  _writeHead: (context, callback) ->
+    this._writeStartBlock(context)
+    context.buffer.push "<#{@name}"
+    callback()
+
+  ###
+  ###
+
+  _loadChildren: (context, callback) ->
+    @_decor.load context, () =>
+      context.buffer.push ">"
+      super context, callback
+
+  ###
+  ###
+
+  _writeTail: (context, callback) ->
+    context.buffer.push "</#{@name}>"
+    this._writeEndBlock(context)
+    callback()
 
   ###
   ###

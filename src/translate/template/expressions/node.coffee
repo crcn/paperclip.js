@@ -28,7 +28,7 @@ class NodeExpression extends require("./base")
       options.push " attrs: #{@attributes.toJsString()} "
 
     if @children
-      options.push " children: this.create().html('#{@children.toString()}') "
+      options.push " children: paper.create().html('#{@children.toString()}') "
 
     if options.length
       buffer.push ", {#{options}}"

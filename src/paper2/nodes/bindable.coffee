@@ -1,9 +1,13 @@
+pilot  = require "pilot-block"  
+
 class BindableNode extends require("./base")
   
   ###
   ###
 
-  bind: (@section) ->
+  bind: () ->
+    @section = pilot.section @id
+    super()
 
 
   ###
@@ -19,7 +23,6 @@ class BindableNode extends require("./base")
   _writeStartBlock: (context) ->
     context.internal.set("pcid", pcid = (context.internal.get("pcid") or 0) + 1)
     context.buffer.push "<!--spc:#{@id = pcid}-->"
-    context.addBinding @
 
   ###
   ###

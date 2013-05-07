@@ -1,19 +1,37 @@
 <html>
 <head>
   <script src="./paper.js" type="text/javascript"></script>
+  <script src="/jquery.js" type="text/javascript"></script>
 
 </head>
 <body>
 
   <script type="text/javascript">
-    var context;
+    var context, data  = {
+      name: "Craig",
+      age: 23,
+      addFriend: function(friend) {
+        data.friends.push(friend);
+      }
+    }
 
-    paper.attach(document.body, context = new paper.Context({ name: "craig", age: 0 }));
+    data.friends = new paper.bindable.Collection([], "name");
+    data.friends.transform().map(friend)
+
+    data.friends.push("jake", "jeff");
 
 
-    setInterval(function() {
-      context.set("age", context.get("age") + 1);
-    }, 1000);
+    function friend(name) {
+      var self;
+      return self = {
+        name: name,
+        remove: function() {
+          data.friends.splice(data.friends.indexOf(self), 1);
+        }
+      }
+    }
+
+    paper.attach(document.body, context = new paper.Context(data));
   </script>
 </body>
 </html>

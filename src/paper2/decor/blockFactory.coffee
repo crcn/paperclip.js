@@ -24,8 +24,7 @@ class Factory
 
     decor = new DecorCollection()
     for scriptName in node.clip.scripts.names
-      bd = blockDecorators[scriptName]
-      if bd
+      if bd = blockDecorators[scriptName]
         decor.push new bd node
 
     decor

@@ -48,9 +48,6 @@ class Parser extends BaseParser
       return @_parseNode()
     else if ccode is TokenCodes.SBLOCK
       return @_parseBindingBlock()
-    else if ccode is TokenCodes.WS
-      @_nextCode()
-      return @_parseExpression()
     else
       return @_parseText()
 
@@ -106,9 +103,9 @@ class Parser extends BaseParser
         @_nextCode()
         break
 
-      if ccode is TokenCodes.WS 
-        @_nextCode()
-        continue
+      #if ccode is TokenCodes.WS 
+      #  @_nextCode()
+      #  continue
 
 
       children.push @_parseExpression()
@@ -177,7 +174,7 @@ class Parser extends BaseParser
       @_nextCode()
 
     # just a blank string? skip it.
-    return null if buffer.join("").match(/^\s$/) 
+    # return null if buffer.join("").match(/^\s$/) 
 
     # trim
     new TextStringExpression new StringExpression buffer.join("")

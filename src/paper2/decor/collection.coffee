@@ -18,9 +18,10 @@ class Collection
   ###
   ###
 
-  load: (info, callback) -> 
+  load: (context, callback) -> 
+    @clip?.reset context, false
     async.eachSeries @_items, ((decor, next) ->
-      decor.load info, next
+      decor.load context, next
     ), callback
 
 
