@@ -49,13 +49,15 @@ class NodeExpression extends require("./base")
     if @attributes
       buffer.push " ", @attributes
 
-    buffer.push ">"
 
     if @children
+      buffer.push ">"
       buffer.push @children.items.join("")
+      buffer.push "</#{@name}>"
+    else
+      buffer.push "/>"
 
 
-    buffer.push "</#{@name}>"
 
     buffer.join("")
 

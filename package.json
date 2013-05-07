@@ -17,7 +17,9 @@
   "devDependencies": {
     "jsdom": "*",
     "expect.js": "0.2.x",
-    "mocha": "1.9.x"
+    "mocha": "1.9.x",
+    "sardines": "0.4.x",
+    "karma": "0.8.x"
   },
   "bin": {
     "paperclip": "./bin/paperclip"
@@ -29,6 +31,8 @@
     "hoist": "0.0.x",
     "async": "0.2.x",
     "uglify-js": "1.3.x",
-    "optimist": "0.4.x"
+    "optimist": "0.4.x",
+    "pilot-block": "0.0.x",
+    "asyngleton": "0.1.x"
   }
 }

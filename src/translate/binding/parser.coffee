@@ -66,7 +66,7 @@ class Parser extends BaseParser
   ###
   ###
 
-  _parseActionOptions: () ->
+  _parseActionOptions: () ->  
     switch @_currentCode() 
       when TokenCodes.LB then @_parseMultiOptions()
       else @_parseReference()
@@ -77,6 +77,8 @@ class Parser extends BaseParser
   _parseMultiOptions: () ->
     c = @_currentCode()
     options = []
+
+
 
 
     while c and (c = @_currentCode()) isnt TokenCodes.RB

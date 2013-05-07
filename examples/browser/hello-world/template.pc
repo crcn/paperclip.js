@@ -1,0 +1,1 @@
+hello {{name}}, you are {{age||0}} years old, therefore you {{age > 20 ? "can" : "cannot"}} drink!

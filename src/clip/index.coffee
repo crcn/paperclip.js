@@ -85,6 +85,7 @@ class PropertyChain
 
       pv = cv
       cv = if cv.get then cv.get(command.ref) else dref.get cv, command.ref
+
       
       # reference
       if command.args
@@ -122,7 +123,6 @@ class ClipScript extends events.EventEmitter
   dispose: () ->
     for key of @_watching
       @_watching[key].binding.dispose()
-
     @_watching = {}
 
   ###
@@ -250,7 +250,7 @@ class Clip
 
   constructor: (@options) ->
     @_self = new bindable.Object()
-    @data = new bindable.Object options.data  or {}
+    @reset options.data, false
     @modifiers = options.modifiers or {}
     scripts = @options.scripts or @options.script
 
@@ -260,8 +260,10 @@ class Clip
     if options.watch isnt false
       @watch()
 
-  reset: (data) ->
-    @data.reset data
+  reset: (data = {}, update = true) ->
+    @data = if data.__isBindable then data else new bindable.Object data
+    if update
+      @update()
     @
 
   watch: () ->
@@ -273,8 +275,10 @@ class Clip
     @
 
   dispose: () -> 
+
     @_self?.dispose()
     @scripts?.dispose()
+
     @_self     = undefined
     @_scripts  = undefined
 

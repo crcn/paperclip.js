@@ -1,27 +1,11 @@
 Clip  = require "./clip"
-Paper = require "./paper"
+paper = require "./paper2"
 
-class Paperclip
-
-  ###
-  ###
-
-  constructor: () ->
-
-  ###
-   attaches the context (data), to the element
-  ###
-
-  attach: (data, element) ->
-    dom = new Paper.DOM()
-    dom.attach data, element
-
-
-module.exports = () -> new Paperclip()
 
 # clips compiled data-binding to observables
 module.exports.Clip     = Clip
-module.exports.Paper    = Paper
+module.exports.paper    = paper
+module.exports.Context  = paper.Context
 module.exports.bindable = require "bindable"
 
 if typeof window isnt "undefined"

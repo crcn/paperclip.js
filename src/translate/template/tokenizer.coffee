@@ -105,7 +105,7 @@ class Tokenizer extends BaseTokenizer
         return @_t Codes.LM, "{{"
 
     else if cchar is "}"
-      if @_s.peek(2) is "}}"
+      if @_s.peek(2) is "}}" and @_s.peek(3) isnt "}}}"
         @_s.nextChar()
         return @_t Codes.RM, "}}"
 

@@ -25,6 +25,22 @@
     if (typeof window.process == "undefined") {
         window.process = {};
     }
+    define("paperclip/test-web/hello-test.js", function(require, module, exports, __dirname, __filename) {
+        var Paperclip = require("paperclip/lib/index.js"), helloTpl = Paperclip.paper(require("paperclip/test-web/templates/hello.js")), Context = Paperclip.Context, expect = require("expect.js/expect.js");
+        describe("hello", function() {
+            var context;
+            it("can attach the template to the DOM", function(done) {
+                helloTpl.attach(document.body, context = new Context({
+                    name: "craig"
+                }), done);
+            });
+            it("can change a value and have it reflect in the DOM", function() {
+                context.set("name", "john");
+                expect(document.body.childNodes[2].nodeValue).to.be("john");
+            });
+        });
+        return module.exports;
+    });
     define("paperclip/lib/index.js", function(require, module, exports, __dirname, __filename) {
         var Clip, paper;
         Clip = require("paperclip/lib/clip/index.js");
@@ -36,6 +52,740 @@
         if (typeof window !== "undefined") {
             window.paperclip = module.exports;
         }
+        return module.exports;
+    });
+    define("paperclip/test-web/templates/hello.js", function(require, module, exports, __dirname, __filename) {
+        module.exports = function() {
+            return this.create().html("hello ").textBinding({
+                fn: function() {
+                    return this.ref("name").value();
+                },
+                refs: [ "name" ]
+            }).html("!");
+        };
+        return module.exports;
+    });
+    define("expect.js/expect.js", function(require, module, exports, __dirname, __filename) {
+        (function(global, module) {
+            if ("undefined" == typeof module) {
+                var module = {
+                    exports: {}
+                }, exports = module.exports;
+            }
+            module.exports = expect;
+            expect.Assertion = Assertion;
+            expect.version = "0.1.2";
+            var flags = {
+                not: [ "to", "be", "have", "include", "only" ],
+                to: [ "be", "have", "include", "only", "not" ],
+                only: [ "have" ],
+                have: [ "own" ],
+                be: [ "an" ]
+            };
+            function expect(obj) {
+                return new Assertion(obj);
+            }
+            function Assertion(obj, flag, parent) {
+                this.obj = obj;
+                this.flags = {};
+                if (undefined != parent) {
+                    this.flags[flag] = true;
+                    for (var i in parent.flags) {
+                        if (parent.flags.hasOwnProperty(i)) {
+                            this.flags[i] = true;
+                        }
+                    }
+                }
+                var $flags = flag ? flags[flag] : keys(flags), self = this;
+                if ($flags) {
+                    for (var i = 0, l = $flags.length; i < l; i++) {
+                        if (this.flags[$flags[i]]) continue;
+                        var name = $flags[i], assertion = new Assertion(this.obj, name, this);
+                        if ("function" == typeof Assertion.prototype[name]) {
+                            var old = this[name];
+                            this[name] = function() {
+                                return old.apply(self, arguments);
+                            };
+                            for (var fn in Assertion.prototype) {
+                                if (Assertion.prototype.hasOwnProperty(fn) && fn != name) {
+                                    this[name][fn] = bind(assertion[fn], assertion);
+                                }
+                            }
+                        } else {
+                            this[name] = assertion;
+                        }
+                    }
+                }
+            }
+            Assertion.prototype.assert = function(truth, msg, error) {
+                var msg = this.flags.not ? error : msg, ok = this.flags.not ? !truth : truth;
+                if (!ok) {
+                    throw new Error(msg.call(this));
+                }
+                this.and = new Assertion(this.obj);
+            };
+            Assertion.prototype.ok = function() {
+                this.assert(!!this.obj, function() {
+                    return "expected " + i(this.obj) + " to be truthy";
+                }, function() {
+                    return "expected " + i(this.obj) + " to be falsy";
+                });
+            };
+            Assertion.prototype.throwError = Assertion.prototype.throwException = function(fn) {
+                expect(this.obj).to.be.a("function");
+                var thrown = false, not = this.flags.not;
+                try {
+                    this.obj();
+                } catch (e) {
+                    if ("function" == typeof fn) {
+                        fn(e);
+                    } else if ("object" == typeof fn) {
+                        var subject = "string" == typeof e ? e : e.message;
+                        if (not) {
+                            expect(subject).to.not.match(fn);
+                        } else {
+                            expect(subject).to.match(fn);
+                        }
+                    }
+                    thrown = true;
+                }
+                if ("object" == typeof fn && not) {
+                    this.flags.not = false;
+                }
+                var name = this.obj.name || "fn";
+                this.assert(thrown, function() {
+                    return "expected " + name + " to throw an exception";
+                }, function() {
+                    return "expected " + name + " not to throw an exception";
+                });
+            };
+            Assertion.prototype.empty = function() {
+                var expectation;
+                if ("object" == typeof this.obj && null !== this.obj && !isArray(this.obj)) {
+                    if ("number" == typeof this.obj.length) {
+                        expectation = !this.obj.length;
+                    } else {
+                        expectation = !keys(this.obj).length;
+                    }
+                } else {
+                    if ("string" != typeof this.obj) {
+                        expect(this.obj).to.be.an("object");
+                    }
+                    expect(this.obj).to.have.property("length");
+                    expectation = !this.obj.length;
+                }
+                this.assert(expectation, function() {
+                    return "expected " + i(this.obj) + " to be empty";
+                }, function() {
+                    return "expected " + i(this.obj) + " to not be empty";
+                });
+                return this;
+            };
+            Assertion.prototype.be = Assertion.prototype.equal = function(obj) {
+                this.assert(obj === this.obj, function() {
+                    return "expected " + i(this.obj) + " to equal " + i(obj);
+                }, function() {
+                    return "expected " + i(this.obj) + " to not equal " + i(obj);
+                });
+                return this;
+            };
+            Assertion.prototype.eql = function(obj) {
+                this.assert(expect.eql(obj, this.obj), function() {
+                    return "expected " + i(this.obj) + " to sort of equal " + i(obj);
+                }, function() {
+                    return "expected " + i(this.obj) + " to sort of not equal " + i(obj);
+                });
+                return this;
+            };
+            Assertion.prototype.within = function(start, finish) {
+                var range = start + ".." + finish;
+                this.assert(this.obj >= start && this.obj <= finish, function() {
+                    return "expected " + i(this.obj) + " to be within " + range;
+                }, function() {
+                    return "expected " + i(this.obj) + " to not be within " + range;
+                });
+                return this;
+            };
+            Assertion.prototype.a = Assertion.prototype.an = function(type) {
+                if ("string" == typeof type) {
+                    var n = /^[aeiou]/.test(type) ? "n" : "";
+                    this.assert("array" == type ? isArray(this.obj) : "object" == type ? "object" == typeof this.obj && null !== this.obj : type == typeof this.obj, function() {
+                        return "expected " + i(this.obj) + " to be a" + n + " " + type;
+                    }, function() {
+                        return "expected " + i(this.obj) + " not to be a" + n + " " + type;
+                    });
+                } else {
+                    var name = type.name || "supplied constructor";
+                    this.assert(this.obj instanceof type, function() {
+                        return "expected " + i(this.obj) + " to be an instance of " + name;
+                    }, function() {
+                        return "expected " + i(this.obj) + " not to be an instance of " + name;
+                    });
+                }
+                return this;
+            };
+            Assertion.prototype.greaterThan = Assertion.prototype.above = function(n) {
+                this.assert(this.obj > n, function() {
+                    return "expected " + i(this.obj) + " to be above " + n;
+                }, function() {
+                    return "expected " + i(this.obj) + " to be below " + n;
+                });
+                return this;
+            };
+            Assertion.prototype.lessThan = Assertion.prototype.below = function(n) {
+                this.assert(this.obj < n, function() {
+                    return "expected " + i(this.obj) + " to be below " + n;
+                }, function() {
+                    return "expected " + i(this.obj) + " to be above " + n;
+                });
+                return this;
+            };
+            Assertion.prototype.match = function(regexp) {
+                this.assert(regexp.exec(this.obj), function() {
+                    return "expected " + i(this.obj) + " to match " + regexp;
+                }, function() {
+                    return "expected " + i(this.obj) + " not to match " + regexp;
+                });
+                return this;
+            };
+            Assertion.prototype.length = function(n) {
+                expect(this.obj).to.have.property("length");
+                var len = this.obj.length;
+                this.assert(n == len, function() {
+                    return "expected " + i(this.obj) + " to have a length of " + n + " but got " + len;
+                }, function() {
+                    return "expected " + i(this.obj) + " to not have a length of " + len;
+                });
+                return this;
+            };
+            Assertion.prototype.property = function(name, val) {
+                if (this.flags.own) {
+                    this.assert(Object.prototype.hasOwnProperty.call(this.obj, name), function() {
+                        return "expected " + i(this.obj) + " to have own property " + i(name);
+                    }, function() {
+                        return "expected " + i(this.obj) + " to not have own property " + i(name);
+                    });
+                    return this;
+                }
+                if (this.flags.not && undefined !== val) {
+                    if (undefined === this.obj[name]) {
+                        throw new Error(i(this.obj) + " has no property " + i(name));
+                    }
+                } else {
+                    var hasProp;
+                    try {
+                        hasProp = name in this.obj;
+                    } catch (e) {
+                        hasProp = undefined !== this.obj[name];
+                    }
+                    this.assert(hasProp, function() {
+                        return "expected " + i(this.obj) + " to have a property " + i(name);
+                    }, function() {
+                        return "expected " + i(this.obj) + " to not have a property " + i(name);
+                    });
+                }
+                if (undefined !== val) {
+                    this.assert(val === this.obj[name], function() {
+                        return "expected " + i(this.obj) + " to have a property " + i(name) + " of " + i(val) + ", but got " + i(this.obj[name]);
+                    }, function() {
+                        return "expected " + i(this.obj) + " to not have a property " + i(name) + " of " + i(val);
+                    });
+                }
+                this.obj = this.obj[name];
+                return this;
+            };
+            Assertion.prototype.string = Assertion.prototype.contain = function(obj) {
+                if ("string" == typeof this.obj) {
+                    this.assert(~this.obj.indexOf(obj), function() {
+                        return "expected " + i(this.obj) + " to contain " + i(obj);
+                    }, function() {
+                        return "expected " + i(this.obj) + " to not contain " + i(obj);
+                    });
+                } else {
+                    this.assert(~indexOf(this.obj, obj), function() {
+                        return "expected " + i(this.obj) + " to contain " + i(obj);
+                    }, function() {
+                        return "expected " + i(this.obj) + " to not contain " + i(obj);
+                    });
+                }
+                return this;
+            };
+            Assertion.prototype.key = Assertion.prototype.keys = function($keys) {
+                var str, ok = true;
+                $keys = isArray($keys) ? $keys : Array.prototype.slice.call(arguments);
+                if (!$keys.length) throw new Error("keys required");
+                var actual = keys(this.obj), len = $keys.length;
+                ok = every($keys, function(key) {
+                    return ~indexOf(actual, key);
+                });
+                if (!this.flags.not && this.flags.only) {
+                    ok = ok && $keys.length == actual.length;
+                }
+                if (len > 1) {
+                    $keys = map($keys, function(key) {
+                        return i(key);
+                    });
+                    var last = $keys.pop();
+                    str = $keys.join(", ") + ", and " + last;
+                } else {
+                    str = i($keys[0]);
+                }
+                str = (len > 1 ? "keys " : "key ") + str;
+                str = (!this.flags.only ? "include " : "only have ") + str;
+                this.assert(ok, function() {
+                    return "expected " + i(this.obj) + " to " + str;
+                }, function() {
+                    return "expected " + i(this.obj) + " to not " + str;
+                });
+                return this;
+            };
+            Assertion.prototype.fail = function(msg) {
+                msg = msg || "explicit failure";
+                this.assert(false, msg, msg);
+                return this;
+            };
+            function bind(fn, scope) {
+                return function() {
+                    return fn.apply(scope, arguments);
+                };
+            }
+            function every(arr, fn, thisObj) {
+                var scope = thisObj || global;
+                for (var i = 0, j = arr.length; i < j; ++i) {
+                    if (!fn.call(scope, arr[i], i, arr)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            function indexOf(arr, o, i) {
+                if (Array.prototype.indexOf) {
+                    return Array.prototype.indexOf.call(arr, o, i);
+                }
+                if (arr.length === undefined) {
+                    return -1;
+                }
+                for (var j = arr.length, i = i < 0 ? i + j < 0 ? 0 : i + j : i || 0; i < j && arr[i] !== o; i++) ;
+                return j <= i ? -1 : i;
+            }
+            var getOuterHTML = function(element) {
+                if ("outerHTML" in element) return element.outerHTML;
+                var ns = "http://www.w3.org/1999/xhtml";
+                var container = document.createElementNS(ns, "_");
+                var elemProto = (window.HTMLElement || window.Element).prototype;
+                var xmlSerializer = new XMLSerializer;
+                var html;
+                if (document.xmlVersion) {
+                    return xmlSerializer.serializeToString(element);
+                } else {
+                    container.appendChild(element.cloneNode(false));
+                    html = container.innerHTML.replace("><", ">" + element.innerHTML + "<");
+                    container.innerHTML = "";
+                    return html;
+                }
+            };
+            var isDOMElement = function(object) {
+                if (typeof HTMLElement === "object") {
+                    return object instanceof HTMLElement;
+                } else {
+                    return object && typeof object === "object" && object.nodeType === 1 && typeof object.nodeName === "string";
+                }
+            };
+            function i(obj, showHidden, depth) {
+                var seen = [];
+                function stylize(str) {
+                    return str;
+                }
+                function format(value, recurseTimes) {
+                    if (value && typeof value.inspect === "function" && value !== exports && !(value.constructor && value.constructor.prototype === value)) {
+                        return value.inspect(recurseTimes);
+                    }
+                    switch (typeof value) {
+                      case "undefined":
+                        return stylize("undefined", "undefined");
+                      case "string":
+                        var simple = "'" + json.stringify(value).replace(/^"|"$/g, "").replace(/'/g, "\\'").replace(/\\"/g, '"') + "'";
+                        return stylize(simple, "string");
+                      case "number":
+                        return stylize("" + value, "number");
+                      case "boolean":
+                        return stylize("" + value, "boolean");
+                    }
+                    if (value === null) {
+                        return stylize("null", "null");
+                    }
+                    if (isDOMElement(value)) {
+                        return getOuterHTML(value);
+                    }
+                    var visible_keys = keys(value);
+                    var $keys = showHidden ? Object.getOwnPropertyNames(value) : visible_keys;
+                    if (typeof value === "function" && $keys.length === 0) {
+                        if (isRegExp(value)) {
+                            return stylize("" + value, "regexp");
+                        } else {
+                            var name = value.name ? ": " + value.name : "";
+                            return stylize("[Function" + name + "]", "special");
+                        }
+                    }
+                    if (isDate(value) && $keys.length === 0) {
+                        return stylize(value.toUTCString(), "date");
+                    }
+                    var base, type, braces;
+                    if (isArray(value)) {
+                        type = "Array";
+                        braces = [ "[", "]" ];
+                    } else {
+                        type = "Object";
+                        braces = [ "{", "}" ];
+                    }
+                    if (typeof value === "function") {
+                        var n = value.name ? ": " + value.name : "";
+                        base = isRegExp(value) ? " " + value : " [Function" + n + "]";
+                    } else {
+                        base = "";
+                    }
+                    if (isDate(value)) {
+                        base = " " + value.toUTCString();
+                    }
+                    if ($keys.length === 0) {
+                        return braces[0] + base + braces[1];
+                    }
+                    if (recurseTimes < 0) {
+                        if (isRegExp(value)) {
+                            return stylize("" + value, "regexp");
+                        } else {
+                            return stylize("[Object]", "special");
+                        }
+                    }
+                    seen.push(value);
+                    var output = map($keys, function(key) {
+                        var name, str;
+                        if (value.__lookupGetter__) {
+                            if (value.__lookupGetter__(key)) {
+                                if (value.__lookupSetter__(key)) {
+                                    str = stylize("[Getter/Setter]", "special");
+                                } else {
+                                    str = stylize("[Getter]", "special");
+                                }
+                            } else {
+                                if (value.__lookupSetter__(key)) {
+                                    str = stylize("[Setter]", "special");
+                                }
+                            }
+                        }
+                        if (indexOf(visible_keys, key) < 0) {
+                            name = "[" + key + "]";
+                        }
+                        if (!str) {
+                            if (indexOf(seen, value[key]) < 0) {
+                                if (recurseTimes === null) {
+                                    str = format(value[key]);
+                                } else {
+                                    str = format(value[key], recurseTimes - 1);
+                                }
+                                if (str.indexOf("\n") > -1) {
+                                    if (isArray(value)) {
+                                        str = map(str.split("\n"), function(line) {
+                                            return "  " + line;
+                                        }).join("\n").substr(2);
+                                    } else {
+                                        str = "\n" + map(str.split("\n"), function(line) {
+                                            return "   " + line;
+                                        }).join("\n");
+                                    }
+                                }
+                            } else {
+                                str = stylize("[Circular]", "special");
+                            }
+                        }
+                        if (typeof name === "undefined") {
+                            if (type === "Array" && key.match(/^\d+$/)) {
+                                return str;
+                            }
+                            name = json.stringify("" + key);
+                            if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+                                name = name.substr(1, name.length - 2);
+                                name = stylize(name, "name");
+                            } else {
+                                name = name.replace(/'/g, "\\'").replace(/\\"/g, '"').replace(/(^"|"$)/g, "'");
+                                name = stylize(name, "string");
+                            }
+                        }
+                        return name + ": " + str;
+                    });
+                    seen.pop();
+                    var numLinesEst = 0;
+                    var length = reduce(output, function(prev, cur) {
+                        numLinesEst++;
+                        if (indexOf(cur, "\n") >= 0) numLinesEst++;
+                        return prev + cur.length + 1;
+                    }, 0);
+                    if (length > 50) {
+                        output = braces[0] + (base === "" ? "" : base + "\n ") + " " + output.join(",\n  ") + " " + braces[1];
+                    } else {
+                        output = braces[0] + base + " " + output.join(", ") + " " + braces[1];
+                    }
+                    return output;
+                }
+                return format(obj, typeof depth === "undefined" ? 2 : depth);
+            }
+            function isArray(ar) {
+                return Object.prototype.toString.call(ar) == "[object Array]";
+            }
+            function isRegExp(re) {
+                var s;
+                try {
+                    s = "" + re;
+                } catch (e) {
+                    return false;
+                }
+                return re instanceof RegExp || typeof re === "function" && re.constructor.name === "RegExp" && re.compile && re.test && re.exec && s.match(/^\/.*\/[gim]{0,3}$/);
+            }
+            function isDate(d) {
+                if (d instanceof Date) return true;
+                return false;
+            }
+            function keys(obj) {
+                if (Object.keys) {
+                    return Object.keys(obj);
+                }
+                var keys = [];
+                for (var i in obj) {
+                    if (Object.prototype.hasOwnProperty.call(obj, i)) {
+                        keys.push(i);
+                    }
+                }
+                return keys;
+            }
+            function map(arr, mapper, that) {
+                if (Array.prototype.map) {
+                    return Array.prototype.map.call(arr, mapper, that);
+                }
+                var other = new Array(arr.length);
+                for (var i = 0, n = arr.length; i < n; i++) if (i in arr) other[i] = mapper.call(that, arr[i], i, arr);
+                return other;
+            }
+            function reduce(arr, fun) {
+                if (Array.prototype.reduce) {
+                    return Array.prototype.reduce.apply(arr, Array.prototype.slice.call(arguments, 1));
+                }
+                var len = +this.length;
+                if (typeof fun !== "function") throw new TypeError;
+                if (len === 0 && arguments.length === 1) throw new TypeError;
+                var i = 0;
+                if (arguments.length >= 2) {
+                    var rv = arguments[1];
+                } else {
+                    do {
+                        if (i in this) {
+                            rv = this[i++];
+                            break;
+                        }
+                        if (++i >= len) throw new TypeError;
+                    } while (true);
+                }
+                for (; i < len; i++) {
+                    if (i in this) rv = fun.call(null, rv, this[i], i, this);
+                }
+                return rv;
+            }
+            expect.eql = function eql(actual, expected) {
+                if (actual === expected) {
+                    return true;
+                } else if ("undefined" != typeof Buffer && Buffer.isBuffer(actual) && Buffer.isBuffer(expected)) {
+                    if (actual.length != expected.length) return false;
+                    for (var i = 0; i < actual.length; i++) {
+                        if (actual[i] !== expected[i]) return false;
+                    }
+                    return true;
+                } else if (actual instanceof Date && expected instanceof Date) {
+                    return actual.getTime() === expected.getTime();
+                } else if (typeof actual != "object" && typeof expected != "object") {
+                    return actual == expected;
+                } else {
+                    return objEquiv(actual, expected);
+                }
+            };
+            function isUndefinedOrNull(value) {
+                return value === null || value === undefined;
+            }
+            function isArguments(object) {
+                return Object.prototype.toString.call(object) == "[object Arguments]";
+            }
+            function objEquiv(a, b) {
+                if (isUndefinedOrNull(a) || isUndefinedOrNull(b)) return false;
+                if (a.prototype !== b.prototype) return false;
+                if (isArguments(a)) {
+                    if (!isArguments(b)) {
+                        return false;
+                    }
+                    a = pSlice.call(a);
+                    b = pSlice.call(b);
+                    return expect.eql(a, b);
+                }
+                try {
+                    var ka = keys(a), kb = keys(b), key, i;
+                } catch (e) {
+                    return false;
+                }
+                if (ka.length != kb.length) return false;
+                ka.sort();
+                kb.sort();
+                for (i = ka.length - 1; i >= 0; i--) {
+                    if (ka[i] != kb[i]) return false;
+                }
+                for (i = ka.length - 1; i >= 0; i--) {
+                    key = ka[i];
+                    if (!expect.eql(a[key], b[key])) return false;
+                }
+                return true;
+            }
+            var json = function() {
+                "use strict";
+                if ("object" == typeof JSON && JSON.parse && JSON.stringify) {
+                    return {
+                        parse: nativeJSON.parse,
+                        stringify: nativeJSON.stringify
+                    };
+                }
+                var JSON = {};
+                function f(n) {
+                    return n < 10 ? "0" + n : n;
+                }
+                function date(d, key) {
+                    return isFinite(d.valueOf()) ? d.getUTCFullYear() + "-" + f(d.getUTCMonth() + 1) + "-" + f(d.getUTCDate()) + "T" + f(d.getUTCHours()) + ":" + f(d.getUTCMinutes()) + ":" + f(d.getUTCSeconds()) + "Z" : null;
+                }
+                var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, gap, indent, meta = {
+                    "\b": "\\b",
+                    "	": "\\t",
+                    "\n": "\\n",
+                    "\f": "\\f",
+                    "\r": "\\r",
+                    '"': '\\"',
+                    "\\": "\\\\"
+                }, rep;
+                function quote(string) {
+                    escapable.lastIndex = 0;
+                    return escapable.test(string) ? '"' + string.replace(escapable, function(a) {
+                        var c = meta[a];
+                        return typeof c === "string" ? c : "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
+                    }) + '"' : '"' + string + '"';
+                }
+                function str(key, holder) {
+                    var i, k, v, length, mind = gap, partial, value = holder[key];
+                    if (value instanceof Date) {
+                        value = date(key);
+                    }
+                    if (typeof rep === "function") {
+                        value = rep.call(holder, key, value);
+                    }
+                    switch (typeof value) {
+                      case "string":
+                        return quote(value);
+                      case "number":
+                        return isFinite(value) ? String(value) : "null";
+                      case "boolean":
+                      case "null":
+                        return String(value);
+                      case "object":
+                        if (!value) {
+                            return "null";
+                        }
+                        gap += indent;
+                        partial = [];
+                        if (Object.prototype.toString.apply(value) === "[object Array]") {
+                            length = value.length;
+                            for (i = 0; i < length; i += 1) {
+                                partial[i] = str(i, value) || "null";
+                            }
+                            v = partial.length === 0 ? "[]" : gap ? "[\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "]" : "[" + partial.join(",") + "]";
+                            gap = mind;
+                            return v;
+                        }
+                        if (rep && typeof rep === "object") {
+                            length = rep.length;
+                            for (i = 0; i < length; i += 1) {
+                                if (typeof rep[i] === "string") {
+                                    k = rep[i];
+                                    v = str(k, value);
+                                    if (v) {
+                                        partial.push(quote(k) + (gap ? ": " : ":") + v);
+                                    }
+                                }
+                            }
+                        } else {
+                            for (k in value) {
+                                if (Object.prototype.hasOwnProperty.call(value, k)) {
+                                    v = str(k, value);
+                                    if (v) {
+                                        partial.push(quote(k) + (gap ? ": " : ":") + v);
+                                    }
+                                }
+                            }
+                        }
+                        v = partial.length === 0 ? "{}" : gap ? "{\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "}" : "{" + partial.join(",") + "}";
+                        gap = mind;
+                        return v;
+                    }
+                }
+                JSON.stringify = function(value, replacer, space) {
+                    var i;
+                    gap = "";
+                    indent = "";
+                    if (typeof space === "number") {
+                        for (i = 0; i < space; i += 1) {
+                            indent += " ";
+                        }
+                    } else if (typeof space === "string") {
+                        indent = space;
+                    }
+                    rep = replacer;
+                    if (replacer && typeof replacer !== "function" && (typeof replacer !== "object" || typeof replacer.length !== "number")) {
+                        throw new Error("JSON.stringify");
+                    }
+                    return str("", {
+                        "": value
+                    });
+                };
+                JSON.parse = function(text, reviver) {
+                    var j;
+                    function walk(holder, key) {
+                        var k, v, value = holder[key];
+                        if (value && typeof value === "object") {
+                            for (k in value) {
+                                if (Object.prototype.hasOwnProperty.call(value, k)) {
+                                    v = walk(value, k);
+                                    if (v !== undefined) {
+                                        value[k] = v;
+                                    } else {
+                                        delete value[k];
+                                    }
+                                }
+                            }
+                        }
+                        return reviver.call(holder, key, value);
+                    }
+                    text = String(text);
+                    cx.lastIndex = 0;
+                    if (cx.test(text)) {
+                        text = text.replace(cx, function(a) {
+                            return "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
+                        });
+                    }
+                    if (/^[\],:{}\s]*$/.test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, "@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:\s*\[)+/g, ""))) {
+                        j = eval("(" + text + ")");
+                        return typeof reviver === "function" ? walk({
+                            "": j
+                        }, "") : j;
+                    }
+                    throw new SyntaxError("JSON.parse");
+                };
+                return JSON;
+            }();
+            if ("undefined" != typeof window) {
+                window.expect = module.exports;
+            }
+        })(this, "undefined" != typeof module ? module : {}, "undefined" != typeof exports ? exports : {});
         return module.exports;
     });
     define("paperclip/lib/clip/index.js", function(require, module, exports, __dirname, __filename) {
@@ -341,9 +1091,6 @@
             });
             Paper.prototype.attach = function(element, context, callback) {
                 var _this = this;
-                if (callback == null) {
-                    callback = function() {};
-                }
                 return this.load(context, function(err, context) {
                     var binding, _i, _len, _ref;
                     if (err != null) {
@@ -2039,81 +2786,92 @@
         };
         return module.exports;
     });
-    define("bindable/lib/object/setters/factory.js", function(require, module, exports, __dirname, __filename) {
+    define("bindable/lib/collection/binding.js", function(require, module, exports, __dirname, __filename) {
         (function() {
-            var BindableSetter, CollectionSetter, FnSetter;
-            FnSetter = require("bindable/lib/object/setters/fn.js");
-            BindableSetter = require("bindable/lib/object/setters/bindable.js");
-            CollectionSetter = require("bindable/lib/object/setters/collection.js");
+            var SettersFactory, settersFactory, utils;
+            SettersFactory = require("bindable/lib/collection/setters/factory.js");
+            settersFactory = new SettersFactory;
+            utils = require("bindable/lib/core/utils.js");
             module.exports = function() {
-                function _Class() {}
-                _Class.prototype.createSetter = function(binding, target, property) {
-                    var callback, to, toProperty;
-                    to = null;
-                    toProperty = null;
-                    callback = null;
-                    if (!target && !property) {
-                        return null;
+                function _Class(_from) {
+                    this._from = _from;
+                    this._limit = -1;
+                    this._setters = [];
+                    this._listen();
+                }
+                _Class.prototype.transform = function(value) {
+                    if (!arguments.length) {
+                        return this._transformer;
                     }
-                    if (typeof property === "string") {
-                        to = target;
-                        toProperty = property;
-                    } else if (typeof target === "string") {
-                        to = binding._from;
-                        toProperty = target;
-                    } else if (typeof target === "function") {
-                        callback = target;
-                    } else if (typeof target === "object" && target) {
-                        if (target.__isBinding) {
-                            throw new Error("Cannot bind to a binding.");
-                        } else if (target.__isCollection) {
-                            return new CollectionSetter(binding, target);
+                    this._transformer = utils.transformer(value);
+                    return this;
+                };
+                _Class.prototype.dispose = function() {
+                    this._dispose(this._setters);
+                    this._setters = void 0;
+                    this._dispose(this._listeners);
+                    return this._listeners = void 0;
+                };
+                _Class.prototype.copyId = function(value) {
+                    if (!arguments.length) {
+                        return this._copyId;
+                    }
+                    this._copyId = value;
+                    return this;
+                };
+                _Class.prototype._dispose = function(collection) {
+                    var disposable, _i, _len, _results;
+                    if (collection) {
+                        _results = [];
+                        for (_i = 0, _len = collection.length; _i < _len; _i++) {
+                            disposable = collection[_i];
+                            _results.push(disposable.dispose());
                         }
+                        return _results;
                     }
-                    if (callback) {
-                        return new FnSetter(binding, callback);
-                    } else if (to && toProperty) {
-                        return new BindableSetter(binding, to, toProperty);
+                };
+                _Class.prototype.filter = function(search) {
+                    if (!arguments.length) {
+                        return this._filter;
                     }
-                    return null;
+                    this._filter = search;
+                    return this;
+                };
+                _Class.prototype.to = function(collection) {
+                    var setter;
+                    setter = settersFactory.createSetter(this, collection);
+                    if (setter) {
+                        this._setters.push(setter);
+                    }
+                    return this;
+                };
+                _Class.prototype._listen = function() {
+                    var event, _i, _len, _ref, _results, _this = this;
+                    this._listeners = [];
+                    _ref = [ "insert", "remove", "update" ];
+                    _results = [];
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        event = _ref[_i];
+                        _results.push(function(event) {
+                            return _this._listeners.push(_this._from.on(event, function(item, index) {
+                                return _this._callSetters(event, item, index);
+                            }));
+                        }(event));
+                    }
+                    return _results;
+                };
+                _Class.prototype._callSetters = function(method, item) {
+                    var setter, _i, _len, _ref, _results;
+                    _ref = this._setters;
+                    _results = [];
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        setter = _ref[_i];
+                        _results.push(setter.change(method, item));
+                    }
+                    return _results;
                 };
                 return _Class;
             }();
-        }).call(this);
-        return module.exports;
-    });
-    define("bindable/lib/core/utils.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var hoist;
-            hoist = require("hoist/lib/index.js");
-            exports.tryTransform = function(transformer, method, value, callback) {
-                if (!transformer) {
-                    return callback(null, value);
-                }
-                return transformer[method].call(transformer, value, callback);
-            };
-            exports.transformer = function(options) {
-                if (typeof options === "function") {
-                    options = {
-                        from: options,
-                        to: options
-                    };
-                }
-                if (!options.from) {
-                    options.from = function(value) {
-                        return value;
-                    };
-                }
-                if (!options.to) {
-                    options.to = function(value) {
-                        return value;
-                    };
-                }
-                return {
-                    from: hoist.map(options.from),
-                    to: hoist.map(options.to)
-                };
-            };
         }).call(this);
         return module.exports;
     });
@@ -2134,90 +2892,6 @@
                 method = _ref[_i];
                 _fn(method);
             }
-        }).call(this);
-        return module.exports;
-    });
-    define("bindable/lib/object/deepPropertyWatcher.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var PropertyWatcher, dref, poolParty, propertyWatcher, __bind = function(fn, me) {
-                return function() {
-                    return fn.apply(me, arguments);
-                };
-            };
-            dref = require("dref/lib/index.js");
-            poolParty = require("poolparty/lib/index.js");
-            PropertyWatcher = function() {
-                function PropertyWatcher(options) {
-                    this._changed = __bind(this._changed, this);
-                    this.reset(options);
-                }
-                PropertyWatcher.prototype.reset = function(options) {
-                    if (options.property) {
-                        options.path = options.property.split(".");
-                    }
-                    this.index = options.index || 0;
-                    this._fullPath = options.path;
-                    this._path = this._fullPath.slice(0, this.index);
-                    this._property = this._path.join(".");
-                    this.target = options.target;
-                    this.callback = options.callback;
-                    return this._watch();
-                };
-                PropertyWatcher.prototype._dispose = function() {
-                    if (this._listener) {
-                        this._listener.dispose();
-                        this._listener = void 0;
-                    }
-                    if (this._binding) {
-                        this._binding.dispose();
-                        this._binding = void 0;
-                    }
-                    if (this._child) {
-                        this._child.dispose();
-                        return this._child = void 0;
-                    }
-                };
-                PropertyWatcher.prototype.dispose = function() {
-                    this._dispose();
-                    return propertyWatcher.add(this);
-                };
-                PropertyWatcher.prototype._watch = function() {
-                    var value;
-                    value = this.target.get(this._property);
-                    if (this._property.length) {
-                        this._listener = this.target.on("change:" + this._property, this._changed);
-                    }
-                    if (value && value.__isBindable) {
-                        return this._binding = propertyWatcher.create({
-                            target: value,
-                            path: this._fullPath.slice(this.index),
-                            callback: this._changed
-                        });
-                    } else if (this._path.length < this._fullPath.length) {
-                        return this._child = propertyWatcher.create({
-                            target: this.target,
-                            path: this._fullPath,
-                            callback: this.callback,
-                            index: this.index + 1
-                        });
-                    }
-                };
-                PropertyWatcher.prototype._changed = function(value) {
-                    this._dispose();
-                    this._watch();
-                    return this.callback(value);
-                };
-                return PropertyWatcher;
-            }();
-            propertyWatcher = module.exports = poolParty({
-                max: 100,
-                factory: function(options) {
-                    return new PropertyWatcher(options);
-                },
-                recycle: function(watcher, options) {
-                    return watcher.reset(options);
-                }
-            });
         }).call(this);
         return module.exports;
     });
@@ -2387,92 +3061,165 @@
         }).call(this);
         return module.exports;
     });
-    define("bindable/lib/collection/binding.js", function(require, module, exports, __dirname, __filename) {
+    define("bindable/lib/object/deepPropertyWatcher.js", function(require, module, exports, __dirname, __filename) {
         (function() {
-            var SettersFactory, settersFactory, utils;
-            SettersFactory = require("bindable/lib/collection/setters/factory.js");
-            settersFactory = new SettersFactory;
-            utils = require("bindable/lib/core/utils.js");
-            module.exports = function() {
-                function _Class(_from) {
-                    this._from = _from;
-                    this._limit = -1;
-                    this._setters = [];
-                    this._listen();
+            var PropertyWatcher, dref, poolParty, propertyWatcher, __bind = function(fn, me) {
+                return function() {
+                    return fn.apply(me, arguments);
+                };
+            };
+            dref = require("dref/lib/index.js");
+            poolParty = require("poolparty/lib/index.js");
+            PropertyWatcher = function() {
+                function PropertyWatcher(options) {
+                    this._changed = __bind(this._changed, this);
+                    this.reset(options);
                 }
-                _Class.prototype.transform = function(value) {
-                    if (!arguments.length) {
-                        return this._transformer;
+                PropertyWatcher.prototype.reset = function(options) {
+                    if (options.property) {
+                        options.path = options.property.split(".");
                     }
-                    this._transformer = utils.transformer(value);
-                    return this;
+                    this.index = options.index || 0;
+                    this._fullPath = options.path;
+                    this._path = this._fullPath.slice(0, this.index);
+                    this._property = this._path.join(".");
+                    this.target = options.target;
+                    this.callback = options.callback;
+                    return this._watch();
                 };
-                _Class.prototype.dispose = function() {
-                    this._dispose(this._setters);
-                    this._setters = void 0;
-                    this._dispose(this._listeners);
-                    return this._listeners = void 0;
-                };
-                _Class.prototype.copyId = function(value) {
-                    if (!arguments.length) {
-                        return this._copyId;
+                PropertyWatcher.prototype._dispose = function() {
+                    if (this._listener) {
+                        this._listener.dispose();
+                        this._listener = void 0;
                     }
-                    this._copyId = value;
-                    return this;
+                    if (this._binding) {
+                        this._binding.dispose();
+                        this._binding = void 0;
+                    }
+                    if (this._child) {
+                        this._child.dispose();
+                        return this._child = void 0;
+                    }
                 };
-                _Class.prototype._dispose = function(collection) {
-                    var disposable, _i, _len, _results;
-                    if (collection) {
-                        _results = [];
-                        for (_i = 0, _len = collection.length; _i < _len; _i++) {
-                            disposable = collection[_i];
-                            _results.push(disposable.dispose());
+                PropertyWatcher.prototype.dispose = function() {
+                    this._dispose();
+                    return propertyWatcher.add(this);
+                };
+                PropertyWatcher.prototype._watch = function() {
+                    var value;
+                    value = this.target.get(this._property);
+                    if (this._property.length) {
+                        this._listener = this.target.on("change:" + this._property, this._changed);
+                    }
+                    if (value && value.__isBindable) {
+                        return this._binding = propertyWatcher.create({
+                            target: value,
+                            path: this._fullPath.slice(this.index),
+                            callback: this._changed
+                        });
+                    } else if (this._path.length < this._fullPath.length) {
+                        return this._child = propertyWatcher.create({
+                            target: this.target,
+                            path: this._fullPath,
+                            callback: this.callback,
+                            index: this.index + 1
+                        });
+                    }
+                };
+                PropertyWatcher.prototype._changed = function(value) {
+                    this._dispose();
+                    this._watch();
+                    return this.callback(value);
+                };
+                return PropertyWatcher;
+            }();
+            propertyWatcher = module.exports = poolParty({
+                max: 100,
+                factory: function(options) {
+                    return new PropertyWatcher(options);
+                },
+                recycle: function(watcher, options) {
+                    return watcher.reset(options);
+                }
+            });
+        }).call(this);
+        return module.exports;
+    });
+    define("bindable/lib/object/setters/factory.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var BindableSetter, CollectionSetter, FnSetter;
+            FnSetter = require("bindable/lib/object/setters/fn.js");
+            BindableSetter = require("bindable/lib/object/setters/bindable.js");
+            CollectionSetter = require("bindable/lib/object/setters/collection.js");
+            module.exports = function() {
+                function _Class() {}
+                _Class.prototype.createSetter = function(binding, target, property) {
+                    var callback, to, toProperty;
+                    to = null;
+                    toProperty = null;
+                    callback = null;
+                    if (!target && !property) {
+                        return null;
+                    }
+                    if (typeof property === "string") {
+                        to = target;
+                        toProperty = property;
+                    } else if (typeof target === "string") {
+                        to = binding._from;
+                        toProperty = target;
+                    } else if (typeof target === "function") {
+                        callback = target;
+                    } else if (typeof target === "object" && target) {
+                        if (target.__isBinding) {
+                            throw new Error("Cannot bind to a binding.");
+                        } else if (target.__isCollection) {
+                            return new CollectionSetter(binding, target);
                         }
-                        return _results;
                     }
-                };
-                _Class.prototype.filter = function(search) {
-                    if (!arguments.length) {
-                        return this._filter;
+                    if (callback) {
+                        return new FnSetter(binding, callback);
+                    } else if (to && toProperty) {
+                        return new BindableSetter(binding, to, toProperty);
                     }
-                    this._filter = search;
-                    return this;
-                };
-                _Class.prototype.to = function(collection) {
-                    var setter;
-                    setter = settersFactory.createSetter(this, collection);
-                    if (setter) {
-                        this._setters.push(setter);
-                    }
-                    return this;
-                };
-                _Class.prototype._listen = function() {
-                    var event, _i, _len, _ref, _results, _this = this;
-                    this._listeners = [];
-                    _ref = [ "insert", "remove", "update" ];
-                    _results = [];
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        event = _ref[_i];
-                        _results.push(function(event) {
-                            return _this._listeners.push(_this._from.on(event, function(item, index) {
-                                return _this._callSetters(event, item, index);
-                            }));
-                        }(event));
-                    }
-                    return _results;
-                };
-                _Class.prototype._callSetters = function(method, item) {
-                    var setter, _i, _len, _ref, _results;
-                    _ref = this._setters;
-                    _results = [];
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        setter = _ref[_i];
-                        _results.push(setter.change(method, item));
-                    }
-                    return _results;
+                    return null;
                 };
                 return _Class;
             }();
+        }).call(this);
+        return module.exports;
+    });
+    define("bindable/lib/core/utils.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var hoist;
+            hoist = require("hoist/lib/index.js");
+            exports.tryTransform = function(transformer, method, value, callback) {
+                if (!transformer) {
+                    return callback(null, value);
+                }
+                return transformer[method].call(transformer, value, callback);
+            };
+            exports.transformer = function(options) {
+                if (typeof options === "function") {
+                    options = {
+                        from: options,
+                        to: options
+                    };
+                }
+                if (!options.from) {
+                    options.from = function(value) {
+                        return value;
+                    };
+                }
+                if (!options.to) {
+                    options.to = function(value) {
+                        return value;
+                    };
+                }
+                return {
+                    from: hoist.map(options.from),
+                    to: hoist.map(options.to)
+                };
+            };
         }).call(this);
         return module.exports;
     });
@@ -3565,125 +4312,29 @@
         module.exports = BindableNode;
         return module.exports;
     });
-    define("bindable/lib/object/setters/fn.js", function(require, module, exports, __dirname, __filename) {
+    define("bindable/lib/collection/setters/factory.js", function(require, module, exports, __dirname, __filename) {
         (function() {
-            var Base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-                for (var key in parent) {
-                    if (__hasProp.call(parent, key)) child[key] = parent[key];
-                }
-                function ctor() {
-                    this.constructor = child;
-                }
-                ctor.prototype = parent.prototype;
-                child.prototype = new ctor;
-                child.__super__ = parent.prototype;
-                return child;
-            };
-            Base = require("bindable/lib/object/setters/base.js");
-            module.exports = function(_super) {
-                __extends(_Class, _super);
-                function _Class(binding, callback) {
-                    this.binding = binding;
-                    this.callback = callback;
-                    _Class.__super__.constructor.call(this, this.binding);
-                }
-                _Class.prototype._change = function(value) {
-                    return this.callback(value);
-                };
-                _Class.prototype.dispose = function() {
-                    return this.callback = null;
-                };
-                return _Class;
-            }(Base);
-        }).call(this);
-        return module.exports;
-    });
-    define("bindable/lib/object/setters/bindable.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var Base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-                for (var key in parent) {
-                    if (__hasProp.call(parent, key)) child[key] = parent[key];
-                }
-                function ctor() {
-                    this.constructor = child;
-                }
-                ctor.prototype = parent.prototype;
-                child.prototype = new ctor;
-                child.__super__ = parent.prototype;
-                return child;
-            };
-            Base = require("bindable/lib/object/setters/base.js");
-            module.exports = function(_super) {
-                __extends(_Class, _super);
-                function _Class(binding, to, property) {
-                    this.binding = binding;
-                    this.to = to;
-                    this.property = property;
-                    _Class.__super__.constructor.call(this, this.binding);
-                }
-                _Class.prototype._change = function(value) {
-                    return this.to.set(this.property, value);
-                };
-                _Class.prototype.dispose = function() {
-                    if (!this._disposable) {
-                        return;
+            var CollectionSetter, FnSetter, ObjSetter;
+            FnSetter = require("bindable/lib/collection/setters/fn.js");
+            ObjSetter = require("bindable/lib/collection/setters/object.js");
+            CollectionSetter = require("bindable/lib/collection/setters/collection.js");
+            module.exports = function() {
+                function _Class() {}
+                _Class.prototype.createSetter = function(binding, target) {
+                    if (!target) {
+                        return null;
                     }
-                    this._disposable.dispose();
-                    return this._disposable = this.binding = this.to = this.property = null;
-                };
-                _Class.prototype.bothWays = function() {
-                    var _this = this;
-                    return this._disposable = this.to.bind(this.property).to(function(value) {
-                        if (_this.currentValue !== value) {
-                            return _this._changeFrom(value);
-                        }
-                    });
-                };
-                _Class.prototype._changeFrom = function(value) {
-                    var _this = this;
-                    return this.__transform("from", value, function(err, transformedValue) {
-                        if (err) {
-                            throw err;
-                        }
-                        return _this.binding._from.set(_this.binding._property, _this.currentValue = transformedValue);
-                    });
+                    if (typeof target === "function") {
+                        return new FnSetter(binding, target);
+                    } else if (target.__isCollection) {
+                        return new CollectionSetter(binding, target);
+                    } else if (target.insert || target.update || target.remove || target.replace) {
+                        return new ObjSetter(binding, target);
+                    }
+                    return null;
                 };
                 return _Class;
-            }(Base);
-        }).call(this);
-        return module.exports;
-    });
-    define("bindable/lib/object/setters/collection.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var Base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-                for (var key in parent) {
-                    if (__hasProp.call(parent, key)) child[key] = parent[key];
-                }
-                function ctor() {
-                    this.constructor = child;
-                }
-                ctor.prototype = parent.prototype;
-                child.prototype = new ctor;
-                child.__super__ = parent.prototype;
-                return child;
-            };
-            Base = require("bindable/lib/object/setters/base.js");
-            module.exports = function(_super) {
-                __extends(_Class, _super);
-                function _Class(binding, to, property) {
-                    this.binding = binding;
-                    this.to = to;
-                    this.property = property;
-                    _Class.__super__.constructor.call(this, this.binding);
-                }
-                _Class.prototype._change = function(value) {
-                    return this.to.reset(value);
-                };
-                _Class.prototype.dispose = function() {
-                    return this.to.disposeSourceBinding();
-                };
-                return _Class;
-            }(Base);
+            }();
         }).call(this);
         return module.exports;
     });
@@ -3884,29 +4535,125 @@
         }).call(this);
         return module.exports;
     });
-    define("bindable/lib/collection/setters/factory.js", function(require, module, exports, __dirname, __filename) {
+    define("bindable/lib/object/setters/fn.js", function(require, module, exports, __dirname, __filename) {
         (function() {
-            var CollectionSetter, FnSetter, ObjSetter;
-            FnSetter = require("bindable/lib/collection/setters/fn.js");
-            ObjSetter = require("bindable/lib/collection/setters/object.js");
-            CollectionSetter = require("bindable/lib/collection/setters/collection.js");
-            module.exports = function() {
-                function _Class() {}
-                _Class.prototype.createSetter = function(binding, target) {
-                    if (!target) {
-                        return null;
-                    }
-                    if (typeof target === "function") {
-                        return new FnSetter(binding, target);
-                    } else if (target.__isCollection) {
-                        return new CollectionSetter(binding, target);
-                    } else if (target.insert || target.update || target.remove || target.replace) {
-                        return new ObjSetter(binding, target);
-                    }
-                    return null;
+            var Base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+                for (var key in parent) {
+                    if (__hasProp.call(parent, key)) child[key] = parent[key];
+                }
+                function ctor() {
+                    this.constructor = child;
+                }
+                ctor.prototype = parent.prototype;
+                child.prototype = new ctor;
+                child.__super__ = parent.prototype;
+                return child;
+            };
+            Base = require("bindable/lib/object/setters/base.js");
+            module.exports = function(_super) {
+                __extends(_Class, _super);
+                function _Class(binding, callback) {
+                    this.binding = binding;
+                    this.callback = callback;
+                    _Class.__super__.constructor.call(this, this.binding);
+                }
+                _Class.prototype._change = function(value) {
+                    return this.callback(value);
+                };
+                _Class.prototype.dispose = function() {
+                    return this.callback = null;
                 };
                 return _Class;
-            }();
+            }(Base);
+        }).call(this);
+        return module.exports;
+    });
+    define("bindable/lib/object/setters/bindable.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var Base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+                for (var key in parent) {
+                    if (__hasProp.call(parent, key)) child[key] = parent[key];
+                }
+                function ctor() {
+                    this.constructor = child;
+                }
+                ctor.prototype = parent.prototype;
+                child.prototype = new ctor;
+                child.__super__ = parent.prototype;
+                return child;
+            };
+            Base = require("bindable/lib/object/setters/base.js");
+            module.exports = function(_super) {
+                __extends(_Class, _super);
+                function _Class(binding, to, property) {
+                    this.binding = binding;
+                    this.to = to;
+                    this.property = property;
+                    _Class.__super__.constructor.call(this, this.binding);
+                }
+                _Class.prototype._change = function(value) {
+                    return this.to.set(this.property, value);
+                };
+                _Class.prototype.dispose = function() {
+                    if (!this._disposable) {
+                        return;
+                    }
+                    this._disposable.dispose();
+                    return this._disposable = this.binding = this.to = this.property = null;
+                };
+                _Class.prototype.bothWays = function() {
+                    var _this = this;
+                    return this._disposable = this.to.bind(this.property).to(function(value) {
+                        if (_this.currentValue !== value) {
+                            return _this._changeFrom(value);
+                        }
+                    });
+                };
+                _Class.prototype._changeFrom = function(value) {
+                    var _this = this;
+                    return this.__transform("from", value, function(err, transformedValue) {
+                        if (err) {
+                            throw err;
+                        }
+                        return _this.binding._from.set(_this.binding._property, _this.currentValue = transformedValue);
+                    });
+                };
+                return _Class;
+            }(Base);
+        }).call(this);
+        return module.exports;
+    });
+    define("bindable/lib/object/setters/collection.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var Base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+                for (var key in parent) {
+                    if (__hasProp.call(parent, key)) child[key] = parent[key];
+                }
+                function ctor() {
+                    this.constructor = child;
+                }
+                ctor.prototype = parent.prototype;
+                child.prototype = new ctor;
+                child.__super__ = parent.prototype;
+                return child;
+            };
+            Base = require("bindable/lib/object/setters/base.js");
+            module.exports = function(_super) {
+                __extends(_Class, _super);
+                function _Class(binding, to, property) {
+                    this.binding = binding;
+                    this.to = to;
+                    this.property = property;
+                    _Class.__super__.constructor.call(this, this.binding);
+                }
+                _Class.prototype._change = function(value) {
+                    return this.to.reset(value);
+                };
+                _Class.prototype.dispose = function() {
+                    return this.to.disposeSourceBinding();
+                };
+                return _Class;
+            }(Base);
         }).call(this);
         return module.exports;
     });
@@ -4180,53 +4927,6 @@
         module.exports = ComponentDecor;
         return module.exports;
     });
-    define("bindable/lib/object/setters/base.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var utils;
-            utils = require("bindable/lib/core/utils.js");
-            module.exports = function() {
-                function _Class(binding) {
-                    this.binding = binding;
-                    this._transformer = this.binding.transform();
-                    this.init();
-                }
-                _Class.prototype.init = function() {
-                    var _this = this;
-                    return this._setValue(this.binding._from.get(this.binding._property), function(value) {
-                        if (!_this.binding.watch()) {
-                            return _this._change(value);
-                        }
-                    });
-                };
-                _Class.prototype.change = function(value) {
-                    var _this = this;
-                    return this._setValue(value, function(value) {
-                        return _this._change(value);
-                    });
-                };
-                _Class.prototype._setValue = function(value, callback) {
-                    var _this = this;
-                    if (this.currentValue === value) {
-                        return false;
-                    }
-                    this.__transform("to", value, function(err, transformedValue) {
-                        if (err) {
-                            throw err;
-                        }
-                        return callback(_this.currentValue = transformedValue);
-                    });
-                    return true;
-                };
-                _Class.prototype.bothWays = function() {};
-                _Class.prototype._change = function(value) {};
-                _Class.prototype.__transform = function(method, value, next) {
-                    return utils.tryTransform(this._transformer, method, value, next);
-                };
-                return _Class;
-            }();
-        }).call(this);
-        return module.exports;
-    });
     define("bindable/lib/collection/setters/fn.js", function(require, module, exports, __dirname, __filename) {
         (function() {
             var _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
@@ -4362,6 +5062,53 @@
                 };
                 return _Class;
             }(require("bindable/lib/collection/setters/base.js"));
+        }).call(this);
+        return module.exports;
+    });
+    define("bindable/lib/object/setters/base.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var utils;
+            utils = require("bindable/lib/core/utils.js");
+            module.exports = function() {
+                function _Class(binding) {
+                    this.binding = binding;
+                    this._transformer = this.binding.transform();
+                    this.init();
+                }
+                _Class.prototype.init = function() {
+                    var _this = this;
+                    return this._setValue(this.binding._from.get(this.binding._property), function(value) {
+                        if (!_this.binding.watch()) {
+                            return _this._change(value);
+                        }
+                    });
+                };
+                _Class.prototype.change = function(value) {
+                    var _this = this;
+                    return this._setValue(value, function(value) {
+                        return _this._change(value);
+                    });
+                };
+                _Class.prototype._setValue = function(value, callback) {
+                    var _this = this;
+                    if (this.currentValue === value) {
+                        return false;
+                    }
+                    this.__transform("to", value, function(err, transformedValue) {
+                        if (err) {
+                            throw err;
+                        }
+                        return callback(_this.currentValue = transformedValue);
+                    });
+                    return true;
+                };
+                _Class.prototype.bothWays = function() {};
+                _Class.prototype._change = function(value) {};
+                _Class.prototype.__transform = function(method, value, next) {
+                    return utils.tryTransform(this._transformer, method, value, next);
+                };
+                return _Class;
+            }();
         }).call(this);
         return module.exports;
     });
@@ -5279,7 +6026,7 @@
         }).call(this);
         return module.exports;
     });
-    var entries = [ "paperclip/lib/index.js" ];
+    var entries = [ "paperclip/test-web/hello-test.js" ];
     for (var i = entries.length; i--; ) {
         _require(entries[i]);
     }

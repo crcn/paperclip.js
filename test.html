@@ -1,7 +1,32 @@
 <div id="test">
-   hello {{first.name}}, how are you today?
+   hello {{first.name}}, how are you today? Here's a list of your friends: <br />
 
-   {{#each:people}}
-    hello
+   {{#each:friends;as:"friend"}}
+    {{friend.name}} {{first.name}} <br />
    {{/}}
 </div>
+
+
+{{#template:"fish"}}
+  hello {{html:blockContent}}
+
+  Foot?
+
+  {{html:footer}}
+{{/}}
+
+
+{{#component:"fish";item:first}}
+
+
+  {{#block:"blockContent"}}
+    <span>
+      {{first.name}} has {{friends.length}} friends!
+    </span>
+  {{/}}
+
+  {{#block:"footer"}} 
+    Footer!
+  {{/}}
+
+{{/}}
