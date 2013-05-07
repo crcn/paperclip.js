@@ -12,7 +12,22 @@ class HtmlDecor extends require("./base")
       context.buffer.push html
       callback()
     else
-      html.load context, callback
+      @child = html.createContent()
+      @child.load context, callback
+
+  ###
+  ###
+
+  bind: () ->
+    super()
+    @child.bind()
+
+  ###
+  ###
+
+  dispose: () ->
+    super()
+    @child.dispose()
 
 
 module.exports = HtmlDecor

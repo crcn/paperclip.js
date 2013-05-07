@@ -199,7 +199,16 @@ module.exports = function(paper) {
                 return this.ref("name").value();
             },
             refs: [ "name" ]
-        }).html("! <br/> ");
+        }).html(" <br/> ");
+    }).html(" ").blockBinding({
+        block: {
+            fn: function() {
+                return "blarg";
+            },
+            refs: []
+        }
+    }, function() {
+        return paper.create().html(" Hello block!<br/> ");
     }).html(" ").textBinding({
         view: {
             fn: function() {
@@ -221,6 +230,27 @@ module.exports = function(paper) {
                 };
             },
             refs: []
+        }
+    }).html(" ").textBinding({
+        html: {
+            fn: function() {
+                return this.ref("blarg").value();
+            },
+            refs: [ "blarg" ]
+        }
+    }).html(" ").textBinding({
+        html: {
+            fn: function() {
+                return this.ref("blarg").value();
+            },
+            refs: [ "blarg" ]
+        }
+    }).html(" ").textBinding({
+        html: {
+            fn: function() {
+                return this.ref("blarg").value();
+            },
+            refs: [ "blarg" ]
         }
     }).html(" ");
 };

@@ -42,9 +42,16 @@ Current Address: <br />
 
 
 {{#template:"test"}}
-  hello view {{name}}! <br />
+  hello view {{name}} <br />
+{{/}}
+
+{{#block:"blarg"}}
+  Hello block!<br />
 {{/}}
 
 {{view:{name:"test",item:this}}}
 {{view:{name:"test",item:{name:"john"}}}}
+{{html:blarg}}
+{{html:blarg}}
+{{html:blarg}}
 
