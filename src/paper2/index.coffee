@@ -21,18 +21,7 @@ class Paper
   ###
 
   attach: (element, context, callback = (() ->)) -> 
-    @load context, (err, context) =>
-      return callback(err) if err?
-
-      # set the inner html of the target
-      element.innerHTML = context.buffer.join("")
-
-      # scan the element for sections
-      pilot.update element
-
-      @node.bind()
-
-      callback null, context
+    @node.attach element, context, callback
 
   ###
   ###

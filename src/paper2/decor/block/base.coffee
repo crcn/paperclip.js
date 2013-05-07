@@ -19,6 +19,7 @@ class NodeDecor
   bind: () -> 
     @clip.bind(@constructor.scriptName).watch(true).to @_onChange
 
+
   ###
   ###
 

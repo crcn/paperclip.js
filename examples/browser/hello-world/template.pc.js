@@ -108,5 +108,14 @@ module.exports = function(paper) {
             },
             refs: [ "friend.name" ]
         }).html(" <br/> ");
+    }).html(" ").blockBinding({
+        when: {
+            fn: function() {
+                return this.ref("age").value() > 21;
+            },
+            refs: [ "age" ]
+        }
+    }, function() {
+        return paper.create().html(" Yippe! You're over 21! ");
     }).html(" ");
 };

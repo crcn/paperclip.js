@@ -2,6 +2,40 @@ Base  = require "./base"
 decorFactory = require("../decor/blockFactory")
 Clip = require "../../clip"
 
+# loops through a collection of items
+# {{#each:people}}
+# {{/}}
+
+
+class BlockChild extends require("./bindable")
+  
+  ###
+  ###
+
+  constructor: (@block, @with) ->
+    super()
+    @content = @block.contentFactory()
+
+  ###
+  ###
+
+  bind: () ->
+    super()
+    @content.bind()
+
+  ###
+  ###
+
+  load: (context, callback) ->
+    return super context, callback if not @with
+    super context.child(@with), callback
+
+  ###
+  ###
+
+  _loadChildren: (context, callback) ->
+    @content.load context, callback
+
 class BlockBinding extends require("./bindable")
   
   ###
@@ -17,7 +51,6 @@ class BlockBinding extends require("./bindable")
     @clip = new Clip { script: script, watch: false }
     @_decor = decorFactory.getDecor @
 
-
   ###
   ###
 
@@ -26,6 +59,10 @@ class BlockBinding extends require("./bindable")
     @clip.watch()
     @_decor.bind()
 
+  ###
+  ###
+
+  createContent: (wth) -> new BlockChild @, wth
 
   ###
   ###
@@ -34,7 +71,6 @@ class BlockBinding extends require("./bindable")
     @clip.reset context
     @clip.update()
     super context, callback
-    
 
   ###
   ###
@@ -46,7 +82,6 @@ class BlockBinding extends require("./bindable")
   ###
 
   clone: () -> new BlockBinding @script, Base.cloneEach @children
-
 
   
 module.exports = BlockBinding

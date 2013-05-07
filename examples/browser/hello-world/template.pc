@@ -16,3 +16,8 @@ Your Friends: <br />
   <a href="#" data-bind="{{click:friend.remove()}}">x</a> {{friend.name}} <br />
 {{/}}
 
+
+{{#when:age > 21}}
+Yippe! You're over 21!
+{{/}}
+

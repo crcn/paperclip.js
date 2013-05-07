@@ -6,38 +6,6 @@ pilot   = require "pilot-block"
 # {{/}}
 
 
-class EachNode extends require("../../nodes/bindable")
-  
-  ###
-  ###
-
-  constructor: (@item, @block, @itemName = "item") ->
-    super()
-    @content = @block.contentFactory()
-
-  ###
-  ###
-
-  bind: () ->
-    super()
-    @content.bind()
-
-  ###
-  ###
-
-  load: (context, callback) ->
-    data = {}
-    data[@itemName] = @item
-    super context.child(data), callback
-
-  ###
-  ###
-
-  _loadChildren: (context, callback) ->
-    @content.load context, callback
-
-
-
 class EachDecor extends require("./base")
 
   ###
@@ -73,12 +41,12 @@ class EachDecor extends require("./base")
 
   load: (@context, callback) -> 
     @children = []
-    @itemName = @node.clip.get("as") or "item"
+    @itemName = 
 
     source = if @script.value?.source then @script.value.source() else (@script.value or [])
 
     for item in source
-      @children.push new EachNode item, @node, @itemName
+      @children.push @_createChild item
 
     async.eachSeries @children, ((child, next) ->
       child.load context, next
@@ -87,14 +55,20 @@ class EachDecor extends require("./base")
   ###
   ###
 
+  _createChild: (item) ->
+    data = {}
+    data[@node.clip.get("as") or "item"] = item
+    node = @node.createContent data
+    node.item = item
+    node
+
+  ###
+  ###
+
   _insert: (item) =>
     return if @_ignoreInsert
-    @children.push node = new EachNode item, @node, @itemName
-    node.load context = @context.child().detachBuffer(), (err) =>
-      return if err?
-      @node.section.append pilot.createSection context.buffer.join("")
-      pilot.update @node.section.parent
-      node.bind()
+    @children.push node = @_createChild item
+    node.attach @node, @context
 
 
 

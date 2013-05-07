@@ -1,6 +1,12 @@
 async  = require "async"
+pilot  = require "pilot-block"
 
 class Base
+
+  ###
+  ###
+
+  __isNode: true
 
   ###
   ###
@@ -14,6 +20,25 @@ class Base
   bind: () ->
     for child in @children or []
       child.bind()
+
+
+  ###
+  ###
+
+  attach: (element, context, callback = (() ->)) ->
+    @load context.detachBuffer(), (err) =>
+      return callback(err) if err?
+
+      if element.__isNode
+        element.section.append pilot.createSection context.buffer.join("")
+        pilot.update element.section.parent
+      else
+        element.innerHTML = context.buffer.join("")
+        pilot.update element
+
+      @bind()
+      callback()
+
 
 
   ###

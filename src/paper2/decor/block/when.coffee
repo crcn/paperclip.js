@@ -1,12 +1,39 @@
-# useful for showing browser info
-# {{when:browser.name == "ie"}}
-# {{/}}
+###
+
+{{#when:condition}}
+  do something
+{{/}}
 
 
-class WhenDecor extends require("./base")
+###
+
+
+class BlockDecor extends require("./base")
+  
+  ###
+  ###
+
+  @scriptName: "when"
 
   ###
   ###
 
-  load: (context, callback) ->
-    
+  load: (@context, callback) ->
+    if @clip.get("when")
+      @child = @node.createContent()
+      @child.load context, callback
+    else
+      callback()
+
+  ###
+  ###
+
+  _onChange: (value) =>
+    if value
+      @node.createContent().attach @node, @context
+    else
+      @node.section.html("")
+      
+
+
+module.exports = BlockDecor
