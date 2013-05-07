@@ -208,7 +208,12 @@ module.exports = function(paper) {
             refs: []
         }
     }, function() {
-        return paper.create().html(" Hello block!<br/> ");
+        return paper.create().html(" Hello block! name = ").textBinding({
+            fn: function() {
+                return this.ref("name").value();
+            },
+            refs: [ "name" ]
+        }).html("<br/> ");
     }).html(" ").textBinding({
         view: {
             fn: function() {

@@ -46,7 +46,7 @@ Current Address: <br />
 {{/}}
 
 {{#block:"blarg"}}
-  Hello block!<br />
+  Hello block! name = {{name}}<br />
 {{/}}
 
 {{view:{name:"test",item:this}}}
