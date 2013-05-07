@@ -42,9 +42,9 @@ Current Address: <br />
 
 
 {{#template:"test"}}
-  hello component {{name}}! <br />
+  hello view {{name}}! <br />
 {{/}}
 
-{{component:{name:"test",item:this}}}
-{{component:{name:"test",item:{name:"john"}}}}
+{{view:{name:"test",item:this}}}
+{{view:{name:"test",item:{name:"john"}}}}
 

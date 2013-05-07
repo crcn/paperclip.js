@@ -1,11 +1,11 @@
-# {{component:{name:"ablah", source: "/source.js" }}}
+# {{view:{name:"ablah", source: "/source.js" }}}
 # OR
-# {{#component:{name"ablah"}}}
+# {{#view:{name"ablah"}}}
 # blah
 # {{/}}
 
 
-class ComponentDecor extends require("./base")
+class ViewDecor extends require("./base")
     
   ###
   ###
@@ -13,7 +13,6 @@ class ComponentDecor extends require("./base")
   bind: () ->
     super()
     @child.bind()
-    console.log "BIND"
 
   ###
   ###
@@ -27,8 +26,8 @@ class ComponentDecor extends require("./base")
   ###
 
   load: (context, callback) ->
-    tplName = "template.#{@clip.get("component.name") or @clip.get("component")}"
-    wth = @clip.get("component.item") or undefined
+    tplName = "template.#{@clip.get("view.name") or @clip.get("view")}"
+    wth = @clip.get("view.item") or undefined
     tpl = context.internal.get(tplName)
     return callback() if not tpl
     child = context.child().detachBuffer()
@@ -45,4 +44,4 @@ class ComponentDecor extends require("./base")
       onContentLoad()
   
 
-module.exports = ComponentDecor
+module.exports = ViewDecor

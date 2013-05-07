@@ -194,14 +194,14 @@ module.exports = function(paper) {
             refs: []
         }
     }, function() {
-        return paper.create().html(" hello component ").textBinding({
+        return paper.create().html(" hello view ").textBinding({
             fn: function() {
                 return this.ref("name").value();
             },
             refs: [ "name" ]
         }).html("! <br/> ");
     }).html(" ").textBinding({
-        component: {
+        view: {
             fn: function() {
                 return {
                     name: "test",
@@ -211,7 +211,7 @@ module.exports = function(paper) {
             refs: [ "this" ]
         }
     }).html(" ").textBinding({
-        component: {
+        view: {
             fn: function() {
                 return {
                     name: "test",
