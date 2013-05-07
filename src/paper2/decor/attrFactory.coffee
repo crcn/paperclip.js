@@ -3,13 +3,13 @@ ClippedBuffer = require("../../clip/buffer")
 Clip = require("../../clip")
 
 attrDecorators = 
-  value: require("./attr/value")
-  click: require("./attr/click")
-  enter: require("./attr/enter")
-  css: require("./attr/css")
-  disable: require("./attr/disable")
-  style: require("./attr/style")
-  show: require("./attr/show")
+  css     : require("./attr/css")
+  show    : require("./attr/show")
+  style   : require("./attr/style")
+  value   : require("./attr/value")
+  click   : require("./attr/click")
+  enter   : require("./attr/enter")
+  disable : require("./attr/disable")
 
 
 

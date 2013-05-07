@@ -1,14 +1,14 @@
 DecorCollection = require "./collection"
 
 blockDecorators = 
-  html: require("./block/html")
-  block: require("./block/block")
-  when: require("./block/when")
-  with: require("./block/with")
-  each: require("./block/each")
-  value: require("./block/value")
-  template: require("./block/template")
-  component: require("./block/template")
+  html      : require("./block/html")
+  when      : require("./block/when")
+  with      : require("./block/with")
+  each      : require("./block/each")
+  value     : require("./block/value")
+  block     : require("./block/block")
+  template  : require("./block/template")
+  component : require("./block/template")
 
 
 
