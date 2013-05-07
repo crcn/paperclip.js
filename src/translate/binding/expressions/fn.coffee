@@ -13,4 +13,10 @@ class FnExpression extends base.Expression
     super()
     @addChild @params
 
+
+  ###
+  ###
+
+  toString: () -> @name
+
 module.exports = FnExpression

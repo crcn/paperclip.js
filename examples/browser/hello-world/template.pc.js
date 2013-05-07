@@ -116,7 +116,7 @@ module.exports = function(paper) {
                         fn: function() {
                             return this.ref("friend").call("remove", []).value();
                         },
-                        refs: [ "friend.[object Object]" ]
+                        refs: [ "friend.remove" ]
                     }
                 } ]
             },
@@ -141,7 +141,7 @@ module.exports = function(paper) {
                     fn: function() {
                         return this.call("drinkBeer", []).value();
                     },
-                    refs: [ "[object Object]" ]
+                    refs: [ "drinkBeer" ]
                 }
             } ],
             value: [ "drink beer" ]
