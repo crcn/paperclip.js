@@ -89,7 +89,12 @@ module.exports = function(paper) {
             } ],
             placeholder: [ "Add a friend" ]
         }
-    }).html(" <br/> Your Friends: <br/> ").blockBinding({
+    }).html(" <br/> Your Friends (").textBinding({
+        fn: function() {
+            return this.ref("friends.length").value();
+        },
+        refs: [ "friends.length" ]
+    }).html("): <br/> ").blockBinding({
         each: {
             fn: function() {
                 return this.ref("friends").value();
