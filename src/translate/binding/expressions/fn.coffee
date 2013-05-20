@@ -4,6 +4,7 @@ class FnExpression extends base.Expression
   
   ###
   ###
+  
   _type: "fn"
 
   ###
@@ -12,7 +13,6 @@ class FnExpression extends base.Expression
   constructor: (@name, @params) ->
     super()
     @addChild @params
-
 
   ###
   ###

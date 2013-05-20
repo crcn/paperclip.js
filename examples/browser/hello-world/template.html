@@ -2,7 +2,7 @@ Name: <input type="text" data-bind="{{value:name;bothWays:true}}" /> <br />
 Age: <input type="text" data-bind="{{value:age;bothWays:true}}" /> <br />
 
 <span>
-  hello {{this.name}}, you are {{age||0}} years old, therefore you <b data-bind="{{style:{color:age>20?'green':'red'}}}">{{age > 20 ? "can" : "cannot"}}</b> 
+  hello {{name}}, you are {{age||0}} years old, therefore you <b data-bind="{{style:{color:age>20?'green':'red'}}}">{{age > 20 ? "can" : "cannot"}}</b> 
  drink!
 </span>
 
@@ -56,8 +56,10 @@ Current Address: <br />
   Hello block! name = {{name}}<br />
 {{/}}
 
-{{view:{name:"test",item:this}}}
+{{#view:{name:"test",item:this}}}
+{{/}}
 {{view:{name:"test",item:{name:"john"}}}}
+
 {{html:blarg}}
 {{html:blarg}}
 {{html:blarg}}

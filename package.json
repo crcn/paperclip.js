@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "scripts": {
@@ -33,6 +33,8 @@
     "uglify-js": "1.3.x",
     "optimist": "0.4.x",
     "pilot-block": "0.0.x",
-    "asyngleton": "0.1.x"
+    "asyngleton": "0.1.x",
+    "walkr": "0.0.x",
+    "watch_r": "0.0.x"
   }
 }
