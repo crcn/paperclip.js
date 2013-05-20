@@ -1,4 +1,4 @@
-watchr    = require "watch_r"
+watch    = require "watch"
 walkr     = require "walkr"
 path      = require "path"
 _         = require "underscore"
@@ -42,12 +42,7 @@ class Build
     match = @_match
 
     walkr(@_input = @_fixInput(options.input), @_output = @_fixInput(options.output)).
-    filterFile((options, next) =>
-      if options.source.match match
-        @_parseFile options.source, next
-      else
-        next()
-    ).
+    filterFile(@_parseFile).
     start () ->
 
     return if not options.watch
@@ -62,18 +57,20 @@ class Build
   ###
 
   _watch: () ->
-    watchr @_input, (err, watcher) =>
-      watcher.on "change", (target) =>  
-        @_parseFile target.path
-      watcher.on "remove", (target) =>
-
-        fs.unlink output = @_destFile target.path
+    watch.createMonitor @_input, (monitor) =>
+      monitor.on "changed", (file) =>
+        @_parseFile file
+      monitor.on "created", (file) =>  
+        @_parseFile file
+      monitor.on "removed", (file) =>
+        fs.unlink output = @_destFile file
         console.log "rm", output
 
   ###
   ###
 
   _parseFile: (source, next = (() ->)) => 
+    return next() if not source.match(@_match)
     destination = @_destFile source
     fs.readFile source, "utf8", (err, content) =>
       return next(err) if err?

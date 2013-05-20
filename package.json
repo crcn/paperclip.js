@@ -35,6 +35,6 @@
     "pilot-block": "0.0.x",
     "asyngleton": "0.1.x",
     "walkr": "0.0.x",
-    "watch_r": "0.0.x"
+    "watch": "0.7.x"
   }
 }
