@@ -13,7 +13,6 @@ attrDecorators =
   checked : require("./attr/checked")
 
 
-
 DataBindDecor = require("./attr/dataBind")
 TextAttrBinding = require("./attr/text")
 

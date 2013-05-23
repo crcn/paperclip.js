@@ -13,3 +13,7 @@ examples:
 	for FILE in `find ./ -name "template.pc"`; do paperclip -i $$FILE -o "$$FILE.js" -p;  DIRNAME=`dirname $$FILE`; sardines $$DIRNAME/template.js -o $$DIRNAME/paper.js -p browser; done;
 
 
+examples-watch:
+	watch_r --input ./src --output ./lib --each "paperclip -i <%-input %> -o <%-output %>.js -p; sardines <%-output %>.js -o <%-output %>.js"
+
+

@@ -11,7 +11,6 @@ blockDecorators =
   view      : require("./block/view")
 
 
-
 class Factory
 
   ###
@@ -25,7 +24,6 @@ class Factory
         decor.push new bd node, scriptName
 
     decor
-
 
 
 module.exports = new Factory()

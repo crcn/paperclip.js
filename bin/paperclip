@@ -18,7 +18,6 @@ builder = new Builder()
 fs = require("fs");
 
 
-
 builder.start({
   input  : argv.i,
   output : argv.o,

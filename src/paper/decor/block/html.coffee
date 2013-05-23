@@ -20,14 +20,14 @@ class HtmlDecor extends require("./base")
 
   bind: () ->
     super()
-    @child.bind()
+    @child?.bind()
 
   ###
   ###
 
   dispose: () ->
     super()
-    @child.dispose()
+    @child?.dispose()
 
 
 module.exports = HtmlDecor

@@ -21,7 +21,6 @@ class ViewDecor extends require("./base")
     super()
     @child.dispose()
 
-
   ###
   ###
 

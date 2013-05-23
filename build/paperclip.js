@@ -25,6 +25,24 @@
     if (typeof window.process == "undefined") {
         window.process = {};
     }
+    if (typeof document == "undefined") {
+        global.document = global;
+    }
+    if (typeof document.documentElement == "undefined") {
+        document.documentElement = {};
+    }
+    if (typeof document.documentElement.style == "undefined") {
+        document.documentElement.style = {};
+    }
+    if (typeof navigator == "undefined") {
+        global.navigator = global;
+    }
+    if (typeof navigator.userAgent == "undefined") {
+        navigator.userAgent = "sardines";
+    }
+    if (typeof navigator.platform == "undefined") {
+        navigator.platform = "sardines";
+    }
     define("paperclip/lib/index.js", function(require, module, exports, __dirname, __filename) {
         var Clip, paper;
         Clip = require("paperclip/lib/clip/index.js");
@@ -1275,6 +1293,7 @@
                         return this;
                     }
                     this._insert(this._source = this._transform(source));
+                    this._resetInfo();
                     return this;
                 };
                 _Class.prototype.disposeSourceBinding = function() {
@@ -1540,6 +1559,28 @@
                 return EventEmitter;
             }(events.EventEmitter);
         }).call(this);
+        return module.exports;
+    });
+    define("type-component/index.js", function(require, module, exports, __dirname, __filename) {
+        var toString = Object.prototype.toString;
+        module.exports = function(val) {
+            switch (toString.call(val)) {
+              case "[object Function]":
+                return "function";
+              case "[object Date]":
+                return "date";
+              case "[object RegExp]":
+                return "regexp";
+              case "[object Arguments]":
+                return "arguments";
+              case "[object Array]":
+                return "array";
+            }
+            if (val === null) return "null";
+            if (val === undefined) return "undefined";
+            if (val === Object(val)) return "object";
+            return typeof val;
+        };
         return module.exports;
     });
     define("paperclip/lib/paper/nodes/nodeBinding.js", function(require, module, exports, __dirname, __filename) {
@@ -1851,28 +1892,6 @@
         module.exports = Base;
         return module.exports;
     });
-    define("type-component/index.js", function(require, module, exports, __dirname, __filename) {
-        var toString = Object.prototype.toString;
-        module.exports = function(val) {
-            switch (toString.call(val)) {
-              case "[object Function]":
-                return "function";
-              case "[object Date]":
-                return "date";
-              case "[object RegExp]":
-                return "regexp";
-              case "[object Arguments]":
-                return "arguments";
-              case "[object Array]":
-                return "array";
-            }
-            if (val === null) return "null";
-            if (val === undefined) return "undefined";
-            if (val === Object(val)) return "object";
-            return typeof val;
-        };
-        return module.exports;
-    });
     define("pilot-block/lib/section.js", function(require, module, exports, __dirname, __filename) {
         var Section, utils;
         utils = require("pilot-block/lib/utils.js");
@@ -1906,17 +1925,17 @@
                 if ((_ref = this.start.parentNode) != null) {
                     _ref.removeChild(this.start);
                 }
-                return (_ref1 = this.start.parentNode) != null ? _ref1.removeChild(this.end) : void 0;
+                return (_ref1 = this.end.parentNode) != null ? _ref1.removeChild(this.end) : void 0;
             };
             Section.prototype.appendTo = function(element) {
                 return utils.moveChildren(utils.arrayToFragment(this.allElements), element);
             };
             Section.prototype.append = function() {
-                utils.insertAfter(this._parseElements(arguments), this.allElements.length === 2 ? this.allElements[0] : this.allElements[this.allElements.length - 2]);
+                utils.insertAfter(this._parseElements(arguments), this.end.previousSibling);
                 return this.update();
             };
             Section.prototype.prepend = function() {
-                utils.insertAfter(this._parseElements(arguments), this.allElements[0]);
+                utils.insertAfter(this._parseElements(arguments), this.start);
                 return this.update();
             };
             Section.prototype.replaceChildren = function(element) {
@@ -1927,16 +1946,17 @@
                 if (!arguments.length) {
                     return this.toString();
                 }
+                this.update();
                 this.removeElements();
                 utils.insertAfter(utils.createElements(content), this.start);
-                this.pilot.update(this.start.parentNode);
+                utils.unguardComments(this.start.parentNode);
                 return this.update();
             };
             Section.prototype.toString = function() {
-                var doc;
-                doc = document.createElement("div");
-                doc.appendChild(utils.copyElements(this.allElements));
-                return doc.innerHTML;
+                return utils.guardComments($(this.start.parentNode).html());
+            };
+            Section.prototype.updateChildren = function() {
+                return this.pilot.update(this.start.parentNode);
             };
             Section.prototype.controller = function(value) {
                 if (!arguments.length) {
@@ -1981,7 +2001,7 @@
                 if (!parent) {
                     return;
                 }
-                while (celement !== this.end) {
+                while (celement && celement !== this.end) {
                     celements.push(celement);
                     parent.removeChild(celement);
                     celement = this.start.nextSibling;
@@ -2086,7 +2106,7 @@
             var doc, frag;
             frag = document.createDocumentFragment();
             doc = document.createElement("div");
-            doc.innerHTML = content;
+            $(doc).html(exports.guardComments(content));
             while (doc.childNodes.length) {
                 frag.appendChild(doc.childNodes[0]);
             }
@@ -2100,6 +2120,22 @@
                 frag.appendChild(child);
             }
             return frag;
+        };
+        exports.guardComments = function(content) {
+            return content.replace(/(\{g\})*<!--/g, "{g}<!--");
+        };
+        exports.unguardComments = function(element) {
+            var child, _i, _len, _ref;
+            _ref = element.childNodes;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                child = _ref[_i];
+                exports.unguardComments(child);
+            }
+            if (element.nodeName === "#text") {
+                if (~element.nodeValue.indexOf("{g}")) {
+                    return element.nodeValue = element.nodeValue.replace(/\{g\}/g, "");
+                }
+            }
         };
         exports.removeAllChildren = function(element) {
             var _results;
@@ -2521,7 +2557,7 @@
                 _Class.prototype._listen = function() {
                     var event, _i, _len, _ref, _results, _this = this;
                     this._listeners = [];
-                    _ref = [ "insert", "remove", "update" ];
+                    _ref = [ "insert", "remove", "reset" ];
                     _results = [];
                     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
                         event = _ref[_i];
@@ -2533,13 +2569,13 @@
                     }
                     return _results;
                 };
-                _Class.prototype._callSetters = function(method, item) {
+                _Class.prototype._callSetters = function(method, item, index) {
                     var setter, _i, _len, _ref, _results;
                     _ref = this._setters;
                     _results = [];
                     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
                         setter = _ref[_i];
-                        _results.push(setter.change(method, item));
+                        _results.push(setter.change(method, item, index));
                     }
                     return _results;
                 };
@@ -4990,8 +5026,8 @@
                     }
                     return _results;
                 };
-                _Class.prototype._change = function(method, item) {
-                    return this.target(method, item);
+                _Class.prototype._change = function(method, item, oldItems) {
+                    return this.target(method, item, oldItems);
                 };
                 return _Class;
             }(require("bindable/lib/collection/setters/base.js"));
@@ -5025,7 +5061,7 @@
                     _.defaults(this.target, {
                         insert: function(item) {},
                         remove: function(item) {},
-                        update: function(item) {}
+                        reset: function(item) {}
                     });
                     return this._setter = new FnSetter(this.binding, function(method, item, index) {
                         return _this.target[method].call(_this.target, item, index);
@@ -5074,8 +5110,21 @@
                                 return _this.target.push(item);
                             }
                         },
-                        update: function(item, index) {
+                        update: function(item) {
                             return _this.target.update(item);
+                        },
+                        reset: function(items, oldItems) {
+                            var item, _i, _j, _len, _len1, _results;
+                            for (_i = 0, _len = oldItems.length; _i < _len; _i++) {
+                                item = oldItems[_i];
+                                _this.target.remove(item);
+                            }
+                            _results = [];
+                            for (_j = 0, _len1 = items.length; _j < _len1; _j++) {
+                                item = items[_j];
+                                _results.push(methods.insert(item));
+                            }
+                            return _results;
                         },
                         remove: function(item) {
                             var index;
@@ -5994,8 +6043,9 @@
     });
     define("bindable/lib/collection/setters/base.js", function(require, module, exports, __dirname, __filename) {
         (function() {
-            var utils;
+            var async, utils;
             utils = require("bindable/lib/core/utils.js");
+            async = require("async/lib/async.js");
             module.exports = function() {
                 function _Class(binding, target) {
                     this.binding = binding;
@@ -6006,7 +6056,14 @@
                 }
                 _Class.prototype.init = function() {};
                 _Class.prototype.dispose = function() {};
-                _Class.prototype.change = function(event, item) {
+                _Class.prototype.change = function(event, item, oldItem) {
+                    if (event === "reset") {
+                        return this._changeItems(event, item, oldItem);
+                    } else {
+                        return this._changeItem(event, item, oldItem);
+                    }
+                };
+                _Class.prototype._changeItem = function(event, item, oldItem) {
                     var _this = this;
                     if (this._filter) {
                         if (!this._filter(item)) {
@@ -6017,7 +6074,28 @@
                         if (err) {
                             throw err;
                         }
-                        return _this._change(event, item);
+                        return _this._change(event, item, oldItem);
+                    });
+                };
+                _Class.prototype._changeItems = function(event, items, oldItems) {
+                    var changed, _this = this;
+                    if (this._filter) {
+                        changed = items.filter(this._filter);
+                    } else {
+                        changed = items;
+                    }
+                    return async.map(changed, function(item, next) {
+                        return _this.__transform("to", item, function(err, item) {
+                            if (err) {
+                                throw err;
+                            }
+                            return next(null, item);
+                        });
+                    }, function(err, items) {
+                        if (err) {
+                            throw err;
+                        }
+                        return _this._change(event, items, oldItems);
                     });
                 };
                 _Class.prototype._change = function(event, item) {};

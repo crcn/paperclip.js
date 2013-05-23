@@ -1,4 +1,4 @@
-watch    = require "watch"
+watch_r    = require "watch_r"
 walkr     = require "walkr"
 path      = require "path"
 _         = require "underscore"
@@ -40,13 +40,18 @@ class Build
   parse: (options) ->
 
     match = @_match
+    @_input = @_fixInput(options.input)
+    @_output = @_fixInput(options.output)
 
-    walkr(@_input = @_fixInput(options.input), @_output = @_fixInput(options.output)).
-    filterFile(@_parseFile).
-    start () ->
+    if options.watch
+      @_watch()
+    else
+      walkr(@_input).
+      filterFile((file, next) =>
+        @_parseFile file.source, next
+      ).
+      start () ->
 
-    return if not options.watch
-    @_watch()
 
   ###
   ###
@@ -57,13 +62,13 @@ class Build
   ###
 
   _watch: () ->
-    watch.createMonitor @_input, (monitor) =>
-      monitor.on "changed", (file) =>
-        @_parseFile file
-      monitor.on "created", (file) =>  
-        @_parseFile file
-      monitor.on "removed", (file) =>
-        fs.unlink output = @_destFile file
+    watch_r @_input, (err, monitor) =>
+      monitor.on "change", (target) =>
+        @_parseFile target.path
+      monitor.on "file", (target) => 
+        @_parseFile target.path
+      monitor.on "remove", (target) =>
+        fs.unlink output = @_destFile target.path
         console.log "rm", output
 
   ###
@@ -84,7 +89,7 @@ class Build
   ###
   ###
 
-  _destFile: (source) => source.replace(@_input, @_output).replace(@_match, ".js")
+  _destFile: (source) => source.replace(@_input, @_output).replace(@_match, ".#{@_ext}.js")
 
 
 module.exports = Build
