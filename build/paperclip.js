@@ -47,10 +47,12 @@
         var Clip, paper;
         Clip = require("paperclip/lib/clip/index.js");
         paper = require("paperclip/lib/paper/index.js");
-        module.exports.Clip = Clip;
-        module.exports.paper = paper;
-        module.exports.Context = paper.Context;
-        module.exports.bindable = require("bindable/lib/index.js");
+        module.exports = {
+            Clip: Clip,
+            paper: paper,
+            Context: paper.Context,
+            bindable: require("bindable/lib/index.js")
+        };
         if (typeof window !== "undefined") {
             window.paperclip = module.exports;
         }
@@ -1561,28 +1563,6 @@
         }).call(this);
         return module.exports;
     });
-    define("type-component/index.js", function(require, module, exports, __dirname, __filename) {
-        var toString = Object.prototype.toString;
-        module.exports = function(val) {
-            switch (toString.call(val)) {
-              case "[object Function]":
-                return "function";
-              case "[object Date]":
-                return "date";
-              case "[object RegExp]":
-                return "regexp";
-              case "[object Arguments]":
-                return "arguments";
-              case "[object Array]":
-                return "array";
-            }
-            if (val === null) return "null";
-            if (val === undefined) return "undefined";
-            if (val === Object(val)) return "object";
-            return typeof val;
-        };
-        return module.exports;
-    });
     define("paperclip/lib/paper/nodes/nodeBinding.js", function(require, module, exports, __dirname, __filename) {
         var AttributeBinding, Base, ClippedBuffer, NodeBinding, async, attrFactory, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
             for (var key in parent) {
@@ -1932,11 +1912,16 @@
             };
             Section.prototype.append = function() {
                 utils.insertAfter(this._parseElements(arguments), this.end.previousSibling);
+                this.unguard();
                 return this.update();
             };
             Section.prototype.prepend = function() {
                 utils.insertAfter(this._parseElements(arguments), this.start);
+                this.unguard();
                 return this.update();
+            };
+            Section.prototype.unguard = function() {
+                return utils.unguardComments(this.start.parentNode);
             };
             Section.prototype.replaceChildren = function(element) {
                 utils.removeAllChildren(element);
@@ -1948,9 +1933,7 @@
                 }
                 this.update();
                 this.removeElements();
-                utils.insertAfter(utils.createElements(content), this.start);
-                utils.unguardComments(this.start.parentNode);
-                return this.update();
+                return this.prepend(utils.createElements(content));
             };
             Section.prototype.toString = function() {
                 return utils.guardComments($(this.start.parentNode).html());
@@ -2122,7 +2105,7 @@
             return frag;
         };
         exports.guardComments = function(content) {
-            return content.replace(/(\{g\})*<!--/g, "{g}<!--");
+            return (content || "").replace(/(\{g\})*<!--/g, "{g}<!--");
         };
         exports.unguardComments = function(element) {
             var child, _i, _len, _ref;
@@ -2144,6 +2127,28 @@
                 _results.push(element.removeChild(element.childNodes[0]));
             }
             return _results;
+        };
+        return module.exports;
+    });
+    define("type-component/index.js", function(require, module, exports, __dirname, __filename) {
+        var toString = Object.prototype.toString;
+        module.exports = function(val) {
+            switch (toString.call(val)) {
+              case "[object Function]":
+                return "function";
+              case "[object Date]":
+                return "date";
+              case "[object RegExp]":
+                return "regexp";
+              case "[object Arguments]":
+                return "arguments";
+              case "[object Array]":
+                return "array";
+            }
+            if (val === null) return "null";
+            if (val === undefined) return "undefined";
+            if (val === Object(val)) return "object";
+            return typeof val;
         };
         return module.exports;
     });
@@ -3648,7 +3653,7 @@
         return module.exports;
     });
     define("paperclip/lib/paper/nodes/bindable.js", function(require, module, exports, __dirname, __filename) {
-        var BindableNode, pilot, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+        var BindableNode, pilot, _pcid, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
             for (var key in parent) {
                 if (__hasProp.call(parent, key)) child[key] = parent[key];
             }
@@ -3661,6 +3666,7 @@
             return child;
         };
         pilot = require("pilot-block/lib/index.js");
+        _pcid = 0;
         BindableNode = function(_super) {
             __extends(BindableNode, _super);
             function BindableNode() {
@@ -3677,9 +3683,7 @@
                 return BindableNode.__super__._writeHead.call(this, context, callback);
             };
             BindableNode.prototype._writeStartBlock = function(context) {
-                var pcid;
-                context.internal.set("pcid", pcid = (context.internal.get("pcid") || 0) + 1);
-                return context.buffer.push("<!--spc:" + (this.id = pcid) + "-->");
+                return context.buffer.push("<!--spc:" + (this.id = ++_pcid) + "-->");
             };
             BindableNode.prototype._writeTail = function(context, callback) {
                 this._writeEndBlock(context);
@@ -4605,12 +4609,14 @@
                 }
             };
             HtmlDecor.prototype.bind = function() {
+                var _ref1;
                 HtmlDecor.__super__.bind.call(this);
-                return this.child.bind();
+                return (_ref1 = this.child) != null ? _ref1.bind() : void 0;
             };
             HtmlDecor.prototype.dispose = function() {
+                var _ref1;
                 HtmlDecor.__super__.dispose.call(this);
-                return this.child.dispose();
+                return (_ref1 = this.child) != null ? _ref1.dispose() : void 0;
             };
             return HtmlDecor;
         }(require("paperclip/lib/paper/decor/block/base.js"));

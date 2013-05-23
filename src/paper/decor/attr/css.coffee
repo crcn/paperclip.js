@@ -18,6 +18,7 @@ class CssDecor extends require("./dataBind")
       if useClass
         if not @_currentClasses[className]
           @_currentClasses[className] = 1
+
           @$element.addClass className
       else
         if @_currentClasses[className]

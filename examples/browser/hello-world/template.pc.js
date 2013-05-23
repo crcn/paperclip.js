@@ -37,9 +37,9 @@ module.exports = function(paper) {
         }
     }).html(" <br/> <span> hello ").textBinding({
         fn: function() {
-            return this.ref("this.name").value();
+            return this.ref("name").value();
         },
-        refs: [ "this.name" ]
+        refs: [ "name" ]
     }).html(", you are ").textBinding({
         fn: function() {
             return this.ref("age").value() || 0;
@@ -118,6 +118,12 @@ module.exports = function(paper) {
                         },
                         refs: [ "friend.remove" ]
                     }
+                } ],
+                "class": [ "abc-", {
+                    fn: function() {
+                        return this.ref("friend.name").value();
+                    },
+                    refs: [ "friend.name" ]
                 } ]
             },
             children: paper.create().html("x")
@@ -249,7 +255,7 @@ module.exports = function(paper) {
             },
             refs: [ "name" ]
         }).html("<br/> ");
-    }).html(" ").textBinding({
+    }).html(" ").blockBinding({
         view: {
             fn: function() {
                 return {
@@ -259,7 +265,9 @@ module.exports = function(paper) {
             },
             refs: [ "this" ]
         }
-    }).html(" ").textBinding({
+    }, function() {
+        return paper.create().html(" ");
+    }).textBinding({
         view: {
             fn: function() {
                 return {
