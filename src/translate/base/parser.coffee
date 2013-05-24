@@ -54,20 +54,29 @@ class Parser
 
 
   _error: () ->
-  
-    pos = @_t.current[2]
 
-    buffer = "\n\nUnexpected Token:\n"
-    buffer += @_source + "\n"
+
+    buffer = "\n\nUnexpected Token: #{@_t.current[1]}\n\n"
+    buffer += @_bufferPosInfo()
+
+    throw new Error buffer
+
+  _bufferPosInfo: () ->
+    buffer = @_source + "\n"
+
+    epos = @_t.current[2]
+    spos = epos - @_t.current[1].length - 1
+
     for n in [0..@_source.length]
-      if n is pos
+      if n > spos and n < epos
         char = "^"
       else
         char = "-"
+
       buffer += char
 
     buffer += "\n\n"
+    buffer
 
-    throw new Error buffer
 
 module.exports = Parser

@@ -74,19 +74,25 @@ class Parser extends BaseParser
   ###
 
   _parseMultiOptions: () ->
-    c = @_currentCode()
     options = []
 
-    while c and (c = @_currentCode()) isnt TokenCodes.RB
-    
-      @_nextCode()
+    @_nextCode() # eat }
 
+
+    while (c = @_currentCode()) isnt TokenCodes.RB
+      
       name = @_currentString()
 
       @_expectNextCode TokenCodes.COLON
 
       @_nextCode()
+
       options.push new OptionExpression name, @_parseActionOptions()
+      
+      # coma? eat it. might also be a right bracket
+      if @_currentCode() is TokenCodes.COMA
+        @_nextCode()
+
 
     # get rid of RP
     @_nextCode()
@@ -118,7 +124,6 @@ class Parser extends BaseParser
         c = @_currentCode()
 
       if c is TokenCodes.STRING
-        console.log("STRING")
         expressions.push new StringExpression @_currentString()
         c = @_nextCode()
 
@@ -138,10 +143,6 @@ class Parser extends BaseParser
 
       @_nextCode()
 
-
-    # coma? skip it
-    if @_currentCode() is TokenCodes.COMA
-      @_nextCode()
 
     new CollectionExpression(expressions)
 
