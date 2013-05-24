@@ -31,6 +31,7 @@ class ClippedBufferPart
   update: () ->
     @clip.reset @clippedBuffer._data
     @clip.update()
+    @value = @clip.get("value")
 
 
   ###
