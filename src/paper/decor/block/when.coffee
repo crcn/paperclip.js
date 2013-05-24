@@ -26,7 +26,7 @@ class BlockDecor extends require("./base")
 
   bind: () ->
     super()
-    @child.bind()
+    @child?.bind()
 
   ###
   ###
@@ -35,7 +35,8 @@ class BlockDecor extends require("./base")
     if value
       @child = @node.createContent().attach(@node, @context).bind()
     else
-      @child.dispose()
+      @child?.dispose()
+      @child = undefined
       
 
 
