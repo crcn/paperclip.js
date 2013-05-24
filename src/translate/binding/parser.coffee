@@ -118,11 +118,11 @@ class Parser extends BaseParser
         c = @_currentCode()
 
       if c is TokenCodes.STRING
+        console.log("STRING")
         expressions.push new StringExpression @_currentString()
         c = @_nextCode()
 
       while c is TokenCodes.PIPE
-        @_nextCode()
         expressions.push @_parsePipe expressions.pop()
         c = @_currentCode()
 
