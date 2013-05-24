@@ -60,6 +60,7 @@ class Tokenizer extends BaseTokenizer
 
   _next: () ->
     # word?
+
     if @_s.isAZ() or (ccode = @_s.ccode()) is 36 or ccode is 95 or ccode is 64
       word = @_s.next /[_$@a-zA-Z0-9]+/
 
@@ -74,8 +75,6 @@ class Tokenizer extends BaseTokenizer
     else if @_s.is09()
       return @_t Codes.NUMBER, @_s.nextNumber()
 
-    else if @_s.isWs()
-      return @_t Codes.WS, @_s.next /[\s\r\n\t]+/
 
     else if ccode is 33
       if @_s.peek(2) is "!="

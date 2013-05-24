@@ -28,7 +28,6 @@ class Parser extends BaseParser
   constructor: () ->
     super new Tokenizer()
 
-
   ###
   ###
 
@@ -49,7 +48,7 @@ class Parser extends BaseParser
 
     while @_t.current
       actions.push @_parseAction()
-      if @_currentCode() is TokenCodes.SEMI_COLON
+      if @_currentCode() is TokenCodes.COMA
         @_nextCode()
     
     new ScriptsExpression actions
@@ -77,9 +76,6 @@ class Parser extends BaseParser
   _parseMultiOptions: () ->
     c = @_currentCode()
     options = []
-
-
-
 
     while c and (c = @_currentCode()) isnt TokenCodes.RB
     
@@ -135,7 +131,7 @@ class Parser extends BaseParser
       if ~[TokenCodes.RP, TokenCodes.RB].indexOf c
         break
 
-      if not c or ~[TokenCodes.SEMI_COLON, TokenCodes.COMA].indexOf c
+      if not c or ~[TokenCodes.COMA].indexOf c
         break
 
       expressions.push new JsExpression @_currentString()
@@ -143,8 +139,8 @@ class Parser extends BaseParser
       @_nextCode()
 
 
-    # semi colon? skip it
-    if @_currentCode() is TokenCodes.SEMI_COLON
+    # coma? skip it
+    if @_currentCode() is TokenCodes.COMA
       @_nextCode()
 
     new CollectionExpression(expressions)
