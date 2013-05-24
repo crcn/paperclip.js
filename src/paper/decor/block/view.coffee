@@ -35,12 +35,18 @@ class ViewDecor extends require("./base")
       child.set "content", child.buffer.join("")
       child.attachBuffer()
       @child = tpl.node.createContent()
-      @child.load(child.child(wth), callback)
+      @child.load(@_childContext = child.child(wth), callback)
 
     if @node.content
       @node.content.load child, onContentLoad
     else 
       onContentLoad()
+
+  ###
+  ###
+
+  _onChange: () ->
+    @_childContext?.reset @clip.get "view.item"
   
 
 module.exports = ViewDecor

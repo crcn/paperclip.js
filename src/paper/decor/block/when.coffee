@@ -15,7 +15,7 @@ class BlockDecor extends require("./base")
   ###
 
   load: (@context, callback) ->
-    if @clip.get("when")
+    if @_show = !!@clip.get("when")
       @child = @node.createContent()
       @child.load context, callback
     else
@@ -32,7 +32,12 @@ class BlockDecor extends require("./base")
   ###
 
   _onChange: (value) =>
-    if value
+
+    show = !!value
+    return if @_show is show
+    @_show = show
+
+    if show
       @child = @node.createContent().attach(@node, @context).bind()
     else
       @child?.dispose()
