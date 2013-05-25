@@ -41,8 +41,8 @@ class EachDecor extends require("./base")
 
     source = if @script.value?.source then @script.value.source() else (@script.value or [])
 
-    for item in source
-      @children.push @_createChild item
+    for model in source
+      @children.push @_createChild model
 
     async.eachSeries @children, ((child, next) ->
       child.load context, next
@@ -51,28 +51,28 @@ class EachDecor extends require("./base")
   ###
   ###
 
-  _createChild: (item) ->
+  _createChild: (model) ->
     data = {}
-    data[@node.clip.get("as") or "item"] = item
+    data[@node.clip.get("as") or "model"] = model
     node = @node.createContent data
-    node.item = item
+    node.model = model
     node
 
   ###
   ###
 
-  _insert: (item) =>
+  _insert: (model) =>
     return if @_ignoreInsert
-    @children.push node = @_createChild item
+    @children.push node = @_createChild model
     node.attach @node, @context
 
 
   ###
   ###
 
-  _remove: (item) =>
+  _remove: (model) =>
     for child, i in @children
-      if child.item is item
+      if child.model is model
         @children.splice(i, 1)
         child.dispose()
         break

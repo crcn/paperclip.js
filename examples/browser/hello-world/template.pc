@@ -54,9 +54,9 @@ Current Address: <br />
   Hello block! name = {{name}}<br />
 {{/}}
 
-{{#view:{name:"test",item:this}}}
+{{#view:{name:"test",model:this}}}
 {{/}}
-{{view:{name:"test",item:{name:"john"}}}}
+{{view:{name:"test",model:{name:"john"}}}}
 
 {{html:blarg}}
 {{html:blarg}}

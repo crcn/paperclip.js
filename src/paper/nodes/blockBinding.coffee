@@ -2,7 +2,7 @@ Base  = require "./base"
 decorFactory = require("../decor/blockFactory")
 Clip = require "../../clip"
 
-# loops through a collection of items
+# loops through a collection of models
 # {{#each:people}}
 # {{/}}
 

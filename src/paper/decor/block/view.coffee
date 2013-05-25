@@ -26,7 +26,7 @@ class ViewDecor extends require("./base")
 
   load: (context, callback) ->
     tplName = "template.#{@clip.get("view.name") or @clip.get("view")}"
-    wth = @clip.get("view.item") or undefined
+    wth = @clip.get("view.model") or undefined
     tpl = context.internal.get(tplName)
     return callback() if not tpl
     child = context.child().detachBuffer()
@@ -46,7 +46,7 @@ class ViewDecor extends require("./base")
   ###
 
   _onChange: () ->
-    @_childContext?.reset @clip.get "view.item"
+    @_childContext?.reset @clip.get "view.model"
   
 
 module.exports = ViewDecor

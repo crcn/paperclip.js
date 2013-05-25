@@ -6,13 +6,13 @@ class Collection
   ###
 
   constructor: () ->
-    @_items = []
+    @_models = []
 
   ###
   ###
 
-  push: (item) ->
-    @_items.push item
+  push: (model) ->
+    @_models.push model
 
 
   ###
@@ -20,8 +20,8 @@ class Collection
 
   dispose: () ->
     @clip?.dispose()
-    for item in @_items
-      item.dispose()
+    for model in @_models
+      model.dispose()
 
 
   ###
@@ -29,7 +29,7 @@ class Collection
 
   load: (context, callback) -> 
     @clip?.reset context, false
-    async.eachSeries @_items, ((decor, next) ->
+    async.eachSeries @_models, ((decor, next) ->
       decor.load context, next
     ), callback
 
@@ -40,7 +40,7 @@ class Collection
   bind: () ->
     return if @_bound
     @_bound = true
-    for decor in @_items
+    for decor in @_models
       decor.bind()
 
 
