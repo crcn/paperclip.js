@@ -16,6 +16,7 @@ class SubmitDecor extends require("./dataBind")
   ###
 
   _onSubmitted: (event) =>
+    event.preventDefault()
     @clip.data.set "event", event
     @script.update()
 
