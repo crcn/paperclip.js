@@ -7,7 +7,16 @@ attrDecorators =
   show    : require("./attr/show")
   style   : require("./attr/style")
   value   : require("./attr/value")
-  click   : require("./attr/click")
+
+  click      : require("./attr/event")
+  submit     : require("./attr/event")
+  mousedown  : require("./attr/event")
+  mouseup    : require("./attr/event")
+  mouseover  : require("./attr/event")
+  mouseout   : require("./attr/event")
+  keydown    : require("./attr/event")
+  keyup      : require("./attr/event")
+
   enter   : require("./attr/enter")
   disable : require("./attr/disable")
   checked : require("./attr/checked")
@@ -27,8 +36,8 @@ class Factory
     if node.attributes["data-bind"]
       decor.clip = clip = new Clip { script: node.attributes["data-bind"][0], watch: false }
       for name in clip.scripts.names
-        if ad = attrDecorators[name]
-          decor.push new ad node, name, clip
+        if ad = attrDecorators[name.toLowerCase()]
+          decor.push new ad node, name.toLowerCase(), clip
         else
           decor.push new DataBindDecor node, name, clip
 

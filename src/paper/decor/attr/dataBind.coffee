@@ -4,7 +4,7 @@ class DataBindDecor extends require("./base")
     @attrName = "data-bind"
     @script = clip.script(@name)
     @refs = @script.script.refs
-    super node
+    super node, @name
 
   load: (context, callback) ->
     if @watch isnt false

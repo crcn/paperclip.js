@@ -1,5 +1,5 @@
 class BaseDecor
-  constructor: (@node) ->
+  constructor: (@node, @name) ->
   load: (@context, callback) -> callback()
   bind: () ->
   dispose: () ->
