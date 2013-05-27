@@ -56,7 +56,7 @@ class BlockBinding extends require("./bindable")
   ###
   ###
 
-  constructor: (@script, @contentFactory) ->
+  constructor: (@script, @contentFactory, @childBinding) ->
     super()
     @clip = new Clip { script: script, watch: false }
     @_decor = decorFactory.getDecor @

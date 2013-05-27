@@ -92,9 +92,9 @@ class Tokenizer extends BaseTokenizer
       return @_t Codes.WS, " "
 
     else if cchar is "{"
-      if @_s.peek(5) is "{{/}}"
-        @_s.skip(5)
-        return @_t Codes.EBLOCK, "{{/}}"
+      if @_s.peek(3) is "{{/"
+        @_s.skip(2)
+        return @_t Codes.EBLOCK, "{{/"
 
       if @_s.peek(3) is "{{#"
         @_s.skip(2)

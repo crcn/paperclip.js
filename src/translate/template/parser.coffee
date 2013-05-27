@@ -103,9 +103,6 @@ class Parser extends BaseParser
         @_nextCode()
         break
 
-      #if ccode is TokenCodes.WS 
-      #  @_nextCode()
-      #  continue
 
 
       children.push @_parseExpression()
@@ -190,11 +187,16 @@ class Parser extends BaseParser
     while (ccode = @_currentCode()) isnt TokenCodes.EBLOCK and ccode
       children.push @_parseExpression()
 
-
-    # each {{/}}
     @_nextCode()
 
-    new BindingExpression script, new CollectionExpression children
+    # it's a child binding block
+    if @_currentCode() isnt TokenCodes.RM
+      @_t.putBack()
+      child = @_parseBindingBlock()
+    else
+      @_nextCode()
+
+    new BindingExpression script, new CollectionExpression(children), child
     
   ###
   ###

@@ -31,8 +31,8 @@ class Html extends Base
    binding with children
   ###
 
-  blockBinding: (script, child) -> 
-    @addChild new BlockBinding script, child
+  blockBinding: (script, contentFactory, childBinding) -> 
+    @addChild new BlockBinding script, contentFactory, childBinding
     @
 
   ###

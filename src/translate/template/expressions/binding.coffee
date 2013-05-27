@@ -6,7 +6,7 @@ class Binding extends require("./base")
   ###
   ###
 
-  constructor: (@script, @children) ->
+  constructor: (@script, @children, @childBinding) ->
     super()
     @addChild @children
 
@@ -24,6 +24,14 @@ class Binding extends require("./base")
   ###
   ###
 
-  toMethodString: () -> "blockBinding(#{@script}, function(){ return paper.create().html('#{@children.toString()}')})"
+  toMethodString: () -> 
+    buffer = ["blockBinding(#{@script}, function(){ return paper.create().html('#{@children.toString()}')}"]
+
+    if @childBinding
+      buffer.push ", paper.create().#{@childBinding.toMethodString()}"
+
+    buffer.push ")"
+
+    buffer.join("")
 
 module.exports = Binding
