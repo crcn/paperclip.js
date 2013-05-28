@@ -9,6 +9,7 @@ class Paper
   ###
 
   constructor: (@factory) ->
+    @modifiers = require("./defaultModifiers")
     @node = @factory @
 
   ###
@@ -27,6 +28,12 @@ class Paper
   ###
 
   create: () -> new Html()
+
+  ###
+  ###
+
+  registeModifier: (name, modifier) ->
+    @modifiers[name] = modifier
 
 
 

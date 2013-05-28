@@ -27,7 +27,7 @@ class ModifierExpression extends base.Expression
     if modifiers[@name]
       buffer.push "this.defaultModifiers"
     else
-      buffer.push "this.modifiers"
+      buffer.push "paper.modifiers"
 
     buffer.push ".#{@name}("
 

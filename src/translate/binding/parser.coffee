@@ -151,6 +151,7 @@ class Parser extends BaseParser
   ###
 
   _parsePipe: (expressions) ->
+    @_nextCode() # eat pipe |
     name = @_currentString()
     params = []
     @_nextCode()

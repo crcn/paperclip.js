@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "scripts": {
