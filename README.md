@@ -1,5 +1,4 @@
-
-Paperclip is a declarative data-binding library, similar to [Angular](http://angularjs.org/), [Derby](http://derbyjs.com/), and [Knockout](http://knockoutjs.com/)
+Paperclip is a data-bindable templating system similar to [Angular](http://angularjs.org/), [Derby](http://derbyjs.com/), and [Knockout](http://knockoutjs.com/)
 
 
 
