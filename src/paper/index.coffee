@@ -2,6 +2,7 @@ Context    = require "./context"
 Html       = require "./nodes/html"
 pilot      = require "pilot-block"       
 asyngleton = require "asyngleton"
+modifiers  = require "./defaultModifiers"
 
 class Paper
 
@@ -9,7 +10,7 @@ class Paper
   ###
 
   constructor: (@factory) ->
-    @modifiers = require("./defaultModifiers")
+    @modifiers = modifiers
     @node = @factory @
 
   ###
@@ -29,15 +30,11 @@ class Paper
 
   create: () -> new Html()
 
-  ###
-  ###
-
-  registeModifier: (name, modifier) ->
-    @modifiers[name] = modifier
-
-
 
 
 module.exports = (fn) -> new Paper(fn)
 module.exports.Context = Context
+module.exports.registerModifier = (name, modifier) ->
+  modifiers[name] = modifier
+
 

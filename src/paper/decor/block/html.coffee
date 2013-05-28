@@ -8,7 +8,7 @@ class HtmlDecor extends require("./base")
   load: (context, callback) ->
     html = @clip.get("html")
     return callback() if not html?
-    if typeof html is "string"
+    if typeof html is "string" or html?.__isSection
       context.buffer.push html
       callback()
     else

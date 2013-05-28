@@ -1,7 +1,6 @@
 dref             = require "dref"
 events           = require "events"
 bindable         = require "bindable"
-defaultModifiers = require "./modifiers"
 
 ###
  Reads a property chain 
@@ -112,7 +111,6 @@ class ClipScript extends events.EventEmitter
 
   constructor: (@script, @clip) ->
     @modifiers = @clip.modifiers
-    @defaultModifiers = defaultModifiers
     @options = @clip.options
     @_watching = {}
     @cast = {}
@@ -292,4 +290,3 @@ class Clip
 
 
 module.exports = Clip
-module.exports.modifiers = defaultModifiers
