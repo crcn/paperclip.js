@@ -5,15 +5,14 @@ class HtmlDecor extends require("./base")
   ###
   ###
 
-  load: (context, callback) ->
+  load: (context) ->
     html = @clip.get("html")
-    return callback() if not html?
+    return if not html?
     if typeof html is "string" or html?.__isSection
       context.buffer.push html
-      callback()
     else
       @child = html.createContent()
-      @child.load context, callback
+      @child.load context
 
   ###
   ###

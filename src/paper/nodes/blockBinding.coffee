@@ -36,15 +36,15 @@ class BlockChild extends require("./bindable")
   ###
   ###
 
-  load: (context, callback) ->
-    return super context, callback if not @with
-    super context.child(@with), callback
+  load: (context) ->
+    return super context if not @with
+    super context.child(@with)
 
   ###
   ###
 
-  _loadChildren: (context, callback) ->
-    @content.load context, callback
+  _loadChildren: (context) ->
+    @content.load context
 
 class BlockBinding extends require("./bindable")
   
@@ -86,16 +86,16 @@ class BlockBinding extends require("./bindable")
   ###
   ###
 
-  _writeHead: (context, callback) ->
+  _writeHead: (context) ->
     @clip.reset context
     @clip.update()
-    super context, callback
+    super context
 
   ###
   ###
 
-  _loadChildren: (context, callback) ->
-    @_decor.load context, callback
+  _loadChildren: (context) ->
+    @_decor.load context
 
   ###
   ###

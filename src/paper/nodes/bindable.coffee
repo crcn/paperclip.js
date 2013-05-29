@@ -16,9 +16,9 @@ class BindableNode extends require("./base")
   ###
   ###
 
-  _writeHead: (context, callback) ->
+  _writeHead: (context) ->
     @_writeStartBlock context
-    super context, callback
+    super context
 
   ###
   ###
@@ -29,9 +29,9 @@ class BindableNode extends require("./base")
   ###
   ###
 
-  _writeTail: (context, callback) ->
+  _writeTail: (context) ->
     @_writeEndBlock context
-    super context, callback
+    super context
 
 
   ###

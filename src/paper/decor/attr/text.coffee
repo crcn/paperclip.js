@@ -17,13 +17,12 @@ class TextBinding extends require("./base")
   ###
   ###
 
-  load: (@context, callback) ->
+  load: (@context) ->
     @clippedBuffer.reset context
 
     if @clippedBuffer.text.length
       context.buffer.push " #{@attrName}=\"#{@clippedBuffer.text}\""
 
-    callback()
 
   ###
   ###

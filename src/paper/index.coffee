@@ -16,14 +16,14 @@ class Paper
   ###
   ###
 
-  load: asyngleton (context, callback) -> 
-    @node.load context, callback
+  load: (context) -> 
+    @node.load context
 
   ###
   ###
 
-  attach: (element, context, callback = (() ->)) -> 
-    @node.attach element, context, callback
+  attach: (element, context) -> 
+    @node.attach element, context
 
   ###
   ###

@@ -27,11 +27,12 @@ class Collection
   ###
   ###
 
-  load: (context, callback) -> 
+  load: (context) -> 
+  
     @clip?.reset context, false
-    async.eachSeries @_models, ((decor, next) ->
-      decor.load context, next
-    ), callback
+
+    for decor in @_models
+      decor.load context
 
 
   ###

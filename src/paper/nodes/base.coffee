@@ -33,19 +33,19 @@ class Base
   ###
   ###
 
-  attach: (element, context, callback = (() ->)) ->
-    @load context.detachBuffer(), (err) =>
-      return callback(err) if err?
+  attach: (element, context) ->
 
-      if element.__isNode
-        element.section.append pilot.createSection context.buffer.join("")
-        pilot.update element.section.parent
-      else
-        element.innerHTML = context.buffer.join("")
-        pilot.update element
+    @load context.detachBuffer()
 
-      @bind()
-      callback()
+    if element.__isNode
+      element.section.append pilot.createSection context.buffer.join("")
+      pilot.update element.section.parent
+    else
+      element.innerHTML = context.buffer.join("")
+      pilot.update element
+
+    @bind()
+
 
 
 
@@ -53,36 +53,30 @@ class Base
    writes HTML to the DOM
   ###
 
-  load: (@context, callback) ->  
+  load: (@context) ->  
 
-    @_writeHead context, (err) =>
-      return callback(err) if err?
-
-      @_loadChildren context, (err) =>
-        return callback(err) if err?
-        
-        @_writeTail context, (err) -> 
-          return setTimeout callback, 0, err, context
+    @_writeHead context
+    @_loadChildren context
+    @_writeTail context
 
     @
 
   ###
   ###
 
-  _writeHead: (info, callback) ->
-    callback()
+  _writeHead: (info) ->
 
   ###
   ###
 
-  _loadChildren: (info, callback) -> 
-    Base.loadEachItem @children or [], info, callback
+  _loadChildren: (context) -> 
+    for child in @children
+      child.load context
 
   ###
   ###
 
-  _writeTail: (info, callback) ->
-    callback()
+  _writeTail: (info) ->
 
   ###
   ###
@@ -92,13 +86,6 @@ class Base
       child.parent = @
       @children.push child
 
-  ###
-  ###
-
-  @loadEachItem: (source, info, callback) ->
-    async.eachSeries source, ((child, next) ->
-      child.load info, next
-    ), callback
 
   ###
    used mostly for block bindings

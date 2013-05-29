@@ -15,11 +15,10 @@ class AttributeBinding extends Base
   ###
   ###
 
-  load: (info, callback) ->
+  load: (info) ->
     @clippedBuffer.reset info.data
     if @clippedBuffer.text.length
       info.buffer.push " #{@name}=\"#{@clippedBuffer.text}\""
-    callback()
 
 
 class NodeBinding extends require("./bindable")
@@ -51,26 +50,24 @@ class NodeBinding extends require("./bindable")
   ###
   ###
 
-  _writeHead: (context, callback) ->
-    this._writeStartBlock(context)
+  _writeHead: (context) ->
+    this._writeStartBlock context
     context.buffer.push "<#{@name}"
-    callback()
 
   ###
   ###
 
-  _loadChildren: (context, callback) ->
-    @_decor.load context, () =>
-      context.buffer.push ">"
-      super context, callback
+  _loadChildren: (context) ->
+    @_decor.load context
+    context.buffer.push ">"
+    super context
 
   ###
   ###
 
-  _writeTail: (context, callback) ->
+  _writeTail: (context) ->
     context.buffer.push "</#{@name}>"
-    this._writeEndBlock(context)
-    callback()
+    this._writeEndBlock context
 
   ###
   ###

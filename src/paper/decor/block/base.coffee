@@ -11,7 +11,7 @@ class NodeDecor
   ###
   ###
 
-  load: (context, callback) -> callback()
+  load: (context) ->
 
   ###
   ###

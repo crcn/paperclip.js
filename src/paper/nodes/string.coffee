@@ -11,13 +11,14 @@ class StringBuilder extends require("./base")
 
   constructor: (buffer = "") -> 
     @_buffer = buffer
+    super()
 
   ###
   ###
 
-  _writeHead: (info, callback) ->
+  _writeHead: (info) ->
     info.buffer.push @_buffer
-    super info, callback
+    super info
 
 
 

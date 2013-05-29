@@ -6,10 +6,10 @@ class DataBindDecor extends require("./base")
     @refs = @script.script.refs
     super node, @name
 
-  load: (context, callback) ->
+  load: (context) ->
     if @watch isnt false
       @script.update()
-    super context, callback
+    super context
 
   bind: () ->
     @clip.bind(@name).watch(true).to @_onChange

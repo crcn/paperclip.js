@@ -1,4 +1,3 @@
-async   = require "async"
 pilot   = require "pilot-block"
 
 # loops through a collection of items
@@ -35,7 +34,7 @@ class EachDecor extends require("./base")
   ###
   ###
 
-  load: (@context, callback) -> 
+  load: (@context) -> 
     @children = []
     @itemName = 
 
@@ -44,9 +43,9 @@ class EachDecor extends require("./base")
     for model in source
       @children.push @_createChild model
 
-    async.eachSeries @children, ((child, next) ->
-      child.load context, next
-    ), callback
+
+    for child in @children
+      child.load context
 
   ###
   ###

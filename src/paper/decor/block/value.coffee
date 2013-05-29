@@ -3,11 +3,10 @@ class ValueDecor extends require("./base")
   ###
   ###
 
-  load: (context, callback) ->
+  load: (context) ->
     v = @clip.get("value")
     if v?
       context.buffer.push v
-    callback()
 
   ###
   ###

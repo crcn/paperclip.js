@@ -18,9 +18,9 @@ class BlockDecor extends require("./base")
   ###
   ###
 
-  load: (@context, callback) ->
+  load: (@context) ->
     @child = @node.createContent()
-    @child.load @_childContext(context), callback
+    @child.load @_childContext(context)
 
 
   ###

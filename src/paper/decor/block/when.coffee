@@ -14,12 +14,10 @@ class BlockDecor extends require("./base")
   ###
   ###
 
-  load: (@context, callback) ->
+  load: (@context) ->
     if @_show = !!@clip.get("when")
       @child = @node.createContent()
-      @child.load context, callback
-    else
-      callback()
+      @child.load context
 
   ###
   ###
