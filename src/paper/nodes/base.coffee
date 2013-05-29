@@ -62,7 +62,7 @@ class Base
         return callback(err) if err?
         
         @_writeTail context, (err) -> 
-          return callback err, context
+          return setTimeout callback, 0, err, context
 
     @
 
