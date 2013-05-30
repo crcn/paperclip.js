@@ -6,7 +6,7 @@ class DisableDecor extends require("./dataBind")
   bind: () ->
     super()
     @$element = $(@element)
-    @clip.bind("disable").to @_show
+    @clip.bind("disable").to(@_show).now()
     @_show @clip.get("disable")
 
   ###

@@ -8,7 +8,7 @@ class StyleDecor extends require("./dataBind")
     super()
     @_currentStyles = {}
     @$element = $(@element)
-    @clip.bind("style").to @_updateStyle
+    @clip.bind("style").to(@_updateStyle).now()
 
   ###
   ###

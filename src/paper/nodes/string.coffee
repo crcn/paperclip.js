@@ -20,8 +20,6 @@ class StringBuilder extends require("./base")
     info.buffer.push @_buffer
     super info
 
-
-
   ###
   ###
 

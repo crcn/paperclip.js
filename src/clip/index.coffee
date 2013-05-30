@@ -169,7 +169,7 @@ class ClipScript extends events.EventEmitter
 
     @_watching[path] = {
       target: target
-      binding: target.bind(path).watch(true).to(@update)
+      binding: target.bind(path).to(@update)
     }
 
 

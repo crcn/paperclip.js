@@ -1,9 +1,6 @@
 
 all: lib examples
 
-clean:
-	for FILE in `find ./ -name template.js`; do rm $$FILE; done;
-
 
 lib:
 	cd ../../; make all browser; cp build/paperclip.js examples/browser/paperclip.js

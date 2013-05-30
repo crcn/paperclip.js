@@ -17,7 +17,7 @@ class ClippedBufferPart
 
     # bind to update, but ONLY bind on changes. This won't get fired if value
     # isn't undefined.
-    @clip.bind("value").watch(true).to @_onUpdated
+    @clip.bind("value").to @_onUpdated
 
   ###
   ###

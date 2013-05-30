@@ -1,5 +1,5 @@
-Name: <input type="text" data-bind="{{value:name;bothWays:true}}" /> <br />
-Age: <input type="text" data-bind="{{value:age;bothWays:true}}" /> <br />
+Name: <input type="text" data-bind="{{value:name,bothWays:true}}" /> <br />
+Age: <input type="text" data-bind="{{value:age,bothWays:true}}" /> <br />
 
 <span>
   hello {{name}}, you are {{age||0}} years old, therefore you <b data-bind="{{style:{color:age>20?'green':'red'}}}">{{age > 20 ? "can" : "cannot"}}</b> 
@@ -10,18 +10,18 @@ Age: <input type="text" data-bind="{{value:age;bothWays:true}}" /> <br />
 
 <br />
 
-<input type="text" data-bind="{{value:currentFriend || "";bothWays:true;enter:currentFriend = "" || addFriend(currentFriend)}}" placeholder="Add a friend"></input> <br />
+<input type="text" data-bind="{{value:currentFriend || "",bothWays:true,enter:currentFriend = "" || addFriend(currentFriend)}}" placeholder="Add a friend"></input> <br />
 Your Friends ({{friends.length}}): <br />
-{{#each:friends;as:"friend"}}
+{{#each:friends,as:"friend"}}
   <a href="#" data-bind="{{click:friend.remove()}}" class="abc-{{friend.name}}">x</a> {{friend.name}} <br />
 {{/}}
 
-<input type="submit" data-bind="{{disable:age<21;click:drinkBeer()}}" value="drink beer" /><br />
+<input type="submit" data-bind="{{disable:age<21,click:drinkBeer()}}" value="drink beer" /><br />
 
 
 <select>
   <option>Select a friend</option>
-  {{#each:friends;as:"friend"}}
+  {{#each:friends,as:"friend"}}
     <option value="{{friend.name}}">{{friend.name}}</option>
   {{/}}
 </select>

@@ -25,10 +25,10 @@ class EachDecor extends require("./base")
 
     if @script.value?.source
       @_ignoreInsert = true
-      @script.value.bind {
+      @script.value.bind({
         insert: @_insert,
         remove: @_remove
-      }
+      }).now()
       @_ignoreInsert = false
 
   ###

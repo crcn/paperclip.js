@@ -5,7 +5,7 @@ class CheckedDecor extends require("./dataBind")
 
   bind: () ->
     super()
-    @clip.bind("checked").to @_show
+    @clip.bind("checked").to(@_show).now()
 
   ###
   ###

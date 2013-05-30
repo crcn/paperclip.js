@@ -12,7 +12,7 @@ class DataBindDecor extends require("./base")
     super context
 
   bind: () ->
-    @clip.bind(@name).watch(true).to @_onChange
+    @clip.bind(@name).to @_onChange
     @element = @node.section.elements[0]
 
     if @watch isnt false

@@ -7,7 +7,7 @@ class CssDecor extends require("./dataBind")
     super()
     @_currentClasses = {}
     @$element = $(@element)
-    @clip.bind("css").to @_updateCss
+    @clip.bind("css").to(@_updateCss).now()
 
   ###
   ###

@@ -182,7 +182,7 @@ module.exports = function(paper) {
                 refs: [ "friend.name" ]
             })
         }).html(" ");
-    }).html("</select> ").nodeBinding("div", {
+    }).html(" </select> ").nodeBinding("div", {
         attrs: {
             "data-bind": [ {
                 show: {
@@ -260,19 +260,19 @@ module.exports = function(paper) {
             fn: function() {
                 return {
                     name: "test",
-                    item: this.ref("this").value()
+                    model: this.ref("this").value()
                 };
             },
             refs: [ "this" ]
         }
     }, function() {
         return paper.create().html(" ");
-    }).textBinding({
+    }).html(" ").textBinding({
         view: {
             fn: function() {
                 return {
                     name: "test",
-                    item: {
+                    model: {
                         name: "john"
                     }
                 };

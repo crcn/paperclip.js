@@ -51,7 +51,8 @@
             Clip: Clip,
             paper: paper,
             Context: paper.Context,
-            bindable: require("bindable/lib/index.js")
+            bindable: require("bindable/lib/index.js"),
+            registerModifier: paper.registerModifier
         };
         if (typeof window !== "undefined") {
             window.paperclip = module.exports;
@@ -59,7 +60,7 @@
         return module.exports;
     });
     define("paperclip/lib/clip/index.js", function(require, module, exports, __dirname, __filename) {
-        var Clip, ClipScript, ClipScripts, PropertyChain, bindable, defaultModifiers, dref, events, __bind = function(fn, me) {
+        var Clip, ClipScript, ClipScripts, PropertyChain, bindable, dref, events, __bind = function(fn, me) {
             return function() {
                 return fn.apply(me, arguments);
             };
@@ -78,7 +79,6 @@
         dref = require("dref/lib/index.js");
         events = require("events/index.js");
         bindable = require("bindable/lib/index.js");
-        defaultModifiers = require("paperclip/lib/clip/modifiers/index.js");
         PropertyChain = function() {
             PropertyChain.prototype.__isPropertyChain = true;
             function PropertyChain(watcher) {
@@ -163,7 +163,6 @@
                 this.clip = clip;
                 this.update = __bind(this.update, this);
                 this.modifiers = this.clip.modifiers;
-                this.defaultModifiers = defaultModifiers;
                 this.options = this.clip.options;
                 this._watching = {};
                 this.cast = {};
@@ -218,7 +217,7 @@
                 }
                 return this._watching[path] = {
                     target: target,
-                    binding: target.bind(path).watch(true).to(this.update)
+                    binding: target.bind(path).to(this.update)
                 };
             };
             return ClipScript;
@@ -342,28 +341,26 @@
             return Clip;
         }();
         module.exports = Clip;
-        module.exports.modifiers = defaultModifiers;
         return module.exports;
     });
     define("paperclip/lib/paper/index.js", function(require, module, exports, __dirname, __filename) {
-        var Context, Html, Paper, asyngleton, pilot;
+        var Context, Html, Paper, asyngleton, modifiers, pilot;
         Context = require("paperclip/lib/paper/context.js");
         Html = require("paperclip/lib/paper/nodes/html.js");
         pilot = require("pilot-block/lib/index.js");
         asyngleton = require("asyngleton/lib/index.js");
+        modifiers = require("paperclip/lib/paper/defaultModifiers.js");
         Paper = function() {
             function Paper(factory) {
                 this.factory = factory;
+                this.modifiers = modifiers;
                 this.node = this.factory(this);
             }
-            Paper.prototype.load = asyngleton(function(context, callback) {
-                return this.node.load(context, callback);
-            });
-            Paper.prototype.attach = function(element, context, callback) {
-                if (callback == null) {
-                    callback = function() {};
-                }
-                return this.node.attach(element, context, callback);
+            Paper.prototype.load = function(context) {
+                return this.node.load(context);
+            };
+            Paper.prototype.attach = function(element, context) {
+                return this.node.attach(element, context);
             };
             Paper.prototype.create = function() {
                 return new Html;
@@ -374,6 +371,9 @@
             return new Paper(fn);
         };
         module.exports.Context = Context;
+        module.exports.registerModifier = function(name, modifier) {
+            return modifiers[name] = modifier;
+        };
         return module.exports;
     });
     define("bindable/lib/index.js", function(require, module, exports, __dirname, __filename) {
@@ -600,23 +600,6 @@
         };
         return module.exports;
     });
-    define("paperclip/lib/clip/modifiers/index.js", function(require, module, exports, __dirname, __filename) {
-        module.exports = {
-            uppercase: function(value) {
-                return String(value).toUpperCase();
-            },
-            lowercase: function(value) {
-                return String(value).toLowerCase();
-            },
-            json: function(value, count, delimiter) {
-                return JSON.stringify.apply(JSON, arguments);
-            },
-            replace: function(value, newValue) {
-                return newValue;
-            }
-        };
-        return module.exports;
-    });
     define("paperclip/lib/paper/context.js", function(require, module, exports, __dirname, __filename) {
         var Context, bindable, pilot, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
             for (var key in parent) {
@@ -698,8 +681,8 @@
                 this.addChild(new NodeBinding(name, options));
                 return this;
             };
-            Html.prototype.blockBinding = function(script, child) {
-                this.addChild(new BlockBinding(script, child));
+            Html.prototype.blockBinding = function(script, contentFactory, childBinding) {
+                this.addChild(new BlockBinding(script, contentFactory, childBinding));
                 return this;
             };
             Html.prototype.textBinding = function(binding) {
@@ -952,13 +935,26 @@
         module.exports.factory = structrFactory;
         return module.exports;
     });
+    define("paperclip/lib/paper/defaultModifiers.js", function(require, module, exports, __dirname, __filename) {
+        module.exports = {
+            uppercase: function(value) {
+                return String(value).toUpperCase();
+            },
+            lowercase: function(value) {
+                return String(value).toLowerCase();
+            },
+            json: function(value, count, delimiter) {
+                return JSON.stringify.apply(JSON, arguments);
+            }
+        };
+        return module.exports;
+    });
     define("bindable/lib/object/binding.js", function(require, module, exports, __dirname, __filename) {
         (function() {
-            var BindableSetter, Binding, bindableSetter, deepPropertyWatcher, hoist, toarray, utils;
+            var BindableSetter, Binding, bindableSetter, deepPropertyWatcher, toarray, utils;
             BindableSetter = require("bindable/lib/object/setters/factory.js");
             bindableSetter = new BindableSetter;
             utils = require("bindable/lib/core/utils.js");
-            hoist = require("hoist/lib/index.js");
             toarray = require("toarray/index.js");
             deepPropertyWatcher = require("bindable/lib/object/deepPropertyWatcher.js");
             module.exports = Binding = function() {
@@ -971,11 +967,20 @@
                     this._triggerCount = 0;
                     this._listen();
                 }
-                Binding.prototype.watch = function(value) {
-                    if (!arguments.length) {
-                        return this._watch;
+                Binding.prototype.now = function() {
+                    var setter, value, _i, _len, _ref;
+                    value = this._from.get(this._property);
+                    if (this._value === value) {
+                        return this;
                     }
-                    this._watch = value;
+                    _ref = this._setters;
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        setter = _ref[_i];
+                        setter.change(value);
+                    }
+                    if (~this._limit && ++this._triggerCount > this._limit) {
+                        this.dispose();
+                    }
                     return this;
                 };
                 Binding.prototype.collection = function() {
@@ -984,13 +989,20 @@
                     }
                     this._collection = new Binding.Collection;
                     this.to(this._collection.source);
+                    this.now();
                     return this._collectionBinding = this._collection.bind().copyId(true);
                 };
-                Binding.prototype.to = function(target, property) {
+                Binding.prototype.to = function(target, property, now) {
                     var setter;
+                    if (now == null) {
+                        now = false;
+                    }
                     setter = bindableSetter.createSetter(this, target, property);
                     if (setter) {
                         this._setters.push(setter);
+                        if (now === true) {
+                            setter.now();
+                        }
                     }
                     return this;
                 };
@@ -1022,15 +1034,25 @@
                     return !!this._boundBothWays;
                 };
                 Binding.prototype.bothWays = function() {
+                    var setter, _i, _len, _ref;
                     if (this._boundBothWays) {
                         return this;
                     }
                     this._boundBothWays = true;
-                    this._callSetterFns("bothWays");
+                    _ref = this._setters;
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        setter = _ref[_i];
+                        setter.bothWays();
+                    }
                     return this;
                 };
                 Binding.prototype.dispose = function() {
-                    this._callSetterFns("dispose");
+                    var setter, _i, _len, _ref;
+                    _ref = this._setters;
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        setter = _ref[_i];
+                        setter.dispose();
+                    }
                     this._setters = [];
                     if (this._collectionBinding) {
                         this._collectionBinding.dispose();
@@ -1043,30 +1065,13 @@
                     this._disposeListener = void 0;
                     return this;
                 };
-                Binding.prototype._trigger = function() {
-                    this._callSetterFns("change", [ this._from.get(this._property) ]);
-                    if (~this._limit && ++this._triggerCount > this._limit) {
-                        this.dispose();
-                    }
-                    return this;
-                };
-                Binding.prototype._callSetterFns = function(method, args) {
-                    var setter, _i, _len, _ref, _results;
-                    _ref = this._setters;
-                    _results = [];
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        setter = _ref[_i];
-                        _results.push(setter[method].apply(setter, args || []));
-                    }
-                    return _results;
-                };
                 Binding.prototype._listen = function() {
                     var _this = this;
                     this._listener = deepPropertyWatcher.create({
                         target: this._from,
                         property: this._property,
                         callback: function() {
-                            return _this._trigger();
+                            return _this.now();
                         }
                     });
                     return this._disposeListener = this._from.once("dispose", function() {
@@ -1098,6 +1103,9 @@
                 if (options.bothWays) {
                     binding.bothWays();
                 }
+                if (options.now) {
+                    binding.now();
+                }
                 return binding;
             };
         }).call(this);
@@ -1105,7 +1113,7 @@
     });
     define("bindable/lib/object/index.js", function(require, module, exports, __dirname, __filename) {
         (function() {
-            var Bindable, Binding, Builder, EventEmitter, dref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            var Bindable, Binding, EventEmitter, dref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
                 for (var key in parent) {
                     if (__hasProp.call(parent, key)) child[key] = parent[key];
                 }
@@ -1121,7 +1129,6 @@
             require("dref/lib/index.js").use(require("bindable/lib/shim/dref.js"));
             EventEmitter = require("bindable/lib/core/eventEmitter.js");
             Binding = require("bindable/lib/object/binding.js");
-            Builder = require("bindable/lib/core/builder.js");
             module.exports = Bindable = function(_super) {
                 __extends(Bindable, _super);
                 Bindable.prototype.__isBindable = true;
@@ -1140,8 +1147,11 @@
                     }
                     return (_ref = dref.get(this.data, key, flatten)) != null ? _ref : dref.get(this[key.split(".").shift()], key.split(".").slice(1).join("."), flatten);
                 };
-                Bindable.prototype.getFlatten = function(key) {
+                Bindable.prototype.toObject = function(key) {
                     return this.get(key, true);
+                };
+                Bindable.prototype.getFlatten = function(key) {
+                    return this.toObject(key);
                 };
                 Bindable.prototype.keys = function() {
                     return Object.keys(this.getFlatten());
@@ -1215,7 +1225,6 @@
                 };
                 return Bindable;
             }(EventEmitter);
-            new Builder(Binding, Bindable);
             module.exports.EventEmitter = EventEmitter;
             module.exports.propertyWatcher = require("bindable/lib/object/deepPropertyWatcher.js");
         }).call(this);
@@ -1563,6 +1572,28 @@
         }).call(this);
         return module.exports;
     });
+    define("type-component/index.js", function(require, module, exports, __dirname, __filename) {
+        var toString = Object.prototype.toString;
+        module.exports = function(val) {
+            switch (toString.call(val)) {
+              case "[object Function]":
+                return "function";
+              case "[object Date]":
+                return "date";
+              case "[object RegExp]":
+                return "regexp";
+              case "[object Arguments]":
+                return "arguments";
+              case "[object Array]":
+                return "array";
+            }
+            if (val === null) return "null";
+            if (val === undefined) return "undefined";
+            if (val === Object(val)) return "object";
+            return typeof val;
+        };
+        return module.exports;
+    });
     define("paperclip/lib/paper/nodes/nodeBinding.js", function(require, module, exports, __dirname, __filename) {
         var AttributeBinding, Base, ClippedBuffer, NodeBinding, async, attrFactory, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
             for (var key in parent) {
@@ -1591,12 +1622,11 @@
                 AttributeBinding.__super__.constructor.call(this);
                 this.clippedBuffer = new ClippedBuffer(buffer);
             }
-            AttributeBinding.prototype.load = function(info, callback) {
+            AttributeBinding.prototype.load = function(info) {
                 this.clippedBuffer.reset(info.data);
                 if (this.clippedBuffer.text.length) {
-                    info.buffer.push(" " + this.name + '="' + this.clippedBuffer.text + '"');
+                    return info.buffer.push(" " + this.name + '="' + this.clippedBuffer.text + '"');
                 }
-                return callback();
             };
             return AttributeBinding;
         }(Base);
@@ -1619,22 +1649,18 @@
                 this._decor.bind();
                 return this;
             };
-            NodeBinding.prototype._writeHead = function(context, callback) {
+            NodeBinding.prototype._writeHead = function(context) {
                 this._writeStartBlock(context);
-                context.buffer.push("<" + this.name);
-                return callback();
+                return context.buffer.push("<" + this.name);
             };
-            NodeBinding.prototype._loadChildren = function(context, callback) {
-                var _this = this;
-                return this._decor.load(context, function() {
-                    context.buffer.push(">");
-                    return NodeBinding.__super__._loadChildren.call(_this, context, callback);
-                });
+            NodeBinding.prototype._loadChildren = function(context) {
+                this._decor.load(context);
+                context.buffer.push(">");
+                return NodeBinding.__super__._loadChildren.call(this, context);
             };
-            NodeBinding.prototype._writeTail = function(context, callback) {
+            NodeBinding.prototype._writeTail = function(context) {
                 context.buffer.push("</" + this.name + ">");
-                this._writeEndBlock(context);
-                return callback();
+                return this._writeEndBlock(context);
             };
             NodeBinding.prototype.clone = function() {
                 return new NodeBinding(this.name, this.options);
@@ -1678,23 +1704,24 @@
                 this.content.dispose();
                 return this;
             };
-            BlockChild.prototype.load = function(context, callback) {
+            BlockChild.prototype.load = function(context) {
                 if (!this["with"]) {
-                    return BlockChild.__super__.load.call(this, context, callback);
+                    return BlockChild.__super__.load.call(this, context);
                 }
-                return BlockChild.__super__.load.call(this, context.child(this["with"]), callback);
+                return BlockChild.__super__.load.call(this, context.child(this["with"]));
             };
-            BlockChild.prototype._loadChildren = function(context, callback) {
-                return this.content.load(context, callback);
+            BlockChild.prototype._loadChildren = function(context) {
+                return this.content.load(context);
             };
             return BlockChild;
         }(require("paperclip/lib/paper/nodes/bindable.js"));
         BlockBinding = function(_super) {
             __extends(BlockBinding, _super);
             BlockBinding.prototype.name = "blockBinding";
-            function BlockBinding(script, contentFactory) {
+            function BlockBinding(script, contentFactory, childBinding) {
                 this.script = script;
                 this.contentFactory = contentFactory;
+                this.childBinding = childBinding;
                 BlockBinding.__super__.constructor.call(this);
                 this.clip = new Clip({
                     script: script,
@@ -1715,13 +1742,13 @@
             BlockBinding.prototype.createContent = function(wth) {
                 return new BlockChild(this, wth);
             };
-            BlockBinding.prototype._writeHead = function(context, callback) {
+            BlockBinding.prototype._writeHead = function(context) {
                 this.clip.reset(context);
                 this.clip.update();
-                return BlockBinding.__super__._writeHead.call(this, context, callback);
+                return BlockBinding.__super__._writeHead.call(this, context);
             };
-            BlockBinding.prototype._loadChildren = function(context, callback) {
-                return this._decor.load(context, callback);
+            BlockBinding.prototype._loadChildren = function(context) {
+                return this._decor.load(context);
             };
             BlockBinding.prototype.clone = function() {
                 return new BlockBinding(this.script, Base.cloneEach(this.children));
@@ -1752,10 +1779,11 @@
                     buffer = "";
                 }
                 this._buffer = buffer;
+                StringBuilder.__super__.constructor.call(this);
             }
-            StringBuilder.prototype._writeHead = function(info, callback) {
+            StringBuilder.prototype._writeHead = function(info) {
                 info.buffer.push(this._buffer);
-                return StringBuilder.__super__._writeHead.call(this, info, callback);
+                return StringBuilder.__super__._writeHead.call(this, info);
             };
             StringBuilder.prototype.clone = function() {
                 return new StringBuilder(this._buffer);
@@ -1796,53 +1824,36 @@
                 }
                 return _results;
             };
-            Base.prototype.attach = function(element, context, callback) {
-                var _this = this;
-                if (callback == null) {
-                    callback = function() {};
+            Base.prototype.attach = function(element, context) {
+                this.load(context.detachBuffer());
+                if (element.__isNode) {
+                    element.section.append(pilot.createSection(context.buffer.join("")));
+                    pilot.update(element.section.parent);
+                } else {
+                    element.innerHTML = context.buffer.join("");
+                    pilot.update(element);
                 }
-                return this.load(context.detachBuffer(), function(err) {
-                    if (err != null) {
-                        return callback(err);
-                    }
-                    if (element.__isNode) {
-                        element.section.append(pilot.createSection(context.buffer.join("")));
-                        pilot.update(element.section.parent);
-                    } else {
-                        element.innerHTML = context.buffer.join("");
-                        pilot.update(element);
-                    }
-                    _this.bind();
-                    return callback();
-                });
+                return this.bind();
             };
-            Base.prototype.load = function(context, callback) {
-                var _this = this;
+            Base.prototype.load = function(context) {
                 this.context = context;
-                this._writeHead(context, function(err) {
-                    if (err != null) {
-                        return callback(err);
-                    }
-                    return _this._loadChildren(context, function(err) {
-                        if (err != null) {
-                            return callback(err);
-                        }
-                        return _this._writeTail(context, function(err) {
-                            return callback(err, context);
-                        });
-                    });
-                });
+                this._writeHead(context);
+                this._loadChildren(context);
+                this._writeTail(context);
                 return this;
             };
-            Base.prototype._writeHead = function(info, callback) {
-                return callback();
+            Base.prototype._writeHead = function(info) {};
+            Base.prototype._loadChildren = function(context) {
+                var child, _i, _len, _ref, _results;
+                _ref = this.children;
+                _results = [];
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                    child = _ref[_i];
+                    _results.push(child.load(context));
+                }
+                return _results;
             };
-            Base.prototype._loadChildren = function(info, callback) {
-                return Base.loadEachItem(this.children || [], info, callback);
-            };
-            Base.prototype._writeTail = function(info, callback) {
-                return callback();
-            };
+            Base.prototype._writeTail = function(info) {};
             Base.prototype.addChild = function() {
                 var child, _i, _len, _results;
                 _results = [];
@@ -1852,11 +1863,6 @@
                     _results.push(this.children.push(child));
                 }
                 return _results;
-            };
-            Base.loadEachItem = function(source, info, callback) {
-                return async.eachSeries(source, function(child, next) {
-                    return child.load(info, next);
-                }, callback);
             };
             Base.cloneEach = function(source) {
                 var item, items, _i, _len;
@@ -2130,28 +2136,6 @@
         };
         return module.exports;
     });
-    define("type-component/index.js", function(require, module, exports, __dirname, __filename) {
-        var toString = Object.prototype.toString;
-        module.exports = function(val) {
-            switch (toString.call(val)) {
-              case "[object Function]":
-                return "function";
-              case "[object Date]":
-                return "date";
-              case "[object RegExp]":
-                return "regexp";
-              case "[object Arguments]":
-                return "arguments";
-              case "[object Array]":
-                return "array";
-            }
-            if (val === null) return "null";
-            if (val === undefined) return "undefined";
-            if (val === Object(val)) return "object";
-            return typeof val;
-        };
-        return module.exports;
-    });
     define("bindable/lib/object/setters/factory.js", function(require, module, exports, __dirname, __filename) {
         (function() {
             var BindableSetter, CollectionSetter, FnSetter;
@@ -2199,11 +2183,11 @@
         (function() {
             var hoist;
             hoist = require("hoist/lib/index.js");
-            exports.tryTransform = function(transformer, method, value, callback) {
+            exports.tryTransform = function(transformer, method, value) {
                 if (!transformer) {
-                    return callback(null, value);
+                    return value;
                 }
-                return transformer[method].call(transformer, value, callback);
+                return transformer[method].call(transformer, value);
             };
             exports.transformer = function(options) {
                 if (typeof options === "function") {
@@ -2227,26 +2211,6 @@
                     to: hoist.map(options.to)
                 };
             };
-        }).call(this);
-        return module.exports;
-    });
-    define("hoist/lib/index.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var method, transformer, _fn, _i, _len, _ref, _this = this;
-            transformer = require("hoist/lib/transformer.js");
-            module.exports = transformer;
-            _ref = [ "cast", "map", "preCast", "preMap", "postCast", "postMap" ];
-            _fn = function(method) {
-                return module.exports[method] = function() {
-                    var t;
-                    t = transformer();
-                    return t[method].apply(t, arguments);
-                };
-            };
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                method = _ref[_i];
-                _fn(method);
-            }
         }).call(this);
         return module.exports;
     });
@@ -2414,92 +2378,6 @@
         }).call(this);
         return module.exports;
     });
-    define("bindable/lib/core/builder.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var Builder, CallChain;
-            CallChain = function() {
-                CallChain.prototype.__isCallChain = true;
-                function CallChain(_targetClass, methods) {
-                    this._targetClass = _targetClass;
-                    this._addMethods(methods);
-                    this._callChain = [];
-                }
-                CallChain.prototype.createObject = function() {
-                    var C, args, call, clazz, obj, _i, _len, _ref, _results;
-                    clazz = this._targetClass;
-                    args = arguments;
-                    C = function() {
-                        return clazz.apply(this, args);
-                    };
-                    C.prototype = clazz.prototype;
-                    obj = new C;
-                    _ref = this._callChain;
-                    _results = [];
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        call = _ref[_i];
-                        _results.push(obj = obj[call.method].apply(obj, call.args));
-                    }
-                    return _results;
-                };
-                CallChain.prototype.copyId = function(value) {
-                    if (!arguments.length) {
-                        return this._copyId;
-                    }
-                    this._copyId = value;
-                    return this;
-                };
-                CallChain.prototype.callMethod = function(method, args) {
-                    this._callChain.push({
-                        method: method,
-                        args: args
-                    });
-                    return this;
-                };
-                CallChain.prototype._addMethods = function(methods) {
-                    var method, _i, _len;
-                    for (_i = 0, _len = methods.length; _i < _len; _i++) {
-                        method = methods[_i];
-                        this._addMethod(method);
-                    }
-                    return this;
-                };
-                CallChain.prototype._addMethod = function(method) {
-                    return this[method] = function() {
-                        return this.callMethod(method, arguments);
-                    };
-                };
-                return CallChain;
-            }();
-            module.exports = Builder = function() {
-                function Builder(_class, _attach) {
-                    this._class = _class;
-                    this._attach = _attach != null ? _attach : this;
-                    this._createMethods();
-                }
-                Builder.prototype._createMethods = function() {
-                    var key, _results;
-                    this._methods = [];
-                    _results = [];
-                    for (key in this._class.prototype) {
-                        if (key.substr(0, 1) === "_") {
-                            continue;
-                        }
-                        _results.push(this._addMethod(key));
-                    }
-                    return _results;
-                };
-                Builder.prototype._addMethod = function(method) {
-                    var _this = this;
-                    this._methods.push(method);
-                    return this._attach[method] = function() {
-                        return (new CallChain(_this._class, _this._methods)).callMethod(method, arguments);
-                    };
-                };
-                return Builder;
-            }();
-        }).call(this);
-        return module.exports;
-    });
     define("bindable/lib/collection/binding.js", function(require, module, exports, __dirname, __filename) {
         (function() {
             var SettersFactory, settersFactory, utils;
@@ -2518,6 +2396,15 @@
                         return this._transformer;
                     }
                     this._transformer = utils.transformer(value);
+                    return this;
+                };
+                _Class.prototype.now = function() {
+                    var setter, _i, _len, _ref;
+                    _ref = this._setters;
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        setter = _ref[_i];
+                        setter.now();
+                    }
                     return this;
                 };
                 _Class.prototype.dispose = function() {
@@ -2551,11 +2438,17 @@
                     this._filter = search;
                     return this;
                 };
-                _Class.prototype.to = function(collection) {
+                _Class.prototype.to = function(collection, now) {
                     var setter;
+                    if (now == null) {
+                        now = true;
+                    }
                     setter = settersFactory.createSetter(this, collection);
                     if (setter) {
                         this._setters.push(setter);
+                        if (now === true) {
+                            setter.now();
+                        }
                     }
                     return this;
                 };
@@ -2586,6 +2479,26 @@
                 };
                 return _Class;
             }();
+        }).call(this);
+        return module.exports;
+    });
+    define("hoist/lib/index.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var method, transformer, _fn, _i, _len, _ref, _this = this;
+            transformer = require("hoist/lib/transformer.js");
+            module.exports = transformer;
+            _ref = [ "cast", "map", "preCast", "preMap", "postCast", "postMap" ];
+            _fn = function(method) {
+                return module.exports[method] = function() {
+                    var t;
+                    t = transformer();
+                    return t[method].apply(t, arguments);
+                };
+            };
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                method = _ref[_i];
+                _fn(method);
+            }
         }).call(this);
         return module.exports;
     });
@@ -3528,14 +3441,15 @@
                 this.clip = new Clip({
                     script: this.script
                 });
-                this.clip.bind("value").watch(true).to(this._onUpdated);
+                this.clip.bind("value").to(this._onUpdated);
             }
             ClippedBufferPart.prototype.dispose = function() {
                 return this.clip.dispose();
             };
             ClippedBufferPart.prototype.update = function() {
                 this.clip.reset(this.clippedBuffer._data);
-                return this.clip.update();
+                this.clip.update();
+                return this.value = this.clip.get("value");
             };
             ClippedBufferPart.prototype._onUpdated = function(value) {
                 this.value = value;
@@ -3615,7 +3529,14 @@
             show: require("paperclip/lib/paper/decor/attr/show.js"),
             style: require("paperclip/lib/paper/decor/attr/style.js"),
             value: require("paperclip/lib/paper/decor/attr/value.js"),
-            click: require("paperclip/lib/paper/decor/attr/click.js"),
+            click: require("paperclip/lib/paper/decor/attr/event.js"),
+            submit: require("paperclip/lib/paper/decor/attr/event.js"),
+            mousedown: require("paperclip/lib/paper/decor/attr/event.js"),
+            mouseup: require("paperclip/lib/paper/decor/attr/event.js"),
+            mouseover: require("paperclip/lib/paper/decor/attr/event.js"),
+            mouseout: require("paperclip/lib/paper/decor/attr/event.js"),
+            keydown: require("paperclip/lib/paper/decor/attr/event.js"),
+            keyup: require("paperclip/lib/paper/decor/attr/event.js"),
             enter: require("paperclip/lib/paper/decor/attr/enter.js"),
             disable: require("paperclip/lib/paper/decor/attr/disable.js"),
             checked: require("paperclip/lib/paper/decor/attr/checked.js")
@@ -3635,8 +3556,8 @@
                     _ref = clip.scripts.names;
                     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
                         name = _ref[_i];
-                        if (ad = attrDecorators[name]) {
-                            decor.push(new ad(node, name, clip));
+                        if (ad = attrDecorators[name.toLowerCase()]) {
+                            decor.push(new ad(node, name.toLowerCase(), clip));
                         } else {
                             decor.push(new DataBindDecor(node, name, clip));
                         }
@@ -3678,16 +3599,16 @@
                 this.section = pilot.section(this.id);
                 return this;
             };
-            BindableNode.prototype._writeHead = function(context, callback) {
+            BindableNode.prototype._writeHead = function(context) {
                 this._writeStartBlock(context);
-                return BindableNode.__super__._writeHead.call(this, context, callback);
+                return BindableNode.__super__._writeHead.call(this, context);
             };
             BindableNode.prototype._writeStartBlock = function(context) {
                 return context.buffer.push("<!--spc:" + (this.id = ++_pcid) + "-->");
             };
-            BindableNode.prototype._writeTail = function(context, callback) {
+            BindableNode.prototype._writeTail = function(context) {
                 this._writeEndBlock(context);
-                return BindableNode.__super__._writeTail.call(this, context, callback);
+                return BindableNode.__super__._writeTail.call(this, context);
             };
             BindableNode.prototype._writeEndBlock = function(context) {
                 return context.buffer.push("<!--epc:" + this.id + "-->");
@@ -3789,28 +3710,23 @@
                     return this.to.set(this.property, value);
                 };
                 _Class.prototype.dispose = function() {
-                    if (!this._disposable) {
-                        return;
+                    var _ref;
+                    if ((_ref = this._bothWaysBinding) != null) {
+                        _ref.dispose();
                     }
-                    this._disposable.dispose();
-                    return this._disposable = this.binding = this.to = this.property = null;
+                    return this._bothWaysBinding = this.binding = this.to = this.property = null;
                 };
                 _Class.prototype.bothWays = function() {
                     var _this = this;
-                    return this._disposable = this.to.bind(this.property).to(function(value) {
-                        if (_this.currentValue !== value) {
-                            return _this._changeFrom(value);
+                    return this._bothWaysBinding = this.to.bind(this.property).to(function(value) {
+                        if (_this._value === value) {
+                            return;
                         }
+                        return _this._changeFrom(value);
                     });
                 };
                 _Class.prototype._changeFrom = function(value) {
-                    var _this = this;
-                    return this.__transform("from", value, function(err, transformedValue) {
-                        if (err) {
-                            throw err;
-                        }
-                        return _this.binding._from.set(_this.binding._property, _this.currentValue = transformedValue);
-                    });
+                    return this.binding._from.set(this.binding._property, this._value = this.__transform("from", value));
                 };
                 return _Class;
             }(Base);
@@ -3848,6 +3764,111 @@
                 };
                 return _Class;
             }(Base);
+        }).call(this);
+        return module.exports;
+    });
+    define("poolparty/lib/index.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var PoolParty, __bind = function(fn, me) {
+                return function() {
+                    return fn.apply(me, arguments);
+                };
+            };
+            PoolParty = function() {
+                function PoolParty(options) {
+                    if (options == null) {
+                        options = {};
+                    }
+                    this.drip = __bind(this.drip, this);
+                    this.max = options.max || 50;
+                    this.min = options.min || 0;
+                    this.staleTimeout = options.staleTimeout || 1e3;
+                    this.factory = options.factory || options.create;
+                    this.recycle = options.recycle;
+                    this._pool = [];
+                    this._size = 0;
+                }
+                PoolParty.prototype.size = function() {
+                    return this._size;
+                };
+                PoolParty.prototype.drain = function() {
+                    var i, _i, _ref, _results;
+                    _results = [];
+                    for (i = _i = 0, _ref = this._size - this.min; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
+                        _results.push(this.drip());
+                    }
+                    return _results;
+                };
+                PoolParty.prototype.drip = function() {
+                    this._dripping = false;
+                    if (!this._size) {
+                        return;
+                    }
+                    this._size--;
+                    this._pool.shift();
+                    return this._timeoutDrip();
+                };
+                PoolParty.prototype.create = function(options) {
+                    var item;
+                    if (this._size) {
+                        this._size--;
+                        item = this._pool.shift();
+                        this.recycle(item, options);
+                        return item;
+                    }
+                    item = this.factory(options);
+                    item.__pool = this;
+                    return item;
+                };
+                PoolParty.prototype.add = function(object) {
+                    if (object.__pool !== this) {
+                        return this;
+                    }
+                    if (!~this._pool.indexOf(object) && this._size < this.max) {
+                        this._size++;
+                        this._pool.push(object);
+                        this._timeoutDrip();
+                    }
+                    return this;
+                };
+                PoolParty.prototype._timeoutDrip = function() {
+                    if (this._dripping) {
+                        return;
+                    }
+                    this._dripping = true;
+                    return setTimeout(this.drip, this.staleTimeout);
+                };
+                return PoolParty;
+            }();
+            module.exports = function(options) {
+                return new PoolParty(options);
+            };
+        }).call(this);
+        return module.exports;
+    });
+    define("bindable/lib/collection/setters/factory.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var CollectionSetter, FnSetter, ObjSetter;
+            FnSetter = require("bindable/lib/collection/setters/fn.js");
+            ObjSetter = require("bindable/lib/collection/setters/object.js");
+            CollectionSetter = require("bindable/lib/collection/setters/collection.js");
+            module.exports = function() {
+                function _Class() {}
+                _Class.prototype.createSetter = function(binding, target) {
+                    if (!target) {
+                        return null;
+                    }
+                    if (typeof target === "function") {
+                        return new FnSetter(binding, target);
+                    } else if (target.__isCollection) {
+                        return new CollectionSetter(binding, target);
+                    } else if (target.insert || target.update || target.remove || target.replace) {
+                        return new ObjSetter(binding, target);
+                    }
+                    return null;
+                };
+                return _Class;
+            }();
         }).call(this);
         return module.exports;
     });
@@ -3969,142 +3990,41 @@
         }).call(this);
         return module.exports;
     });
-    define("poolparty/lib/index.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var PoolParty, __bind = function(fn, me) {
-                return function() {
-                    return fn.apply(me, arguments);
-                };
-            };
-            PoolParty = function() {
-                function PoolParty(options) {
-                    if (options == null) {
-                        options = {};
-                    }
-                    this.drip = __bind(this.drip, this);
-                    this.max = options.max || 50;
-                    this.min = options.min || 0;
-                    this.staleTimeout = options.staleTimeout || 1e3;
-                    this.factory = options.factory || options.create;
-                    this.recycle = options.recycle;
-                    this._pool = [];
-                    this._size = 0;
-                }
-                PoolParty.prototype.size = function() {
-                    return this._size;
-                };
-                PoolParty.prototype.drain = function() {
-                    var i, _i, _ref, _results;
-                    _results = [];
-                    for (i = _i = 0, _ref = this._size - this.min; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
-                        _results.push(this.drip());
-                    }
-                    return _results;
-                };
-                PoolParty.prototype.drip = function() {
-                    this._dripping = false;
-                    if (!this._size) {
-                        return;
-                    }
-                    this._size--;
-                    this._pool.shift();
-                    return this._timeoutDrip();
-                };
-                PoolParty.prototype.create = function(options) {
-                    var item;
-                    if (this._size) {
-                        this._size--;
-                        item = this._pool.shift();
-                        this.recycle(item, options);
-                        return item;
-                    }
-                    item = this.factory(options);
-                    item.__pool = this;
-                    return item;
-                };
-                PoolParty.prototype.add = function(object) {
-                    if (object.__pool !== this) {
-                        return this;
-                    }
-                    if (!~this._pool.indexOf(object) && this._size < this.max) {
-                        this._size++;
-                        this._pool.push(object);
-                        this._timeoutDrip();
-                    }
-                    return this;
-                };
-                PoolParty.prototype._timeoutDrip = function() {
-                    if (this._dripping) {
-                        return;
-                    }
-                    this._dripping = true;
-                    return setTimeout(this.drip, this.staleTimeout);
-                };
-                return PoolParty;
-            }();
-            module.exports = function(options) {
-                return new PoolParty(options);
-            };
-        }).call(this);
-        return module.exports;
-    });
-    define("bindable/lib/collection/setters/factory.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var CollectionSetter, FnSetter, ObjSetter;
-            FnSetter = require("bindable/lib/collection/setters/fn.js");
-            ObjSetter = require("bindable/lib/collection/setters/object.js");
-            CollectionSetter = require("bindable/lib/collection/setters/collection.js");
-            module.exports = function() {
-                function _Class() {}
-                _Class.prototype.createSetter = function(binding, target) {
-                    if (!target) {
-                        return null;
-                    }
-                    if (typeof target === "function") {
-                        return new FnSetter(binding, target);
-                    } else if (target.__isCollection) {
-                        return new CollectionSetter(binding, target);
-                    } else if (target.insert || target.update || target.remove || target.replace) {
-                        return new ObjSetter(binding, target);
-                    }
-                    return null;
-                };
-                return _Class;
-            }();
-        }).call(this);
-        return module.exports;
-    });
     define("paperclip/lib/paper/decor/collection.js", function(require, module, exports, __dirname, __filename) {
         var Collection, async;
         async = require("async/lib/async.js");
         Collection = function() {
             function Collection() {
-                this._items = [];
+                this._models = [];
             }
-            Collection.prototype.push = function(item) {
-                return this._items.push(item);
+            Collection.prototype.push = function(model) {
+                return this._models.push(model);
             };
             Collection.prototype.dispose = function() {
-                var item, _i, _len, _ref, _ref1, _results;
+                var model, _i, _len, _ref, _ref1, _results;
                 if ((_ref = this.clip) != null) {
                     _ref.dispose();
                 }
-                _ref1 = this._items;
+                _ref1 = this._models;
                 _results = [];
                 for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-                    item = _ref1[_i];
-                    _results.push(item.dispose());
+                    model = _ref1[_i];
+                    _results.push(model.dispose());
                 }
                 return _results;
             };
-            Collection.prototype.load = function(context, callback) {
-                var _ref;
+            Collection.prototype.load = function(context) {
+                var decor, _i, _len, _ref, _ref1, _results;
                 if ((_ref = this.clip) != null) {
                     _ref.reset(context, false);
                 }
-                return async.eachSeries(this._items, function(decor, next) {
-                    return decor.load(context, next);
-                }, callback);
+                _ref1 = this._models;
+                _results = [];
+                for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                    decor = _ref1[_i];
+                    _results.push(decor.load(context));
+                }
+                return _results;
             };
             Collection.prototype.bind = function() {
                 var decor, _i, _len, _ref, _results;
@@ -4112,7 +4032,7 @@
                     return;
                 }
                 this._bound = true;
-                _ref = this._items;
+                _ref = this._models;
                 _results = [];
                 for (_i = 0, _len = _ref.length; _i < _len; _i++) {
                     decor = _ref[_i];
@@ -4153,7 +4073,7 @@
                 CssDecor.__super__.bind.call(this);
                 this._currentClasses = {};
                 this.$element = $(this.element);
-                return this.clip.bind("css").to(this._updateCss);
+                return this.clip.bind("css").to(this._updateCss).now();
             };
             CssDecor.prototype._updateCss = function(classes) {
                 var className, useClass, _results;
@@ -4210,7 +4130,7 @@
             ShowDecor.prototype.bind = function() {
                 ShowDecor.__super__.bind.call(this);
                 this.$element = $(this.element);
-                this.clip.bind("show").to(this._show);
+                this.clip.bind("show").to(this._show).now();
                 return this._show(this.clip.get("show"));
             };
             ShowDecor.prototype._show = function(value) {
@@ -4251,7 +4171,7 @@
                 StyleDecor.__super__.bind.call(this);
                 this._currentStyles = {};
                 this.$element = $(this.element);
-                return this.clip.bind("style").to(this._updateStyle);
+                return this.clip.bind("style").to(this._updateStyle).now();
             };
             StyleDecor.prototype._updateStyle = function(styles) {
                 var hasNew, name, newStyles, style;
@@ -4328,8 +4248,8 @@
         module.exports = ValueDecor;
         return module.exports;
     });
-    define("paperclip/lib/paper/decor/attr/click.js", function(require, module, exports, __dirname, __filename) {
-        var ClickDecor, _ref, __bind = function(fn, me) {
+    define("paperclip/lib/paper/decor/attr/event.js", function(require, module, exports, __dirname, __filename) {
+        var SubmitDecor, _ref, __bind = function(fn, me) {
             return function() {
                 return fn.apply(me, arguments);
             };
@@ -4345,24 +4265,26 @@
             child.__super__ = parent.prototype;
             return child;
         };
-        ClickDecor = function(_super) {
-            __extends(ClickDecor, _super);
-            function ClickDecor() {
-                this._onClicked = __bind(this._onClicked, this);
-                _ref = ClickDecor.__super__.constructor.apply(this, arguments);
+        SubmitDecor = function(_super) {
+            __extends(SubmitDecor, _super);
+            function SubmitDecor() {
+                this._onSubmitted = __bind(this._onSubmitted, this);
+                _ref = SubmitDecor.__super__.constructor.apply(this, arguments);
                 return _ref;
             }
-            ClickDecor.prototype.watch = false;
-            ClickDecor.prototype.bind = function() {
-                ClickDecor.__super__.bind.call(this);
-                return $(this.element).bind("click", this._onClicked);
+            SubmitDecor.prototype.watch = false;
+            SubmitDecor.prototype.bind = function() {
+                SubmitDecor.__super__.bind.call(this);
+                return $(this.element).bind(this.name, this._onSubmitted);
             };
-            ClickDecor.prototype._onClicked = function(event) {
+            SubmitDecor.prototype._onSubmitted = function(event) {
+                event.preventDefault();
+                this.clip.data.set("event", event);
                 return this.script.update();
             };
-            return ClickDecor;
+            return SubmitDecor;
         }(require("paperclip/lib/paper/decor/attr/dataBind.js"));
-        module.exports = ClickDecor;
+        module.exports = SubmitDecor;
         return module.exports;
     });
     define("paperclip/lib/paper/decor/attr/enter.js", function(require, module, exports, __dirname, __filename) {
@@ -4432,7 +4354,7 @@
             DisableDecor.prototype.bind = function() {
                 DisableDecor.__super__.bind.call(this);
                 this.$element = $(this.element);
-                this.clip.bind("disable").to(this._show);
+                this.clip.bind("disable").to(this._show).now();
                 return this._show(this.clip.get("disable"));
             };
             DisableDecor.prototype._show = function(value) {
@@ -4473,7 +4395,7 @@
             }
             CheckedDecor.prototype.bind = function() {
                 CheckedDecor.__super__.bind.call(this);
-                return this.clip.bind("checked").to(this._show);
+                return this.clip.bind("checked").to(this._show).now();
             };
             CheckedDecor.prototype._show = function(value) {
                 return this.element.checked = value;
@@ -4509,16 +4431,16 @@
                 this.attrName = "data-bind";
                 this.script = clip.script(this.name);
                 this.refs = this.script.script.refs;
-                DataBindDecor.__super__.constructor.call(this, node);
+                DataBindDecor.__super__.constructor.call(this, node, this.name);
             }
-            DataBindDecor.prototype.load = function(context, callback) {
+            DataBindDecor.prototype.load = function(context) {
                 if (this.watch !== false) {
                     this.script.update();
                 }
-                return DataBindDecor.__super__.load.call(this, context, callback);
+                return DataBindDecor.__super__.load.call(this, context);
             };
             DataBindDecor.prototype.bind = function() {
-                this.clip.bind(this.name).watch(true).to(this._onChange);
+                this.clip.bind(this.name).to(this._onChange);
                 this.element = this.node.section.elements[0];
                 if (this.watch !== false) {
                     return this.script.watch();
@@ -4557,15 +4479,14 @@
             }
             TextBinding.prototype.bind = function() {
                 TextBinding.__super__.bind.call(this);
-                return this.clippedBuffer.bind("text", this._onChange);
+                return this.clippedBuffer.bind("text").to(this._onChange);
             };
-            TextBinding.prototype.load = function(context, callback) {
+            TextBinding.prototype.load = function(context) {
                 this.context = context;
                 this.clippedBuffer.reset(context);
                 if (this.clippedBuffer.text.length) {
-                    context.buffer.push(" " + this.attrName + '="' + this.clippedBuffer.text + '"');
+                    return context.buffer.push(" " + this.attrName + '="' + this.clippedBuffer.text + '"');
                 }
-                return callback();
             };
             TextBinding.prototype._onChange = function(value) {
                 return this.node.section.elements[0].setAttribute(this.attrName, value);
@@ -4594,18 +4515,17 @@
                 _ref = HtmlDecor.__super__.constructor.apply(this, arguments);
                 return _ref;
             }
-            HtmlDecor.prototype.load = function(context, callback) {
+            HtmlDecor.prototype.load = function(context) {
                 var html;
                 html = this.clip.get("html");
                 if (html == null) {
-                    return callback();
+                    return;
                 }
-                if (typeof html === "string") {
-                    context.buffer.push(html);
-                    return callback();
+                if (typeof html === "string" || (html != null ? html.__isSection : void 0)) {
+                    return context.buffer.push(html);
                 } else {
                     this.child = html.createContent();
-                    return this.child.load(context, callback);
+                    return this.child.load(context);
                 }
             };
             HtmlDecor.prototype.bind = function() {
@@ -4647,24 +4567,32 @@
                 _ref = BlockDecor.__super__.constructor.apply(this, arguments);
                 return _ref;
             }
-            BlockDecor.prototype.load = function(context, callback) {
+            BlockDecor.prototype.load = function(context) {
                 this.context = context;
-                if (this.clip.get("when")) {
+                if (this._show = !!this.clip.get("when")) {
                     this.child = this.node.createContent();
-                    return this.child.load(context, callback);
-                } else {
-                    return callback();
+                    return this.child.load(context);
                 }
             };
             BlockDecor.prototype.bind = function() {
+                var _ref1;
                 BlockDecor.__super__.bind.call(this);
-                return this.child.bind();
+                return (_ref1 = this.child) != null ? _ref1.bind() : void 0;
             };
             BlockDecor.prototype._onChange = function(value) {
-                if (value) {
+                var show, _ref1;
+                show = !!value;
+                if (this._show === show) {
+                    return;
+                }
+                this._show = show;
+                if (show) {
                     return this.child = this.node.createContent().attach(this.node, this.context).bind();
                 } else {
-                    return this.child.dispose();
+                    if ((_ref1 = this.child) != null) {
+                        _ref1.dispose();
+                    }
+                    return this.child = void 0;
                 }
             };
             return BlockDecor;
@@ -4697,10 +4625,10 @@
                 return _ref;
             }
             BlockDecor.scriptName = "with";
-            BlockDecor.prototype.load = function(context, callback) {
+            BlockDecor.prototype.load = function(context) {
                 this.context = context;
                 this.child = this.node.createContent();
-                return this.child.load(this._childContext(context), callback);
+                return this.child.load(this._childContext(context));
             };
             BlockDecor.prototype._childContext = function(context) {
                 return context.child(this.clip.get("with"));
@@ -4718,7 +4646,7 @@
         return module.exports;
     });
     define("paperclip/lib/paper/decor/block/each.js", function(require, module, exports, __dirname, __filename) {
-        var EachDecor, async, pilot, __bind = function(fn, me) {
+        var EachDecor, pilot, __bind = function(fn, me) {
             return function() {
                 return fn.apply(me, arguments);
             };
@@ -4734,7 +4662,6 @@
             child.__super__ = parent.prototype;
             return child;
         };
-        async = require("async/lib/async.js");
         pilot = require("pilot-block/lib/index.js");
         EachDecor = function(_super) {
             __extends(EachDecor, _super);
@@ -4756,46 +4683,50 @@
                     this.script.value.bind({
                         insert: this._insert,
                         remove: this._remove
-                    });
+                    }).now();
                     return this._ignoreInsert = false;
                 }
             };
-            EachDecor.prototype.load = function(context, callback) {
-                var item, source, _i, _len, _ref;
+            EachDecor.prototype.load = function(context) {
+                var child, model, source, _i, _j, _len, _len1, _ref, _ref1, _results;
                 this.context = context;
                 this.children = [];
                 this.itemName = source = ((_ref = this.script.value) != null ? _ref.source : void 0) ? this.script.value.source() : this.script.value || [];
                 for (_i = 0, _len = source.length; _i < _len; _i++) {
-                    item = source[_i];
-                    this.children.push(this._createChild(item));
+                    model = source[_i];
+                    this.children.push(this._createChild(model));
                 }
-                return async.eachSeries(this.children, function(child, next) {
-                    return child.load(context, next);
-                }, callback);
+                _ref1 = this.children;
+                _results = [];
+                for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+                    child = _ref1[_j];
+                    _results.push(child.load(context));
+                }
+                return _results;
             };
-            EachDecor.prototype._createChild = function(item) {
+            EachDecor.prototype._createChild = function(model) {
                 var data, node;
                 data = {};
-                data[this.node.clip.get("as") || "item"] = item;
+                data[this.node.clip.get("as") || "model"] = model;
                 node = this.node.createContent(data);
-                node.item = item;
+                node.model = model;
                 return node;
             };
-            EachDecor.prototype._insert = function(item) {
+            EachDecor.prototype._insert = function(model) {
                 var node;
                 if (this._ignoreInsert) {
                     return;
                 }
-                this.children.push(node = this._createChild(item));
+                this.children.push(node = this._createChild(model));
                 return node.attach(this.node, this.context);
             };
-            EachDecor.prototype._remove = function(item) {
+            EachDecor.prototype._remove = function(model) {
                 var child, i, _i, _len, _ref, _results;
                 _ref = this.children;
                 _results = [];
                 for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
                     child = _ref[i];
-                    if (child.item === item) {
+                    if (child.model === model) {
                         this.children.splice(i, 1);
                         child.dispose();
                         break;
@@ -4829,13 +4760,12 @@
                 _ref = ValueDecor.__super__.constructor.apply(this, arguments);
                 return _ref;
             }
-            ValueDecor.prototype.load = function(context, callback) {
+            ValueDecor.prototype.load = function(context) {
                 var v;
                 v = this.clip.get("value");
                 if (v != null) {
-                    context.buffer.push(v);
+                    return context.buffer.push(v);
                 }
-                return callback();
             };
             ValueDecor.prototype._onChange = function(value) {
                 return this.node.section.html(value);
@@ -4864,9 +4794,8 @@
                 _ref = BlockDecor.__super__.constructor.apply(this, arguments);
                 return _ref;
             }
-            BlockDecor.prototype.load = function(context, callback) {
-                context.set(this.clip.get("block"), this.node);
-                return callback();
+            BlockDecor.prototype.load = function(context) {
+                return context.set(this.clip.get("block"), this.node);
             };
             return BlockDecor;
         }(require("paperclip/lib/paper/decor/block/base.js"));
@@ -4892,9 +4821,8 @@
                 _ref = TemplateDecor.__super__.constructor.apply(this, arguments);
                 return _ref;
             }
-            TemplateDecor.prototype.load = function(context, callback) {
-                context.internal.set("template." + (this.clip.get("template.name") || this.clip.get("template")), this);
-                return callback();
+            TemplateDecor.prototype.load = function(context) {
+                return context.internal.set("template." + (this.clip.get("template.name") || this.clip.get("template")), this);
             };
             return TemplateDecor;
         }(require("paperclip/lib/paper/decor/block/base.js"));
@@ -4928,26 +4856,26 @@
                 ViewDecor.__super__.dispose.call(this);
                 return this.child.dispose();
             };
-            ViewDecor.prototype.load = function(context, callback) {
-                var child, onContentLoad, tpl, tplName, wth, _this = this;
+            ViewDecor.prototype.load = function(context) {
+                var child, tpl, tplName, wth;
                 tplName = "template." + (this.clip.get("view.name") || this.clip.get("view"));
-                wth = this.clip.get("view.item") || void 0;
+                wth = this.clip.get("view.model") || void 0;
                 tpl = context.internal.get(tplName);
                 if (!tpl) {
-                    return callback();
+                    return;
                 }
                 child = context.child().detachBuffer();
-                onContentLoad = function() {
-                    child.set("content", child.buffer.join(""));
-                    child.attachBuffer();
-                    _this.child = tpl.node.createContent();
-                    return _this.child.load(child.child(wth), callback);
-                };
                 if (this.node.content) {
-                    return this.node.content.load(child, onContentLoad);
-                } else {
-                    return onContentLoad();
+                    this.node.content.load(child);
                 }
+                child.set("content", child.buffer.join(""));
+                child.attachBuffer();
+                this.child = tpl.node.createContent();
+                return this.child.load(this._childContext = child.child(wth));
+            };
+            ViewDecor.prototype._onChange = function() {
+                var _ref1;
+                return (_ref1 = this._childContext) != null ? _ref1.reset(this.clip.get("view.model")) : void 0;
             };
             return ViewDecor;
         }(require("paperclip/lib/paper/decor/block/base.js"));
@@ -4962,39 +4890,20 @@
                 function _Class(binding) {
                     this.binding = binding;
                     this._transformer = this.binding.transform();
-                    this.init();
                 }
-                _Class.prototype.init = function() {
-                    var _this = this;
-                    return this._setValue(this.binding._from.get(this.binding._property), function(value) {
-                        if (!_this.binding.watch()) {
-                            return _this._change(value);
-                        }
-                    });
-                };
                 _Class.prototype.change = function(value) {
-                    var _this = this;
-                    return this._setValue(value, function(value) {
-                        return _this._change(value);
-                    });
-                };
-                _Class.prototype._setValue = function(value, callback) {
-                    var _this = this;
-                    if (this.currentValue === value) {
-                        return false;
+                    var transformedValue;
+                    transformedValue = this.__transform("to", value);
+                    if (this._value === transformedValue) {
+                        return;
                     }
-                    this.__transform("to", value, function(err, transformedValue) {
-                        if (err) {
-                            throw err;
-                        }
-                        return callback(_this.currentValue = transformedValue);
-                    });
-                    return true;
+                    this._value = transformedValue;
+                    return this._change(transformedValue);
                 };
                 _Class.prototype.bothWays = function() {};
                 _Class.prototype._change = function(value) {};
-                _Class.prototype.__transform = function(method, value, next) {
-                    return utils.tryTransform(this._transformer, method, value, next);
+                _Class.prototype.__transform = function(method, value) {
+                    return utils.tryTransform(this._transformer, method, value);
                 };
                 return _Class;
             }();
@@ -5022,8 +4931,14 @@
                     return _ref;
                 }
                 _Class.prototype.init = function() {
+                    return _Class.__super__.init.call(this);
+                };
+                _Class.prototype.now = function() {
                     var i, item, _i, _len, _ref1, _results;
-                    _Class.__super__.init.call(this);
+                    if (this._initialized) {
+                        return;
+                    }
+                    this._initialized = true;
                     _ref1 = this.binding._from.source();
                     _results = [];
                     for (i = _i = 0, _len = _ref1.length; _i < _len; i = ++_i) {
@@ -5072,6 +4987,9 @@
                     return this._setter = new FnSetter(this.binding, function(method, item, index) {
                         return _this.target[method].call(_this.target, item, index);
                     });
+                };
+                _Class.prototype.now = function() {
+                    return this._setter.now();
                 };
                 _Class.prototype._change = function() {
                     return this._setter._change.apply(this._setter, arguments);
@@ -5140,6 +5058,9 @@
                             }
                         }
                     });
+                };
+                _Class.prototype.now = function() {
+                    return this._setter.now();
                 };
                 _Class.prototype._change = function() {
                     return this._setter._change.apply(this._setter, arguments);
@@ -6003,12 +5924,12 @@
     define("paperclip/lib/paper/decor/attr/base.js", function(require, module, exports, __dirname, __filename) {
         var BaseDecor;
         BaseDecor = function() {
-            function BaseDecor(node) {
+            function BaseDecor(node, name) {
                 this.node = node;
+                this.name = name;
             }
-            BaseDecor.prototype.load = function(context, callback) {
+            BaseDecor.prototype.load = function(context) {
                 this.context = context;
-                return callback();
             };
             BaseDecor.prototype.bind = function() {};
             BaseDecor.prototype.dispose = function() {};
@@ -6031,11 +5952,9 @@
                 this.script = node.clip.script(this.scriptName);
                 this.clip = node.clip;
             }
-            NodeDecor.prototype.load = function(context, callback) {
-                return callback();
-            };
+            NodeDecor.prototype.load = function(context) {};
             NodeDecor.prototype.bind = function() {
-                return this.clip.bind(this.scriptName).watch(true).to(this._onChange);
+                return this.clip.bind(this.scriptName).to(this._onChange);
             };
             NodeDecor.prototype.dispose = function() {};
             NodeDecor.prototype._onChange = function(value) {};
@@ -6061,6 +5980,7 @@
                     this.init();
                 }
                 _Class.prototype.init = function() {};
+                _Class.prototype.now = function() {};
                 _Class.prototype.dispose = function() {};
                 _Class.prototype.change = function(event, item, oldItem) {
                     if (event === "reset") {
@@ -6070,44 +5990,30 @@
                     }
                 };
                 _Class.prototype._changeItem = function(event, item, oldItem) {
-                    var _this = this;
                     if (this._filter) {
                         if (!this._filter(item)) {
                             return;
                         }
                     }
-                    return this.__transform("to", item, function(err, item) {
-                        if (err) {
-                            throw err;
-                        }
-                        return _this._change(event, item, oldItem);
-                    });
+                    return this._change(event, this.__transform("to", item), oldItem);
                 };
                 _Class.prototype._changeItems = function(event, items, oldItems) {
-                    var changed, _this = this;
+                    var changed, i, item, _i, _len;
                     if (this._filter) {
                         changed = items.filter(this._filter);
                     } else {
-                        changed = items;
+                        changed = items.concat();
                     }
-                    return async.map(changed, function(item, next) {
-                        return _this.__transform("to", item, function(err, item) {
-                            if (err) {
-                                throw err;
-                            }
-                            return next(null, item);
-                        });
-                    }, function(err, items) {
-                        if (err) {
-                            throw err;
-                        }
-                        return _this._change(event, items, oldItems);
-                    });
+                    for (i = _i = 0, _len = changed.length; _i < _len; i = ++_i) {
+                        item = changed[i];
+                        changed[i] = this.__transform("to", item);
+                    }
+                    return this._change(events, changed, oldItems);
                 };
                 _Class.prototype._change = function(event, item) {};
                 _Class.prototype.bothWays = function() {};
-                _Class.prototype.__transform = function(method, value, next) {
-                    return utils.tryTransform(this._transformer, method, value, next);
+                _Class.prototype.__transform = function(method, value) {
+                    return utils.tryTransform(this._transformer, method, value);
                 };
                 return _Class;
             }();

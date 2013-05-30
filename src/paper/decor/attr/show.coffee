@@ -6,7 +6,7 @@ class ShowDecor extends require("./dataBind")
   bind: () ->
     super()
     @$element = $(@element)
-    @clip.bind("show").to @_show
+    @clip.bind("show").to(@_show).now()
     @_show @clip.get("show")
 
   ###
