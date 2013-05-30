@@ -82,9 +82,9 @@ module.exports = function(paper) {
                 },
                 enter: {
                     fn: function() {
-                        return this.ref("currentFriend").value("" || this.call("addFriend", [ this.ref("currentFriend").value() ]).value());
+                        return this.call("addFriend", [ this.ref("currentFriend").value() ]).value() || this.ref("currentFriend").value("");
                     },
-                    refs: [ "currentFriend" ]
+                    refs: [ "addFriend", "currentFriend" ]
                 }
             } ],
             placeholder: [ "Add a friend" ]

@@ -10,7 +10,7 @@ Age: <input type="text" data-bind="{{value:age,bothWays:true}}" /> <br />
 
 <br />
 
-<input type="text" data-bind="{{value:currentFriend || "",bothWays:true,enter:currentFriend = "" || addFriend(currentFriend)}}" placeholder="Add a friend"></input> <br />
+<input type="text" data-bind="{{value:currentFriend || "",bothWays:true,enter:addFriend(currentFriend) || currentFriend = ""}}" placeholder="Add a friend"></input> <br />
 Your Friends ({{friends.length}}): <br />
 {{#each:friends,as:"friend"}}
   <a href="#" data-bind="{{click:friend.remove()}}" class="abc-{{friend.name}}">x</a> {{friend.name}} <br />

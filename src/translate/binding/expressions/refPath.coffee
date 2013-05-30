@@ -42,6 +42,7 @@ class RefPathExpression extends CollectionExpression
       else
         currentChain.push part.name
         self = self or part.self
+    
 
 
     @_pushRef buffer, currentChain, self

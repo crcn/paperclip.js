@@ -214,11 +214,9 @@ class Parser extends BaseParser
       castAs = @_currentString()
       @_nextCode()
 
-
     if c is TokenCodes.ASSIGN
       @_nextCode()
       assign = @_parseReference()
-
 
     new RefPathExpression refs, castAs, assign
 

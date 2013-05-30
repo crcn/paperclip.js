@@ -2111,7 +2111,7 @@
             return frag;
         };
         exports.guardComments = function(content) {
-            return (content || "").replace(/(\{g\})*<!--/g, "{g}<!--");
+            return String(content || "").replace(/(\{g\})*<!--/g, "{g}<!--");
         };
         exports.unguardComments = function(element) {
             var child, _i, _len, _ref;
