@@ -8,6 +8,7 @@ attrDecorators =
   style   : require("./attr/style")
   value   : require("./attr/value")
 
+  # deprecated
   click      : require("./attr/event")
   submit     : require("./attr/event")
   mousedown  : require("./attr/event")
@@ -16,8 +17,18 @@ attrDecorators =
   mouseout   : require("./attr/event")
   keydown    : require("./attr/event")
   keyup      : require("./attr/event")
+  enter      : require("./attr/enter")
 
-  enter   : require("./attr/enter")
+  onClick      : require("./attr/event")
+  onSubmit     : require("./attr/event")
+  onMouseDown  : require("./attr/event")
+  onMouseUp    : require("./attr/event")
+  onMouseOver  : require("./attr/event")
+  onMouseOut   : require("./attr/event")
+  onKeyDown    : require("./attr/event")
+  onKeyUp      : require("./attr/event")
+  onEnter      : require("./attr/enter")
+
   disable : require("./attr/disable")
   checked : require("./attr/checked")
 
