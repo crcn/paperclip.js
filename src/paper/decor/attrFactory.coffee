@@ -47,8 +47,8 @@ class Factory
     if node.attributes["data-bind"]
       decor.clip = clip = new Clip { script: node.attributes["data-bind"][0], watch: false }
       for name in clip.scripts.names
-        if ad = attrDecorators[name.toLowerCase()]
-          decor.push new ad node, name.toLowerCase(), clip
+        if ad = attrDecorators[name]
+          decor.push new ad node, name, clip
         else
           decor.push new DataBindDecor node, name, clip
 

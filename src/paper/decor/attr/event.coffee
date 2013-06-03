@@ -10,6 +10,11 @@ class SubmitDecor extends require("./dataBind")
 
   bind: () ->
     super()
+    event = @name
+    
+    if event.substr(0, 2) is "on"
+      event = event.substr(2).toLowerCase()
+
     $(@element).bind @name, @_onSubmitted
 
   ###
