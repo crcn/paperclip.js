@@ -1,22 +1,12 @@
-class EnterDecor extends require("./dataBind")
+class EnterDecor extends require("./event")
+
+  event: "keyup"
 
   ###
   ###
 
-  watch: false
-
-  ###
-  ###
-
-  bind: () ->
-    super()
-    $(@element).bind "keyup", @_onKeyUp
-
-  ###
-  ###
-
-  _onKeyUp: (event) =>
+  _event: (event) =>
     return if event.keyCode isnt 13
-    @script.update()
+    super()
 
 module.exports = EnterDecor
