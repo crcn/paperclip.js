@@ -14,7 +14,7 @@ AttributesExpression  = require "./expressions/attributes"
 CollectionExpression  = require "./expressions/collection"
 TextStringExpression  = require "./expressions/textString"
 TextBindingExpression = require "./expressions/textBinding"
-
+ 
 class Parser extends BaseParser
 
   ###
