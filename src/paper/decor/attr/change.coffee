@@ -1,9 +1,14 @@
 class ChangeDecor extends require("./event")
+
+  ###
+  ###
+
+  @events: "keydown change input"
   
   ###
   ###
-  
-  event: "keydown change input"
+
+  event: @events
 
   ###
   ###

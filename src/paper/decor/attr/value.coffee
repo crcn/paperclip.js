@@ -1,4 +1,5 @@
 _ = require "underscore"
+ChangeDecor = require("./change")
 
 class ValueDecor extends require("./dataBind")
 
@@ -7,7 +8,7 @@ class ValueDecor extends require("./dataBind")
 
   bind: () ->
     super()
-    $(@element).bind "keydown change input", _.debounce @_onElementChange, 1
+    $(@element).bind ChangeDecor.events, _.debounce @_onElementChange, 1
     @_onChange @clip.get("value")
   
 
