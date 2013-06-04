@@ -23,3 +23,6 @@ class ChangeDecor extends require("./event")
 
   _update2: () ->
     @script.update()
+
+
+module.exports = ChangeDecor
