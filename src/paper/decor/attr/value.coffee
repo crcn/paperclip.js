@@ -55,7 +55,7 @@ class ValueDecor extends require("./dataBind")
 
   _isInput: () =>
     # allows for contenteditable
-    /input/.test @element.nodeName.toLowerCase()
+    @element.hasOwnProperty "value"
 
 
 
