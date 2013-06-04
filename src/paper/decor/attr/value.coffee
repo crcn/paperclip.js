@@ -38,27 +38,33 @@ class ValueDecor extends require("./dataBind")
   ###
 
   _elementValue: (value) =>
-    isInput = @_isInput()
+    isInput = @element.hasOwnProperty "value"
 
     unless arguments.length
-      return if isInput then @element.value else @element.innerHTML
+      return if isInput then @_checkedOrValue() else @element.innerHTML
 
     @currentValue = value
 
     if isInput
-      @element.value = value
+      @_checkedOrValue value
     else
       @element.innerHTML = value
 
 
 
-
   ###
   ###
 
-  _isInput: () =>
-    # allows for contenteditable
-    @element.hasOwnProperty "value"
+  _checkedOrValue: (value) ->
+    isCheckbox = /checkbox/.test @element.type
+
+    unless arguments.length
+      return if isCheckbox then @element.checked else @element.value
+
+    if isCheckbox
+      @element.checked = value
+    else 
+      @element.value = value
 
 
 
