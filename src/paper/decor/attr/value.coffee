@@ -18,7 +18,7 @@ class ValueDecor extends require("./dataBind")
     
     # need to delay so that the input value can catch up
     setTimeout (() =>
-      value = @element.value
+      value = @_elementValue()
       if @clip.get("bothWays")
         for ref in @refs
           @context.set ref, value
@@ -28,7 +28,34 @@ class ValueDecor extends require("./dataBind")
   ###
 
   _onChange: (value) =>
-    @element.value = @currentValue = value
+    @_elementValue value
+
+
+  ###
+  ###
+
+  _elementValue: (value) =>
+    isInput = @_isInput()
+
+    unless arguments.length
+      return if isInput then @element.value else @element.innerHTML
+
+    @currentValue = value
+
+    if isInput
+      @element.value = value
+    else
+      @element.innerHTML = value
+
+
+
+
+  ###
+  ###
+
+  _isInput: () =>
+    # allows for contenteditable
+    /input/.test @element.nodeName.toLowerCase()
 
 
 
