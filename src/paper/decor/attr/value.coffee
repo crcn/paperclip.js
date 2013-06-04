@@ -8,7 +8,7 @@ class ValueDecor extends require("./dataBind")
 
   bind: () ->
     super()
-    $(@element).bind ChangeDecor.events, _.debounce @_onElementChange, 1
+    $(@element).bind ChangeDecor.events, @_onElementChange
     @_onChange @clip.get("value")
   
 
@@ -16,9 +16,11 @@ class ValueDecor extends require("./dataBind")
   ###
 
   _onElementChange: (event) =>
-    
+
+    event.stopPropagation()
+    clearTimeout @_changeTimeout
     # need to delay so that the input value can catch up
-    setTimeout (() =>
+    @_changeTimeout = setTimeout (() =>
       value = @_elementValue()
       if @clip.get("bothWays")
         for ref in @refs
