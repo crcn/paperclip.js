@@ -21,7 +21,7 @@ class SubmitDecor extends require("./dataBind")
   ###
 
   _onEvent: (event) =>
-    event.preventDefault()
+    event.stopPropagation()
 
     return if @clip.get("disable")
 
