@@ -184,7 +184,15 @@ class ClipScript extends events.EventEmitter
     value.off "change", @update
     value.on "change", () =>
       return if not @_updated
-      @update()
+      @_debounceUpdate()
+
+
+  ###
+  ###
+
+  _debounceUpdate: () =>
+    clearTimeout @_debounceTimeout
+    @_debounceTimeout = setTimeout @update, 0
 
 
 
