@@ -199,7 +199,19 @@ class ClipScript extends events.EventEmitter
       value.off "change", onChange
 
   ### 
-   spies an all the bindable references, and watches them
+   temporarily overwrites an existing, referenced function, and finds *all* the references
+   called within the given function. This is needed incase a function is called inline, and *might*
+   be updated. For example:
+
+   getSum = () -> @get("someNum") + @get("anotherNum")
+
+   and 
+
+   {{ getSum() }}
+
+   _spyFunction would find the references to "someNum", and "anotherSum", and listen for *those* to change,
+   then re-call getSum()
+
   ###
 
   _spyFunction: (path, fn, target) ->
@@ -227,7 +239,11 @@ class ClipScript extends events.EventEmitter
       for ref in refs
         self._watch ref, @
 
+    # set callspy to the overridden function, since _spyFunction
+    # will be called again after it's overridden. We want to prevent an infinite loop!
     fn._callSpy = true
+
+    # override the old function *temporarily*
     target.set path, fn
 
     
