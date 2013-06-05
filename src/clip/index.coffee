@@ -187,6 +187,8 @@ class ClipScript extends events.EventEmitter
 
 
   ###
+   watches a bindable object for any changes, then updates this binding asynchronously This is important
+   for such a case: {{ someObject | someComputer() }}
   ###
 
   _watchBindable: (value, oldValue) ->
@@ -223,7 +225,7 @@ class ClipScript extends events.EventEmitter
 
     # store a reference to the original function so it's never spied on again
     @_fnSpies.push fn
-    
+
     self = @
 
     # need to fetch the owner of the function so proper items are 
