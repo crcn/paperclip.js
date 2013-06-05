@@ -28,17 +28,6 @@ class Context extends bindable.Object
   ###
   ###
 
-
-  ###
-  bind: (key) ->
-    return super(key) if (typeof key isnt "string") or @has(key)
-    if @has(key)
-      @parent?.bind key
-  ###
-
-  ###
-  ###
-
   child: (data = {}) ->  new Context data, @
 
   ###

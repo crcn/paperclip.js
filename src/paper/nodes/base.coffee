@@ -1,5 +1,6 @@
-async  = require "async"
-pilot  = require "pilot-block"
+async   = require "async"
+pilot   = require "pilot-block"
+Context = require "../context"
 
 class Base
 
@@ -35,7 +36,7 @@ class Base
 
   attach: (element, context) ->
 
-    @load context.detachBuffer()
+    @load context
 
     if element.__isNode
       element.section.append pilot.createSection context.buffer.join("")
@@ -47,13 +48,20 @@ class Base
     @bind()
 
 
+  ###
+  ###
+
+  load: (context) -> 
+    context.buffer   = context.buffer or []
+    context.internal = new Context()
+    @_load context
 
 
   ###
    writes HTML to the DOM
   ###
 
-  load: (@context) ->  
+  _load: (@context) ->  
 
     @_writeHead context
     @_loadChildren context
@@ -71,7 +79,7 @@ class Base
 
   _loadChildren: (context) -> 
     for child in @children
-      child.load context
+      child._load context
 
   ###
   ###

@@ -4,6 +4,8 @@
 # blah
 # {{/}}
 
+Context = require "../../context"
+
 
 class ViewDecor extends require("./base")
     
@@ -29,14 +31,15 @@ class ViewDecor extends require("./base")
     wth = @clip.get("view.model") or undefined
     tpl = context.internal.get(tplName)
     return if not tpl
-    child = context.child().detachBuffer()
+    child = new Context {}, context
 
     if @node.content
       @node.content.load child
 
 
     child.set "content", child.buffer.join("")
-    child.attachBuffer()
+    child.buffer = context.buffer
+
     @child = tpl.node.createContent()
     @child.load @_childContext = child.child(wth)
 
