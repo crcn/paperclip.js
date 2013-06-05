@@ -78,7 +78,7 @@ class PropertyChain
 
     for command, i in @_commands
 
-      @watcher._watch command.ref, cv, !!command.args
+      @watcher._watch command.ref, cv
 
       if i is n-1 and hasValue
         if cv.set then cv.set(command.ref, value) else dref.set cv, command.ref, value
@@ -96,9 +96,6 @@ class PropertyChain
 
       break if not cv
 
-    #modifier(ref.value(), modifier(anotherRef.value()))
-    @watcher.currentRef = @
-
     return cv
 
 
@@ -111,19 +108,19 @@ class ClipScript extends events.EventEmitter
   ###
 
   constructor: (@script, @clip) ->
-    @modifiers = @clip.modifiers
-    @options = @clip.options
-    @_watching = {}
-    @cast = {}
-    @_fnSpies = []
+
+    @options    = @clip.options
+    @_watching  = {}
+    @cast       = {}
 
   ###
   ###
 
   dispose: () ->
+
     for key of @_watching
       @_watching[key].dispose()
-    @_fnSpies = []
+
     @_watching = {}
 
   ###
@@ -147,9 +144,7 @@ class ClipScript extends events.EventEmitter
   ###
   ###
 
-  references: () ->  
-    # will happen with inline bindings
-    return [] if not @script.refs 
+  references: () ->  @script.refs or []
 
   ###
   ###
@@ -160,9 +155,10 @@ class ClipScript extends events.EventEmitter
   castAs : (name) -> new PropertyChain(@).castAs name
 
   ###
+   watches 
   ###
 
-  _watch: (path, target, isFn) ->
+  _watch: (path, target) ->
 
     return if not @__watch
 
@@ -174,11 +170,7 @@ class ClipScript extends events.EventEmitter
     @_watching[path] = 
       target  : target
       binding : binding = target.bind(path).to((value, oldValue) =>
-
-        # watches for any changes in the bindable object
         return @_watchBindable(value, oldValue) if value?.__isBindable
-
-        # temporarily overwrites the function so it can see what values to reference
         return @_spyFunction(path, value, target) if type(value) is "function"
       ).now().to(@update)
       dispose : () ->
@@ -219,18 +211,21 @@ class ClipScript extends events.EventEmitter
   _spyFunction: (path, fn, target) ->
     oldFn = fn
 
-    # if the function is a spying function, OR the function
-    # has already been computed, then ignore it.
-    return if fn.__isCallSpy or ~@_fnSpies.indexOf fn
+    # if the function is a spying function, then ignore it
+    return if fn.__isCallSpy
 
-    # store a reference to the original function so it's never spied on again
-    @_fnSpies.push fn
 
     self = @
 
     # need to fetch the owner of the function so proper items are 
     # references
     target = target.owner?(path) or target
+
+    # references attached to the function? watch them!
+    if fn.refs
+      for ref in fn.refs
+        @_watch ref, target
+      return
 
     fn = () ->
       refs   = []
@@ -247,11 +242,10 @@ class ClipScript extends events.EventEmitter
       # reset the old this.get function
       @get = oldGet
 
+      oldFn.refs = refs
+
       #reset the old function
       @set path, oldFn
-
-      for ref in refs
-        self._watch ref, @
 
     # set callspy to the overridden function, since _spyFunction
     # will be called again after it's overridden. We want to prevent an infinite loop!
@@ -349,7 +343,6 @@ class Clip
   constructor: (@options) ->
     @_self = new bindable.Object()
     @reset options.data, false
-    @modifiers = options.modifiers or {}
     scripts = @options.scripts or @options.script
 
     if scripts
