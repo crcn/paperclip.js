@@ -1,6 +1,7 @@
 dref             = require "dref"
 events           = require "events"
 bindable         = require "bindable"
+type             = require "type-component"
 
 ###
  Reads a property chain 
@@ -77,7 +78,7 @@ class PropertyChain
 
     for command, i in @_commands
 
-      @watcher._watch command.ref, cv
+      @watcher._watch command.ref, cv, !!command.args
 
       if i is n-1 and hasValue
         if cv.set then cv.set(command.ref, value) else dref.set cv, command.ref, value
@@ -114,13 +115,15 @@ class ClipScript extends events.EventEmitter
     @options = @clip.options
     @_watching = {}
     @cast = {}
+    @_fnSpies = []
 
   ###
   ###
 
   dispose: () ->
     for key of @_watching
-      @_watching[key].binding.dispose()
+      @_watching[key].dispose()
+    @_fnSpies = []
     @_watching = {}
 
   ###
@@ -151,40 +154,84 @@ class ClipScript extends events.EventEmitter
   ###
   ###
 
-  ref: (path) -> new PropertyChain(@).ref path
-  self: (path) -> new PropertyChain(@).self path
-  call: (path, args) -> new PropertyChain(@).call path, args
-  castAs: (name) -> new PropertyChain(@).castAs name
+  ref    : (path) -> new PropertyChain(@).ref path
+  self   : (path) -> new PropertyChain(@).self path
+  call   : (path, args) -> new PropertyChain(@).call path, args
+  castAs : (name) -> new PropertyChain(@).castAs name
 
   ###
   ###
 
-  _watch: (path, target) ->
+  _watch: (path, target, isFn) ->
 
     return if not @__watch
 
     if @_watching[path]
       return if @_watching[path].target is target
-      @_watching[path].binding.dispose()
+      @_watching[path].dispose()
 
 
-    @_watching[path] = {
-      target: target
-      binding: target.bind(path).to(@_watchBindable).now().to(@update)
-    }
+    @_watching[path] = 
+      target  : target
+      binding : binding = target.bind(path).to((value, oldValue) =>
+
+        # watches for any changes in the bindable object
+        return @_watchBindable(value, oldValue) if value?.__isBindable
+
+        # temporarily overwrites the function so it can see what values to reference
+        return @_spyFunction(path, value, target) if type(value) is "function"
+      ).now().to(@update)
+      dispose : () ->
+        binding.dispose()
+    
 
 
   ###
   ###
 
-  _watchBindable: (value, oldValue) =>
-    return if not value?.__isBindable
+  _watchBindable: (value, oldValue) ->
 
-    oldValue?.off? "change", @update
-    value.off "change", @update
-    value.on "change", () =>
+    value.on "change", onChange = () =>
       return if not @_updated
       @_debounceUpdate()
+
+    disposeBinding: () =>
+      value.off "change", onChange
+
+  ### 
+   spies an all the bindable references, and watches them
+  ###
+
+  _spyFunction: (path, fn, target) ->
+    oldFn = fn
+    return if fn._callSpy or ~@_fnSpies.indexOf fn
+    @_fnSpies.push fn
+    self = @
+
+    # need to fetch the owner of the function so proper items are 
+    # references
+    target = target.owner?(path) or target
+
+    fn = () ->
+      refs   = []
+      oldGet = @get
+
+      @get = (key) ->
+        refs.push(key) if key and key.length
+        oldGet.call @, key
+
+      oldFn.apply @, arguments
+      @get = oldGet
+      @set path, oldFn
+
+      for ref in refs
+        self._watch ref, @
+
+    fn._callSpy = true
+    target.set path, fn
+
+    
+
 
 
   ###
