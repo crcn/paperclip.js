@@ -38,7 +38,9 @@ class ValueDecor extends require("./dataBind")
   ###
 
   _elementValue: (value) =>
-    isInput = @element.hasOwnProperty "value"
+
+    # hasOwnProperty doesn't work for firefox
+    isInput = @element.hasOwnProperty("value") or /input/.test(@element.nodeName.toLowerCase())
 
     unless arguments.length
       return if isInput then @_checkedOrValue() else @element.innerHTML
