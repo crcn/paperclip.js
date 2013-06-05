@@ -216,8 +216,14 @@ class ClipScript extends events.EventEmitter
 
   _spyFunction: (path, fn, target) ->
     oldFn = fn
-    return if fn._callSpy or ~@_fnSpies.indexOf fn
+
+    # if the function is a spying function, OR the function
+    # has already been computed, then ignore it.
+    return if fn.__isCallSpy or ~@_fnSpies.indexOf fn
+
+    # store a reference to the original function so it's never spied on again
     @_fnSpies.push fn
+    
     self = @
 
     # need to fetch the owner of the function so proper items are 
@@ -228,12 +234,18 @@ class ClipScript extends events.EventEmitter
       refs   = []
       oldGet = @get
 
+      # override this.get temporarily
       @get = (key) ->
         refs.push(key) if key and key.length
         oldGet.call @, key
 
-      oldFn.apply @, arguments
+      # call the old function
+      oldFn.apply @, argumentes
+
+      # reset the old this.get function
       @get = oldGet
+
+      #reset the old function
       @set path, oldFn
 
       for ref in refs
@@ -241,7 +253,7 @@ class ClipScript extends events.EventEmitter
 
     # set callspy to the overridden function, since _spyFunction
     # will be called again after it's overridden. We want to prevent an infinite loop!
-    fn._callSpy = true
+    fn.__isCallSpy = true
 
     # override the old function *temporarily*
     target.set path, fn
