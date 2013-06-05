@@ -129,6 +129,7 @@ class ClipScript extends events.EventEmitter
   update: () =>
     newValue = @script.fn.call @
     return newValue if newValue is @value
+    @_updated = true
     @emit "change", @value = newValue
     newValue
 
@@ -169,8 +170,22 @@ class ClipScript extends events.EventEmitter
 
     @_watching[path] = {
       target: target
-      binding: target.bind(path).to(@update)
+      binding: target.bind(path).to(@_watchBindable).now().to(@update)
     }
+
+
+  ###
+  ###
+
+  _watchBindable: (value, oldValue) =>
+    return if not value?.__isBindable
+
+    oldValue?.off? "change", @update
+    value.off "change", @update
+    value.on "change", () =>
+      return if not @_updated
+      @update()
+
 
 
 
