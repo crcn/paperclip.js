@@ -237,7 +237,7 @@ class ClipScript extends events.EventEmitter
         oldGet.call @, key
 
       # call the old function
-      oldFn.apply @, argumentes
+      ret = oldFn.apply @, arguments
 
       # reset the old this.get function
       @get = oldGet
@@ -246,6 +246,8 @@ class ClipScript extends events.EventEmitter
 
       #reset the old function
       @set path, oldFn
+
+      ret
 
     # set callspy to the overridden function, since _spyFunction
     # will be called again after it's overridden. We want to prevent an infinite loop!
