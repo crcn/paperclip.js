@@ -221,12 +221,17 @@ class ClipScript extends events.EventEmitter
     # references
     target = target.owner?(path) or target
 
+
     # references attached to the function? watch them!
     if fn.refs
       for ref in fn.refs
         @_watch ref, target
       return
+    else
+      return
 
+    # DEPRECATED
+    ###
     fn = () ->
       refs   = []
       oldGet = @get
@@ -255,6 +260,7 @@ class ClipScript extends events.EventEmitter
 
     # override the old function *temporarily*
     target.set path, fn
+    ###
 
     
 
