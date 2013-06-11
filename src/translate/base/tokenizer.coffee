@@ -34,6 +34,11 @@ class Tokenizer
     @_s.source @_source = value
     @
 
+
+  skipWhitespace: (value) ->
+    return @_s.skipWhitespace() unless arguments.length
+    @_s.skipWhitespace value
+
   ###
   ###
 

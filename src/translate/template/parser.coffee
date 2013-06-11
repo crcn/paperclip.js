@@ -119,7 +119,7 @@ class Parser extends BaseParser
 
     name = @_currentString()
     if @_nextCode() is TokenCodes.EQ
-      @_nextCode()
+      @_nextCodeSkipWs()
       value = @_parseAttributeValue().buffer
 
     new AttributeExpression name, value
@@ -129,9 +129,9 @@ class Parser extends BaseParser
 
   _parseAttributeValue: () ->
     # skip quote
-    @_nextCode()
+    @_nextCode() # eat quote
     ret = @_parseTextUntil(TokenCodes.QUOTE)
-    @_nextCode()
+    @_nextCodeSkipWs()
     ret
 
 

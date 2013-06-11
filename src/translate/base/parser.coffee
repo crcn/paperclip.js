@@ -40,6 +40,24 @@ class Parser
   ###
   ###
 
+  _nextCodeSkipWs: () ->
+
+    while /[\r\n\s\t]+/.test @_nextString()
+      true
+
+    @_currentCode()
+
+  ###
+  ###
+
+
+  skipWhitespace: () ->
+    @_t.skipWhitespace arguments...
+
+
+  ###
+  ###
+
   _nextString: () -> @_t.next()?[1]
 
   ###
