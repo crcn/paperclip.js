@@ -37,7 +37,7 @@ class AttributesExpression extends require("./collection")
       buffer.push "#{attr.name}"
 
       if attr.value
-        buffer.push "\"#{attr.value}\""
+        buffer.push "=\"#{attr.value}\""
 
       params.push buffer.join("")
 

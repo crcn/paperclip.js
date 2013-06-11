@@ -129,8 +129,9 @@ class Parser extends BaseParser
 
   _parseAttributeValue: () ->
     # skip quote
+    quoteCode = @_currentCode()
     @_nextCode() # eat quote
-    ret = @_parseTextUntil(TokenCodes.QUOTE)
+    ret = @_parseTextUntil quoteCode
     @_nextCodeSkipWs()
     ret
 
