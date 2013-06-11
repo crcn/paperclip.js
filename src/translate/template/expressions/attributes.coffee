@@ -33,7 +33,13 @@ class AttributesExpression extends require("./collection")
 
     params = []
     for attr in @_children
-      params.push "#{attr.name}=\"#{attr.value}\""
+      buffer = []
+      buffer.push "#{attr.name}"
+
+      if attr.value
+        buffer.push "\"#{attr.value}\""
+
+      params.push buffer.join("")
 
     params.join " "
 
