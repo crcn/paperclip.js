@@ -20,7 +20,7 @@ class TextBinding extends require("./base")
   load: (@context) ->
     @clippedBuffer.reset context
 
-    if @clippedBuffer.text.length
+    if @clippedBuffer.text.length and @clippedBuffer.text isnt "[object Object]"
       context.buffer.push " #{@attrName}=\"#{@clippedBuffer.text}\""
 
 

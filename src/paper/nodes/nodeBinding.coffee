@@ -3,22 +3,6 @@ ClippedBuffer = require("../../clip/buffer")
 Base = require "./base"
 attrFactory = require("../decor/attrFactory")
 
-class AttributeBinding extends Base
-  
-  ###
-  ###
-
-  constructor: (@name, buffer) ->
-    super()
-    @clippedBuffer = new ClippedBuffer buffer
-
-  ###
-  ###
-
-  load: (info) ->
-    @clippedBuffer.reset info.data
-    if @clippedBuffer.text.length
-      info.buffer.push " #{@name}=\"#{@clippedBuffer.text}\""
 
 
 class NodeBinding extends require("./bindable")
