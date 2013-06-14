@@ -13,7 +13,7 @@ class ShowDecor extends require("./dataBind")
   ###
 
   _show: (value) => 
-    @$element.css { "display": if value then "block" else "none" }
+    @$element.css { "display": if value then undefined else "none" }
 
 
 module.exports = ShowDecor
