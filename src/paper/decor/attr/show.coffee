@@ -7,6 +7,8 @@ class ShowDecor extends require("./dataBind")
     super()
     @$element = $(@element)
     @clip.bind("show").to(@_show).now()
+
+    # clip *might* not get fired if "show" is undefined.
     @_show @clip.get("show")
 
   ###
