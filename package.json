@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "0.1.28",
+  "version": "0.1.29",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "scripts": {
@@ -36,6 +36,7 @@
     "asyngleton": "0.1.x",
     "walkr": "0.0.x",
     "watch_r": "0.0.x",
-    "underscore": "1.4.x"
+    "underscore": "1.4.x",
+    "type-component": "0.0.x"
   }
 }
