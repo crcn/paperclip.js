@@ -3,13 +3,13 @@ class EnterDecor extends require("./event")
   ###
   ###
   
-  event: "keyup"
+  event: "keydown"
 
   ###
   ###
 
-  _update: (event) =>
+  _onEvent: (event) =>
     return if event.keyCode isnt 13
-    super()
+    super event
 
 module.exports = EnterDecor
