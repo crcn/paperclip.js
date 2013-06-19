@@ -78,12 +78,14 @@ class Tokenizer extends BaseTokenizer
 
     else if ccode is 33
       if @_s.peek(2) is "!="
+        @_s.skip(1)
         return @_t Codes.NEQ, "!="
       else
         return @_t Codes.NOT, "!"
     
     else if ccode is 61
       if @_s.peek(2) is "=="
+        @_s.skip(1)
         return @_t Codes.EQ, "=="
       else
         return @_t Codes.ASSIGN, "="
