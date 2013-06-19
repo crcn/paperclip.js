@@ -1,3 +1,4 @@
+escapeHTML = require "../../utils/escapeHTML"
 
 class TextBinding extends require("./base")
   
@@ -28,6 +29,6 @@ class TextBinding extends require("./base")
   ###
 
   _onChange: (value) =>
-    @node.section.elements[0].setAttribute(@attrName, value)
+    @node.section.elements[0].setAttribute(@attrName, escapeHTML(value))
 
 module.exports = TextBinding

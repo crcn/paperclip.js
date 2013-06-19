@@ -1,3 +1,5 @@
+escapeHTML = require "../../utils/escapeHTML"
+
 class ValueDecor extends require("./base")
   
   ###
@@ -12,7 +14,7 @@ class ValueDecor extends require("./base")
   ###
 
   _onChange: (value) ->
-    @node.section.html value
+    @node.section.html escapeHTML value
 
 
 
