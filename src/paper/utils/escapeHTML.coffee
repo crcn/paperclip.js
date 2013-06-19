@@ -16,7 +16,7 @@ module.exports = (str) ->
       return "&#{e};"
     else if c.match /\s/
       return c
-    else if c < 32 or c > 126
+    else if cc < 32 or cc > 126
       return "&##{cc};"
 
     return c
