@@ -14,7 +14,7 @@ class EventDecor extends require("./dataBind")
   ###
   ###
 
-  preventDefault: true
+  preventDefault: false
 
   ###
   ###
@@ -28,16 +28,25 @@ class EventDecor extends require("./dataBind")
       @preventDefault = true
 
 
-    # set default properties for event modifiers
-    for ev in ["propagateEvent", "preventDefault"]
-      if not @clip.get(ev)? and @[ev]?
-        @clip.set ev, @[ev]
+    event = (@event or @name).toLowerCase()
+    name  = @name.toLowerCase()
 
-
-    event = @event or @name
+    if name.substr(0, 2) is "on"
+      name = name.substr(2)
     
     if event.substr(0, 2) is "on"
-      event = event.substr(2).toLowerCase()
+      event = event.substr(2)
+
+
+
+    @_pge = "propagateEvent." + name
+    @_pde = "preventDefault." + name
+
+    # set default properties for event modifiers
+    for ev in [@_pge, @_pde]
+      prop = ev.split(".").shift()
+      if not @clip.get(ev)? and @[prop]?
+        @clip.set ev, @[prop]
 
     $(@element).bind event, @_onEvent
 
@@ -46,10 +55,10 @@ class EventDecor extends require("./dataBind")
 
   _onEvent: (event) =>
 
-    if @clip.get("propagateEvent") is false
+    if @clip.get("propagateEvent") is true or @clip.get(@_pge) is true
       event.stopPropagation()
 
-    if @clip.get("preventDefault") is true
+    if @clip.get("preventDefault") is true or @clip.get(@_pde) is true
       event.preventDefault()
 
     return if @clip.get("disable")
