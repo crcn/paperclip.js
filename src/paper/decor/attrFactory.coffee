@@ -18,6 +18,7 @@ attrDecorators =
   keydown    : require("./attr/event")
   keyup      : require("./attr/event")
   enter      : require("./attr/enter")
+  delete     : require("./attr/delete")
 
   onClick      : require("./attr/event")
   onSubmit     : require("./attr/event")
