@@ -24,8 +24,6 @@ class EventDecor extends require("./dataBind")
 
     # keyup keydown mouseup mousedown 
 
-    if @name in ["click", "mouseup", "mousedown"]
-      @preventDefault = true
 
 
     event = (@event or @name).toLowerCase()
@@ -37,6 +35,9 @@ class EventDecor extends require("./dataBind")
     if event.substr(0, 2) is "on"
       event = event.substr(2)
 
+
+    if name in ["click", "mouseup", "mousedown"]
+      @preventDefault = true
 
 
     @_pge = "propagateEvent." + name
