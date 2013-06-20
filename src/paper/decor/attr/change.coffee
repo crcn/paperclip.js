@@ -21,7 +21,7 @@ class ChangeDecor extends require("./event")
   ###
   ###
 
-  _update2: () ->
+  _update2: () =>
     @script.update()
 
 
