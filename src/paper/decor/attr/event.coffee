@@ -1,4 +1,5 @@
-class SubmitDecor extends require("./dataBind")
+# see http://arantius.com/misc/webref/domref/dom_event_ref33.html
+class EventDecor extends require("./dataBind")
 
   ###
   ###
@@ -8,8 +9,31 @@ class SubmitDecor extends require("./dataBind")
   ###
   ###
 
+  propagateEvent: false
+
+  ###
+  ###
+
+  preventDefault: true
+
+  ###
+  ###
+
   bind: () ->
     super()
+
+    # keyup keydown mouseup mousedown 
+
+    if @name in ["click", "mouseup", "mousedown"]
+      @preventDefault = true
+
+
+    # set default properties for event modifiers
+    for ev in ["propagateEvent", "preventDefault"]
+      if not @clip.get(ev)? and @[ev]?
+        @clip.set ev, @[ev]
+
+
     event = @event or @name
     
     if event.substr(0, 2) is "on"
@@ -22,10 +46,10 @@ class SubmitDecor extends require("./dataBind")
 
   _onEvent: (event) =>
 
-    if @clip.get("propagateEvent") isnt true
+    if @clip.get("propagateEvent") is false
       event.stopPropagation()
 
-    if @clip.get("preventDefault") isnt false
+    if @clip.get("preventDefault") is true
       event.preventDefault()
 
     return if @clip.get("disable")
@@ -40,4 +64,4 @@ class SubmitDecor extends require("./dataBind")
     @script.update()
 
 
-module.exports = SubmitDecor
+module.exports = EventDecor
