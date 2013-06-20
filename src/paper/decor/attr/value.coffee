@@ -1,6 +1,7 @@
 _ = require "underscore"
 ChangeDecor = require("./change")
 escapeHTML = require("../../utils/escapeHTML")
+type = require "type-component"
 
 class ValueDecor extends require("./dataBind")
 
@@ -32,7 +33,7 @@ class ValueDecor extends require("./dataBind")
   ###
 
   _onChange: (value) =>
-    @_elementValue escapeHTML value
+    @_elementValue if type(value) is "string" then escapeHTML(value) else value
 
 
   ###
