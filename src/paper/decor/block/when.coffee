@@ -15,7 +15,7 @@ class BlockDecor extends require("./base")
   ###
 
   load: (@context) ->
-    if @_show = !!@clip.get("when")
+    if @_show = !!@clip.get(@scriptName)
       @child = @node.createContent()
       @child.load context
 

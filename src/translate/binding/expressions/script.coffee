@@ -2,6 +2,8 @@ base = require "../../base/expression"
 _    = require "underscore"
 
 findRefs = (expr, refs = []) ->
+
+  return [] unless expr
     
   if expr._type is "refPath"
     refs.push expr
@@ -29,10 +31,11 @@ class ActionExpression extends base.Expression
   ###
 
   toString: () -> 
+
     refs      = _.uniq findRefs(@options).map((ref) -> "'" + (ref.toPathString()) + "'" )
     refBuffer = ["[", refs.join(","), "]"].join("")
 
-    "{ fn: function(){ return #{@options.toString()} }, refs: #{refBuffer} }"
+    "{ fn: function(){ return #{if @options then @options.toString() else 'true'}; }, refs: #{refBuffer} }"
 
 
 module.exports = ActionExpression

@@ -24,13 +24,13 @@ class Parser
   ###
 
   _expectNextCode: (code) ->
-    @_error() if @_t.next()[0] isnt code
+    @_error() if @_nextCode() isnt code
 
   ###
   ###
 
   _expectCurrentCode: (code) ->
-    @_error() if @_t.current[0] isnt code
+    @_error() if @_nextCode() isnt code
 
   ###
   ###
@@ -73,6 +73,8 @@ class Parser
 
   _error: () ->
 
+    unless @_t.current
+      throw new Error "\n\nUnexpected End Of File\n\n"
 
     buffer = "\n\nUnexpected Token: #{@_t.current[1]}\n\n"
     buffer += @_bufferPosInfo()

@@ -180,9 +180,9 @@ class Parser extends BaseParser
   ###
   ###
 
-  _parseBindingBlock: () ->
+  _parseBindingBlock: (isChild) ->
 
-    script = @_parseScript()
+    script = @_parseScript(isChild)
     children = []
 
     while (ccode = @_currentCode()) isnt TokenCodes.EBLOCK and ccode
@@ -193,7 +193,7 @@ class Parser extends BaseParser
     # it's a child binding block
     if @_currentCode() isnt TokenCodes.RM
       @_t.putBack()
-      child = @_parseBindingBlock()
+      child = @_parseBindingBlock true
     else
       @_nextCode()
 
@@ -207,7 +207,7 @@ class Parser extends BaseParser
   ###
   ###
 
-  _parseScript: () ->
+  _parseScript: (isChild) ->
     # skip {{ or {{#
 
     @_nextCode()
@@ -216,6 +216,9 @@ class Parser extends BaseParser
     while ((ccode = @_currentCode()) isnt TokenCodes.RM) and ccode
       buffer.push @_currentString()
       @_nextCode()
+
+    if isChild
+      buffer.unshift "/"
 
     script = bindingParser.parse buffer.join("")
 

@@ -21,6 +21,7 @@ class Codes
   @RP         = 41       # )
   @COMA       = 44       # ,
   @DOT        = 46       # .
+  @BS         = 47       # /
   @COLON      = 58       # :
   @SEMI_COLON = 59       # ;
   @AT         = 64       # @

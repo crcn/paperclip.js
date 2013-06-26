@@ -41,8 +41,14 @@ class Parser extends BaseParser
   _parseActionsOrOptions: () ->
     actions = []
 
+    isExpr = not (pn = @_t.peekNext()) or pn[0] isnt TokenCodes.COLON
+
+    if @_t.current[0] is TokenCodes.BS
+      @_nextCode()
+      isExpr = false
+
     # not a colon? actions aren't provided
-    if not (pn = @_t.peekNext()) or pn[0] isnt TokenCodes.COLON
+    if isExpr
       return new ScriptExpression undefined, @_parseActionOptions()
 
 
@@ -58,8 +64,8 @@ class Parser extends BaseParser
 
   _parseAction: () ->
     name = @_currentString()
-    @_expectNextCode TokenCodes.COLON
-    @_nextCode()
+    @_nextCode() # eat name
+    @_nextCode() # eat :
     new ScriptExpression name, @_parseActionOptions()
 
   ###
@@ -143,7 +149,7 @@ class Parser extends BaseParser
 
       @_nextCode()
 
-
+    return undefined unless expressions.length
     new CollectionExpression(expressions)
 
   ###
