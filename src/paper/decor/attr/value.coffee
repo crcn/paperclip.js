@@ -41,6 +41,10 @@ class ValueDecor extends require("./dataBind")
 
   _elementValue: (value) =>
 
+    # cannot be undefined
+    unless value?
+      value = ""
+
     # hasOwnProperty doesn't work for firefox
     isInput = @element.hasOwnProperty("value") or /input/.test(@element.nodeName.toLowerCase())
 

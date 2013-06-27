@@ -30,7 +30,7 @@ class Parser
   ###
 
   _expectCurrentCode: (code) ->
-    @_error() if @_nextCode() isnt code
+    @_error() if @_currentCode() isnt code
 
   ###
   ###

@@ -174,6 +174,7 @@ class Parser extends BaseParser
 
   _parseParams2: () ->
     @_expectCurrentCode TokenCodes.LP
+
     params = []
     while c = @_nextCode()
       break if c is TokenCodes.RP
