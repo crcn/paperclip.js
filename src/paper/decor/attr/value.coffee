@@ -33,7 +33,8 @@ class ValueDecor extends require("./dataBind")
   ###
 
   _onChange: (value) =>
-    @_elementValue if type(value) is "string" then escapeHTML(value) else value
+    #@_elementValue if type(value) is "string" then escapeHTML(value) else value
+    @_elementValue value
 
 
   ###
