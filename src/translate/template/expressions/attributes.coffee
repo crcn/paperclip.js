@@ -13,7 +13,7 @@ class AttributesExpression extends require("./collection")
   
     params = []
     for attr in @_children
-      params.push "'#{attr.name}':#{attr.value.toJsString()}"
+      params.push "'#{attr.name}':#{if attr.value then attr.value.toJsString() else 'true' }"
 
     "{#{params.join(',')}}"
 
