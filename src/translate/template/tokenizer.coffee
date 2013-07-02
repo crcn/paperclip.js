@@ -20,14 +20,13 @@ class Codes
   @SBLOCK  =  @RM      << 1 # }}
   @EBLOCK  =  @SBLOCK  << 1 # {{/}}
   @QUOTE   =  @EBLOCK  << 1 # "
-  @ETAG    =  @QUOTE   << 1 # </tag>
+  @SQUOTE  =  @QUOTE   << 1 # '
+  @ETAG    =  @SQUOTE  << 1 # </tag>
   @BLOCK   =  @ETAG    << 1 
   @CHAR    =  @BLOCK   << 1
   @COMMENT =  @CHAR    << 1
   @HASH    =  @COMMENT << 1 # #
   @WS      =  @HASH    << 1 # #
-
-
 
 class Tokenizer extends BaseTokenizer
   
@@ -114,6 +113,9 @@ class Tokenizer extends BaseTokenizer
 
     else if cchar is "\""
       return @_t Codes.QUOTE, "\""
+
+    else if cchar is "\'" 
+      return @_t Codes.SQUOTE, "\'"
 
     else if cchar is "#"
       return @_t Codes.HASH, "#"
