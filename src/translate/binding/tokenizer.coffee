@@ -9,7 +9,8 @@ class Codes
   @WS     = @VAR    + 1 # \s
   @NUMBER = @WS     + 1 # 0-9
   @BOOL   = @NUMBER + 1 # true / false
-  @AS     = @BOOL   + 1 # casting
+  @UNDEF  = @BOOL   + 1 # true / false
+  @AS     = @UNDEF  + 1 # casting
   @OR     = @AS     + 1 # ||
   @ASSIGN = @OR     + 1 # =
   @EQ     = @ASSIGN + 1 # ==
@@ -66,6 +67,7 @@ class Tokenizer extends BaseTokenizer
       word = @_s.next /[_$@a-zA-Z0-9]+/
 
       return @_t(Codes.BOOL, word) if /true|false/.test word
+      return @_t(Codes.UNDEF, word) if /undefined|null/.test word
       return @_t(Codes.AS, word) if word is "as"
       return @_t Codes.VAR, word
 
