@@ -3,6 +3,12 @@ class ChangeDecor extends require("./event")
   ###
   ###
 
+  constructor: () ->
+    super arguments...
+
+  ###
+  ###
+
   @events: "keydown change input mousedown mouseup click"
 
   ###
