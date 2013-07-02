@@ -9,7 +9,7 @@ class EventDecor extends require("./dataBind")
   ###
   ###
 
-  propagateEvent: false
+  propagateEvent: true
 
   ###
   ###
@@ -42,7 +42,7 @@ class EventDecor extends require("./dataBind")
 
     @_pge = "propagateEvent." + name
     @_pde = "preventDefault." + name
-
+ 
     # set default properties for event modifiers
     for ev in [@_pge, @_pde]
       prop = ev.split(".").shift()
@@ -56,7 +56,7 @@ class EventDecor extends require("./dataBind")
 
   _onEvent: (event) =>
 
-    if @clip.get("propagateEvent") is true or @clip.get(@_pge) is true
+    if @clip.get("propagateEvent") isnt true or @clip.get(@_pge) isnt true
       event.stopPropagation()
 
     if @clip.get("preventDefault") is true or @clip.get(@_pde) is true
