@@ -36,7 +36,7 @@ class EventDecor extends require("./dataBind")
       event = event.substr(2)
 
 
-    if name in ["click", "mouseup", "mousedown"]
+    if name in ["click", "mouseup", "mousedown", "submit"]
       @preventDefault = true
 
 
@@ -46,7 +46,7 @@ class EventDecor extends require("./dataBind")
     # set default properties for event modifiers
     for ev in [@_pge, @_pde]
       prop = ev.split(".").shift()
-      if not @clip.get(ev)? and @[prop]?
+      if not @clip.get(ev)? and not @clip.get(prop)? and @[prop]?
         @clip.set ev, @[prop]
 
     $(@element).bind event, @_onEvent
