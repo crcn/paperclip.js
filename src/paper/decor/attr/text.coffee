@@ -29,6 +29,6 @@ class TextBinding extends require("./base")
   ###
 
   _onChange: (value) =>
-    @node.section.elements[0].setAttribute(@attrName, escapeHTML(value))
+    $(@node.section.elements[0]).attr(@attrName, escapeHTML(value))
 
 module.exports = TextBinding
