@@ -16,7 +16,7 @@ class Html extends Base
   ###
 
   text: (content) -> 
-    @addChild new TextBuilder content
+    @addChild new Text content
     @
 
   ###

@@ -16,14 +16,14 @@ class TextBuilder extends require("./base")
   ###
   ###
 
-  _writeHead: (info) ->
+  _writeHead: (stream) ->
     info.buffer.push @_buffer
     super info
 
   ###
   ###
 
-  clone: () -> new StringBuilder @_buffer
+  clone: () -> new TextBuilder @_buffer
 
 
 

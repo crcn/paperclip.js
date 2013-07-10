@@ -51,7 +51,7 @@ class Base
   ###
   ###
 
-  load: (context) -> 
+  load: (stream) -> 
     context.buffer   = context.buffer or []
     context.internal = new Context()
     @_load context
@@ -62,11 +62,8 @@ class Base
   ###
 
   _load: (@context) ->  
-
     @_writeHead context
     @_loadChildren context
-    @_writeTail context
-
     @
 
   ###
@@ -80,11 +77,6 @@ class Base
   _loadChildren: (context) -> 
     for child in @children
       child._load context
-
-  ###
-  ###
-
-  _writeTail: (info) ->
 
   ###
   ###
