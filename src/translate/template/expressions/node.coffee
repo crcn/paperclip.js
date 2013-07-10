@@ -19,7 +19,7 @@ class NodeExpression extends require("./base")
 
   toJsString: () ->
 
-    buffer = ["').nodeBinding('#{@name}'"]
+    buffer = ["').element('#{@name}'"]
 
     options = []
 

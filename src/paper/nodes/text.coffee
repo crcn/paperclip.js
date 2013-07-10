@@ -1,10 +1,10 @@
 
-class StringBuilder extends require("./base")
+class TextBuilder extends require("./base")
   
   ###
   ###
 
-  name: "string"
+  name: "text"
 
   ###
   ###

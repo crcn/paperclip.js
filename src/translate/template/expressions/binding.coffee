@@ -25,7 +25,7 @@ class Binding extends require("./base")
   ###
 
   toMethodString: () -> 
-    buffer = ["blockBinding(#{@script}, function(){ return paper.create().text('#{@children.toString()}')}"]
+    buffer = ["block(#{@script}, function(){ return paper.create().text('#{@children.toString()}')}"]
 
     if @childBinding
       buffer.push ", paper.create().#{@childBinding.toMethodString()}"

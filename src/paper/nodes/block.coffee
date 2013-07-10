@@ -51,7 +51,7 @@ class BlockBinding extends require("./bindable")
   ###
   ###
 
-  name: "blockBinding"
+  name: "block"
 
   ###
   ###

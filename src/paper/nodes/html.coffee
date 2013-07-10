@@ -1,6 +1,6 @@
-NodeBinding    = require "./nodeBinding"
-BlockBinding   = require "./blockBinding"
-StringBuffer   = require "./string"
+Element        = require "./element"
+Block          = require "./block"
+Text           = require "./string"
 Base           = require "./base"
 
 
@@ -15,31 +15,25 @@ class Html extends Base
    just an html buffer
   ###
 
-  html: (content) -> 
-    @addChild new StringBuffer content
+  text: (content) -> 
+    @addChild new TextBuilder content
     @
 
   ###
    Node which has a binding
   ###
 
-  nodeBinding: (name, options) -> 
-    @addChild new NodeBinding name, options
+  element: (name, options) -> 
+    @addChild new Element name, options
     @
 
   ###
    binding with children
   ###
 
-  blockBinding: (script, contentFactory, childBinding) -> 
-    @addChild new BlockBinding script, contentFactory, childBinding
+  block: (script, contentFactory, childBinding) -> 
+    @addChild new Block script, contentFactory, childBinding
     @
-
-  ###
-    single-line text binding 
-  ###
-
-  textBinding: (binding) -> return @blockBinding binding
 
   ###
   ###

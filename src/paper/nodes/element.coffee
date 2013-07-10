@@ -10,7 +10,7 @@ class NodeBinding extends require("./bindable")
   ###
   ###
 
-  name: "nodeBinding"
+  name: "element"
 
   ###
   ###
