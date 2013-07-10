@@ -14,8 +14,8 @@ class BlockDecor extends require("./base")
   ###
   ###
 
-  load: (context) ->
-    context.set(@clip.get("block"), @node)
+  load: (stream) ->
+    stream.context.set(@clip.get("block"), @node)
 
 
 

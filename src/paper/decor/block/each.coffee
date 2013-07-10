@@ -34,9 +34,8 @@ class EachDecor extends require("./base")
   ###
   ###
 
-  load: (@context) -> 
+  load: (@stream) -> 
     @children = []
-    @itemName = 
 
     source = if @script.value?.source then @script.value.source() else (@script.value or [])
 
