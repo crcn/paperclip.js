@@ -18,14 +18,14 @@ class Binding extends require("./base")
   ###
   ###
 
-  toString: () -> "').#{@toMethodString()}.html('"
+  toString: () -> "').#{@toMethodString()}.text('"
 
 
   ###
   ###
 
   toMethodString: () -> 
-    buffer = ["blockBinding(#{@script}, function(){ return paper.create().html('#{@children.toString()}')}"]
+    buffer = ["blockBinding(#{@script}, function(){ return paper.create().text('#{@children.toString()}')}"]
 
     if @childBinding
       buffer.push ", paper.create().#{@childBinding.toMethodString()}"
