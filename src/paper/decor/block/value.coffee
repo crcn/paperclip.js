@@ -8,8 +8,7 @@ class ValueDecor extends require("./base")
   load: (@stream) ->
     v = @clip.get("value")
     if v?
-      context.buffer.push v
-      @node.target.html v
+      @_onChange v
 
   ###
   ###
@@ -18,7 +17,8 @@ class ValueDecor extends require("./base")
     unless value?
       value = ""
 
-    @node.section.html escapeHTML value
+    @node.target.replace @stream.createTextNode escapeHTML value
+    # @node.section.html escapeHTML value
 
 
 
