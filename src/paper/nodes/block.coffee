@@ -77,7 +77,6 @@ class BlockBinding extends require("./bindable")
     @_decor.dispose()
     super()
 
-
   ###
   ###
 
@@ -86,10 +85,10 @@ class BlockBinding extends require("./bindable")
   ###
   ###
 
-  _writeHead: (context) ->
-    @clip.reset context
+  load: (stream) ->
+    @clip.reset stream.context
     @clip.update()
-    super context
+    super stream
 
   ###
   ###

@@ -27,12 +27,12 @@ class Collection
   ###
   ###
 
-  load: (context) -> 
+  load: (stream) -> 
   
-    @clip?.reset context, false
+    @clip?.reset stream.context, false
 
     for decor in @_models
-      decor.load context
+      decor.load stream
 
 
   ###

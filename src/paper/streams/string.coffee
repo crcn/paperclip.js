@@ -17,6 +17,11 @@ class Element
   ###
   ###
 
+  appendChild: (node) -> @childNodes.push node
+
+  ###
+  ###
+
   toString: () ->
     buffer = ["<", @name]
 

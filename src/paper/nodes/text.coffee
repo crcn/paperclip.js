@@ -17,7 +17,7 @@ class TextBuilder extends require("./base")
   ###
 
   _writeHead: (stream) ->
-    info.buffer.push @_buffer
+    @target = stream.createTextNode @_buffer
     super info
 
   ###

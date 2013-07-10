@@ -17,8 +17,8 @@ class NodeBinding extends require("./bindable")
 
   constructor: (@name, @options = {}) ->
     super()
-    @attributes   = options.attrs or {}
-    @_decor = attrFactory.getDecor @
+    @attributes = options.attrs or {}
+    @_decor     = attrFactory.getDecor @
 
     if options.children
       @addChild options.children
@@ -34,24 +34,16 @@ class NodeBinding extends require("./bindable")
   ###
   ###
 
-  _writeHead: (context) ->
-    this._writeStartBlock context
-    context.buffer.push "<#{@name}"
+  _load: (stream) ->
+    @target = stream.createElement @name
+    super stream
 
   ###
   ###
 
-  _loadChildren: (context) ->
-    @_decor.load context
-    context.buffer.push ">"
-    super context
-
-  ###
-  ###
-
-  _writeTail: (context) ->
-    context.buffer.push "</#{@name}>"
-    this._writeEndBlock context
+  _loadChildren: (stream) ->
+    @_decor.load stream
+    super stream
 
   ###
   ###

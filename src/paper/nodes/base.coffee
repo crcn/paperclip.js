@@ -51,32 +51,17 @@ class Base
   ###
   ###
 
-  load: (stream) -> 
-    context.buffer   = context.buffer or []
-    context.internal = new Context()
-    @_load context
-
-
-  ###
-   writes HTML to the DOM
-  ###
-
-  _load: (@context) ->  
-    @_writeHead context
-    @_loadChildren context
+  load: (@stream) -> 
+    @target = @createNode stream
+    @_loadChildren stream
     @
 
   ###
   ###
 
-  _writeHead: (info) ->
-
-  ###
-  ###
-
-  _loadChildren: (context) -> 
+  _loadChildren: (stream) -> 
     for child in @children
-      child._load context
+      @target.appendChild child.load stream
 
   ###
   ###
@@ -86,6 +71,10 @@ class Base
       child.parent = @
       @children.push child
 
+  ###
+  ###
+
+  createNode: (stream) -> stream.createElement "div"
 
   ###
    used mostly for block bindings
