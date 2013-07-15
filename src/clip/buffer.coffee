@@ -49,7 +49,7 @@ class ClippedBufferPart
   ###
   ###
 
-  toString: () -> String @value or ""
+  toString: () -> String @value ? ""
 
 
 ###
