@@ -16,7 +16,7 @@ class ValueDecor extends require("./base")
   _onChange: (value) ->
     unless value?
       value = ""
-    @node.section.html escapeHTML value
+    @node.section?.html escapeHTML value
 
 
 
