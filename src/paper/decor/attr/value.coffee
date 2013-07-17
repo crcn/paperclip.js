@@ -47,7 +47,7 @@ class ValueDecor extends require("./dataBind")
       value = ""
 
     # Object.prototype.hasOwnProperty is a work-around for ffox and, ie
-    isInput = Object.prototype.hasOwnProperty.call(@element, "value") or /input/.test(@element.nodeName.toLowerCase())
+    isInput = Object.prototype.hasOwnProperty.call(@element, "value") or /input|textarea|checkbox/.test(@element.nodeName.toLowerCase())
 
     unless arguments.length
       return if isInput then @_checkedOrValue() else @element.innerHTML
