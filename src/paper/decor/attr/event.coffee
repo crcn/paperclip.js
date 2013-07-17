@@ -38,6 +38,7 @@ class EventDecor extends require("./dataBind")
 
     if name in ["click", "mouseup", "mousedown", "submit"]
       @preventDefault = true
+      @propagateEvent = false
 
 
     @_pge = "propagateEvent." + name
@@ -56,10 +57,10 @@ class EventDecor extends require("./dataBind")
 
   _onEvent: (event) =>
 
-    if @clip.get("propagateEvent") isnt true or @clip.get(@_pge) isnt true
+    if @clip.get("propagateEvent") isnt true and @clip.get(@_pge) isnt true
       event.stopPropagation()
 
-    if @clip.get("preventDefault") is true or @clip.get(@_pde) is true
+    if @clip.get("preventDefault") is true and @clip.get(@_pde) is true
       event.preventDefault()
 
     return if @clip.get("disable")
