@@ -16,8 +16,8 @@ class TextBuilder extends require("./base")
   ###
   ###
 
-  _writeHead: (stream) ->
-    @target = stream.createTextNode @_buffer
+  _writeHead: (writer) ->
+    @target = writer.createTextNode @_buffer
     super info
 
   ###
@@ -25,6 +25,11 @@ class TextBuilder extends require("./base")
 
   clone: () -> new TextBuilder @_buffer
 
+  ###
+  ###
+
+  createNode: (writer) -> writer.createTextNode @_buffer
 
 
-module.exports = StringBuilder
+
+module.exports = TextBuilder

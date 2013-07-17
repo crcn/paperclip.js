@@ -1,6 +1,13 @@
 bindable = require "bindable"
 
-class DomStream
+class Section
+	
+	###
+	###
+
+	constructor: () ->
+
+class DomWriter
 	
 	###
 	###
@@ -18,7 +25,12 @@ class DomStream
 
 	createTextNode: (text) -> document.createTextNode text
 
+	###
+	###
+
+	createFragment: () -> document.createDocumentFragment() 
 
 
 
-module.exports = DomStream
+
+module.exports = (context) -> new DomWriter context

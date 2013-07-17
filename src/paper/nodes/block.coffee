@@ -7,7 +7,7 @@ Clip = require "../../clip"
 # {{/}}
 
 
-class BlockChild extends require("./bindable")
+class BlockChild extends require("./base")
   
   ###
   ###
@@ -46,7 +46,7 @@ class BlockChild extends require("./bindable")
   _loadChildren: (context) ->
     @content.load context
 
-class BlockBinding extends require("./bindable")
+class BlockBinding extends require("./base")
   
   ###
   ###
@@ -85,10 +85,10 @@ class BlockBinding extends require("./bindable")
   ###
   ###
 
-  load: (stream) ->
-    @clip.reset stream.context
+  load: (writer) ->
+    @clip.reset writer.context
     @clip.update()
-    super stream
+    super writer
 
   ###
   ###
@@ -100,6 +100,11 @@ class BlockBinding extends require("./bindable")
   ###
 
   clone: () -> new BlockBinding @script, Base.cloneEach @children
+
+  ###
+  ###
+
+  createNode: (writer) -> writer.createFragment()
 
   
 module.exports = BlockBinding

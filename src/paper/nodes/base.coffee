@@ -34,34 +34,17 @@ class Base
   ###
   ###
 
-  attach: (element, context) ->
-
-    @load context
-
-    if element.__isNode
-      element.section.append pilot.createSection context.buffer.join("")
-      pilot.update element.section.parent
-    else
-      element.innerHTML = context.buffer.join("")
-      pilot.update element
-
-    @bind()
-
-
-  ###
-  ###
-
-  load: (@stream) -> 
-    @target = @createNode stream
-    @_loadChildren stream
+  load: (@writer) -> 
+    @target = @createNode writer
+    @_loadChildren writer
     @
 
   ###
   ###
 
-  _loadChildren: (stream) -> 
+  _loadChildren: (writer) -> 
     for child in @children
-      @target.appendChild child.load stream
+      @target.appendChild child.load(writer).target
 
   ###
   ###
@@ -74,7 +57,7 @@ class Base
   ###
   ###
 
-  createNode: (stream) -> stream.createElement "div"
+  createNode: (writer) -> writer.createElement "div"
 
   ###
    used mostly for block bindings

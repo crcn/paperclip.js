@@ -16,7 +16,9 @@ class ValueDecor extends require("./base")
   _onChange: (value) ->
     unless value?
       value = ""
-    @node.target.replace @stream.createTextNode escapeHTML value
+
+
+    @node.target.replaceChildren @stream.createTextNode escapeHTML value
     # @node.section.html escapeHTML value
 
 

@@ -3,6 +3,7 @@ Html       = require "./nodes/html"
 pilot      = require "pilot-block"       
 asyngleton = require "asyngleton"
 modifiers  = require "./defaultModifiers"
+writers    = require "./writers"
 
 class Paper
 
@@ -16,14 +17,8 @@ class Paper
   ###
   ###
 
-  load: (context) -> 
-    @node.load context
-
-  ###
-  ###
-
-  attach: (element, context) -> 
-    @node.attach element, context
+  load: (@writer) -> 
+    @node.load writer
 
   ###
   ###

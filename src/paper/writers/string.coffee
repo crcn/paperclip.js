@@ -49,8 +49,28 @@ class Text
   toString: () -> @value
 
 
+class Section
 
-class StringStream
+  ###
+  ###
+
+  constructor: () ->
+    @_children = []
+
+  ###
+  ###
+
+  appendChild: (child) -> @_children.push child
+
+
+  ###
+  ###
+
+  toString: () -> @_children.join ""
+
+
+
+class StringWriter
 
   ###
   ###
@@ -68,5 +88,10 @@ class StringStream
 
   createTextNode: (text) -> new Text text
 
+  ###
+  ###
 
-module.exports = StringStream
+  createSection: () -> new Section()
+
+
+module.exports = (context) -> new StringWriter context

@@ -5,7 +5,7 @@ attrFactory = require("../decor/attrFactory")
 
 
 
-class NodeBinding extends require("./bindable")
+class NodeBinding extends require("./base")
 
   ###
   ###
@@ -34,16 +34,16 @@ class NodeBinding extends require("./bindable")
   ###
   ###
 
-  _load: (stream) ->
-    @target = stream.createElement @name
-    super stream
+  _load: (writer) ->
+    @target = writer.createElement @name
+    super writer
 
   ###
   ###
 
-  _loadChildren: (stream) ->
-    @_decor.load stream
-    super stream
+  _loadChildren: (writer) ->
+    @_decor.load writer
+    super writer
 
   ###
   ###

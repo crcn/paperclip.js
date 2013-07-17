@@ -1,6 +1,6 @@
 Element        = require "./element"
 Block          = require "./block"
-Text           = require "./string"
+Text           = require "./text"
 Base           = require "./base"
 
 
