@@ -13,7 +13,9 @@ class DataBindDecor extends require("./base")
 
   bind: () ->
     @clip.bind(@name).to @_onChange
-    @element = @node.section.elements[0]
+    @element = @node.section.elements.filter((element) ->
+      element.nodeType is 1
+    ).shift()
 
     if @watch isnt false
       @script.watch()
