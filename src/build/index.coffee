@@ -41,7 +41,8 @@ class Build
 
     match = @_match
     @_input = @_fixInput(options.input)
-    @_output = @_fixInput(options.output)
+    if options.output
+      @_output = @_fixInput(options.output)
 
     if options.watch
       @_watch()
@@ -68,7 +69,11 @@ class Build
       monitor.on "file", (target) => 
         @_parseFile target.path
       monitor.on "remove", (target) =>
-        fs.unlink output = @_destFile target.path
+        output = @_destFile target.path
+
+        if output
+          fs.unlink output
+
         console.log "rm", output
 
   ###
@@ -82,14 +87,20 @@ class Build
       tpl = parser.parse(content)
       if @_pretty
         tpl = formatter.format(tpl)
-      fs.writeFile destination, tpl, "utf8", next
-      console.log source, "->", destination
+
+      if destination
+        fs.writeFile destination, tpl, "utf8", next
+        console.log source, "->", destination
+      else
+        console.log String tpl
 
 
   ###
   ###
 
-  _destFile: (source) => source.replace(@_input, @_output).replace(@_match, ".#{@_ext}.js")
+  _destFile: (source) => 
+    return undefined unless @_output
+    source.replace(@_input, @_output).replace(@_match, ".#{@_ext}.js")
 
 
 module.exports = Build
