@@ -87,12 +87,15 @@ class BlockBinding extends require("./base")
 
   replaceAll: () ->   
 
+
     # create a fragment out of all the nodes to place
-    @node = newFragment = arguments[0] #if arguments.length > 1 then @paper.nodeFactory.createFragment(arguments...) else arguments[0]
+    @node = newFragment = if arguments.length > 1 then @paper.nodeFactory.createFragment(arguments...) else arguments[0]
 
     firstNode = @nodes[0]
-    console.log @parent.node.chilNodes
     
+    oldNodes = @nodes
+    @nodes = arguments
+
 
     # not added to the DOM? ignore the rest! 
     return unless firstNode.parentNode
@@ -101,10 +104,10 @@ class BlockBinding extends require("./base")
     firstNode.parentNode.insertBefore newFragment, firstNode
 
     # and remove the rest of the elements
-    for rmNode in @nodes
+    for rmNode in oldNodes
       rmNode.parentNode.removeChild rmNode
 
-    @nodes = arguments
+
 
 
 

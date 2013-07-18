@@ -35,6 +35,14 @@ class Element
   ###
   ###
 
+  removeChild: (child) ->
+    i = @childNodes.indexOf child
+    return unless ~i
+    @childNodes.splice i, 1
+
+  ###
+  ###
+
   insertBefore: (newElement, before) ->
     i = @childNodes.indexOf before
     return unless ~i

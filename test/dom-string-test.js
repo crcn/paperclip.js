@@ -28,7 +28,9 @@ describe("DOM test", function() {
 		it("can be bound", function() {
 			writer.bind();
 			expect(writer.toString()).to.be("<div>hello Josh!<div/>");
-		})
+			person.set("name", "Sam");
+			expect(writer.toString()).to.be("<div>hello Sam!<div/>");
+		});
 
 	});
 
