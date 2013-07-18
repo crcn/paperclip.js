@@ -1,6 +1,4 @@
 async   = require "async"
-pilot   = require "pilot-block"
-Context = require "../context"
 
 class Base
 
@@ -27,24 +25,23 @@ class Base
   ###
 
   dispose: () ->
-    @section?.dispose()
     for child in @children or []
       child.dispose()
 
   ###
   ###
 
-  load: (@writer) -> 
-    @target = @createNode writer
-    @_loadChildren writer
+  load: (@context) -> 
+    @node = @createNode @paper.nodeFactory
+    @_loadChildren context
     @
 
   ###
   ###
 
-  _loadChildren: (writer) -> 
+  _loadChildren: (context) -> 
     for child in @children
-      @target.appendChild child.load(writer).target
+      @node.appendChild child.load(context).node
 
   ###
   ###
@@ -52,12 +49,19 @@ class Base
   addChild: () ->
     for child in arguments
       child.parent = @
+      child.paper  = @paper
       @children.push child
 
   ###
   ###
 
-  createNode: (writer) -> writer.createElement "div"
+  createNode: (nodeFactory) -> nodeFactory.createElement "div"
+
+
+  ###
+  ###
+
+  toString: () -> @node.toString()
 
   ###
    used mostly for block bindings

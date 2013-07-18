@@ -1,33 +1,44 @@
 Context    = require "./context"
-Html       = require "./nodes/html"
+Html       = require "./writers/html"
 pilot      = require "pilot-block"       
 asyngleton = require "asyngleton"
 modifiers  = require "./defaultModifiers"
-writers    = require "./writers"
+nodeFactories = require "./nodeFactories"
 
 class Paper
 
   ###
   ###
 
-  constructor: (@factory) ->
+  constructor: (@templateFactory, @nodeFactory) ->
+
+    # node, or browser?
+    unless @nodeFactory 
+      if typeof window is "undefined"
+        @nodeFactory = nodeFactories.string()
+      else
+        @nodeFactory = nodeFactories.dom()
+
     @modifiers = modifiers
-    @node = @factory @
 
   ###
   ###
 
-  load: (@writer) -> 
-    @node.load writer
+  load: (@context) -> @templateFactory(@).load(context)
 
   ###
   ###
 
-  create: () -> new Html()
+  bind: (@context) -> @load(context).bind()
+
+  ###
+  ###
+
+  create: () -> new Html @
 
 
 
-module.exports = (fn) -> new Paper(fn)
+module.exports = (templateFactory, nodeFactory) -> new Paper templateFactory, nodeFactory
 module.exports.Context = Context
 module.exports.registerModifier = (name, modifier) ->
   modifiers[name] = modifier

@@ -34,16 +34,16 @@ class NodeBinding extends require("./base")
   ###
   ###
 
-  _load: (writer) ->
-    @target = writer.createElement @name
-    super writer
+  _load: (context) ->
+    @node = context.createElement @name
+    super context
 
   ###
   ###
 
-  _loadChildren: (writer) ->
-    @_decor.load writer
-    super writer
+  _loadChildren: (context) ->
+    @_decor.load context
+    super context
 
   ###
   ###

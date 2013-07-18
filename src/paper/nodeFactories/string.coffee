@@ -5,6 +5,11 @@ class Element
   ###
   ###
 
+  nodeType: 3
+
+  ###
+  ###
+
   constructor: (@name) ->
     @attributes = {}
     @childNodes = []
@@ -17,7 +22,24 @@ class Element
   ###
   ###
 
-  appendChild: (node) -> @childNodes.push node
+  appendChild: (node) -> 
+
+    # frag
+    if node.nodeType is 11
+      @appendChild(child) for child in node.childNodes  
+      return
+
+    node.parentNode = @
+    @childNodes.push node
+
+  ###
+  ###
+
+  insertBefore: (newElement, before) ->
+    i = @childNodes.indexOf before
+    return unless ~i
+    @childNodes.splice i, 0, newElement
+
 
   ###
   ###
@@ -41,6 +63,11 @@ class Text
   ###
   ###
 
+  nodeType: 3
+
+  ###
+  ###
+
   constructor: (@value) ->
 
   ###
@@ -49,7 +76,27 @@ class Text
   toString: () -> @value
 
 
-class Section
+class Comment extends Text
+  
+  ###
+  ###
+
+  nodeType: 8
+
+  ###
+  ###
+
+
+  toString: () -> "<!--#{super()}-->"
+
+
+
+class Fragment
+  
+  ###
+  ###
+
+  nodeType: 11
 
   ###
   ###
@@ -70,7 +117,7 @@ class Section
 
 
 
-class StringWriter
+class StringNodeFactory
 
   ###
   ###
@@ -91,7 +138,16 @@ class StringWriter
   ###
   ###
 
-  createSection: () -> new Section()
+  createComment: (text) -> new Comment text
+
+  ###
+  ###
+
+  createFragment: () -> 
+    frag = new Fragment()
+    for child in arguments
+      frag.appendChild child
+    frag
 
 
-module.exports = (context) -> new StringWriter context
+module.exports = (context) -> new StringNodeFactory context

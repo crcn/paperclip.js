@@ -85,10 +85,36 @@ class BlockBinding extends require("./base")
   ###
   ###
 
-  load: (writer) ->
-    @clip.reset writer.context
+  replaceAll: () ->   
+
+    # create a fragment out of all the nodes to place
+    @node = newFragment = arguments[0] #if arguments.length > 1 then @paper.nodeFactory.createFragment(arguments...) else arguments[0]
+
+    firstNode = @nodes[0]
+    console.log @parent.node.chilNodes
+    
+
+    # not added to the DOM? ignore the rest! 
+    return unless firstNode.parentNode
+
+    # otherwise add the fragment
+    firstNode.parentNode.insertBefore newFragment, firstNode
+
+    # and remove the rest of the elements
+    for rmNode in @nodes
+      rmNode.parentNode.removeChild rmNode
+
+    @nodes = arguments
+
+
+
+  ###
+  ###
+
+  load: (context) ->
+    @clip.reset context
     @clip.update()
-    super writer
+    super context
 
   ###
   ###
@@ -104,7 +130,10 @@ class BlockBinding extends require("./base")
   ###
   ###
 
-  createNode: (writer) -> writer.createFragment()
+  createNode: (nodeFactory) -> 
+    node = nodeFactory.createComment "block"
+    @nodes = [node]
+    node
 
   
 module.exports = BlockBinding

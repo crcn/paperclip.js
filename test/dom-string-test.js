@@ -1,19 +1,36 @@
 var paperclip = require("../"),
 templates = require("./templates"),
-bindable = require("bindable");
+bindable = require("bindable"),
+expect = require("expect.js");
 
 
 describe("DOM test", function() {
 
 
+	describe("hello world writer", function() {
 
-	it("can render a helloWorld template", function() {
-		var paper = paperclip.paper(templates.helloWorld);
-		
-		paper.load(paperclip.writers.String(new bindable.Object({
-			name: "Craig"
-		})));
+		var paper = paperclip.paper(templates.helloWorld),
+		writer,
+		person = new bindable.Object({ name: "Craig" });
 
-		console.log(paper.node.target.toString());
+		it("can render html", function() {
+			writer = paper.load(person);
+			expect(writer.toString()).to.be("<div>hello Craig!<div/>");
+		});
+
+		// sanity
+		it("has not been bound", function() {
+			person.set({ name: "Josh" });
+			expect(writer.toString()).to.be("<div>hello Craig!<div/>");
+		});
+
+
+		it("can be bound", function() {
+			writer.bind();
+			expect(writer.toString()).to.be("<div>hello Josh!<div/>");
+		})
+
 	});
+
+
 });

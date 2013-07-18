@@ -5,7 +5,7 @@ class ValueDecor extends require("./base")
   ###
   ###
 
-  load: (@stream) ->
+  load: (@context) ->
     v = @clip.get("value")
     if v?
       @_onChange v
@@ -14,12 +14,12 @@ class ValueDecor extends require("./base")
   ###
 
   _onChange: (value) ->
+  
     unless value?
       value = ""
 
+    @block.replaceAll @block.paper.nodeFactory.createTextNode escapeHTML value
 
-    @node.target.replaceChildren @stream.createTextNode escapeHTML value
-    # @node.section.html escapeHTML value
 
 
 

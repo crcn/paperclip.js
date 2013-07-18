@@ -8,7 +8,7 @@ module.exports =
   paper            : paper
   Context          : paper.Context
   bindable         : require("bindable")
-  writers          : require("./paper/writers")
+  nodeFactories    : require("./paper/nodeFactories")
   registerModifier : paper.registerModifier
 
 if typeof window isnt "undefined"

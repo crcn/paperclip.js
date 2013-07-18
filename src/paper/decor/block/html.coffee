@@ -5,7 +5,7 @@ class HtmlDecor extends require("./base")
   ###
   ###
 
-  load: (stream) ->
+  load: (context) ->
     html = @clip.get("html")
     return if not html?
     if typeof html is "string" or not html.createContent

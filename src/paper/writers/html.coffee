@@ -10,6 +10,9 @@ class Html extends Base
   ###
 
   name: "html"
+
+  constructor: (@paper) ->
+    super()
   
   ### 
    just an html buffer

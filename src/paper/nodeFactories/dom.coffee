@@ -7,7 +7,7 @@ class Section
 
 	constructor: () ->
 
-class DomWriter
+class DomFactory
 	
 	###
 	###
@@ -28,9 +28,13 @@ class DomWriter
 	###
 	###
 
-	createFragment: () -> document.createDocumentFragment() 
+	createFragment: () -> 
+		frag = document.createDocumentFragment() 
+		for child in arguments
+			frag.appendChild child
+		frag
 
 
 
 
-module.exports = (context) -> new DomWriter context
+module.exports = (context) -> new DomFactory context

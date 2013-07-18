@@ -16,19 +16,12 @@ class TextBuilder extends require("./base")
   ###
   ###
 
-  _writeHead: (writer) ->
-    @target = writer.createTextNode @_buffer
-    super info
-
-  ###
-  ###
-
   clone: () -> new TextBuilder @_buffer
 
   ###
   ###
 
-  createNode: (writer) -> writer.createTextNode @_buffer
+  createNode: (nodeFactory) -> nodeFactory.createTextNode @_buffer
 
 
 
