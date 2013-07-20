@@ -16,11 +16,18 @@ describe("section test", function() {
     }
   })
   sectionInfo = new bindable.Object({ 
-    sections: {}
+    sections: {
+      blockValue: "bleh"
+    }
+  });
+
+  it("can display an initial message", function() {
+     writer = paper.bind(sectionInfo);
+     expect(writer.toString()).to.be("A message to our nice friends: bleh How nice was that!");
   });
 
   it("can display a section without anything in it", function() {
-     writer = paper.bind(sectionInfo);
+     sectionInfo.set("sections.blockValue", undefined)
      expect(writer.toString()).to.be("A message to our nice friends: <!--block--> How nice was that!");
   });
 

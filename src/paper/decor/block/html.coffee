@@ -32,14 +32,14 @@ class HtmlDecor extends require("./base")
   _onChange: (value) -> 
 
     unless value
-      @block.removeAll() 
+      return @block.removeAll() 
 
     if value.__isWriter
       node = value.node
     else if value.__isNode
       node = value
-    else if type(value) is "string"
-      node = @context.nodeFactory.parseHtml value 
+    else 
+      node = @context.nodeFactory.parseHtml String value 
 
     @block.replaceAll node
 

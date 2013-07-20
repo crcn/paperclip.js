@@ -94,7 +94,6 @@ class BlockBinding extends require("./base")
 
   replaceAll: () ->   
 
-
     # create a fragment out of all the nodes to place
     @node = newFragment = if arguments.length > 1 then @context.nodeFactory.createFragment(arguments...) else arguments[0]
 
@@ -102,7 +101,6 @@ class BlockBinding extends require("./base")
     
     oldNodes = @nodes
     @nodes = arguments
-
 
     # not added to the DOM? ignore the rest! 
     return unless firstNode.parentNode
@@ -118,7 +116,7 @@ class BlockBinding extends require("./base")
   ###
 
   removeAll: () ->
-    @replaceAll @createNode @context.nodeFactory
+    @replaceAll @context.nodeFactory.createComment "block"
 
   ###
   ###

@@ -176,13 +176,22 @@ class ClipScript extends events.EventEmitter
       return if @_watching[path].target is target
       @_watching[path].dispose()
 
+    initial = false
 
     @_watching[path] = 
       target  : target
       binding : binding = target.bind(path).to((value, oldValue) =>
-        return @_watchBindable(value, oldValue) if value?.__isBindable
-        return @_spyFunction(path, value, target) if type(value) is "function"
-      ).now().to(@update)
+
+        if value?.__isBindable
+          @_watchBindable(value, oldValue) 
+        else if type(value) is "function"
+          @_spyFunction(path, value, target)
+
+        if initial
+          @update()
+
+        initial = true
+      ).now()
       dispose : () ->
         binding.dispose()
     
@@ -273,9 +282,6 @@ class ClipScript extends events.EventEmitter
     ###
 
     
-
-
-
   ###
   ###
 
