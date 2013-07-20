@@ -16,13 +16,13 @@ class NodeBinding extends require("./base")
   ###
 
   constructor: (@name, options = {}) ->
-    super()
+  
+    super options.children
+
     @options = options
     @attributes = options.attrs or {}
     @_decor     = attrFactory.getDecor @
 
-    if options.children
-      @addChild options.children...
 
   ###
   ###

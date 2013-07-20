@@ -10,8 +10,10 @@ class Base
   ###
   ###
 
-  constructor: () ->
-    @children = []
+  constructor: (children = []) ->
+    @children = children
+    for child in children
+      child.parent = @
 
   ###
   ###
