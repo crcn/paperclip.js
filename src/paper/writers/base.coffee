@@ -24,9 +24,9 @@ class Base
   ###
   ###
 
-  dispose: () ->
+  unbind: () ->
     for child in @children or []
-      child.dispose()
+      child.unbind()
 
   ###
   ###

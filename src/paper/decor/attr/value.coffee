@@ -10,7 +10,7 @@ class ValueDecor extends require("./dataBind")
 
   bind: () ->
     super()
-    $(@element).bind ChangeDecor.events, @_onElementChange
+    (@$element = $(@element)).bind ChangeDecor.events, @_onElementChange
     @_onChange @clip.get("value")
   
 
@@ -28,6 +28,12 @@ class ValueDecor extends require("./dataBind")
         for ref in @refs
           @context.set ref, value
     ), 5
+
+  ###
+  ###
+
+  unbind: () ->
+    @$element?.unbind ChangeDecor.events, @_onElementChange
 
   ###
   ###

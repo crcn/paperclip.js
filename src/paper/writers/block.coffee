@@ -27,9 +27,16 @@ class BlockChild extends require("./base")
   ###
   ###
 
-  dispose: () ->
+  unbind: () -> 
     super()
-    @content.dispose()
+    #@content.unbind()
+
+  ###
+  ###
+
+  unbind: () ->
+    super()
+    @content.unbind()
     @
 
 
@@ -72,9 +79,9 @@ class BlockBinding extends require("./base")
   ###
   ###
 
-  dispose: () ->
+  unbind: () ->
     @clip.dispose()
-    @_decor.dispose()
+    @_decor.unbind()
     super()
 
   ###
@@ -106,10 +113,6 @@ class BlockBinding extends require("./base")
     # and remove the rest of the elements
     for rmNode in oldNodes
       rmNode.parentNode.removeChild rmNode
-
-
-
-
 
   ###
   ###

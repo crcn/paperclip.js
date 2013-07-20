@@ -18,10 +18,11 @@ class Collection
   ###
   ###
 
-  dispose: () ->
+  unbind: () ->
+    @_bound = false
     @clip?.dispose()
     for model in @_models
-      model.dispose()
+      model.unbind()
 
 
   ###

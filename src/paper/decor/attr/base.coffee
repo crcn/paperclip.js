@@ -2,6 +2,6 @@ class BaseDecor
   constructor: (@node, @name) ->
   load: (@context) ->
   bind: () ->
-  dispose: () ->
+  unbind: () ->
 
 module.exports = BaseDecor

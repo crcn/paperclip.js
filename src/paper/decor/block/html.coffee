@@ -24,9 +24,9 @@ class HtmlDecor extends require("./base")
   ###
   ###
 
-  dispose: () ->
+  unbind: () ->
     super()
-    @child?.dispose()
+    @child?.unbind()
 
 
 module.exports = HtmlDecor

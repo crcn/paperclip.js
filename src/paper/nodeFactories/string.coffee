@@ -32,6 +32,11 @@ class Element
     node.parentNode = @
     @childNodes.push node
 
+
+  ###
+  ###
+
+
   ###
   ###
 
@@ -44,9 +49,7 @@ class Element
   ###
 
   insertBefore: (newElement, before) ->
-    i = @childNodes.indexOf before
-    return unless ~i
-    @childNodes.splice i, 0, newElement
+    @_splice @childNodes.indexOf(before), 0, newElement
 
 
   ###
@@ -63,6 +66,19 @@ class Element
     buffer.push "<", @name, "/>"
 
     buffer.join ""
+
+  ###
+  ###
+
+  _splice: (index = -1, count, node) ->
+
+    return unless ~index
+
+    if node
+      node.parentNode = @
+
+    @childNodes.splice arguments...
+
 
 
 

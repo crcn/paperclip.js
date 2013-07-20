@@ -41,6 +41,14 @@ class NodeBinding extends require("./base")
   ###
   ###
 
+  unbind: () ->
+    super()
+    @_decor.unbind()
+    @
+
+  ###
+  ###
+
   _loadChildren: (context) ->
     @_decor.load context
     super context

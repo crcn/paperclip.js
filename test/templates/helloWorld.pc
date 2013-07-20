@@ -1,1 +1,1 @@
-hello {{name}}!
+hello {{ name.first }} {{ name.last }}!

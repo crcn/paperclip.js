@@ -38,7 +38,7 @@ class BlockDecor extends require("./base")
     if show
       @child = @node.createContent().attach(@node, @context).bind()
     else
-      @child?.dispose()
+      @child?.unbind()
       @child = undefined
       
 

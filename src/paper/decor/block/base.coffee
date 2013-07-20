@@ -17,12 +17,13 @@ class NodeDecor
   ###
 
   bind: () -> 
-    @clip.bind(@scriptName).to(@_onChange).now()
+    @_binding = @clip.bind(@scriptName).to(@_onChange).now()
 
   ###
   ###
 
-  dispose: () ->
+  unbind: () ->
+    @_binding?.dispose()
 
 
   ###
