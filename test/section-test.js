@@ -15,6 +15,7 @@ describe("section test", function() {
   });
 
   it("can insert a simple hello message", function() {
-     paper.load(persion);
+     writer = paper.load(person);
+     console.log(writer.toString())
   });
 });
