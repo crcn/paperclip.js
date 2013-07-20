@@ -1,23 +1,12 @@
 bindable = require "bindable"
 
-class Element
-
+class Container
+  
   ###
   ###
 
-  nodeType: 3
-
-  ###
-  ###
-
-  constructor: (@name) ->
-    @attributes = {}
+  constructor: () ->
     @childNodes = []
-
-  ###
-  ###
-
-  setAttribute: (name, value) -> @attributes[name] = value
 
   ###
   ###
@@ -31,11 +20,6 @@ class Element
 
     node.parentNode = @
     @childNodes.push node
-
-
-  ###
-  ###
-
 
   ###
   ###
@@ -55,6 +39,41 @@ class Element
   ###
   ###
 
+  _splice: (index = -1, count, node) ->
+
+    return unless ~index
+
+    if node
+      node.parentNode = @
+
+    @childNodes.splice arguments...
+
+
+
+
+class Element extends Container
+
+  ###
+  ###
+
+  nodeType: 3
+
+  ###
+  ###
+
+  constructor: (@name) ->
+    super()
+    @attributes = {}
+
+  ###
+  ###
+
+  setAttribute: (name, value) -> @attributes[name] = value
+
+
+  ###
+  ###
+
   toString: () ->
     buffer = ["<", @name]
 
@@ -66,18 +85,6 @@ class Element
     buffer.push "<", @name, "/>"
 
     buffer.join ""
-
-  ###
-  ###
-
-  _splice: (index = -1, count, node) ->
-
-    return unless ~index
-
-    if node
-      node.parentNode = @
-
-    @childNodes.splice arguments...
 
 
 
@@ -115,29 +122,18 @@ class Comment extends Text
 
 
 
-class Fragment
+class Fragment extends Container
   
   ###
   ###
 
   nodeType: 11
 
-  ###
-  ###
-
-  constructor: () ->
-    @_children = []
 
   ###
   ###
 
-  appendChild: (child) -> @_children.push child
-
-
-  ###
-  ###
-
-  toString: () -> @_children.join ""
+  toString: () -> @childNodes.join ""
 
 
 

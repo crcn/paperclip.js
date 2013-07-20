@@ -55,7 +55,7 @@ class Base
   ###
   ###
 
-  createNode: (nodeFactory) -> nodeFactory.createElement "div"
+  createNode: (nodeFactory) -> nodeFactory.createFragment()
 
 
   ###
