@@ -24,9 +24,7 @@ describe("block value test", function() {
 			expect(writer.toString()).to.be("hello Craig C!");
 		});
 
-
 		it("can be bound", function() {
-			writer.bind();
 			expect(writer.toString()).to.be("hello Josh L!");
 			person.set("name.first", "Sam");
 			expect(writer.toString()).to.be("hello Sam L!");
@@ -41,9 +39,15 @@ describe("block value test", function() {
 			expect(writer.toString()).to.be("hello Sam C!");
 		});
 
+		/**
+		 */
+
+		it("can be re-bound", function() {
+			writer.bind();
+		});
+
 
 		it("properly url encodes html entities", function() {
-			writer.bind();
 			person.set("name.first", "<div");
 			expect(writer.toString()).to.be("hello &lt;div C!");
 		});
