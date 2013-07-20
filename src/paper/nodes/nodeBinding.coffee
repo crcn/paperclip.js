@@ -34,6 +34,14 @@ class NodeBinding extends require("./bindable")
   ###
   ###
 
+  dispose: () ->
+    super()
+    @_decor.dispose()
+    @
+
+  ###
+  ###
+
   _writeHead: (context) ->
     this._writeStartBlock context
     context.buffer.push "<#{@name}"

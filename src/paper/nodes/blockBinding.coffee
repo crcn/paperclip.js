@@ -27,6 +27,13 @@ class BlockChild extends require("./bindable")
   ###
   ###
 
+  unbind: () -> 
+    super()
+    #@content.unbind()
+
+  ###
+  ###
+
   dispose: () ->
     super()
     @content.dispose()
