@@ -117,6 +117,12 @@ class BlockBinding extends require("./base")
   ###
   ###
 
+  removeAll: () ->
+    @replaceAll @createNode @context.nodeFactory
+
+  ###
+  ###
+
   load: (context) ->
     @clip.reset context
     @clip.update()

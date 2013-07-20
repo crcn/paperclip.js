@@ -1,3 +1,5 @@
+type = require "type-component"
+
 # HTML section for 
 class HtmlDecor extends require("./base")
   
@@ -5,15 +7,10 @@ class HtmlDecor extends require("./base")
   ###
   ###
 
-  load: (context) ->
+  load: (@context) ->
     html = @clip.get("html")
     return if not html?
-    console.log html
-    if typeof html is "string" or not html.createContent
-      context.buffer.push html
-    else
-      @child = html.createContent()
-      @child.load context
+    @_onChange html
 
   ###
   ###
@@ -28,6 +25,23 @@ class HtmlDecor extends require("./base")
   unbind: () ->
     super()
     @child?.unbind()
+
+  ###
+  ###
+
+  _onChange: (value) -> 
+
+    unless value
+      @block.removeAll() 
+
+    if value.__isWriter
+      node = value.node
+    else if value.__isNode
+      node = value
+    else if type(value) is "string"
+      node = @context.nodeFactory.parseHtml value 
+
+    @block.replaceAll node
 
 
 module.exports = HtmlDecor

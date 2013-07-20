@@ -34,6 +34,15 @@ class DomFactory
 			frag.appendChild child
 		frag
 
+	###
+	###
+
+	parseHtml: (text) -> 
+		div = @createElement "div"
+		div.innerHTML = text
+		@createFragment div.childNodes...
+
+
 
 
 

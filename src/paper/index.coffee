@@ -28,10 +28,15 @@ class Paper
   ###
   ###
 
-  load: (@context) ->
+  load: (context) ->
+    context.nodeFactory = @nodeFactory
     writer = fragment @templateFactory(block, element, text)
-    @context.nodeFactory = @nodeFactory
-    writer.load @context
+    writer.load context
+
+  ###
+  ###
+
+  bind: (context) -> @load(context).bind()
 
 
 

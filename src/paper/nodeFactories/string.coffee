@@ -1,6 +1,10 @@
 bindable = require "bindable"
 
-class Container
+class Node
+  __isNode: true
+
+class Container extends Node
+
   
   ###
   ###
@@ -13,12 +17,13 @@ class Container
 
   appendChild: (node) -> 
 
+
     # frag
     if node.nodeType is 11
       @appendChild(child) for child in node.childNodes  
       return
 
-    node.parentNode = @
+    @_link node
     @childNodes.push node
 
   ###
@@ -44,9 +49,20 @@ class Container
     return unless ~index
 
     if node
-      node.parentNode = @
+      @_link node
 
     @childNodes.splice arguments...
+
+  ###
+  ###
+
+  _link: (node) ->  
+
+    unless node.__isNode
+      throw new Error "cannot append non-node"
+
+    node.parentNode = @
+
 
 
 
@@ -89,7 +105,7 @@ class Element extends Container
 
 
 
-class Text
+class Text extends Node
 
   ###
   ###
@@ -167,6 +183,14 @@ class StringNodeFactory
     for child in arguments
       frag.appendChild child
     frag
+
+  ###
+  ###
+
+  parseHtml: (buffer) -> 
+
+    # this should really parse HTML, but too much overhead
+    @createTextNode buffer
 
 
 module.exports = (context) -> new StringNodeFactory context

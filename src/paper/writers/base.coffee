@@ -5,7 +5,7 @@ class Base
   ###
   ###
 
-  __isNode: true
+  __isWriter: true
 
   ###
   ###
