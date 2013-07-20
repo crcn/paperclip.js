@@ -8,9 +8,15 @@ describe("section test", function() {
   var paper = paperclip.paper(templates.sectionBinding),
   blockValuePaper = paperclip.paper(templates.blockValue),
   writer,
-  person = new bindable.Object({ 
+  person = new bindable.Object({
+    name: {
+      first: "Craig",
+      last: "C"
+    }
+  })
+  sectionInfo = new bindable.Object({ 
     sections: {
-      blockValue: blockValuePaper
+      blockValue: blockValuePaper.load(person)
     } 
   });
 
