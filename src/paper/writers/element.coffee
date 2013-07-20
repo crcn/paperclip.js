@@ -15,13 +15,14 @@ class NodeBinding extends require("./base")
   ###
   ###
 
-  constructor: (@name, @options = {}) ->
+  constructor: (@name, options = {}) ->
     super()
+    @options = options
     @attributes = options.attrs or {}
     @_decor     = attrFactory.getDecor @
 
     if options.children
-      @addChild options.children
+      @addChild options.children...
 
   ###
   ###
@@ -34,8 +35,8 @@ class NodeBinding extends require("./base")
   ###
   ###
 
-  _load: (context) ->
-    @node = context.createElement @name
+  _load: (paper) ->
+    @node = paper.createElement @name
     super context
 
   ###
@@ -49,15 +50,20 @@ class NodeBinding extends require("./base")
   ###
   ###
 
-  _loadChildren: (context) ->
-    @_decor.load context
-    super context
+  _loadChildren: (paper) ->
+    @_decor.load paper.context
+    super paper
 
   ###
   ###
 
   clone: () -> new NodeBinding @name, @options
 
+  ###
+  ###
+
+  createNode: (nodeFactory) -> nodeFactory.createElement @name
 
 
-module.exports = NodeBinding
+
+module.exports = (name, options) -> new NodeBinding name, options

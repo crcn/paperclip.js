@@ -25,4 +25,4 @@ class TextBuilder extends require("./base")
 
 
 
-module.exports = TextBuilder
+module.exports = (buffer) -> new TextBuilder buffer

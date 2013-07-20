@@ -9,6 +9,8 @@ describe("DOM test", function() {
 
 	describe("hello world writer", function() {
 
+		console.log(String(templates.blockValue))
+
 		var paper = paperclip.paper(templates.blockValue),
 		writer,
 		person = new bindable.Object({ name: { first: "Craig", last: "C" } });

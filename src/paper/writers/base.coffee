@@ -31,17 +31,18 @@ class Base
   ###
   ###
 
-  load: (@context) -> 
+  load: (@paper) -> 
+    @context = @paper.context
     @node = @createNode @paper.nodeFactory
-    @_loadChildren context
+    @_loadChildren paper
     @
 
   ###
   ###
 
-  _loadChildren: (context) -> 
+  _loadChildren: (paper) -> 
     for child in @children
-      @node.appendChild child.load(context).node
+      @node.appendChild child.load(paper).node
 
   ###
   ###
@@ -49,7 +50,6 @@ class Base
   addChild: () ->
     for child in arguments
       child.parent = @
-      child.paper  = @paper
       @children.push child
 
   ###

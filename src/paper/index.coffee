@@ -1,9 +1,13 @@
 Context    = require "./context"
-Html       = require "./writers/html"
 pilot      = require "pilot-block"       
 asyngleton = require "asyngleton"
 modifiers  = require "./defaultModifiers"
 nodeFactories = require "./nodeFactories"
+
+fragment = require "./writers/fragment"
+element  = require "./writers/element"
+text     = require "./writers/text"
+block    = require "./writers/block"
 
 class Paper
 
@@ -24,17 +28,15 @@ class Paper
   ###
   ###
 
-  load: (@context) -> @templateFactory(@).load(context)
+  load: (@context) -> 
+    writer = fragment @templateFactory(block, element, text)
+    writer.load @
 
   ###
   ###
 
   bind: (@context) -> @load(context).bind()
 
-  ###
-  ###
-
-  create: () -> new Html @
 
 
 

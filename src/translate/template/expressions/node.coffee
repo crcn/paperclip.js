@@ -19,7 +19,7 @@ class NodeExpression extends require("./base")
 
   toJsString: () ->
 
-    buffer = ["').element('#{@name}'"]
+    buffer = ["'), element('#{@name}'"]
 
     options = []
 
@@ -27,12 +27,12 @@ class NodeExpression extends require("./base")
       options.push " attrs: #{@attributes.toJsString()} "
 
     if @children
-      options.push " children: paper.create().text('#{@children.toString()}') "
+      options.push " children: [ text('#{@children.toString()}') ] "
 
     if options.length
       buffer.push ", {#{options}}"
 
-    buffer.push ").text('"
+    buffer.push "), text('"
 
     buffer.join("")
 

@@ -43,15 +43,15 @@ class BlockChild extends require("./base")
   ###
   ###
 
-  load: (context) ->
-    return super context if not @with
-    super context.child(@with)
+  load: (paper) ->
+    return super paper if not @with
+    super paper.child(@with)
 
   ###
   ###
 
-  _loadChildren: (context) ->
-    @content.load context
+  _loadChildren: (paper) ->
+    @content.load paper
 
 class BlockBinding extends require("./base")
   
@@ -117,16 +117,16 @@ class BlockBinding extends require("./base")
   ###
   ###
 
-  load: (context) ->
-    @clip.reset context
+  load: (paper) ->
+    @clip.reset paper.context
     @clip.update()
-    super context
+    super paper
 
   ###
   ###
 
-  _loadChildren: (context) ->
-    @_decor.load context
+  _loadChildren: (paper) ->
+    @_decor.load paper.context
 
   ###
   ###
@@ -142,4 +142,5 @@ class BlockBinding extends require("./base")
     node
 
   
-module.exports = BlockBinding
+module.exports = (script, contentFactory, childBinding) -> 
+  new BlockBinding script, contentFactory, childBinding

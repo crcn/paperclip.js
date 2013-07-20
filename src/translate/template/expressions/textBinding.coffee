@@ -13,7 +13,7 @@ class TextBindingExpression extends require("./base")
   ###
   ###
 
-  toString: () -> "').#{@toMethodString()}.text('"
+  toString: () -> "'), #{@toMethodString()}, text('"
 
   ###
   ###

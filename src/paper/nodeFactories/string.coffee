@@ -129,7 +129,6 @@ class Fragment extends Container
 
   nodeType: 11
 
-
   ###
   ###
 
