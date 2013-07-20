@@ -3,5 +3,6 @@ class BaseDecor
   load: (@context) ->
   bind: () ->
   dispose: () ->
+  unbind: () -> @dispose()
 
 module.exports = BaseDecor
