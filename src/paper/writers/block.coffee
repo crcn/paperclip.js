@@ -80,7 +80,7 @@ class BlockBinding extends require("./base")
   ###
 
   unbind: () ->
-    @clip.dispose()
+    @clip.unwatch()
     @_decor.unbind()
     super()
 

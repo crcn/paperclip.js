@@ -4,7 +4,7 @@ bindable = require("bindable"),
 expect = require("expect.js");
 
 
-describe("DOM test", function() {
+describe("block value test", function() {
 
 
 	describe("hello world writer", function() {
@@ -39,6 +39,13 @@ describe("DOM test", function() {
 			writer.unbind();
 			person.set("name.first", "John");
 			expect(writer.toString()).to.be("hello Sam C!");
+		});
+
+
+		it("properly url encodes html entities", function() {
+			writer.bind();
+			person.set("name.first", "<div");
+			expect(writer.toString()).to.be("hello &lt;div C!");
 		});
 
 	});

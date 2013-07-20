@@ -144,6 +144,16 @@ class ClipScript extends events.EventEmitter
   ###
   ###
 
+  unwatch: () ->
+    @__watch = false
+    for key of @_watching
+      @_watching[key].dispose()
+    @_watching = {}
+    @
+
+  ###
+  ###
+
   references: () ->  @script.refs or []
 
   ###
@@ -297,6 +307,15 @@ class ClipScripts
   ###
   ###
 
+  unwatch: () ->
+    for key of @_scripts
+      @_scripts[key].unwatch()
+    @
+
+
+  ###
+  ###
+
   update: () ->
     for key of @_scripts
       @_scripts[key].update()
@@ -359,19 +378,37 @@ class Clip
     if options.watch isnt false
       @watch()
 
+  ###
+  ###
+
   reset: (data = {}, update = true) ->
     @data = if data.__isBindable then data else new bindable.Object data
     if update
       @update()
     @
 
+  ###
+  ###
+
   watch: () ->
     @scripts.watch()
     @
 
+  ###
+  ###
+
+  unwatch: () ->
+    @scripts.unwatch()
+
+  ###
+  ###
+
   update: () ->
     @scripts.update()
     @
+
+  ###
+  ###
 
   dispose: () -> 
 

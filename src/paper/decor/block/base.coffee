@@ -24,6 +24,7 @@ class NodeDecor
 
   unbind: () ->
     @_binding?.dispose()
+    @_binding = undefined
 
 
   ###
