@@ -25,6 +25,7 @@ describe("block value test", function() {
 		});
 
 		it("can be bound", function() {
+			writer.bind()
 			expect(writer.toString()).to.be("hello Josh L!");
 			person.set("name.first", "Sam");
 			expect(writer.toString()).to.be("hello Sam L!");

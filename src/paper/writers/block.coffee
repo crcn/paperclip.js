@@ -43,15 +43,15 @@ class BlockChild extends require("./base")
   ###
   ###
 
-  load: (paper) ->
-    return super paper if not @with
+  load: (context) ->
+    return super context if not @with
     super paper.child(@with)
 
   ###
   ###
 
-  _loadChildren: (paper) ->
-    @content.load paper
+  _loadChildren: (context) ->
+    @content.load context
 
 class BlockBinding extends require("./base")
   
@@ -96,7 +96,7 @@ class BlockBinding extends require("./base")
 
 
     # create a fragment out of all the nodes to place
-    @node = newFragment = if arguments.length > 1 then @paper.nodeFactory.createFragment(arguments...) else arguments[0]
+    @node = newFragment = if arguments.length > 1 then @context.nodeFactory.createFragment(arguments...) else arguments[0]
 
     firstNode = @nodes[0]
     
@@ -117,16 +117,16 @@ class BlockBinding extends require("./base")
   ###
   ###
 
-  load: (paper) ->
-    @clip.reset paper.context
+  load: (context) ->
+    @clip.reset context
     @clip.update()
-    super paper
+    super context
 
   ###
   ###
 
-  _loadChildren: (paper) ->
-    @_decor.load paper.context
+  _loadChildren: (context) ->
+    @_decor.load context
 
   ###
   ###

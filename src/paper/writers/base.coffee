@@ -33,18 +33,18 @@ class Base
   ###
   ###
 
-  load: (@paper) -> 
-    @context = @paper.context
-    @node = @createNode @paper.nodeFactory
-    @_loadChildren paper
+  load: (@context) -> 
+    @context = context
+    @node = @createNode context.nodeFactory
+    @_loadChildren context
     @
 
   ###
   ###
 
-  _loadChildren: (paper) -> 
+  _loadChildren: (context) -> 
     for child in @children
-      @node.appendChild child.load(paper).node
+      @node.appendChild child.load(context).node
 
   ###
   ###

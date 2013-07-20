@@ -16,7 +16,7 @@ class NodeBinding extends require("./base")
   ###
 
   constructor: (@name, options = {}) ->
-  
+
     super options.children
 
     @options = options
@@ -35,13 +35,6 @@ class NodeBinding extends require("./base")
   ###
   ###
 
-  _load: (paper) ->
-    @node = paper.createElement @name
-    super context
-
-  ###
-  ###
-
   unbind: () ->
     super()
     @_decor.unbind()
@@ -50,9 +43,9 @@ class NodeBinding extends require("./base")
   ###
   ###
 
-  _loadChildren: (paper) ->
-    @_decor.load paper.context
-    super paper
+  _loadChildren: (context) ->
+    @_decor.load context
+    super context
 
   ###
   ###
