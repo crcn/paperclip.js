@@ -378,8 +378,6 @@ class Clip
     @_self?.dispose()
     @scripts?.dispose()
 
-    @_self     = undefined
-    @_scripts  = undefined
 
 
   script: (name) ->
