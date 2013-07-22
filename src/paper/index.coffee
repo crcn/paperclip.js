@@ -19,9 +19,9 @@ class Paper
     # node, or browser?
     unless @nodeFactory 
       if typeof window is "undefined"
-        @nodeFactory = nodeFactories.string()
+        @nodeFactory = nodeFactories.string
       else
-        @nodeFactory = nodeFactories.dom()
+        @nodeFactory = nodeFactories.dom
 
     @modifiers = modifiers
 

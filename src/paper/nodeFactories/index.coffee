@@ -1,3 +1,1 @@
-module.exports = 
-	dom    : require("./dom")
-	string : require("./string")
+module.exports = require("nofactor")
