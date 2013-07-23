@@ -37,7 +37,10 @@ class ModelDecor extends require("./dataBind")
           model = @context
 
         if model
-          dref.set model, ref, value
+          if model.set
+            model.set ref, value
+          else
+            dref.set model, ref, value
 
 
     ), 5
