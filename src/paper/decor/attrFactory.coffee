@@ -7,6 +7,7 @@ attrDecorators =
   show    : require("./attr/show")
   style   : require("./attr/style")
   value   : require("./attr/value")
+  model   : require("./attr/model")
 
   # deprecated
   click      : require("./attr/event")
