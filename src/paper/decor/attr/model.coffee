@@ -33,7 +33,7 @@ class ModelDecor extends require("./dataBind")
       if @clip.get("bothWays") isnt false
         ref = name or (if @refs.length then @refs[0] else undefined)
 
-        unless model
+        unless name
           model = @context
 
         if model
@@ -61,7 +61,7 @@ class ModelDecor extends require("./dataBind")
     if name
       @_modelBinding = model?.bind(name).to(@_onValueChange).now()
     else
-      @_onValueChange value
+      @_onValueChange model
 
 
   ###
