@@ -24,15 +24,16 @@ class NodeExpression extends require("./base")
     options = []
 
     if @attributes
-      options.push " attrs: #{@attributes.toJsString()} "
+      buffer.push ", #{@attributes.toJsString()} "
+    else
+      buffer.push ", {}"
 
     if @children
-      options.push " children: [ text('#{@children.toString()}') ] "
+      buffer.push ", [ text('#{@children.toString()}') ] "
 
-    if options.length
-      buffer.push ", {#{options}}"
 
     buffer.push "), text('"
+
 
     buffer.join("")
 

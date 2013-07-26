@@ -23,14 +23,13 @@ class Paper
       else
         @nodeFactory = nodeFactories.dom
 
-    @modifiers = modifiers
 
   ###
   ###
 
   load: (context) ->
     context.nodeFactory = @nodeFactory
-    writer = fragment @templateFactory(block, element, text)
+    writer = fragment @templateFactory(block, element, text, modifiers)
     writer.load context
 
   ###

@@ -16,9 +16,7 @@ class NodeBinding extends require("./base")
   ###
 
   constructor: (@name, options = {}) ->
-
     super options.children
-
     @options = options
     @attributes = options.attrs or {}
     @_decor     = attrFactory.getDecor @
@@ -59,4 +57,4 @@ class NodeBinding extends require("./base")
 
 
 
-module.exports = (name, options) -> new NodeBinding name, options
+module.exports = (name, attributes, children) -> new NodeBinding name, options
