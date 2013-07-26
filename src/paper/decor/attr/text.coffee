@@ -13,7 +13,7 @@ class TextBinding extends require("./base")
 
   bind: () ->
     super()
-    @clippedBuffer.bind("text").to(@_onChange).now()
+    @clippedBuffer.bind("text").to(@_onChange)
 
   ###
   ###
