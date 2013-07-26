@@ -1,60 +1,25 @@
-async = require("async")
-ClippedBuffer = require("../../clip/buffer")
-Base = require "./base"
 attrFactory = require("../decor/attrFactory")
 
 
-
-class NodeBinding extends require("./base")
-
-  ###
-  ###
-
-  name: "element"
+class ElementWriter 
 
   ###
   ###
 
-  constructor: (@name, options = {}) ->
-    super options.children
-    @options = options
-    @attributes = options.attrs or {}
-    @_decor     = attrFactory.getDecor @
-
+  constructor: (@paper, @nodeFactory) ->
 
   ###
   ###
 
-  bind: () =>
-    super()
-    @_decor.bind()
-    @
+  write: (name, attributes, children) =>  
+    element = @nodeFactory.createElement
 
-  ###
-  ###
+    for child in children
+      element.appendChild child
 
-  unbind: () ->
-    super()
-    @_decor.unbind()
-    @
-
-  ###
-  ###
-
-  _loadChildren: (context) ->
-    @_decor.load context
-    super context
-
-  ###
-  ###
-
-  clone: () -> new NodeBinding @name, @options
-
-  ###
-  ###
-
-  createNode: (nodeFactory) -> nodeFactory.createElement @name
+    element
 
 
 
-module.exports = (name, attributes, children) -> new NodeBinding name, options
+
+module.exports = ElementWriter

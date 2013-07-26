@@ -4,6 +4,7 @@ bindable = require("bindable"),
 expect = require("expect.js");
 
 
+return;
 describe("block value test", function() {
 
 

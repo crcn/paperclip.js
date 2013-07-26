@@ -1,28 +1,15 @@
-
-class TextBuilder extends require("./base")
+class TextWriter 
   
   ###
   ###
 
-  name: "text"
+  constructor: (@pape, @nodeFactory) ->
 
   ###
   ###
 
-  constructor: (buffer = "") -> 
-    @_buffer = buffer
-    super()
-
-  ###
-  ###
-
-  clone: () -> new TextBuilder @_buffer
-
-  ###
-  ###
-
-  createNode: (nodeFactory) -> nodeFactory.createTextNode @_buffer
+  write: (text) =>
+    @nodeFactory.createTextNode text
 
 
-
-module.exports = (buffer) -> new TextBuilder buffer
+module.exports = TextWriter
