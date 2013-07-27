@@ -5,8 +5,7 @@ paper = require "./paper"
 # clips compiled data-binding to observables
 module.exports = 
   Clip             : Clip
-  paper            : paper
-  Context          : paper.Context
+  template         : paper.template
   bindable         : require("bindable")
   nodeFactories    : require("./paper/nodeFactories")
   registerModifier : paper.registerModifier

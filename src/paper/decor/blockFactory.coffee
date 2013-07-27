@@ -11,12 +11,12 @@ class Factory
   ###
   ###
 
-  getDecor: (node) ->
+  getDecor: (section, clip, nodeFactory) ->
 
-    decor = new DecorCollection()
-    for scriptName in node.clip.scripts.names
+    decor = new DecorCollection clip
+    for scriptName in clip.scripts.names
       if bd = blockDecorators[scriptName]
-        decor.push new bd node, scriptName
+        decor.push new bd section, clip, nodeFactory, scriptName
 
     decor
 

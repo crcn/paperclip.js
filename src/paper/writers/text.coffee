@@ -1,9 +1,4 @@
-class TextWriter 
-  
-  ###
-  ###
-
-  constructor: (@pape, @nodeFactory) ->
+class TextWriter extends require("./base")
 
   ###
   ###

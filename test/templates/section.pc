@@ -1,0 +1,5 @@
+A message to our nice friends:
+
+{{ html: sections.blockValue }}
+
+How nice was that!

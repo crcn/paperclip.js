@@ -1,12 +1,7 @@
 attrFactory = require("../decor/attrFactory")
 
 
-class ElementWriter 
-
-  ###
-  ###
-
-  constructor: (@paper, @nodeFactory) ->
+class ElementWriter extends require("./base")
 
   ###
   ###

@@ -3,9 +3,9 @@ class NodeDecor
   ###
   ###
 
-  constructor: (@block, @scriptName) ->
-    @script = block.clip.script(@scriptName)
-    @clip   = block.clip
+  constructor: (@section, @clip, @nodeFactory, @scriptName) ->
+    @script = @clip.script(@scriptName)
+    @clip   = @clip
 
 
   ###

@@ -1,47 +1,15 @@
-Context    = require "./context"
-pilot      = require "pilot-block"       
-asyngleton = require "asyngleton"
-modifiers  = require "./defaultModifiers"
-nodeFactories = require "./nodeFactories"
+Template = require "./template"
 
-fragment = require "./writers/fragment"
-element  = require "./writers/element"
-text     = require "./writers/text"
-block    = require "./writers/block"
+###
+ creates new bindings
+###
 
-class Paper
+exports.template = (paper, nodeFactory) ->
+  new Template paper, nodeFactory
 
-  ###
-  ###
+###
+  paperclip modifiers using pipes
+###
 
-  constructor: (@templateFactory, @nodeFactory) ->
-
-    # node, or browser?
-    unless @nodeFactory 
-      if typeof window is "undefined"
-        @nodeFactory = nodeFactories.string
-      else
-        @nodeFactory = nodeFactories.dom
-
-
-  ###
-  ###
-
-  load: (context) ->
-    context.nodeFactory = @nodeFactory
-    writer = fragment @templateFactory(block, element, text, modifiers)
-    writer.load context
-
-  ###
-  ###
-
-  bind: (context) -> @load(context).bind()
-
-
-
-module.exports = (templateFactory, nodeFactory) -> new Paper templateFactory, nodeFactory
-module.exports.Context = Context
 module.exports.registerModifier = (name, modifier) ->
   modifiers[name] = modifier
-
-

@@ -5,7 +5,7 @@ class Collection
   ###
   ###
 
-  constructor: () ->
+  constructor: (@clip) ->
     @_models = []
 
   ###
@@ -20,7 +20,7 @@ class Collection
 
   unbind: () ->
     @_bound = false
-    @clip?.dispose()
+    @clip.dispose()
     for model in @_models
       model.unbind()
 
@@ -28,18 +28,19 @@ class Collection
   ###
   ###
 
-  load: (stream) -> 
+  load: (context) -> 
   
-    @clip?.reset stream.context, false
+    @clip.reset context
 
     for decor in @_models
-      decor.load stream
+      decor.load context
 
 
   ###
   ###
 
   bind: () ->
+    @clip.watch()
     return if @_bound
     @_bound = true
     for decor in @_models

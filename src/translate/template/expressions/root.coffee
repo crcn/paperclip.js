@@ -8,6 +8,6 @@ class RootExpression extends require("./base")
 
   
   toString: () ->
-    "module.exports = function(block, element, text, modifiers){ return [ text('#{@children}') ] }"
+    "module.exports = function(fragment, block, element, text, modifiers){ return fragment([ text('#{@children}') ]) }"
 
 module.exports = RootExpression
