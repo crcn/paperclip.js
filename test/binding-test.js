@@ -273,7 +273,58 @@ describe("binding", function() {
 
 
   describe("assignments", function() {
+    it("can assign a value", function() {
+      var v = pc.
+      template("{{ b = a }}").
+      load({ 
+        a: "a"
+      });
 
+      expect(v.context.get("b")).to.be("a");
+    });
+
+    it("can assign a nested value", function() {
+      var v = pc.
+      template("{{ b.c.d = a }}").
+      load({ 
+        a: "a"
+      });
+
+      expect(v.context.get("b.c.d")).to.be("a");
+    });
+
+    it("can assign a bool value", function() {
+
+      var v = pc.
+      template("{{ b.c.d = a }}").
+      load({ 
+        a: false
+      });
+
+      expect(v.context.get("b.c.d")).to.be(false);
+    });
+
+    it("can assign a bool value with not op", function() {
+
+      var v = pc.
+      template("{{ b.c.d = !a }}").
+      load({ 
+        a: false
+      });
+
+      expect(v.context.get("b.c.d")).to.be(true);
+    });
+
+    it("can assign a bool value by casting a value", function() {
+
+      var v = pc.
+      template("{{ exists = !!a }}").
+      load({ 
+        a: "b"
+      });
+
+      expect(v.context.get("exists")).to.be(true);
+    });
   });
 
 
