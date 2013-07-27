@@ -171,8 +171,20 @@ describe("binding", function() {
 
   describe("strings", function() {
     it("can be concated together", function() {
+      var v = pc.
+      template("{{ a + b }}").
+      load({ a:"a", b:"b" });
 
+      expect(v.toString()).to.be("ab");
     });
+
+    it("can be defined within the binding", function() {
+      var v = pc.
+      template("{{ 'abba' }}").
+      load();
+
+      expect(v.toString()).to.be("abba");
+    })
   });
 
   describe("nested references", function() {
@@ -192,15 +204,76 @@ describe("binding", function() {
       expect(v.toString()).to.be("doesn&apos;t exist!");
     });
 
+  });
 
+  describe("functions", function() {
+    it("can be called", function() {
+
+      var v = pc.
+      template("{{ run() }}").
+      load({ 
+        run: function() {
+          return "abba"
+        }
+      });
+
+      expect(v.toString()).to.be("abba");
+    });
+
+    it("can be called on a nested ref", function() {
+
+      var v = pc.
+      template("{{ a.run() }}").
+      load({ 
+        a: {
+          run: function() {
+            return "aaaa"
+          }
+        } 
+      });
+
+      expect(v.toString()).to.be("aaaa");
+    });
+
+    it("don't break if they're undefined", function() {
+
+      var v = pc.
+      template("{{ run() }}").
+      load();
+
+      expect(v.toString()).to.be("");
+    });
+
+    it("can be called with params", function() {
+
+      var v = pc.
+      template("{{ run(500) }}").
+      load({ 
+        run: function(param) {
+          return param;
+        } 
+      });
+
+      expect(v.toString()).to.be("500");
+    })
+
+    it("can be used with == expression", function() {
+
+      var v = pc.
+      template("{{ run() == 'abba' }}").
+      load({ 
+        run: function() {
+          return 'abba';
+        } 
+      });
+
+      expect(v.toString()).to.be("true");
+    })
   });
 
 
   describe("assignments", function() {
 
-  });
-
-  describe("function calls", function() {
   });
 
 
