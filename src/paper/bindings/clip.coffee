@@ -22,6 +22,6 @@ class ClipBinding extends require("./base")
   ###
 
   unbind: () ->
-    @clip.unbind()
+    @clip.unwatch()
 
 module.exports = ClipBinding

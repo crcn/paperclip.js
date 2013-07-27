@@ -35,7 +35,7 @@ class Collection extends BaseBinding
   unbind: () ->
     return unless @_bound
     @_bound = false
-    binding.bind() for binding in @_source
+    binding.unbind() for binding in @_source
 
 
 module.exports = Collection

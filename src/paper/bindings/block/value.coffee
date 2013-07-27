@@ -1,4 +1,4 @@
-escapeHTML = require "../../utils/escapeHTML"
+ent = require "ent"
 
 class ValueDecor extends require("./base")
   
@@ -18,7 +18,7 @@ class ValueDecor extends require("./base")
     unless value?
       value = ""
 
-    @section.replaceChildNodes @nodeFactory.createTextNode escapeHTML value
+    @section.replaceChildNodes @nodeFactory.createTextNode ent.encode value
 
 
 

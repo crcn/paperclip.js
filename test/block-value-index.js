@@ -37,8 +37,9 @@ describe("basic", function() {
       expect(content.toString()).to.be("hello john b!");
       content.unbind();
       person.set("name.first", "jake");
-      expect(content.toString()).to.be("hello jake b!");
-    })
+      expect(content.toString()).to.be("hello john b!");
+    });
+
   });
 
 
