@@ -10,7 +10,8 @@ class Collection extends BaseBinding
   ###
   ###
 
-  push: (binding) -> @_source.push binding
+  push: () -> 
+    @_source.push arguments...
 
   ###
   ###

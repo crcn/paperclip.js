@@ -1,4 +1,4 @@
-# attrFactory = require("../decor/attrFactory")
+# nodeBindingFactory = require("../decor/node")
 
 
 class ElementWriter extends require("./base")
@@ -7,8 +7,13 @@ class ElementWriter extends require("./base")
   ###
 
   write: (name, attributes, children) =>  
-    element = @nodeFactory.createElement
 
+    # create the DOM element here first
+    element = @nodeFactory.createElement name
+
+    # 
+
+    # finally add the child elements
     for child in children
       element.appendChild child
 

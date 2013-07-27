@@ -19,7 +19,7 @@ class Factory
       if bd = bindingClasses[scriptName]
         bindings.push new bd section, clip, nodeFactory, scriptName
 
-    new BindingCollection section, bindings, clip
+    bindings
 
 
 module.exports = new Factory()
