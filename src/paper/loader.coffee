@@ -1,8 +1,9 @@
-modifiers = require "./defaultModifiers"
+modifiers      = require "./defaultModifiers"
+
 FragmentWriter = require "./writers/fragment"
-BlockWriter = require "./writers/block"
-TextWriter = require "./writers/text"
-ElementWriter = require "./writers/element"
+BlockWriter    = require "./writers/block"
+TextWriter     = require "./writers/text"
+ElementWriter  = require "./writers/element"
 
 class Loader
   
@@ -43,8 +44,14 @@ class Loader
   ###
 
   bind: () ->
-    for binding in @bindings
-      binding.bind context
+    binding.bind() for binding in @bindings
+    @
+
+  ###
+  ###
+
+  unbind: () ->
+    binding.unbind() for binding in @bindings
     @
 
   ###
