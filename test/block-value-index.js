@@ -40,6 +40,12 @@ describe("basic", function() {
       expect(content.toString()).to.be("hello john b!");
     });
 
+
+    it("can be re-bound", function() {
+      content.bind();
+      expect(content.toString()).to.be("hello jake b!");
+    })
+
   });
 
 
