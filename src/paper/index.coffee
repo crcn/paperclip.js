@@ -1,11 +1,11 @@
-Template = require "./template"
+template = require "./template"
+nofactor = require "nofactor"
 
 ###
  creates new bindings
 ###
 
-exports.template = (paper, nodeFactory) ->
-  new Template paper, nodeFactory
+exports.template = template
 
 ###
   paperclip modifiers using pipes

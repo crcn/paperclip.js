@@ -24,6 +24,7 @@
   "bin": {
     "paperclip": "./bin/paperclip"
   },
+  "browserify": "./index/browser",
   "dependencies": {
     "strscanner": "0.0.x",
     "bindable": "0.3.x",

@@ -4,3 +4,5 @@ formatter      = require "./template/formatter"
 exports.parse = (content, options = {}) ->    
   content = templateParser.parse content
   formatter.format content
+
+exports.compile = exports.parse

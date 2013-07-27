@@ -11,8 +11,6 @@ class ElementWriter extends require("./base")
     # create the DOM element here first
     element = @nodeFactory.createElement name
 
-    # 
-
     # finally add the child elements
     for child in children
       element.appendChild child

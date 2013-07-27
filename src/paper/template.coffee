@@ -6,7 +6,7 @@ class Template
   ###
   ###
 
-  constructor: (@paper, @nodeFactory = nofactor.default) ->
+  constructor: (@paper, @nodeFactory) ->
 
   ###
   ###
@@ -19,4 +19,18 @@ class Template
   bind: (context) -> @load(context).bind()
 
 
-module.exports = Template
+
+module.exports = tpl = (paperOrSrc, nodeFactory = nofactor.default) ->
+
+  if typeof paperOrSrc is "string"
+
+    unless tpl.compiler
+      throw new Error "template must be a function"
+
+    paper = tpl.compiler.compile paperOrSrc
+
+  else
+    paper = paperOrSrc
+
+
+  new Template paper, nodeFactory
