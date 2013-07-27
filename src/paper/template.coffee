@@ -27,7 +27,7 @@ module.exports = tpl = (paperOrSrc, nodeFactory = nofactor.default) ->
     unless tpl.compiler
       throw new Error "template must be a function"
 
-    paper = tpl.compiler.compile paperOrSrc
+    paper = tpl.compiler.compile paperOrSrc, { eval: true }
 
   else
     paper = paperOrSrc

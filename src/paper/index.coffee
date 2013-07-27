@@ -1,15 +1,24 @@
-template = require "./template"
-nofactor = require "nofactor"
+template  = require "./template"
+nofactor  = require "nofactor"
+modifiers = require "./modifiers"
 
-###
- creates new bindings
-###
 
-exports.template = template
+module.exports = 
+  
+  # parses a template
+  template: template
 
-###
-  paperclip modifiers using pipes
-###
+  # registers a binding modifier 
+  # {{ message | titlecase() }}
+  modifier: (name, modifier)  ->
+    modifiers[name] = modifier
 
-module.exports.registerModifier = (name, modifier) ->
-  modifiers[name] = modifier
+  # creates a node shim - useful for 
+  # adding support for browsers - e.g: placeholder
+  # text for IE
+  shim: (options) ->
+    throw new Error "shims not supported yet"
+
+
+
+

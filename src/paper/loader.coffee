@@ -1,4 +1,4 @@
-modifiers      = require "./defaultModifiers"
+modifiers      = require "./modifiers"
 
 FragmentWriter = require "./writers/fragment"
 BlockWriter    = require "./writers/block"
@@ -6,6 +6,7 @@ TextWriter     = require "./writers/text"
 ElementWriter  = require "./writers/element"
 
 BindingCollection = require "./bindings/collection"
+bindable = require "bindable"
 
 class Loader
   
@@ -29,7 +30,13 @@ class Loader
   ###
   ###
 
-  load: (@context) ->
+  load: (context = {}) ->
+
+    unless context.__isBindable
+      context = new bindable.Object context
+
+    @context = context
+
 
     # writes the DOM
     @node = @paper @_writers.fragment.write,
