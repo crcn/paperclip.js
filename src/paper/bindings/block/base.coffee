@@ -1,12 +1,11 @@
-class NodeDecor
+class BlockBinding extends require("../base")
 
   ###
   ###
 
   constructor: (@section, @clip, @nodeFactory, @scriptName) ->
-    @script = @clip.script(@scriptName)
+    @script = @clip.script @scriptName
     @clip   = @clip
-
 
   ###
   ###
@@ -26,7 +25,6 @@ class NodeDecor
     @_binding?.dispose()
     @_binding = undefined
 
-
   ###
   ###
 
@@ -38,4 +36,4 @@ class NodeDecor
   @test: (node) -> false
 
 
-module.exports = NodeDecor
+module.exports = BlockBinding

@@ -5,6 +5,8 @@ BlockWriter    = require "./writers/block"
 TextWriter     = require "./writers/text"
 ElementWriter  = require "./writers/element"
 
+BindingCollection = require "./bindings/collection"
+
 class Loader
   
   ###
@@ -15,9 +17,9 @@ class Loader
     @nodeFactory = template.nodeFactory
     @paper       = template.paper
 
+    @bindings = new BindingCollection()
 
-    @bindings = []
-
+    # writers needed for access to the binding collection
     @_writers = 
       fragment : new FragmentWriter @
       block    : new BlockWriter @
@@ -29,29 +31,30 @@ class Loader
 
   load: (@context) ->
 
+    # writes the DOM
     @node = @paper @_writers.fragment.write,
     @_writers.block.write,
     @_writers.element.write,
     @_writers.text.write,
     modifiers
 
-    for binding in @bindings
-      binding.load context
+    # added by the writers
+    @bindings.load @context
 
     @
 
   ###
   ###
 
-  bind: () ->
-    binding.bind() for binding in @bindings
+  bind: () -> 
+    @bindings.bind()
     @
 
   ###
   ###
 
-  unbind: () ->
-    binding.unbind() for binding in @bindings
+  unbind: () -> 
+    @bindings.unbind()
     @
 
   ###

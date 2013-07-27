@@ -7,7 +7,6 @@ module.exports =
   Clip             : Clip
   template         : paper.template
   bindable         : require("bindable")
-  nodeFactories    : require("./paper/nodeFactories")
   registerModifier : paper.registerModifier
 
 if typeof window isnt "undefined"

@@ -18,8 +18,6 @@ class ValueDecor extends require("./base")
     unless value?
       value = ""
 
-
-
     @section.replaceChildNodes @nodeFactory.createTextNode escapeHTML value
 
 

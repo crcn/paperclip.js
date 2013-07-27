@@ -1,4 +1,4 @@
-attrFactory = require("../decor/attrFactory")
+# attrFactory = require("../decor/attrFactory")
 
 
 class ElementWriter extends require("./base")

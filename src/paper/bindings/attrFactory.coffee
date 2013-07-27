@@ -45,7 +45,11 @@ class Factory
   ###
 
   getDecor: (node) ->
+
     decor = new Collection()
+
+    for attribute in node.attributes
+      
 
     if node.attributes["data-bind"]
       decor.clip = clip = new Clip { script: node.attributes["data-bind"][0], watch: false }

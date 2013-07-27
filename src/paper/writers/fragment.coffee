@@ -1,7 +1,4 @@
-attrFactory = require("../decor/attrFactory")
-
-
-class ElementWriter extends require("./base")
+class FragmentWriter extends require("./base")
 
   ###
   ###
@@ -10,6 +7,4 @@ class ElementWriter extends require("./base")
     @nodeFactory.createFragment children...
 
 
-
-
-module.exports = ElementWriter
+module.exports = FragmentWriter
