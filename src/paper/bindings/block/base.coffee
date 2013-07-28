@@ -5,12 +5,12 @@ class BlockBinding extends require("../base")
 
   constructor: (options) ->
 
-    @section         = options.section
-    @clip            = options.clip
-    @nodeFactory     = options.nodeFactory
-    @contentTemplate = options.template
-    @scriptName      = options.scriptName
-    @childBlock      = options.childBlock
+    @section            = options.section
+    @clip               = options.clip
+    @nodeFactory        = options.nodeFactory
+    @contentTemplate    = options.template
+    @scriptName         = options.scriptName
+    @childBlockTemplate = options.childBlockTemplate
 
     @script = @clip.script @scriptName
     
@@ -18,6 +18,7 @@ class BlockBinding extends require("../base")
   ###
 
   bind: (@context) -> 
+  
     @_binding = @clip.bind(@scriptName)
 
     if @_map

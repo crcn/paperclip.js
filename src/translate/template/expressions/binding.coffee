@@ -1,4 +1,6 @@
 # {{binding}}
+RootExpression = require "./root"
+
 class Binding extends require("./base")
 
   _type: "binding"
@@ -6,9 +8,16 @@ class Binding extends require("./base")
   ###
   ###
 
-  constructor: (@script, @children, @childBinding) ->
+  constructor: (@script, children, childBinding) ->
     super()
+
+    @children = new RootExpression children, false
+
+    if childBinding
+      @childBinding = new RootExpression childBinding, false
+
     @addChild @children
+
 
   ###
   ###
@@ -25,10 +34,10 @@ class Binding extends require("./base")
   ###
 
   toMethodString: () -> 
-    buffer = ["block(#{@script}, function(){ return text('#{@children.toString()}')}"]
+    buffer = ["block(#{@script}, #{@children.toString()}"]
 
     if @childBinding
-      buffer.push ", function(){ return #{@childBinding.toMethodString()} }"
+      buffer.push ", function(){ return #{@childBinding.toString()} }"
 
     buffer.push ")"
 

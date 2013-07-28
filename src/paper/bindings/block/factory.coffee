@@ -19,6 +19,7 @@ class Factory
 
     clipScriptNames = options.clip.scripts.names
 
+
     for scriptName in clipScriptNames
       if bd = bindingClasses[scriptName]
         options.scriptName = scriptName
