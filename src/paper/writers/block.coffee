@@ -10,10 +10,11 @@ class BlockWriter extends require("./base")
   ###
   ###
 
-  write: (script, contentFactory, childBlock) =>
+  write: (script, contentFactory, childBlockFactory) =>
 
 
-    tpl = if contentFactory then @template.creator(contentFactory) else undefined
+    tpl      = if contentFactory then @template.creator(contentFactory) else undefined
+    childTpl = if childBlockFactory then @template.creator(childBlockFactory) else undefined
 
     # creates a document fragment which can be modified in a document
     section = loaf()
@@ -30,7 +31,7 @@ class BlockWriter extends require("./base")
       clip: clip,
       template: tpl,
       nodeFactory: @nodeFactory,
-      childBlock: childBlock
+      childBlockTemplate: childTpl
     })...
 
     # returns a collection of the elements that this block owns, controlled
