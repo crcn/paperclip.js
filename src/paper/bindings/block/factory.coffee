@@ -21,5 +21,12 @@ class Factory
 
     bindings
 
+  ###
+  ###
+
+  register: (name, bindingClass) ->
+    bindingClasses[name] = bindingClass
+
+
 
 module.exports = new Factory()

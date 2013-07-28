@@ -48,7 +48,6 @@ class Factory
 
     decor = new Collection()
 
-    for attribute in node.attributes
       
 
     if node.attributes["data-bind"]
