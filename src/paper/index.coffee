@@ -32,15 +32,6 @@ module.exports =
     mappers[name] = mapper
 
   ###
-   creates a node shim - useful for 
-   adding support for browsers - e.g: placeholder
-   text for IE
-  ###
-
-  shim: (options) ->
-    throw new Error "shims not supported yet"
-
-  ###
    expose the class so that one can be registered
   ###
 
@@ -61,7 +52,7 @@ module.exports =
   ###
    adds a node binding class
   ###
-  
+
   nodeBinding: (nodeBindingClass) ->
     bindings.nodeBindingFactory.register nodeBindingClass
 

@@ -81,6 +81,7 @@ class ClippedBuffer extends bindable.Object
   reset: (data = {}) ->
     @_data = data
     @update()
+    @
 
   ###
   ###
