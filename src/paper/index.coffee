@@ -22,10 +22,15 @@ module.exports =
 
   # expose the class so that one can be registered
   BaseBlockBinding: bindings.BaseBlockBinding
+  BaseNodeBinding: bindings.BaseNodeBinding
 
   # adds a block binding class
   blockBinding: (blockBindingClass) ->
     bindings.blockBindingFactory.register blockBindingClass
+
+  # adds a node binding class
+  nodeBinding: (nodeBindingClass) ->
+    bindings.nodeBindingFactory.register nodeBindingClass
 
 
 
