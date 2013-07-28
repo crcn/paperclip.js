@@ -66,4 +66,31 @@ describe("html sections", function() {
     expect(String(v)).to.be("hello 'AAHHH Blake'!");
   });
 
+
+  it("can load a sub-child fragment", function() {
+    var v = pc.template("hello {{ html: message }}!"),
+    b, b1, b2, b3;
+
+    b = v.bind({
+      message: b2 = pc.template("my name {{ html: message }}").bind({
+        message: b3 = pc.template("is {{ html: message }}").bind({
+          message: "craig"
+        })
+      })
+    });
+
+    expect(String(b)).to.be("hello my name is craig!");
+    b3.context.set("message", "john");
+    expect(String(b)).to.be("hello my name is john!");
+    b2.context.set("message", "isn't craig");
+    expect(String(b)).to.be("hello my name isn't craig!");
+    b.context.set("message", "world");
+    expect(String(b)).to.be("hello world!");
+  
+    b.context.set("message", pc.template("awesome {{ html: message }}").bind({
+      message: "blahh"
+    }));
+
+    expect(String(b)).to.be("hello awesome blahh!")
+  });
 });
