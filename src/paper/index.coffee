@@ -1,18 +1,24 @@
+Clip      = require "../clip"
 template  = require "./template"
 nofactor  = require "nofactor"
-modifiers = require "./modifiers"
+mappers   = require "./mappers"
 bindings  = require "./bindings"
+bindable  = require "bindable"
 
 
 module.exports = 
+  
+  Clip: Clip
+
+  bindable: bindable
   
   # parses a template
   template: template
 
   # registers a binding modifier 
   # {{ message | titlecase() }}
-  modifier: (name, modifier)  ->
-    modifiers[name] = modifier
+  map: (name, mapper)  ->
+    mappers[name] = mapper
 
   # creates a node shim - useful for 
   # adding support for browsers - e.g: placeholder

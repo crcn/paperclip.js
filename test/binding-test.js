@@ -37,14 +37,14 @@ describe("binding", function() {
     })
   });
 
-  describe("modifiers", function() {
+  describe("mappers", function() {
 
     it("can be registered", function() {
-      pc.modifier("append", function(str) {
+      pc.map("append", function(str) {
         return Array.prototype.concat.apply([], arguments).join("+");
       });
 
-      pc.modifier("multiply", function(num, multiplier) {
+      pc.map("multiply", function(num, multiplier) {
         return Number(num) * multiplier;
       });
     });
@@ -114,7 +114,7 @@ describe("binding", function() {
       expect(v.toString()).to.be("0.5");
     });
 
-    it("can be divided with a modifier", function() {
+    it("can be divided with a mapper", function() {
 
       var v = pc.
       template("{{ a / b | multiply(10) }}").

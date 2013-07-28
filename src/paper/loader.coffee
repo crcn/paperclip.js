@@ -1,4 +1,4 @@
-modifiers      = require "./modifiers"
+mappers      = require "./mappers"
 
 FragmentWriter = require "./writers/fragment"
 BlockWriter    = require "./writers/block"
@@ -47,7 +47,7 @@ class Loader
     @_writers.block.write,
     @_writers.element.write,
     @_writers.text.write,
-    modifiers
+    mappers
 
     @
 
