@@ -3,15 +3,30 @@ class BlockBinding extends require("../base")
   ###
   ###
 
-  constructor: (@section, @clip, @nodeFactory, @scriptName) ->
+  constructor: (options) ->
+
+    @section         = options.section
+    @clip            = options.clip
+    @nodeFactory     = options.nodeFactory
+    @contentTemplate = options.template
+    @scriptName      = options.scriptName
+    @childBlock      = options.childBlock
+
     @script = @clip.script @scriptName
-    @clip   = @clip
     
   ###
   ###
 
   bind: (@context) -> 
-    @_binding = @clip.bind(@scriptName).to(@_onChange).now()
+    @_binding = @clip.bind(@scriptName)
+
+    if @_map
+      @_binding.map @_map
+
+    @_binding.to @_onChange
+
+    @_binding.now()
+    @
 
   ###
   ###
@@ -19,6 +34,7 @@ class BlockBinding extends require("../base")
   unbind: () ->
     @_binding?.dispose()
     @_binding = undefined
+    @
 
   ###
   ###

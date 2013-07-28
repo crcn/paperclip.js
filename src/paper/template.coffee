@@ -2,7 +2,7 @@ nofactor   = require "nofactor"
 Loader     = require "./loader"
 
 class Template
-
+  
   ###
   ###
 
@@ -16,7 +16,7 @@ class Template
 
 
 
-module.exports = tpl = (paperOrSrc, nodeFactory = nofactor.default) ->
+Template.prototype.creator = module.exports = tpl = (paperOrSrc, nodeFactory = nofactor.default) ->
 
   if typeof paperOrSrc is "string"
 

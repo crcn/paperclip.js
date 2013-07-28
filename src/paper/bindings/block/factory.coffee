@@ -1,9 +1,11 @@
 BindingCollection = require "../collection"
 
 bindingClasses = 
-  html : require("./html")
-  when : require("./when")
-  value: require("./value")
+  html   : require("./html")
+  if     : require("./conditional")
+  else   : require("./conditional")
+  elseif : require("./conditional")
+  value  : require("./value")
 
 
 class Factory
@@ -11,13 +13,16 @@ class Factory
   ###
   ###
 
-  getBindings: (section, clip, nodeFactory) ->
+  getBindings: (options) ->
 
     bindings = []
 
-    for scriptName in clip.scripts.names
+    clipScriptNames = options.clip.scripts.names
+
+    for scriptName in clipScriptNames
       if bd = bindingClasses[scriptName]
-        bindings.push new bd section, clip, nodeFactory, scriptName
+        options.scriptName = scriptName
+        bindings.push new bd options
 
     bindings
 

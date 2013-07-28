@@ -55,8 +55,6 @@ class Loader
   ###
 
   bind:() ->
-
-
     @bindings.bind @context
     @
 
