@@ -37,7 +37,7 @@ class Binding extends require("./base")
     buffer = ["block(#{@script}, #{@children.toString()}"]
 
     if @childBinding
-      buffer.push ", function(){ return #{@childBinding.toString()} }"
+      buffer.push ", #{@childBinding.toString()}"
 
     buffer.push ")"
 

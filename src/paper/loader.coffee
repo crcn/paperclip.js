@@ -37,9 +37,6 @@ class Loader
 
   load: (context = {}) ->
 
-
-    console.log String @paper
-
     unless context.__isBindable
       context = new bindable.Object context
 
