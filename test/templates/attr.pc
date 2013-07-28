@@ -1,3 +1,0 @@
-<div data-bind="{{ show: canShow }}">
-  
-</div>

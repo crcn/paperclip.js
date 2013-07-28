@@ -1,3 +1,0 @@
-{{name | uppercase() }}
-{{name | lowercase() }}
-{{name | lowercase() | titlecase() }}

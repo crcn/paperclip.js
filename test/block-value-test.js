@@ -1,5 +1,4 @@
-var templates = require("./templates"),
-expect = require("expect.js"),
+var expect = require("expect.js"),
 pc = require(".."),
 bindable = require("bindable");
 
@@ -9,7 +8,7 @@ bindable = require("bindable");
  */
 
 describe("basic", function() {
-  var helloTemplate = pc.template(templates.hello),
+  var helloTemplate = pc.template("hello {{ name.first }} {{ name.last }}!"),
   person = new bindable.Object({
     name: {
       first: "craig",
