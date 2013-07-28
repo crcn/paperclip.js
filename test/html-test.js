@@ -22,12 +22,48 @@ describe("html sections", function() {
     }
   });
 
-  it("can load an html section", function() {
+  it("can be loaded without anything", function() {
 
-    return;
-    var sectionContent = sectionTemplate.load(section);
+    var v = pc.
+    template("hello '{{ html: content }}'!").
+    bind();
 
-    console.log(sectionContent.toString());
-    expect(sectionContent.toString()).to.be("")
-  })
+    var sectionContent = sectionTemplate.bind(section);
+
+    expect(v.toString()).to.be("hello ''!");
+  });
+
+  it("can be loaded with a default value", function() {
+    var v = pc.
+    template("hello '{{ html: content || 'world' }}'!").
+    bind();
+
+    var sectionContent = sectionTemplate.bind(section);
+
+    expect(v.toString()).to.be("hello 'world'!");
+  });
+
+  it("can load a child fragment", function() {
+
+    var v2 = pc.template("{{name}}").
+    bind({ name: "Craig" });
+
+
+    var v3 = pc.template("AAHHH {{name}}").
+    bind({ name: "Blake" })
+
+    var v2, v = pc.
+    template("hello '{{ html: content }}'!").
+    bind({
+      content: v2.node
+    });
+
+    expect(String(v)).to.be("hello 'Craig'!");
+    v2.context.set("name", "John");
+    expect(String(v)).to.be("hello 'John'!");
+
+    v.context.set("content", v3);
+    expect(String(v)).to.be("hello 'AAHHH Blake'!");
+  });
+
 });

@@ -9,6 +9,11 @@ BindingCollection = require "./bindings/collection"
 bindable = require "bindable"
 
 class Loader
+
+  ###
+  ###
+
+  __isLoader: true
   
   ###
   ###
@@ -37,7 +42,6 @@ class Loader
 
     @context = context
 
-
     # writes the DOM
     @node = @paper @_writers.fragment.write,
     @_writers.block.write,
@@ -45,17 +49,17 @@ class Loader
     @_writers.text.write,
     modifiers
 
-    # added by the writers
-    @bindings.load @context
-
     @
 
   ###
   ###
 
-  bind: () -> 
-    @bindings.bind()
+  bind:() ->
+
+
+    @bindings.bind @context
     @
+
 
   ###
   ###

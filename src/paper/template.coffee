@@ -11,12 +11,8 @@ class Template
   ###
   ###
 
-  load: (context) -> new Loader(@).load context
+  bind: (context) -> new Loader(@).load(context).bind()
 
-  ###
-  ###
-
-  bind: (context) -> @load(context).bind()
 
 
 

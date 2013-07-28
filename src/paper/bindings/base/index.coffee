@@ -1,7 +1,6 @@
 class BaseBinding
   constructor : (@node) ->
-  load        : (@context) ->
-  bind        : () ->
+  bind        : (@context) ->
   unbind      : () ->
 
 module.exports = BaseBinding

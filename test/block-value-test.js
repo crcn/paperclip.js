@@ -18,12 +18,12 @@ describe("basic", function() {
   });
 
   it("can load the context", function() {
-    var content = helloTemplate.load(person);
+    var content = helloTemplate.bind(person);
     expect(content.toString()).to.be("hello craig condon!");
   });
 
   describe("bind/unbind", function() {
-    var content = helloTemplate.load(person).bind();
+    var content = helloTemplate.bind(person);
 
     it("can bind to the context", function() {
       expect(content.toString()).to.be("hello craig condon!");

@@ -12,22 +12,14 @@ class Collection extends BaseBinding
 
   push: () -> 
     @_source.push arguments...
-
+    
   ###
   ###
 
-  load: (context) -> 
-    return if @_loaded
-    @_loaded = true
-    binding.load(context) for binding in @_source
-
-  ###
-  ###
-
-  bind: () -> 
+  bind: (@context) -> 
     return if @_bound
     @_bound = true
-    binding.bind() for binding in @_source
+    binding.bind(@context) for binding in @_source
 
   ###
   ###

@@ -8,14 +8,14 @@ describe("binding", function() {
     it("boolean", function() {
       var v = pc.
       template("{{ true }}").
-      load({ "true": "craig" });
+      bind({ "true": "craig" });
 
       expect(v.toString()).to.be("true");
 
 
       var v = pc.
       template("{{ false }}").
-      load({ "false": "craig" });
+      bind({ "false": "craig" });
       expect(v.toString()).to.be("false");
 
     });
@@ -23,7 +23,7 @@ describe("binding", function() {
     it("undefined", function() {
       var v = pc.
       template("{{ undefined }}").
-      load({ "undefined": "craig" });
+      bind({ "undefined": "craig" });
 
       expect(v.toString()).to.be("");
     });
@@ -31,7 +31,7 @@ describe("binding", function() {
     it("null", function() {
       var v = pc.
       template("{{ null }}").
-      load({ "null": "craig" });
+      bind({ "null": "craig" });
 
       expect(v.toString()).to.be("");
     })
@@ -52,15 +52,16 @@ describe("binding", function() {
     it("can be added", function() {
       var v = pc.
       template("{{ name | uppercase() }}").
-      load({ name: "craig" });
+      bind({ name: "craig" });
 
       expect(v.toString()).to.be("CRAIG");
     });
 
+
     it("can be nested", function() {
       var v = pc.
       template("{{ name | lowercase() | titlecase() }}").
-      load({ name: "CRAIG" });
+      bind({ name: "CRAIG" });
 
       expect(v.toString()).to.be("Craig");
     });
@@ -68,7 +69,7 @@ describe("binding", function() {
     it("can use params", function() {
       var v = pc.
       template("{{ name | lowercase() | append('_', last | uppercase()) }}").
-      load({ name: "CRAIG", last: "condon" });
+      bind({ name: "CRAIG", last: "condon" });
 
       expect(v.toString()).to.be("craig+_+CONDON");
     });
@@ -76,13 +77,13 @@ describe("binding", function() {
     it("respect groupings", function() {
       var v = pc.
       template("{{ (name + last) | uppercase() }}").
-      load({ name: "craig", last: "condon" });
+      bind({ name: "craig", last: "condon" });
 
       expect(v.toString()).to.be("CRAIGCONDON");
 
       var v = pc.
       template("{{ name + last | uppercase() }}").
-      load({ name: "craig", last: "condon" });
+      bind({ name: "craig", last: "condon" });
 
       expect(v.toString()).to.be("craigCONDON");
     })
@@ -92,7 +93,7 @@ describe("binding", function() {
     it("can be added", function() {
       var v = pc.
       template("{{ a + b }}").
-      load({ a: 1, b: 2 });
+      bind({ a: 1, b: 2 });
 
       expect(v.toString()).to.be("3");
     });
@@ -100,7 +101,7 @@ describe("binding", function() {
     it("can be multiplied", function() {
       var v = pc.
       template("{{ a * b }}").
-      load({ a: 2, b: 2 });
+      bind({ a: 2, b: 2 });
 
       expect(v.toString()).to.be("4");
     });
@@ -108,7 +109,7 @@ describe("binding", function() {
     it("can be divided", function() {
       var v = pc.
       template("{{ a / b }}").
-      load({ a: 1, b: 2 });
+      bind({ a: 1, b: 2 });
 
       expect(v.toString()).to.be("0.5");
     });
@@ -117,7 +118,7 @@ describe("binding", function() {
 
       var v = pc.
       template("{{ a / b | multiply(10) }}").
-      load({ a: 1, b: 2 });
+      bind({ a: 1, b: 2 });
 
       expect(v.toString()).to.be("0.05");
     });
@@ -126,7 +127,7 @@ describe("binding", function() {
 
       var v = pc.
       template("{{ 10 + 1 }}").
-      load();
+      bind();
 
       expect(v.toString()).to.be("11");
     });
@@ -134,7 +135,7 @@ describe("binding", function() {
     it("can use a decimal value", function() {
       var v = pc.
       template("{{ 10 + 0.1 }}").
-      load();
+      bind();
 
       expect(v.toString()).to.be("10.1");
     })
@@ -145,7 +146,7 @@ describe("binding", function() {
     it("is correct for undefined values", function() {
       var v = pc.
       template("{{ name === undefined }}").
-      load();
+      bind();
 
       expect(v.toString()).to.be("true");
     });
@@ -153,14 +154,14 @@ describe("binding", function() {
     it("is correct for numbers", function() {
       var v = pc.
       template("{{ age === 5 }}").
-      load({ age: 5 });
+      bind({ age: 5 });
 
       expect(v.toString()).to.be("true");
 
       //sanity
       var v = pc.
       template("{{ age !== 5 }}").
-      load({ age: 5 });
+      bind({ age: 5 });
 
       expect(v.toString()).to.be("false");
     });
@@ -173,7 +174,7 @@ describe("binding", function() {
     it("can be concated together", function() {
       var v = pc.
       template("{{ a + b }}").
-      load({ a:"a", b:"b" });
+      bind({ a:"a", b:"b" });
 
       expect(v.toString()).to.be("ab");
     });
@@ -181,7 +182,7 @@ describe("binding", function() {
     it("can be defined within the binding", function() {
       var v = pc.
       template("{{ 'abba' }}").
-      load();
+      bind();
 
       expect(v.toString()).to.be("abba");
     })
@@ -191,7 +192,7 @@ describe("binding", function() {
     it("doesn't break on a null reference", function() {
       var v = pc.
       template("{{ a.b.length }}").
-      load({ a: undefined });
+      bind({ a: undefined });
 
       expect(v.toString()).to.be("");
     });
@@ -199,7 +200,7 @@ describe("binding", function() {
     it("an use the OR expression if undefined", function() {
       var v = pc.
       template("{{ a.b || 'doesn\\'t exist!' }}").
-      load({ a: undefined });
+      bind({ a: undefined });
 
       expect(v.toString()).to.be("doesn&apos;t exist!");
     });
@@ -211,7 +212,7 @@ describe("binding", function() {
 
       var v = pc.
       template("{{ run() }}").
-      load({ 
+      bind({ 
         run: function() {
           return "abba"
         }
@@ -224,7 +225,7 @@ describe("binding", function() {
 
       var v = pc.
       template("{{ a.run() }}").
-      load({ 
+      bind({ 
         a: {
           run: function() {
             return "aaaa"
@@ -239,7 +240,7 @@ describe("binding", function() {
 
       var v = pc.
       template("{{ run() }}").
-      load();
+      bind();
 
       expect(v.toString()).to.be("");
     });
@@ -248,7 +249,7 @@ describe("binding", function() {
 
       var v = pc.
       template("{{ run(500) }}").
-      load({ 
+      bind({ 
         run: function(param) {
           return param;
         } 
@@ -261,7 +262,7 @@ describe("binding", function() {
 
       var v = pc.
       template("{{ run() == 'abba' }}").
-      load({ 
+      bind({ 
         run: function() {
           return 'abba';
         } 
@@ -276,7 +277,7 @@ describe("binding", function() {
     it("can assign a value", function() {
       var v = pc.
       template("{{ b = a }}").
-      load({ 
+      bind({ 
         a: "a"
       });
 
@@ -286,7 +287,7 @@ describe("binding", function() {
     it("can assign a nested value", function() {
       var v = pc.
       template("{{ b.c.d = a }}").
-      load({ 
+      bind({ 
         a: "a"
       });
 
@@ -297,7 +298,7 @@ describe("binding", function() {
 
       var v = pc.
       template("{{ b.c.d = a }}").
-      load({ 
+      bind({ 
         a: false
       });
 
@@ -308,7 +309,7 @@ describe("binding", function() {
 
       var v = pc.
       template("{{ b.c.d = !a }}").
-      load({ 
+      bind({ 
         a: false
       });
 
@@ -319,7 +320,7 @@ describe("binding", function() {
 
       var v = pc.
       template("{{ exists = !!a }}").
-      load({ 
+      bind({ 
         a: "b"
       });
 

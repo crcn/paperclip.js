@@ -6,16 +6,11 @@ class BlockBinding extends require("../base")
   constructor: (@section, @clip, @nodeFactory, @scriptName) ->
     @script = @clip.script @scriptName
     @clip   = @clip
-
+    
   ###
   ###
 
-  load: (context) ->
-
-  ###
-  ###
-
-  bind: () -> 
+  bind: (@context) -> 
     @_binding = @clip.bind(@scriptName).to(@_onChange).now()
 
   ###

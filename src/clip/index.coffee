@@ -78,7 +78,8 @@ class PropertyChain
 
     for command, i in @_commands
 
-      @watcher._watch command.ref, cv
+      if cv.__isBindable
+        @watcher._watch command.ref, cv
 
       if i is n-1 and hasValue
         if cv.set then cv.set(command.ref, value) else dref.set cv, command.ref, value
@@ -427,6 +428,7 @@ class Clip
 
   script: (name) ->
     @scripts.get name
+
 
   get  : () -> @_self.get arguments...
   set  : () -> @_self.set arguments...

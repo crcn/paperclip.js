@@ -9,13 +9,8 @@ class ClipBinding extends require("./base")
   ###
   ###
 
-  load: (@context) ->
-    @clip.reset context
-
-  ###
-  ###
-
-  bind: () ->
+  bind: (@context) ->
+    @clip.reset @context
     @clip.watch()
 
   ###

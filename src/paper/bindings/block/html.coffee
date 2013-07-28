@@ -11,37 +11,30 @@ class HtmlDecor extends require("./base")
     html = @clip.get("html")
     return if not html?
     @_onChange html
-
-  ###
-  ###
-
-  bind: () ->
-    super()
-    @child?.bind()
-
-  ###
-  ###
-
-  unbind: () ->
-    super()
-    @child?.unbind()
-
+    
   ###
   ###
 
   _onChange: (value) -> 
 
     unless value
-      return @block.removeAll() 
+      return @section.removeChildNodes() 
 
-    if value.__isWriter
+    if value.__isLoader
       node = value.node
-    else if value.__isNode
+    else if value.nodeType?
       node = value
     else 
-      node = @context.nodeFactory.parseHtml String value 
 
-    @block.replaceAll node
+      if typeof window is "undefined"
+        node = @nodeFactory.createTextNode String value
+      else
+        dom = @nodeFactory.createNode "div"
+        dom.innerHTML = String value
+        node = @nodeFactory.createFragment dom.childNodes
+
+
+    @section.replaceChildNodes node
 
 
 module.exports = HtmlDecor
