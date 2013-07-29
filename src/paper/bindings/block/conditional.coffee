@@ -35,7 +35,7 @@ class BlockDecor extends require("./base")
     # child template might not exist - check for it
     if childTemplate
       @child = childTemplate.bind(@context)
-      @section.replaceChildNodes @child.node
+      @section.replaceChildNodes @child.section.toFragment()
 
 
 

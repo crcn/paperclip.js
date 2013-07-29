@@ -7,6 +7,7 @@ ElementWriter  = require "./writers/element"
 
 BindingCollection = require "./bindings/collection"
 bindable = require "bindable"
+loaf = require "loaf"
 
 class Loader
 
@@ -32,6 +33,7 @@ class Loader
       text     : new TextWriter @
       element  : new ElementWriter @
 
+
   ###
   ###
 
@@ -43,11 +45,14 @@ class Loader
     @context = context
 
     # writes the DOM
-    @node = @paper @_writers.fragment.write,
+    node = @paper @_writers.fragment.write,
     @_writers.block.write,
     @_writers.element.write,
     @_writers.text.write,
     modifiers
+
+    @section = loaf()
+    @section.append node
 
     @
 
@@ -72,12 +77,14 @@ class Loader
   toString: () -> 
 
     if @nodeFactory.name is "string"
-      return @node.toString()
+      return @section.toString()
 
-    if @node.nodeType is 11
-      div = document.createElement "div"
-      div.appendChild @node.cloneNode true
-      return div.innerHTML
+    frag = @section.toFragment()
+
+    
+    div = document.createElement "div"
+    div.appendChild frag.cloneNode true
+    return div.innerHTML
 
 
 

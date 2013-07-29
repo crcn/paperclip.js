@@ -6,13 +6,16 @@ class HtmlDecor extends require("./base")
   ###
   ###
 
-  _onChange: (value) -> 
+  _onChange: (value, oldValue) -> 
+
+    if oldValue?.__isLoader
+      oldValue.section.hide()
 
     unless value
       return @section.removeChildNodes() 
 
     if value.__isLoader
-      node = value.node
+      node = value.section.show().toFragment()
     else if value.nodeType?
       node = value
     else 
