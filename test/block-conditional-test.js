@@ -31,6 +31,8 @@ describe("conditional sections", function() {
 
     it("waterfalls down conditional statements", function() {
 
+    
+
       var v = pc.template("\
         {{#if: color == 'red' }} \
           {{color}} is an intimidating color. \
