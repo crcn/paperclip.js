@@ -43,6 +43,6 @@ module.exports = [
 ];
 
 module.exports = [
-  "firefox:6",
-  "chrome:14"
+  "firefox:12",
+  "chrome:28"
 ];
