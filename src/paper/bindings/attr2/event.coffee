@@ -50,7 +50,14 @@ class EventDecor extends require("./dataBind")
       if not @clip.get(ev)? and not @clip.get(prop)? and @[prop]?
         @clip.set ev, @[prop]
 
-    $(@element).bind event, @_onEvent
+    (@$element = $(@element)).bind @_bindEvent = event, @_onEvent
+
+  ###
+  ###
+
+  dispose: () ->
+    @$element?.unbind @_bindEvent, @_onEvent
+
 
   ###
   ###

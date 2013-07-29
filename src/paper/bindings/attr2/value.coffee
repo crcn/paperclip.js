@@ -3,6 +3,10 @@ ChangeDecor = require("./change")
 escapeHTML = require("../../utils/escapeHTML")
 type = require "type-component"
 
+###
+ DEPRECATED - USE MODEL
+###
+
 class ValueDecor extends require("./dataBind")
 
   ###

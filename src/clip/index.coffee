@@ -179,10 +179,15 @@ class ClipScript extends events.EventEmitter
       @_watching[path].dispose()
 
     lockUpdate = true
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 
     @_watching[path] = 
       target  : target
       binding : binding = target.bind(path).to((value, oldValue) =>
+<<<<<<< HEAD
 
         if value?.__isBindable
           @_watchBindable(value, oldValue) 
@@ -191,9 +196,19 @@ class ClipScript extends events.EventEmitter
 
         return if lockUpdate
         @update()
+=======
+        return @_watchBindable(value, oldValue) if value?.__isBindable
+        return @_spyFunction(path, value, target) if type(value) is "function"
+
+        return if lockUpdate
+        @update()
+
+>>>>>>> master
       ).now()
       dispose : () ->
         binding.dispose()
+
+    lockUpdate = false
     
     lockUpdate = false
 
@@ -421,8 +436,6 @@ class Clip
     @_self?.dispose()
     @scripts?.dispose()
 
-    @_self     = undefined
-    @_scripts  = undefined
 
 
   script: (name) ->
