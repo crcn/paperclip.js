@@ -74,7 +74,7 @@ describe("node", function() {
 
       describe("css", function() {
 
-        it("can add a css class", function() {
+        it("can be added", function() {
           var v = pc.template("<div data-bind=\"{{ \
             css: { \
               'container': useContainer, \
@@ -97,7 +97,22 @@ describe("node", function() {
       });
 
       describe("style", function() {
-        
+        it("can be added", function() {
+          var v = pc.template("<div data-bind=\"{{ \
+            style: { \
+              color: color, \
+              'background-color': backgroundColor \
+            } \
+          ").bind({
+            color: "red"
+          });
+
+          expect(String(v)).to.be('<div style="color:red;"></div>');
+          v.context.set("backgroundColor", "blue");
+          expect(String(v)).to.be('<div style="color:red;background-color:blue;"></div>');
+          v.context.set("color", undefined);
+          expect(String(v)).to.be('<div style="background-color:blue;"></div>');
+        }); 
       });
 
       describe("disable", function() {

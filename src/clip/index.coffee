@@ -73,6 +73,7 @@ class PropertyChain
   value: (value) ->
     hasValue = arguments.length
 
+
     cv = if @_self then @clip else @clip.data
     n = @_commands.length
 
@@ -177,7 +178,7 @@ class ClipScript extends events.EventEmitter
       return if @_watching[path].target is target
       @_watching[path].dispose()
 
-    initial = false
+    lockUpdate = true
 
     @_watching[path] = 
       target  : target
@@ -188,15 +189,13 @@ class ClipScript extends events.EventEmitter
         else if type(value) is "function"
           @_spyFunction(path, value, target)
 
-        if initial
-          @update()
-
-        initial = true
+        return if lockUpdate
+        @update()
       ).now()
       dispose : () ->
         binding.dispose()
     
-
+    lockUpdate = false
 
   ###
    watches a bindable object for any changes, then updates this binding asynchronously This is important
