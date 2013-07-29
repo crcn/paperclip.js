@@ -6,9 +6,9 @@ class DisableAttrBinding extends require("./base")
   _onChange: (value) -> 
 
     if value
-      @node.setAttribute("disable", "disable")
+      @node.setAttribute("disabled", "disabled")
     else
-      @node.removeAttribute("disable")
+      @node.removeAttribute("disabled")
 
 
 module.exports = DisableAttrBinding
