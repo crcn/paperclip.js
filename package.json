@@ -30,7 +30,9 @@
     "karma-phantomjs-launcher": "0.0.2",
     "karma-mocha": "0.0.4",
     "browserify": "~2.25.1",
-    "jquery": "~1.8.3"
+    "jquery": "~1.8.3",
+    "karma-opera-launcher": "0.0.2",
+    "karma-safari-launcher": "0.0.3"
   },
   "bin": {
     "paperclip": "./bin/paperclip"
