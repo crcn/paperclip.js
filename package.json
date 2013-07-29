@@ -52,7 +52,7 @@
     "watch_r": "0.0.x",
     "underscore": "1.4.x",
     "type-component": "0.0.x",
-    "nofactor": "0.0.0",
-    "loaf": "0.0.0"
+    "nofactor": "0.0.x",
+    "loaf": "0.0.x"
   }
 }
