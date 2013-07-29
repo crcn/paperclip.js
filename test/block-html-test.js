@@ -24,6 +24,16 @@ describe("html sections", function() {
     }
   });
 
+  it("can be loaded without anything", function() {
+
+    var v = pc.
+    template("hello '{{ html: content }}'!").
+    bind();
+
+    var sectionContent = sectionTemplate.bind(section);
+
+    expect(v.toString()).to.be("hello ''!");
+  });
 
   it("can be loaded with a default value", function() {
     var v = pc.
@@ -35,7 +45,6 @@ describe("html sections", function() {
     expect(v.toString()).to.be("hello 'world'!");
   });
 
-  return;
   it("can load a child fragment", function() {
 
     var v2 = pc.template("{{name}}").

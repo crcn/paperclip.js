@@ -17,7 +17,7 @@ class HtmlDecor extends require("./base")
       node = value
     else 
 
-      if typeof window is "undefined"
+      if @nodeFactory.name is "string"
         node = @nodeFactory.createTextNode String value
       else
         dom = @nodeFactory.createElement "div"
