@@ -325,6 +325,27 @@ describe("binding", function() {
 
       expect(v.context.get("exists")).to.be(true);
     });
+
+
+    it("can assign to multiple variables", function() {
+      var v = pc.
+      template("{{ b = c = d = a }}").
+      bind({ 
+        a: "ha"
+      });
+
+      expect(v.context.get("b")).to.be("ha");
+      expect(v.context.get("c")).to.be("ha");
+      expect(v.context.get("d")).to.be("ha");
+      expect(v.context.get("a")).to.be("ha");
+
+      v.context.set("c", "bah");
+      expect(v.context.get("c")).to.be("ha");
+      v.context.set("a", "bah");
+      expect(v.context.get("c")).to.be("bah");
+      expect(v.context.get("b")).to.be("bah");
+      expect(v.context.get("d")).to.be("bah");
+    })
   });
 
 
