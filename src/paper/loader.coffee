@@ -69,6 +69,16 @@ class Loader
   ###
   ###
 
-  toString: () -> @node.toString()
+  toString: () -> 
+
+    if @nodeFactory.name is "string"
+      return @node.toString()
+
+    if @node.nodeType is 11
+      div = document.createElement "div"
+      div.appendChild @node.cloneNode true
+      return div.innerHTML
+
+
 
 module.exports = Loader

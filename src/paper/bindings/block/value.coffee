@@ -1,4 +1,3 @@
-escapeHTML = require "../../utils/escapeHTML"
 
 class ValueDecor extends require("./base")
 
@@ -11,7 +10,7 @@ class ValueDecor extends require("./base")
       value = ""
 
 
-    @section.replaceChildNodes @nodeFactory.createTextNode escapeHTML String value
+    @section.replaceChildNodes @nodeFactory.createTextNode String value
 
 
 module.exports = ValueDecor
