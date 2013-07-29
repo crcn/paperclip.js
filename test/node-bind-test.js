@@ -84,22 +84,9 @@ describe("node", function() {
             show: true
           });
 
-
-          var tests = {
-            a: firefox || opera ? "<div style=\"display:inline-block;\"></div>" :
-
-                safari ? "<div style=\"display: inline-block; \"></div>" :
-                         "<div style=\"display: inline-block;\"></div>",
-
-            b: firefox ? "<div style=\"display: none;\"></div>" :
-                        
-                safari ? "<div style=\"display: none; \"></div>" :
-                         "<div style=\"display: none;\"></div>"
-          }
-
-          expect(String(v)).to.be(tests.a);
+          expect(utils.trimEl(v)).to.be("<div style=\"display:inline-block;\"></div>");
           v.context.set("show", false);
-          expect(String(v)).to.be(tests.b);
+          expect(utils.trimEl(v)).to.be("<div style=\"display:none;\"></div>");
         });
 
       });
@@ -141,25 +128,16 @@ describe("node", function() {
 
           var tests = {
 
-            a: safari ? '<div style="color: red; "></div>' :
-                        '<div style="color: red;"></div>',
-
-            b: safari ? '<div style="color: red; background-color: blue; "></div>' :
-                        '<div style="color: red; background-color: blue;"></div>',
-
-            c: safari ? '<div style="background-color: blue; "></div>' :
-                        '<div style="background-color: blue;"></div>',
-
             d: '<div style=""></div>'
           }
 
-          expect(String(v)).to.be(tests.a);
+          expect(utils.trimEl(v)).to.be('<div style="color:red;"></div>');
           v.context.set("backgroundColor", "blue");
-          expect(String(v)).to.be(tests.b);
+          expect(utils.trimEl(v)).to.be('<div style="color:red;background-color:blue;"></div>');
           v.context.set("color", undefined);
-          expect(String(v)).to.be(tests.c);
+          expect(utils.trimEl(v)).to.be('<div style="background-color:blue;"></div>');
           v.context.set("backgroundColor", undefined);
-          expect(String(v)).to.be(tests.d);
+          expect(utils.trimEl(v)).to.be(tests.d);
         }); 
       });
 

@@ -22,7 +22,7 @@ class HtmlDecor extends require("./base")
       else
         dom = @nodeFactory.createElement "div"
         dom.innerHTML = String value
-        node = @nodeFactory.createFragment dom.childNodes...
+        node = @nodeFactory.createFragment dom.childNodes
 
 
     @section.replaceChildNodes node
