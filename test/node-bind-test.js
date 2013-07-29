@@ -117,7 +117,7 @@ describe("node", function() {
 
       describe("disable", function() {
         it("can be added", function() {
-          var v = pc.template("<div data-bind=\"{{disable:disable}}\"></div>").bind({
+          var v = pc.template("<div data-bind=\"{{ disable: disable }}\"></div>").bind({
             disable: true
           });
           expect(String(v)).to.be("<div disable=\"disable\"></div>");

@@ -6,6 +6,8 @@ dataBindingClasses =
   css     : require("./handlers/css")
   style   : require("./handlers/style")
   disable : require("./handlers/disable")
+  value   : require("./handlers/value")
+  model   : require("./handlers/model")
 
   click      : require("./handlers/event")
   submit     : require("./handlers/event")
@@ -66,7 +68,7 @@ dataBindingClasses =
   checked : require("./attr/checked")
 ###
 
-class AttrDataBinding extends require("../base")
+class AttrDataBinding extends require("../../base")
   
   ###
   ###
