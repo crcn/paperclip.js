@@ -20,9 +20,9 @@ class HtmlDecor extends require("./base")
       if typeof window is "undefined"
         node = @nodeFactory.createTextNode String value
       else
-        dom = @nodeFactory.createNode "div"
+        dom = @nodeFactory.createElement "div"
         dom.innerHTML = String value
-        node = @nodeFactory.createFragment dom.childNodes
+        node = @nodeFactory.createFragment dom.childNodes...
 
 
     @section.replaceChildNodes node

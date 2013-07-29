@@ -17,7 +17,7 @@ class BlockWriter extends require("./base")
     childTpl = if childBlockFactory then @template.creator(childBlockFactory) else undefined
 
     # creates a document fragment which can be modified in a document
-    section = loaf()
+    section = loaf @nodeFactory
 
     # clips the scripts to the context
     clip = new Clip { script: script, watch: false }

@@ -17,6 +17,8 @@ class Template
 
 
 Template.prototype.creator = module.exports = tpl = (paperOrSrc, nodeFactory = nofactor.default) ->
+  
+  nodeFactory = nofactor.string
 
   if typeof paperOrSrc is "string"
 
