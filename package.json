@@ -18,14 +18,22 @@
     "jsdom": "*",
     "expect.js": "0.2.x",
     "mocha": "1.9.x",
-    "sardines": "0.4.x",
-    "karma": "0.8.x",
-    "structr": "~0.2.3"
+    "karma": "~0.9.5",
+    "structr": "~0.2.3",
+    "karma-script-launcher": "0.0.2",
+    "karma-chrome-launcher": "0.0.2",
+    "karma-firefox-launcher": "0.0.3",
+    "karma-html2js-preprocessor": "0.0.2",
+    "karma-jasmine": "0.0.3",
+    "karma-requirejs": "0.0.2",
+    "karma-coffee-preprocessor": "0.0.3",
+    "karma-phantomjs-launcher": "0.0.2",
+    "karma-mocha": "0.0.4",
+    "browserify": "~2.25.1"
   },
   "bin": {
     "paperclip": "./bin/paperclip"
   },
-  "browserify": "./index/browser",
   "dependencies": {
     "strscanner": "0.0.x",
     "bindable": "0.3.x",

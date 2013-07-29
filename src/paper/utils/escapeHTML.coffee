@@ -4,6 +4,8 @@ entities =
   "<": "lt"
   "&": "amp"
   ">": "gt"
+  "'": "apos"
+  "\"": "quote"
 
 module.exports = (str) ->
   str = String(str)
