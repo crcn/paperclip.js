@@ -8,7 +8,8 @@ describe("node", function() {
 
     var firefox = utils.browser.mozilla,
     opera       = utils.browser.opera,
-    safari      = utils.browser.safari;
+    safari      = utils.browser.safari,
+    node        = utils.browser.node;
 
     describe("text binding", function() {
 
@@ -71,12 +72,8 @@ describe("node", function() {
         it("can be used", function() {
           var v = pc.template("<div data-bind=\"{{show:true}}\"></div>").bind();
 
-          var tests = {
-            a: safari ? "<div style=\"\"></div>" :
-                      "<div></div>"
-          }
 
-          expect(String(v)).to.be(tests.a)
+          expect(utils.trimEl(v)).to.be("<div></div>")
         }); 
 
         it("respects original display style", function() {
@@ -126,18 +123,13 @@ describe("node", function() {
             color: "red"
           });
 
-          var tests = {
-
-            d: '<div style=""></div>'
-          }
-
           expect(utils.trimEl(v)).to.be('<div style="color:red;"></div>');
           v.context.set("backgroundColor", "blue");
           expect(utils.trimEl(v)).to.be('<div style="color:red;background-color:blue;"></div>');
           v.context.set("color", undefined);
           expect(utils.trimEl(v)).to.be('<div style="background-color:blue;"></div>');
           v.context.set("backgroundColor", undefined);
-          expect(utils.trimEl(v)).to.be(tests.d);
+          expect(utils.trimEl(v)).to.be("<div></div>");
         }); 
       });
 

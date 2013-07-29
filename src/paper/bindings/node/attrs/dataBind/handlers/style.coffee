@@ -19,15 +19,15 @@ class StyleDecor extends require("./base")
     for name of styles
       style = styles[name]
       if style isnt @_currentStyles[name]
-        newStyles[name] = @_currentStyles[name] = style
+        newStyles[name] = @_currentStyles[name] = style or ""
 
 
-    for key of newStyles
-      # blank string effectively removes styles
-      @node.style.setProperty key, @node.style[key] = newStyles[key] or ""
-      
-
-    #$(@node).css newStyles
+    if typeof window is "undefined"
+      for key of newStyles
+        # blank string effectively removes styles
+        @node.style[key] = newStyles[key]
+    else
+      $(@node).css newStyles
 
 
 
