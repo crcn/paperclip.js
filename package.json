@@ -32,7 +32,8 @@
     "browserify": "~2.25.1",
     "jquery": "~1.8.3",
     "karma-opera-launcher": "0.0.2",
-    "karma-safari-launcher": "0.0.3"
+    "karma-safari-launcher": "0.0.3",
+    "karma-eyebrowse-launcher": "0.0.0"
   },
   "bin": {
     "paperclip": "./bin/paperclip"
