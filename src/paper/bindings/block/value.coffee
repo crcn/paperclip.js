@@ -1,8 +1,6 @@
 ent = require "ent"
 
 class ValueDecor extends require("./base")
-  
-
 
   ###
   ###
