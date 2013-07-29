@@ -39,7 +39,4 @@ class BlockDecor extends require("./base")
 
 
 
-      
-
-
 module.exports = BlockDecor

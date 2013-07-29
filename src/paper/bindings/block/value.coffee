@@ -14,6 +14,4 @@ class ValueDecor extends require("./base")
     @section.replaceChildNodes @nodeFactory.createTextNode ent.encode String value
 
 
-
-
 module.exports = ValueDecor
