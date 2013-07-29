@@ -42,11 +42,11 @@ class AttrTextBinding extends require("../../base")
   ###
   ###
 
-  test: (value) ->
+  test: (binding) ->
 
-    return false unless type(value) is "array"
+    return false unless type(binding.value) is "array"
 
-    for v in value
+    for v in binding.value
       return true if v.fn
 
     return false

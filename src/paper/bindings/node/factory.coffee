@@ -55,7 +55,7 @@ class NodeBindingFactory
     for bindable in bindables
       bindingClasses = allBindingClasses[bindable.type][bindable.key] or []
       for bindingClass in bindingClasses
-        if bindingClass.prototype.test bindable.value
+        if bindingClass.prototype.test bindable
           bindings.push new bindingClass bindable
 
 

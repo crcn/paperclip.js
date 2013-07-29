@@ -53,8 +53,7 @@ module.exports =
    {{/}}
   ###
 
-  blockBinding: (name, blockBindingClass) ->
-    bindings.blockBindingFactory.register blockBindingClass
+  blockBinding: bindings.blockBindingFactory.register
 
   ###
    adds a node binding shim
@@ -62,15 +61,12 @@ module.exports =
    <div custom="" />
   ###
 
-  nodeBinding: (name, nodeBindingClass) ->
-    bindings.nodeBindingFactory.register nodeBindingClass
-
+  nodeBinding: bindings.nodeBindingFactory.register
   ###
     data-bind="{{ custom: binding }}"
   ###
 
-  attrDataBinding: (name, attrDataBindingClass) ->
-    bindings.nodeBindingFactory.dataBind.register name, attrDataBindingClass
+  attrDataBinding: bindings.nodeBindingFactory.dataBind.register
 
 
 

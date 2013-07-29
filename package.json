@@ -19,7 +19,8 @@
     "expect.js": "0.2.x",
     "mocha": "1.9.x",
     "sardines": "0.4.x",
-    "karma": "0.8.x"
+    "karma": "0.8.x",
+    "structr": "~0.2.3"
   },
   "bin": {
     "paperclip": "./bin/paperclip"
