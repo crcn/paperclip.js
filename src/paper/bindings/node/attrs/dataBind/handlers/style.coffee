@@ -24,7 +24,8 @@ class StyleDecor extends require("./base")
 
     for key of newStyles
       # blank string effectively removes styles
-      @node.style.setProperty key, newStyles[key] or ""
+      @node.style.setProperty key, @node.style[key] = newStyles[key] or ""
+      
 
     #$(@node).css newStyles
 
