@@ -116,7 +116,14 @@ describe("node", function() {
       });
 
       describe("disable", function() {
-
+        it("can be added", function() {
+          var v = pc.template("<div data-bind=\"{{disable:disable}}\"></div>").bind({
+            disable: true
+          });
+          expect(String(v)).to.be("<div disable=\"disable\"></div>");
+          v.context.set("disable", false);
+          expect(String(v)).to.be("<div></div>");
+        })
       });
 
       describe("model", function() {
