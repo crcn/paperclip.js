@@ -18,7 +18,7 @@ class ElementWriter extends require("./base")
       v = attributes[attrName]
 
       if v.length is 1 and type(v[0]) is "string"
-        element.setAttribute attrName, attributes[attrName]
+        element.setAttribute attrName, v[0]
 
 
     @bindings.push nodeBindingFactory.getBindings({

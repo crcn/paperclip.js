@@ -23,7 +23,7 @@ class BlockWriter extends require("./base")
     clip = new Clip { script: script, watch: false }
 
     # binds the context to the particular script - needed for the block bindings
-    @bindings.push new ClipBinding clip
+    # @bindings.push new ClipBinding clip
 
     # add any bindings that might exist
     @bindings.push blockBindingFactory.getBindings({

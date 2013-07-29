@@ -3,8 +3,7 @@ allBindingClasses = {
   attr: { 
     default: [
     ]
-  }, # attr shim
-
+  }
 }
 
 
@@ -56,7 +55,7 @@ class NodeBindingFactory
     for bindable in bindables
       bindingClasses = allBindingClasses[bindable.type][bindable.key] or []
       for bindingClass in bindingClasses
-        if bindingClass.test bindable.value
+        if bindingClass.prototype.test bindable.value
           bindings.push new bindingClass bindable
 
 
@@ -70,13 +69,15 @@ class NodeBindingFactory
 
   register: (name, bindingClass) ->
 
-    unless /node|attr/.test String(bindingClass.type)
+    type = bindingClass.type or bindingClass.prototype.type 
+
+    unless /node|attr/.test String(type)
       throw new Error "node binding class \"#{bindingClass.name}\" must have a type 'node', or 'attr'"
 
-    classes = allBindingClasses[bindingClass.type]
+    classes = allBindingClasses[type]
 
-    unless bindingClass.test
-      bindingClass.test = () -> true
+    unless bindingClass.prototype.test
+      bindingClass.prototype.test = () -> true
 
     unless classes[name]
       classes[name] = []
@@ -88,7 +89,21 @@ class NodeBindingFactory
 
 nodeFactory = module.exports = new NodeBindingFactory()
 
+defaultBindingClasses = {
+  default: [
+    require("./attrs/text")
+  ],
+  "data-bind": [
+    dataBind = module.exports.dataBind = require("./attrs/dataBind")
+  ]
+}
 
-nodeFactory.register "default", require("./attrs/text")
+
+for type of defaultBindingClasses
+  classes = defaultBindingClasses[type]
+  for clazz in classes
+    nodeFactory.register type, clazz
+
+
 
 

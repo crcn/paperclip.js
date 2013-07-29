@@ -43,18 +43,34 @@ module.exports =
   BaseNodeBinding: bindings.BaseNodeBinding
 
   ###
-   adds a block binding class
   ###
 
-  blockBinding: (blockBindingClass) ->
+  BaseAttrDataBinding: bindings.BaseAttrDataBinding
+
+  ###
+   adds a block binding class
+   {{#custom}}
+   {{/}}
+  ###
+
+  blockBinding: (name, blockBindingClass) ->
     bindings.blockBindingFactory.register blockBindingClass
 
   ###
-   adds a node binding class
+   adds a node binding shim
+   <custom />
+   <div custom="" />
   ###
 
-  nodeBinding: (nodeBindingClass) ->
+  nodeBinding: (name, nodeBindingClass) ->
     bindings.nodeBindingFactory.register nodeBindingClass
+
+  ###
+    data-bind="{{ custom: binding }}"
+  ###
+
+  attrDataBinding: (name, attrDataBindingClass) ->
+    bindings.nodeBindingFactory.dataBind.register name, attrDataBindingClass
 
 
 

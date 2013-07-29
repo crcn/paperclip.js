@@ -1,4 +1,4 @@
-class BlockBinding extends require("../base")
+class BlockBinding extends require("../base/script")
 
   ###
   ###
@@ -13,34 +13,15 @@ class BlockBinding extends require("../base")
     @childBlockTemplate = options.childBlockTemplate
 
     @script = @clip.script @scriptName
-    
-  ###
-  ###
 
-  bind: (@context) -> 
-  
-    @_binding = @clip.bind(@scriptName)
-
-    if @_map
-      @_binding.map @_map
-
-    @_binding.to @_onChange
-
-    @_binding.now()
-    @
+    super @clip, @scriptName
 
   ###
   ###
 
-  unbind: () ->
-    @_binding?.dispose()
-    @_binding = undefined
-    @
-
-  ###
-  ###
-
-  _onChange: (value) =>
+  bind: (@context) ->
+    @clip.reset @context
+    super @context
 
   ###
   ###
