@@ -37,14 +37,14 @@ describe("binding", function() {
     })
   });
 
-  describe("mappers", function() {
+  describe("modifiers", function() {
 
     it("can be registered", function() {
-      pc.map("append", function(str) {
+      pc.modifier("append", function(str) {
         return Array.prototype.concat.apply([], arguments).join("+");
       });
 
-      pc.map("multiply", function(num, multiplier) {
+      pc.modifier("multiply", function(num, multiplier) {
         return Number(num) * multiplier;
       });
     });

@@ -1,7 +1,7 @@
 Clip      = require "../clip"
 template  = require "./template"
 nofactor  = require "nofactor"
-mappers   = require "./mappers"
+modifiers = require "./modifiers"
 bindings  = require "./bindings"
 bindable  = require "bindable"
 
@@ -28,8 +28,8 @@ module.exports =
    {{ message | titlecase() }}
   ###
 
-  map: (name, mapper)  ->
-    mappers[name] = mapper
+  modifier: (name, modifier)  ->
+    modifiers[name] = modifier
 
   ###
    expose the class so that one can be registered
