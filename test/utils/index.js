@@ -4,6 +4,6 @@ module.exports = {
   },
   browser: require("./browser").browser,
   trimEl: function(str) {
-    return String(str).replace(/:\s*/g,":").replace(/;\s*/g,";")
+    return String(str).replace(/:\s*/g,":").replace(/;\s*/g,";").replace(' style=""',"")
   }
 }
