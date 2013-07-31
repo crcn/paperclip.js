@@ -5,6 +5,8 @@ translate = require "./translate"
 adapters  = require "./node/adapters"
 
 
+require("./node")
+
 module.exports = browser
 
 # node

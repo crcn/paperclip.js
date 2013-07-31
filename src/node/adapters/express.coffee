@@ -11,6 +11,9 @@ compile = (path) ->
   tpl = browser.template content
 
   bindable = new browser.bindable.Object()
+  bindable.set("this", bindable)
+  bindable.set("path", path)
+
   loader = tpl.bind bindable
 
   (data) -> 

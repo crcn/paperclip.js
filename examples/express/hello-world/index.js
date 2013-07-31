@@ -13,4 +13,10 @@ app.get("/hello", function(req, res) {
   });
 });
 
+app.get("/complete", function(req, res) {
+  res.render("complete.pc", {
+    teacherName: req.query.teacherName
+  });
+});
+
 app.listen(8081);
