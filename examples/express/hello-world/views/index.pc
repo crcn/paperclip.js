@@ -1,0 +1,6 @@
+hello {{name}}!
+
+
+{{#if:!last}}
+no last name given
+{{/}}

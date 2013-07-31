@@ -24,10 +24,22 @@ describe("conditional sections", function() {
   
 
   describe("with else statements", function() {
+    it("can show / hide conditional blocks", function() {
+      var v = pc.template("{{#if:show}}hello world!{{/}}").bind();
+      expect(String(v)).to.be("");
+      v.context.set("show", true);
+      expect(String(v)).to.be("hello world!");
+      v.context.set("show", false);
+      expect(String(v)).to.be("");
+
+    });
+
     it("are shown if 'if' is false", function() {
       var v = pc.template("hello{{#if:undefined}} world{{/else}} blah{{/}}!").bind();
       expect(String(v)).to.be("hello blah!");
     });
+
+
 
     it("waterfalls down conditional statements", function() {
 
@@ -57,5 +69,6 @@ describe("conditional sections", function() {
 
 
     });
+
   });
 });

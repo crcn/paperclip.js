@@ -20,9 +20,12 @@ class BlockDecor extends require("./base")
 
   _onChange: (value) =>
 
+    oldChild = @child
+
     # remove the previous child if it exists
     @child?.unbind()
     @child = undefined
+
 
     # true? use THIS blocks content
     if value
@@ -36,6 +39,9 @@ class BlockDecor extends require("./base")
     if childTemplate
       @child = childTemplate.bind(@context)
       @section.replaceChildNodes @child.section.toFragment()
+    else if oldChild?
+      oldChild.section.hide()
+
 
 
 
