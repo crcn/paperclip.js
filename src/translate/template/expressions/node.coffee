@@ -14,33 +14,36 @@ class NodeExpression extends require("./base")
     if children
       @addChild @children
 
-
   ###
   ###
 
   toJsString: () ->
 
-    buffer = ["').nodeBinding('#{@name}'"]
+    buffer = ["'), element('#{@name}'"]
 
     options = []
 
     if @attributes
-      options.push " attrs: #{@attributes.toJsString()} "
+      buffer.push ", #{@attributes.toJsString()} "
+    else
+      buffer.push ", {}"
 
     if @children
-      options.push " children: paper.create().html('#{@children.toString()}') "
+      buffer.push ", [ text('#{@children.toString()}') ] "
 
-    if options.length
-      buffer.push ", {#{options}}"
 
-    buffer.push ").html('"
+    buffer.push "), text('"
+
 
     buffer.join("")
+
 
   ###
   ###
 
   toString: () ->
+
+    console.log @attributes.hasBinding
 
     return @toJsString() if @attributes?.hasBinding()
 

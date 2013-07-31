@@ -2,12 +2,20 @@ class RootExpression extends require("./base")
   
   _method: "html"
 
-  constructor: (@children) ->  
+  constructor: (@children, @modExports = true) ->  
     super()
     @addChild children
 
   
   toString: () ->
-    "module.exports = function(paper){ return paper.create().html('#{@children}') }"
+    buffer = []
+
+    if @modExports
+      buffer.push "module.exports = "
+
+
+    buffer.push "function(fragment, block, element, text, modifiers){ return fragment([ text('#{@children}') ]) }"
+
+    buffer.join " "
 
 module.exports = RootExpression

@@ -21,7 +21,7 @@ class NodeBinding extends require("./bindable")
     @_decor = attrFactory.getDecor @
 
     if options.children
-      @addChild options.children
+      @addChild options.children...
 
   ###
   ###

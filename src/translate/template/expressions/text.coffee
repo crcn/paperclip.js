@@ -12,7 +12,7 @@ class TextExpression extends require("./base")
   ###
   ###
 
-  toJsString: () -> "this.text(#{@buffer})"
+  toJsString: () -> "text(#{@buffer})"
 
   toString: () -> 
     @buffer.items.join("")

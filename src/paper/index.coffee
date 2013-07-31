@@ -3,6 +3,7 @@ Html       = require "./nodes/html"
 pilot      = require "pilot-block"       
 asyngleton = require "asyngleton"
 modifiers  = require "./defaultModifiers"
+build      = require "./load"
 
 class Paper
 
@@ -11,7 +12,7 @@ class Paper
 
   constructor: (@factory) ->
     @modifiers = modifiers
-    @node = @factory @
+    @node = build factory
 
   ###
   ###

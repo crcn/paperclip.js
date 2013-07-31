@@ -1,4 +1,6 @@
 # {{binding}}
+RootExpression = require "./root"
+
 class Binding extends require("./base")
 
   _type: "binding"
@@ -6,9 +8,16 @@ class Binding extends require("./base")
   ###
   ###
 
-  constructor: (@script, @children, @childBinding) ->
+  constructor: (@script, children, childBinding) ->
     super()
+
+    @children = new RootExpression children, false
+
+    if childBinding
+      @childBinding = new RootExpression childBinding, false
+
     @addChild @children
+
 
   ###
   ###
@@ -18,17 +27,17 @@ class Binding extends require("./base")
   ###
   ###
 
-  toString: () -> "').#{@toMethodString()}.html('"
+  toString: () -> "'), #{@toMethodString()}, text('"
 
 
   ###
   ###
 
   toMethodString: () -> 
-    buffer = ["blockBinding(#{@script}, function(){ return paper.create().html('#{@children.toString()}')}"]
+    buffer = ["block(#{@script}, #{@children.toString()}"]
 
     if @childBinding
-      buffer.push ", paper.create().#{@childBinding.toMethodString()}"
+      buffer.push ", #{@childBinding.toString()}"
 
     buffer.push ")"
 

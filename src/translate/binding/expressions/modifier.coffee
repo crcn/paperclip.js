@@ -24,7 +24,7 @@ class ModifierExpression extends base.Expression
     buffer = []
 
     
-    buffer.push "paper.modifiers"
+    buffer.push "modifiers"
     buffer.push ".#{@name}("
 
 
