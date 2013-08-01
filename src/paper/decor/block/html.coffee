@@ -19,7 +19,17 @@ class HtmlDecor extends require("./base")
 
   bind: () ->
     super()
+    @clip.bind "html", @_onChange
     @child?.bind()
+
+
+  ###
+  ###
+
+  _onChange: (value) ->
+    if typeof html is "string"
+      @node.section?.html value
+
 
   ###
   ###
