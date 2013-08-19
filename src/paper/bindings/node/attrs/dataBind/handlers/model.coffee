@@ -10,7 +10,7 @@ class ModelAttrBinding extends require("./base")
 
   bind: () ->
     super()
-    (@$element = $(@element)).bind ChangeDecor.events, @_onElementChange
+    (@$element = $(@node)).bind ChangeDecor.events, @_onElementChange
     @_onChange @clip.get("model")
   
 
@@ -90,46 +90,46 @@ class ModelAttrBinding extends require("./base")
       value = ""
 
     # Object.prototype.hasOwnProperty is a work-around for ffox and, ie
-    isInput = Object.prototype.hasOwnProperty.call(@element, "value") or /input|textarea|checkbox/.test(@element.nodeName.toLowerCase())
+    isInput = Object.prototype.hasOwnProperty.call(@node, "value") or /input|textarea|checkbox/.test(@node.nodeName.toLowerCase())
 
     unless arguments.length
-      return if isInput then @_checkedOrValue() else @element.innerHTML
+      return if isInput then @_checkedOrValue() else @node.innerHTML
 
     @currentValue = value
 
     if isInput
       @_checkedOrValue value
     else
-      @element.innerHTML = value
+      @node.innerHTML = value
 
   ###
   ###
 
-  _elementName: () -> $(@element).attr("name")
+  _elementName: () -> $(@node).attr("name")
 
   ###
   ###
 
   _checkedOrValue: (value) ->
 
-    isCheckbox        = /checkbox/.test @element.type
-    isRadio           = /radio/.test @element.type
+    isCheckbox        = /checkbox/.test @node.type
+    isRadio           = /radio/.test @node.type
     isRadioOrCheckbox = isCheckbox or isRadio
 
     unless arguments.length
       if isRadioOrCheckbox
-        return $(@element).val()
+        return $(@node).val()
       else
-        return @element.value
+        return @node.value
 
     if isRadioOrCheckbox
       if isRadio
-        if String(value) is String($(@element).val())
-          $(@element).prop("checked", true)
+        if String(value) is String($(@node).val())
+          $(@node).prop("checked", true)
       else
-        @element.checked = value
+        @node.checked = value
     else 
-      @element.value = value
+      @node.value = value
 
 
 

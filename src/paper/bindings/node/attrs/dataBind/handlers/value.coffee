@@ -13,7 +13,7 @@ class ValueAttrBinding extends require("./base")
 
   bind: () ->
     super()
-    (@$element = $(@element)).bind ChangeDecor.events, @_onElementChange
+    (@$element = $(@node)).bind ChangeDecor.events, @_onElementChange
     @_onChange @clip.get("value")
   
 
@@ -57,17 +57,17 @@ class ValueAttrBinding extends require("./base")
       value = ""
 
     # Object.prototype.hasOwnProperty is a work-around for ffox and, ie
-    isInput = Object.prototype.hasOwnProperty.call(@element, "value") or /input|textarea|checkbox/.test(@element.nodeName.toLowerCase())
+    isInput = Object.prototype.hasOwnProperty.call(@node, "value") or /input|textarea|checkbox/.test(@node.nodeName.toLowerCase())
 
     unless arguments.length
-      return if isInput then @_checkedOrValue() else @element.innerHTML
+      return if isInput then @_checkedOrValue() else @node.innerHTML
 
     @currentValue = value
 
     if isInput
       @_checkedOrValue value
     else
-      @element.innerHTML = value
+      @node.innerHTML = value
 
 
 
@@ -75,15 +75,15 @@ class ValueAttrBinding extends require("./base")
   ###
 
   _checkedOrValue: (value) ->
-    isCheckbox = /checkbox/.test @element.type
+    isCheckbox = /checkbox/.test @node.type
 
     unless arguments.length
-      return if isCheckbox then @element.checked else @element.value
+      return if isCheckbox then @node.checked else @node.value
 
     if isCheckbox
-      @element.checked = value
+      @node.checked = value
     else 
-      @element.value = value
+      @node.value = value
 
 
 
