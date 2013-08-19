@@ -20,6 +20,7 @@ class Collection extends BaseBinding
     return if @_bound
     @_bound = true
     binding.bind(@context) for binding in @_source
+    return
 
   ###
   ###
@@ -28,6 +29,7 @@ class Collection extends BaseBinding
     return unless @_bound
     @_bound = false
     binding.unbind() for binding in @_source
+    return
 
 
 module.exports = Collection

@@ -30,6 +30,7 @@ class ValueAttrBinding extends require("./base")
       if @clip.get("bothWays")
         for ref in @refs
           @context.set ref, value
+      return
     ), 5
 
   ###

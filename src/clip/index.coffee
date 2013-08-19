@@ -352,6 +352,7 @@ class ClipScripts
     else
       for scriptName of scripts
         @_bindScript scriptName, scripts[scriptName]
+    return
 
   ###
   ###

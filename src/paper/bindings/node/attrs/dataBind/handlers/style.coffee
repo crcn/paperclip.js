@@ -29,6 +29,8 @@ class StyleDecor extends require("./base")
     else
       $(@node).css newStyles
 
+    return
+
 
 
 module.exports = StyleDecor
