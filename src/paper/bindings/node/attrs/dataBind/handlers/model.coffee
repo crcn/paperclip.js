@@ -26,11 +26,12 @@ class ModelAttrBinding extends require("./base")
 
       value = @_parseValue @_elementValue()
       name  = @_elementName()
+      refs  = @script.script.refs
       model = @clip.get("model")
 
       # assumed, but can be overridden
       if @clip.get("bothWays") isnt false
-        ref = name or (if @refs.length then @refs[0] else undefined)
+        ref = name or (if refs.length then refs[0] else undefined)
 
         unless name
           model = @context
