@@ -8,16 +8,18 @@ class HtmlDecor extends require("./base")
 
   _onChange: (value, oldValue) -> 
 
-    if oldValue?.__isLoader
+    if oldValue?.section
       oldValue.section.hide()
 
     unless value
       return @section.removeChildNodes() 
 
-    if value.__isLoader
+    if value.section
       node = value.section.show().toFragment()
     else if value.nodeType?
       node = value
+    else if value.createFragment
+      node = value.createFragment()
     else 
 
       if @nodeFactory.name is "string"
