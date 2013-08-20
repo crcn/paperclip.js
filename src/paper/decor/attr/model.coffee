@@ -88,7 +88,6 @@ class ModelDecor extends require("./dataBind")
 
   _elementValue: (value) =>
 
-    return if value is @_currentValue
 
     # cannot be undefined
     unless value?
@@ -100,6 +99,8 @@ class ModelDecor extends require("./dataBind")
     unless arguments.length
       return if isInput then @_checkedOrValue() else @element.innerHTML
 
+    return if value is @_currentValue
+    
     @currentValue = value
 
     if isInput
