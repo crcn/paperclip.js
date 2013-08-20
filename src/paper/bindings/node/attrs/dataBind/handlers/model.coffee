@@ -9,7 +9,7 @@ class ModelAttrBinding extends require("./base")
   ###
 
   bind: () ->
-    super()
+    super arguments...
     (@$element = $(@node)).bind ChangeDecor.events, @_onElementChange
     @_onChange @clip.get("model")
   

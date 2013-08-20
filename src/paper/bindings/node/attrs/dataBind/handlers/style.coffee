@@ -6,7 +6,7 @@ class StyleDecor extends require("./base")
 
   bind: () ->
     @_currentStyles = {}
-    super()
+    super arguments...
 
   ###
   ###
