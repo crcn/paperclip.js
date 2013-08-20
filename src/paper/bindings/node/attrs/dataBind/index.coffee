@@ -57,14 +57,13 @@ class AttrDataBinding extends require("../../base")
   ###
 
   bind: (@context) ->
-    @clip.watch().reset(@context, false)
+    @clip.reset(@context, false)
     @_bindings.bind @context
 
   ###
   ###
 
   unbind: () ->
-    @clip.unwatch()
     @_bindings.unbind()
 
 

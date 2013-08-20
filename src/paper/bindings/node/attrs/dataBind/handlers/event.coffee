@@ -4,7 +4,7 @@ class EventDecor extends require("./base")
   ###
   ###
   
-  watch: false
+  update: false
 
   ###
   ###

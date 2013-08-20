@@ -140,7 +140,6 @@ class ClipScript extends events.EventEmitter
 
   watch: () ->
     @__watch = true
-    @update()
     @
 
   ###

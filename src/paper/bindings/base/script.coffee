@@ -11,8 +11,10 @@ class ScriptBinding extends require("./index")
 
   bind: (@context) -> 
 
-    if @watch isnt false
-      @script.watch()
+    @script.watch()
+
+    if @update isnt false
+      @script.update()
   
     @_binding = @clip.bind(@scriptName)
 
