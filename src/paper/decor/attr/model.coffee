@@ -36,6 +36,8 @@ class ModelDecor extends require("./dataBind")
         unless name
           model = @context
 
+        @_currentValue = value
+
         if model
           if model.set
             model.set ref, value
@@ -85,6 +87,8 @@ class ModelDecor extends require("./dataBind")
   ###
 
   _elementValue: (value) =>
+
+    return if value is @_currentValue
 
     # cannot be undefined
     unless value?
