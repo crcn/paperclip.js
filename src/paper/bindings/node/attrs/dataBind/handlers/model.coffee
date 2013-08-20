@@ -36,6 +36,8 @@ class ModelAttrBinding extends require("./base")
         unless name
           model = @context
 
+        @currentValue = value
+
         if model
           if model.set
             model.set ref, value
@@ -85,6 +87,8 @@ class ModelAttrBinding extends require("./base")
   ###
 
   _elementValue: (value) =>
+
+    return if @currentValue is value
 
     # cannot be undefined
     unless value?
