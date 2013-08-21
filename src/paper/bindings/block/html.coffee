@@ -8,11 +8,10 @@ class HtmlDecor extends require("./base")
 
   _onChange: (value, oldValue) -> 
 
-    if oldValue?.section
-      oldValue.section.hide()
+    @section.removeAll()
 
     unless value
-      return @section.removeChildNodes() 
+      return @section.removeAll() 
 
     if value.section
       node = value.section.show().toFragment()
@@ -28,7 +27,6 @@ class HtmlDecor extends require("./base")
         dom = @nodeFactory.createElement "div"
         dom.innerHTML = String value
         node = @nodeFactory.createFragment dom.childNodes
-
 
     @section.replaceChildNodes node
 

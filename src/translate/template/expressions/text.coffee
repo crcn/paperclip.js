@@ -9,13 +9,8 @@ class TextExpression extends require("./base")
     super()
     @addChild @buffer
 
-  ###
-  ###
-
-  toJsString: () -> "text(#{@buffer})"
-
   toString: () -> 
-    @buffer.items.join("")
+    "text(#{@buffer.items.join("")})" 
 
 
 module.exports = TextExpression

@@ -27,7 +27,7 @@ class Binding extends require("./base")
   ###
   ###
 
-  toString: () -> "'), #{@toMethodString()}, text('"
+  toString: () -> "#{@toMethodString()}"
 
 
   ###

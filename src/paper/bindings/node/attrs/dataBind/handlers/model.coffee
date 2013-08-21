@@ -63,6 +63,7 @@ class ModelAttrBinding extends require("./base")
     name = @_elementName()
     @_modelBinding?.dispose()
 
+
     if name
       @_modelBinding = model?.bind(name).to(@_onValueChange).now()
     else

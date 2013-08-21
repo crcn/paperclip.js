@@ -160,7 +160,7 @@ class Parser extends BaseParser
 
 
 
-    new TextExpression new CollectionExpression items
+    new CollectionExpression items
 
   ###
   ###

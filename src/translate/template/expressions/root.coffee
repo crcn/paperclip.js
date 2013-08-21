@@ -14,7 +14,14 @@ class RootExpression extends require("./base")
       buffer.push "module.exports = "
 
 
-    buffer.push "function(fragment, block, element, text, modifiers){ return fragment([ text('#{@children}') ]) }"
+
+    element = "#{@children}"
+
+
+    if @children.items?.length > 1
+      element = "fragment([#{element}])"
+
+    buffer.push "function(fragment, block, element, text, modifiers){ return #{element} }"
 
     buffer.join " "
 

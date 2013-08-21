@@ -10,14 +10,9 @@ class TextStringExpression extends require("./base")
 
   ###
   ###
-
-  toJsString: () -> 
-    @value.toJsString()
-
-  ###
-  ###
-
-  toString: () -> "#{@value}"
+  
+  toString: () -> 
+    "text(#{@value})" 
 
 
 module.exports = TextStringExpression

@@ -19,20 +19,20 @@ class NodeExpression extends require("./base")
 
   toJsString: () ->
 
-    buffer = ["'), element('#{@name}'"]
+    buffer = ["element('#{@name}'"]
 
     options = []
 
     if @attributes
-      buffer.push ", #{@attributes.toJsString()} "
+      buffer.push ", #{@attributes.toString()} "
     else
       buffer.push ", {}"
 
     if @children
-      buffer.push ", [ text('#{@children.toString()}') ] "
+      buffer.push ", [ #{@children.toString()} ] "
 
 
-    buffer.push "), text('"
+    buffer.push ")"
 
 
     buffer.join("")
