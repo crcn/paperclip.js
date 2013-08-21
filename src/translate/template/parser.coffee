@@ -159,7 +159,6 @@ class Parser extends BaseParser
           items.push str
 
 
-
     new CollectionExpression items
 
   ###

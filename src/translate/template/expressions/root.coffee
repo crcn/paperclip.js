@@ -18,10 +18,12 @@ class RootExpression extends require("./base")
     element = "#{@children}"
 
 
-    if @children.items?.length > 1
+    if @children.items?.length
       element = "fragment([#{element}])"
+    else
+      console.log "\n\n\n", element
 
-    buffer.push "function(fragment, block, element, text, modifiers){ return #{element} }"
+    buffer.push "function(fragment, block, element, text, modifiers){ return fragment([ #{@children} ]) }"
 
     buffer.join " "
 
