@@ -16,12 +16,14 @@ class HtmlDecor extends require("./base")
     unless value
       return @section.removeAll() 
 
-    if value.section
+    # TODO - change this stuff to .render & .remove()
+
+    if value.createFragment
+      node = value.createFragment()
+    else if value.section
       node = value.section.show().toFragment()
     else if value.nodeType?
       node = value
-    else if value.createFragment
-      node = value.createFragment()
     else 
 
       if @nodeFactory.name is "string"
