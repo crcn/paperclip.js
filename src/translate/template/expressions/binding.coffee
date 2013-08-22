@@ -11,6 +11,8 @@ class Binding extends require("./base")
   constructor: (@script, children, childBinding) ->
     super()
 
+
+
     @children = new RootExpression children, false
 
     if childBinding

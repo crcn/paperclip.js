@@ -8,6 +8,9 @@ class HtmlDecor extends require("./base")
 
   _onChange: (value, oldValue) -> 
 
+    if oldValue?.section
+      oldValue.section.hide()
+
     @section.removeAll()
 
     unless value

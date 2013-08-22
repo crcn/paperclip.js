@@ -24,8 +24,7 @@ class AttributesExpression extends require("./collection")
 
     params = []
     for attr in @_children
-      console.log attr.value
-      params.push "'#{attr.name}':#{if attr.value then attr.value.toString() else 'true' }"
+      params.push "'#{attr.name}':[#{if attr.value then attr.value.toString() else 'true' }]"
 
     "{#{params.join(',')}}"
 

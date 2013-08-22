@@ -13,7 +13,6 @@ class StringExpression extends require("./base")
 
   toString: () -> "'#{@value.replace(/'/g,"\\'").replace(/\n/g, "\\n")}'"
 
-
   ###
   ###
 

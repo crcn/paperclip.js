@@ -16,6 +16,7 @@ describe("basic", function() {
     }
   });
 
+
   it("can load the context", function() {
     var content = helloTemplate.bind(person);
     expect(content.toString()).to.be("hello craig condon!");

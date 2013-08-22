@@ -5,7 +5,6 @@ bindingParser = require "../binding/parser"
 
 RootExpression        = require "./expressions/root"
 NodeExpression        = require "./expressions/node"
-TextExpression        = require "./expressions/text"
 StringExpression      = require "./expressions/string"
 BindingExpression     = require "./expressions/binding"
 ChildrenExpression    = require "./expressions/children"
@@ -120,7 +119,7 @@ class Parser extends BaseParser
     name = @_currentString()
     if @_nextCode() is TokenCodes.EQ
       @_nextCodeSkipWs()
-      value = @_parseAttributeValue().buffer
+      value = @_parseAttributeValue()
 
     new AttributeExpression name, value
 
@@ -131,7 +130,7 @@ class Parser extends BaseParser
     # skip quote
     quoteCode = @_currentCode()
     @_nextCode() # eat quote
-    ret = @_parseTextUntil quoteCode
+    ret = @_parseAttrTextUntil quoteCode
     @_nextCodeSkipWs()
     ret
 
@@ -164,18 +163,39 @@ class Parser extends BaseParser
   ###
   ###
 
-  _parseTextString: (scode) ->
+  _parseAttrTextUntil: (scode) ->
+
+    items = []
+
+    while not ((ccode = @_currentCode()) & scode) and ccode
+      if ccode is TokenCodes.LM
+        items.push @_parseScript()
+      else 
+        str = @_parseString TokenCodes.LM | scode
+        if str 
+          items.push str
+
+    new CollectionExpression items
+
+
+  ###
+  ###
+
+  _parseString: (scode) ->
     buffer = []
 
     while not ((ccode = @_currentCode()) & scode) and ccode
       buffer.push @_currentString()
       @_nextCode()
 
-    # just a blank string? skip it.
-    # return null if buffer.join("").match(/^\s$/) 
+    new StringExpression buffer.join("")
 
+  ###
+  ###
+
+  _parseTextString: (scode) ->
     # trim
-    new TextStringExpression new StringExpression buffer.join("")
+    new TextStringExpression @_parseString scode
 
   ###
   ###
@@ -196,6 +216,7 @@ class Parser extends BaseParser
       child = @_parseBindingBlock true
     else
       @_nextCode()
+
 
     new BindingExpression script, new CollectionExpression(children), child
     
