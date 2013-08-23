@@ -10,6 +10,7 @@ bindable  = require("bindable");
 
 describe("html sections", function() {
 
+
   var sectionTemplate = pc.template("\
       A message to our nice friends: \
         \"{{ html: sections.blockValue }}\" \
