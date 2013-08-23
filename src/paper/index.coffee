@@ -69,5 +69,11 @@ module.exports =
   attrDataBinding: bindings.nodeBindingFactory.dataBind.register
 
 
+  ###
+  ###
+
+  use: (fn) -> fn @
+
+
 
 
