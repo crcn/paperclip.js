@@ -68,7 +68,6 @@ module.exports =
 
   attrDataBinding: bindings.nodeBindingFactory.dataBind.register
 
-
   ###
   ###
 
