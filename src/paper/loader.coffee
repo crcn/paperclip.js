@@ -46,7 +46,6 @@ class Loader
 
     @context = context
 
-    console.log String(@paper)
 
     # writes the DOM
     node = @paper @_writers.fragment.write,
