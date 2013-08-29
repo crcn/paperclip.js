@@ -72,7 +72,8 @@ class Tokenizer extends BaseTokenizer
 
           @_s.nextChar()
 
-        return @_t Codes.SN, buffer.join("")
+        # skip comments
+        return @_next()
 
       # other
       if @_s.peek(2) is "<!"

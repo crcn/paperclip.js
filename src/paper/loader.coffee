@@ -4,6 +4,7 @@ FragmentWriter = require "./writers/fragment"
 BlockWriter    = require "./writers/block"
 TextWriter     = require "./writers/text"
 ElementWriter  = require "./writers/element"
+ParseWriter    = require "./writers/parse"
 
 BindingCollection = require "./bindings/collection"
 bindable = require "bindable"
@@ -32,6 +33,7 @@ class Loader
       block    : new BlockWriter @
       text     : new TextWriter @
       element  : new ElementWriter @
+      parse    : new ParseWriter @
 
 
   ###
@@ -44,11 +46,14 @@ class Loader
 
     @context = context
 
+    console.log String(@paper)
+
     # writes the DOM
     node = @paper @_writers.fragment.write,
     @_writers.block.write,
     @_writers.element.write,
     @_writers.text.write,
+    @_writers.parse.write,
     modifiers
 
     @section = loaf()
