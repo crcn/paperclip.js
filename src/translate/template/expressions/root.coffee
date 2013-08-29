@@ -14,7 +14,7 @@ class RootExpression extends require("./base")
       buffer.push "module.exports = "
 
 
-    buffer.push "function(fragment, block, element, text, modifiers){ return fragment([ #{@children} ]) }"
+    buffer.push "function(fragment, block, element, text, modifiers, parse){ return fragment([ #{@children} ]) }"
 
     buffer.join " "
 

@@ -27,6 +27,7 @@ class Codes
   @COMMENT =  @CHAR    << 1
   @HASH    =  @COMMENT << 1 # #
   @WS      =  @HASH    << 1 # #
+  @SN      =  @WS      << 1
 
 class Tokenizer extends BaseTokenizer
   
@@ -54,18 +55,17 @@ class Tokenizer extends BaseTokenizer
 
     if (cchar = @_s.cchar()) is "<"
 
-      if @_s.peek(4) is "<!--"
-        @_s.skip(4)
+      if @_s.peek(2) is "<!"
+        buffer = []
         while (cchar = @_s.cchar()) and cchar
-          if cchar is "-"
-            if @_s.peek(3) is "-->"
-              @_s.skip(3)
+          buffer.push cchar
+          if cchar is ">"
               break
 
           @_s.nextChar()
 
         # skip
-        return @_next()
+        return @_t Codes.SN, buffer.join("")
       else  
 
         if @_s.peek(2) is "</"

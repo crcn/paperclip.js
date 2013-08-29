@@ -13,6 +13,7 @@ AttributesExpression  = require "./expressions/attributes"
 CollectionExpression  = require "./expressions/collection"
 TextStringExpression  = require "./expressions/textString"
 TextBindingExpression = require "./expressions/textBinding"
+StringNodeExpression  = require "./expressions/stringNode"
  
 class Parser extends BaseParser
 
@@ -47,8 +48,18 @@ class Parser extends BaseParser
       return @_parseNode()
     else if ccode is TokenCodes.SBLOCK
       return @_parseBindingBlock()
+    else if ccode is TokenCodes.SN
+      return @_parseStringNode()
     else
       return @_parseText()
+
+  ###
+  ###
+
+  _parseStringNode: () ->
+    cs = @_currentString()
+    @_nextCode()
+    new StringNodeExpression cs
 
   ###
   ###
