@@ -55,6 +55,26 @@ class Tokenizer extends BaseTokenizer
 
     if (cchar = @_s.cchar()) is "<"
 
+      # comment
+      if @_s.peek(4) is "<!--"
+        @_s.skip(4)
+        buffer = ["<!--"]
+        while (cchar = @_s.cchar()) and cchar
+
+          if cchar is "-" 
+            if @_s.peek(2) is "->"
+              @_s.skip(2)
+              buffer.push "->"
+              break
+
+
+          buffer.push cchar
+
+          @_s.nextChar()
+
+        return @_t Codes.SN, buffer.join("")
+
+      # other
       if @_s.peek(2) is "<!"
         buffer = []
         while (cchar = @_s.cchar()) and cchar
