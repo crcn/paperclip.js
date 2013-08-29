@@ -29,6 +29,7 @@ class ValueDecor extends require("./dataBind")
     @_changeTimeout = setTimeout (() =>
       value = @_elementValue()
       if @clip.get("bothWays")
+        @_currentValue = value
         for ref in @refs
           @context.set ref, value
     ), 5
@@ -61,6 +62,8 @@ class ValueDecor extends require("./dataBind")
 
     unless arguments.length
       return if isInput then @_checkedOrValue() else @element.innerHTML
+      
+    return if value is @_currentValue
 
     @currentValue = value
 
