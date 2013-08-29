@@ -80,7 +80,7 @@ class ModelDecor extends require("./dataBind")
 
   _parseValue: (value) ->
     return undefined if not value? or value is ""
-    if isNaN v = Number(value) then value else v
+    value
 
 
   ###
