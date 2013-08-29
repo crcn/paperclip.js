@@ -81,7 +81,7 @@ class ModelAttrBinding extends require("./base")
 
   _parseValue: (value) ->
     return undefined if not value? or value is ""
-    if isNaN v = Number(value) then value else v
+    value
 
 
   ###
