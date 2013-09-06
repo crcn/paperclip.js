@@ -21,6 +21,7 @@ dataBindingClasses =
   delete     : require("./handlers/delete")
 
   onClick      : require("./handlers/event")
+  onLoad       : require("./handlers/event")
   onSubmit     : require("./handlers/event")
   onMouseDown  : require("./handlers/event")
   onMouseUp    : require("./handlers/event")
