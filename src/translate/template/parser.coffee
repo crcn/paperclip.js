@@ -105,17 +105,22 @@ class Parser extends BaseParser
 
   _parseChildren: (nodeName) ->
     children = []
+    ended = false
     while (ccode = @_currentCode()) and ccode
       if (TokenCodes.GT|TokenCodes.EBLOCK) & ccode
         break
 
       if (ccode is TokenCodes.ETAG)
+        ended = true
         @_nextCode()
         break
 
 
 
       children.push @_parseExpression()
+
+    unless ended
+      throw new Error "tag <#{nodeName}> has no ending tag </#{nodeName}>"
 
     return null if not children.length
 
