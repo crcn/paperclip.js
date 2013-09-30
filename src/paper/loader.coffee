@@ -70,6 +70,14 @@ class Loader
   ###
   ###
 
+  dispose: () ->
+    @unbind()
+    @section.dispose()
+    @
+
+  ###
+  ###
+
   unbind: () -> 
     @bindings.unbind()
     @
