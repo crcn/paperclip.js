@@ -7,6 +7,7 @@ class BaseNodeBinding extends require("../../base")
     @name  = options.name or @name
     @node  = options.node
     @value = options.value
+    @context = options.context
 
   ###
   ###

@@ -1,3 +1,5 @@
+bdble = require "bindable"
+
 allBindingClasses = {
   node: { }, # node shim
   attr: { 
@@ -51,14 +53,15 @@ class NodeBindingFactory
         value: attributes[attrName]
         type: "attr"
     
-
     for bindable in bindables
       bindingClasses = allBindingClasses[bindable.type][bindable.key] or []
       for bindingClass in bindingClasses
         if bindingClass.prototype.test bindable
+
+          unless context
+            bindable.context = context = new bdble.Object()
+
           bindings.push new bindingClass bindable
-
-
 
     bindings
 

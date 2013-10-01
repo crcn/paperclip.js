@@ -375,7 +375,7 @@ class Clip
   ###
 
   constructor: (@options) ->
-    @_self = new bindable.Object()
+    @_self = @options.context or new bindable.Object()
     @reset options.data, false
     scripts = @options.scripts or @options.script
 

@@ -94,6 +94,7 @@ class ModelAttrBinding extends require("./base")
     unless value?
       value = ""
 
+
     # Object.prototype.hasOwnProperty is a work-around for ffox and, ie
     isInput = Object.prototype.hasOwnProperty.call(@node, "value") or /input|textarea|checkbox/.test(@node.nodeName.toLowerCase())
 
