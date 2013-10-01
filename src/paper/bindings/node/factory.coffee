@@ -37,6 +37,9 @@ class NodeBindingFactory
       node: node
     }]
 
+
+    context = undefined
+
     for attrName of attributes
 
       bindables.push 
@@ -59,8 +62,10 @@ class NodeBindingFactory
         if bindingClass.prototype.test bindable
 
           unless context
-            bindable.context = context = new bdble.Object()
+            context = new bdble.Object()
 
+          bindable.context = context
+          
           bindings.push new bindingClass bindable
 
     bindings

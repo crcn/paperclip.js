@@ -11,7 +11,8 @@ class ModelAttrBinding extends require("./base")
   bind: () ->
     super arguments...
     (@$element = $(@node)).bind ChangeDecor.events, @_onElementChange
-    @_onChange @clip.get("model")
+    @_onChange()
+    @clip.context.bind "name", @_onChange
   
 
   ###
@@ -57,16 +58,17 @@ class ModelAttrBinding extends require("./base")
   ###
   ###
 
-  _onChange: (model) =>
+  _onChange: () =>
+    model = @clip.get("model")
     #@_elementValue if type(value) is "string" then escapeHTML(value) else value
 
     name = @_elementName()
     @_modelBinding?.dispose()
 
-
+    
     if name
       @_modelBinding = model?.bind(name).to(@_onValueChange).now()
-    else
+    else if type(model) isnt "object"
       @_onValueChange model
 
 

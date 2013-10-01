@@ -37,8 +37,8 @@ class AttrTextBinding extends require("../../base")
       @node.removeAttribute @name
       return
 
-    @context.set @name, text
     @node.setAttribute @name, text
+    @nodeModel.set @name, text
 
 
   ###
