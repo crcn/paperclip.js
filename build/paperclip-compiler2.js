@@ -61,8 +61,12 @@
             eval(parse(content));
             return module.exports;
         };
+        exports.script = function(name) {
+            return exports.compile($("script[data-template-name='" + name + "']").html());
+        };
         if (typeof (typeof window !== "undefined" && window !== null ? window.paperclip : void 0) !== "undefined") {
             window.paperclip.compile = exports.compile;
+            window.paperclip.script = exports.script;
         }
         return module.exports;
     });
