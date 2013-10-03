@@ -11,4 +11,4 @@ exports.compile = (content) ->
 
 
 if typeof window?.paperclip isnt "undefined"
-  window.paperclip.compile = exports.comple
+  window.paperclip.compile = exports.compile

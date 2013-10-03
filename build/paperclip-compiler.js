@@ -62,7 +62,7 @@
             return module.exports;
         };
         if (typeof (typeof window !== "undefined" && window !== null ? window.paperclip : void 0) !== "undefined") {
-            window.paperclip.compile = exports.comple;
+            window.paperclip.compile = exports.compile;
         }
         return module.exports;
     });
@@ -1172,30 +1172,6 @@
         module.exports = Tokenizer;
         return module.exports;
     });
-    define("paperclip/lib/translate/template/expressions/base.js", function(require, module, exports, __dirname, __filename) {
-        var Base, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        Base = function(_super) {
-            __extends(Base, _super);
-            function Base() {
-                _ref = Base.__super__.constructor.apply(this, arguments);
-                return _ref;
-            }
-            return Base;
-        }(require("paperclip/lib/translate/base/expression.js").Expression);
-        module.exports = Base;
-        return module.exports;
-    });
     define("paperclip/lib/translate/binding/tokenizer.js", function(require, module, exports, __dirname, __filename) {
         var BaseTokenizer, Codes, Tokenizer, key, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
             for (var key in parent) {
@@ -1757,6 +1733,30 @@
             return CollectionExpression;
         }(base.Expression);
         module.exports = CollectionExpression;
+        return module.exports;
+    });
+    define("paperclip/lib/translate/template/expressions/base.js", function(require, module, exports, __dirname, __filename) {
+        var Base, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        Base = function(_super) {
+            __extends(Base, _super);
+            function Base() {
+                _ref = Base.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            return Base;
+        }(require("paperclip/lib/translate/base/expression.js").Expression);
+        module.exports = Base;
         return module.exports;
     });
     define("strscanner/lib/index.js", function(require, module, exports, __dirname, __filename) {
