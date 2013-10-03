@@ -2,7 +2,7 @@ templateParser = require "./template/parser"
 
 exports.parse = parse = (content, options = {}) ->    
   content = templateParser.parse content
-  content
+  String content
 
 exports.compile = (content) ->
   module = { exports: { } }

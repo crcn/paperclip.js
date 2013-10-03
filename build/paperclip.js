@@ -426,89 +426,6 @@
         };
         return module.exports;
     });
-    define("paperclip/lib/paper/template.js", function(require, module, exports, __dirname, __filename) {
-        var Loader, Template, nofactor, tpl;
-        nofactor = require("nofactor/lib/index.js");
-        Loader = require("paperclip/lib/paper/loader.js");
-        Template = function() {
-            function Template(paper, nodeFactory) {
-                this.paper = paper;
-                this.nodeFactory = nodeFactory;
-            }
-            Template.prototype.bind = function(context) {
-                return (new Loader(this)).load(context).bind();
-            };
-            return Template;
-        }();
-        Template.prototype.creator = module.exports = tpl = function(paperOrSrc, nodeFactory) {
-            var paper;
-            if (nodeFactory == null) {
-                nodeFactory = nofactor["default"];
-            }
-            if (typeof paperOrSrc === "string") {
-                if (!tpl.compiler) {
-                    throw new Error("template must be a function");
-                }
-                paper = tpl.compiler.compile(paperOrSrc, {
-                    eval: true
-                });
-            } else {
-                paper = paperOrSrc;
-            }
-            return new Template(paper, nodeFactory);
-        };
-        return module.exports;
-    });
-    define("nofactor/lib/index.js", function(require, module, exports, __dirname, __filename) {
-        module.exports = {
-            string: require("nofactor/lib/string.js"),
-            dom: require("nofactor/lib/dom.js")
-        };
-        module.exports["default"] = typeof window !== "undefined" ? module.exports.dom : module.exports.string;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/modifiers.js", function(require, module, exports, __dirname, __filename) {
-        module.exports = {
-            uppercase: function(value) {
-                return String(value).toUpperCase();
-            },
-            lowercase: function(value) {
-                return String(value).toLowerCase();
-            },
-            titlecase: function(value) {
-                var str;
-                str = String(value);
-                return str.substr(0, 1).toUpperCase() + str.substr(1);
-            },
-            json: function(value, count, delimiter) {
-                return JSON.stringify.apply(JSON, arguments);
-            }
-        };
-        return module.exports;
-    });
-    define("paperclip/lib/paper/bindings/index.js", function(require, module, exports, __dirname, __filename) {
-        module.exports = {
-            BaseBlockBinding: require("paperclip/lib/paper/bindings/block/base.js"),
-            blockBindingFactory: require("paperclip/lib/paper/bindings/block/factory.js"),
-            nodeBindingFactory: require("paperclip/lib/paper/bindings/node/factory.js"),
-            BaseNodeBinding: require("paperclip/lib/paper/bindings/node/base/index.js"),
-            BaseAttrDataBinding: require("paperclip/lib/paper/bindings/node/attrs/dataBind/handlers/base.js")
-        };
-        return module.exports;
-    });
-    define("bindable/lib/index.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var Binding;
-            Binding = require("bindable/lib/object/binding.js");
-            exports.Object = require("bindable/lib/object/index.js");
-            exports.Collection = require("bindable/lib/collection/index.js");
-            exports.EventEmitter = require("bindable/lib/core/eventEmitter.js");
-            exports.computed = require("bindable/lib/utils/computed.js");
-            exports.options = require("bindable/lib/utils/options.js");
-            Binding.Collection = exports.Collection;
-        }).call(this);
-        return module.exports;
-    });
     define("dref/lib/index.js", function(require, module, exports, __dirname, __filename) {
         var _gss = global._gss = global._gss || [], type = require("type-component/index.js");
         var _gs = function(context) {
@@ -722,6 +639,19 @@
         };
         return module.exports;
     });
+    define("bindable/lib/index.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var Binding;
+            Binding = require("bindable/lib/object/binding.js");
+            exports.Object = require("bindable/lib/object/index.js");
+            exports.Collection = require("bindable/lib/collection/index.js");
+            exports.EventEmitter = require("bindable/lib/core/eventEmitter.js");
+            exports.computed = require("bindable/lib/utils/computed.js");
+            exports.options = require("bindable/lib/utils/options.js");
+            Binding.Collection = exports.Collection;
+        }).call(this);
+        return module.exports;
+    });
     define("type-component/index.js", function(require, module, exports, __dirname, __filename) {
         var toString = Object.prototype.toString;
         module.exports = function(val) {
@@ -744,656 +674,74 @@
         };
         return module.exports;
     });
-    define("paperclip/lib/paper/loader.js", function(require, module, exports, __dirname, __filename) {
-        var BindingCollection, BlockWriter, ElementWriter, FragmentWriter, Loader, ParseWriter, TextWriter, bindable, loaf, modifiers;
-        modifiers = require("paperclip/lib/paper/modifiers.js");
-        FragmentWriter = require("paperclip/lib/paper/writers/fragment.js");
-        BlockWriter = require("paperclip/lib/paper/writers/block.js");
-        TextWriter = require("paperclip/lib/paper/writers/text.js");
-        ElementWriter = require("paperclip/lib/paper/writers/element.js");
-        ParseWriter = require("paperclip/lib/paper/writers/parse.js");
-        BindingCollection = require("paperclip/lib/paper/bindings/collection.js");
-        bindable = require("bindable/lib/index.js");
-        loaf = require("loaf/lib/index.js");
-        Loader = function() {
-            Loader.prototype.__isLoader = true;
-            function Loader(template) {
-                this.template = template;
-                this.nodeFactory = template.nodeFactory;
-                this.paper = template.paper;
-                this.bindings = new BindingCollection;
-                this._writers = {
-                    fragment: new FragmentWriter(this),
-                    block: new BlockWriter(this),
-                    text: new TextWriter(this),
-                    element: new ElementWriter(this),
-                    parse: new ParseWriter(this)
-                };
+    define("paperclip/lib/paper/template.js", function(require, module, exports, __dirname, __filename) {
+        var Loader, Template, nofactor, tpl;
+        nofactor = require("nofactor/lib/index.js");
+        Loader = require("paperclip/lib/paper/loader.js");
+        Template = function() {
+            function Template(paper, nodeFactory) {
+                this.paper = paper;
+                this.nodeFactory = nodeFactory;
             }
-            Loader.prototype.load = function(context) {
-                var node;
-                if (context == null) {
-                    context = {};
-                }
-                if (!context.__isBindable) {
-                    context = new bindable.Object(context);
-                }
-                this.context = context;
-                node = this.paper(this._writers.fragment.write, this._writers.block.write, this._writers.element.write, this._writers.text.write, this._writers.parse.write, modifiers);
-                this.section = loaf();
-                this.section.append(node);
-                return this;
+            Template.prototype.bind = function(context) {
+                return (new Loader(this)).load(context).bind();
             };
-            Loader.prototype.bind = function() {
-                this.bindings.bind(this.context);
-                return this;
-            };
-            Loader.prototype.dispose = function() {
-                this.unbind();
-                this.section.dispose();
-                return this;
-            };
-            Loader.prototype.unbind = function() {
-                this.bindings.unbind();
-                return this;
-            };
-            Loader.prototype.toString = function() {
-                var div, frag;
-                if (this.nodeFactory.name === "string") {
-                    return this.section.toString();
-                }
-                frag = this.section.toFragment();
-                div = document.createElement("div");
-                div.appendChild(frag.cloneNode(true));
-                return div.innerHTML;
-            };
-            return Loader;
+            return Template;
         }();
-        module.exports = Loader;
+        Template.prototype.creator = module.exports = tpl = function(paperOrSrc, nodeFactory) {
+            var paper;
+            if (nodeFactory == null) {
+                nodeFactory = nofactor["default"];
+            }
+            if (typeof paperOrSrc === "string") {
+                if (!tpl.compiler) {
+                    throw new Error("template must be a function");
+                }
+                paper = tpl.compiler.compile(paperOrSrc, {
+                    eval: true
+                });
+            } else {
+                paper = paperOrSrc;
+            }
+            return new Template(paper, nodeFactory);
+        };
         return module.exports;
     });
-    define("nofactor/lib/string.js", function(require, module, exports, __dirname, __filename) {
-        var Comment, Container, Element, Fragment, Node, StringNodeFactory, Style, Text, bindable, ent, _ref, _ref1, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
+    define("nofactor/lib/index.js", function(require, module, exports, __dirname, __filename) {
+        module.exports = {
+            string: require("nofactor/lib/string.js"),
+            dom: require("nofactor/lib/dom.js")
         };
-        bindable = require("bindable/lib/index.js");
-        ent = require("nofactor/lib/ent.js");
-        Node = function() {
-            function Node() {}
-            Node.prototype.__isNode = true;
-            return Node;
-        }();
-        Container = function(_super) {
-            __extends(Container, _super);
-            function Container() {
-                this.childNodes = [];
-            }
-            Container.prototype.appendChild = function(node) {
-                var child, _i, _len, _ref;
-                if (node.nodeType === 11) {
-                    _ref = node.childNodes.concat();
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        child = _ref[_i];
-                        this.appendChild(child);
-                    }
-                    return;
-                }
-                this._unlink(node);
-                this.childNodes.push(node);
-                return this._link(node);
-            };
-            Container.prototype.prependChild = function(node) {
-                if (!this.childNodes.length) {
-                    return this.appendChild(node);
-                } else {
-                    return this.insertBefore(node, this.childNodes[0]);
-                }
-            };
-            Container.prototype.removeChild = function(child) {
-                var i, _ref, _ref1;
-                i = this.childNodes.indexOf(child);
-                if (!~i) {
-                    return;
-                }
-                this.childNodes.splice(i, 1);
-                if ((_ref = child.previousSibling) != null) {
-                    _ref.nextSibling = child.nextSibling;
-                }
-                if ((_ref1 = child.nextSibling) != null) {
-                    _ref1.previousSibling = child.previousSibling;
-                }
-                return child.parentNode = child.nextSibling = child.previousSibling = void 0;
-            };
-            Container.prototype.insertBefore = function(newElement, before) {
-                var node, _i, _len, _ref;
-                if (newElement.nodeType === 11) {
-                    _ref = newElement.childNodes.concat().reverse();
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        node = _ref[_i];
-                        this.insertBefore(node, before);
-                        before = node;
-                    }
-                    return;
-                }
-                return this._splice(this.childNodes.indexOf(before), 0, newElement);
-            };
-            Container.prototype._splice = function(index, count, node) {
-                var _ref;
-                if (index == null) {
-                    index = -1;
-                }
-                if (!~index) {
-                    return;
-                }
-                if (node) {
-                    this._unlink(node);
-                }
-                (_ref = this.childNodes).splice.apply(_ref, arguments);
-                if (node) {
-                    return this._link(node);
-                }
-            };
-            Container.prototype._unlink = function(node) {
-                if (node.parentNode) {
-                    return node.parentNode.removeChild(node);
-                }
-            };
-            Container.prototype._link = function(node) {
-                var i, _ref, _ref1;
-                if (!node.__isNode) {
-                    throw new Error("cannot append non-node");
-                }
-                node.parentNode = this;
-                i = this.childNodes.indexOf(node);
-                node.previousSibling = i !== 0 ? this.childNodes[i - 1] : void 0;
-                node.nextSibling = i !== this.childNodes.length - 1 ? this.childNodes[i + 1] : void 0;
-                if ((_ref = node.previousSibling) != null) {
-                    _ref.nextSibling = node;
-                }
-                return (_ref1 = node.nextSibling) != null ? _ref1.previousSibling = node : void 0;
-            };
-            return Container;
-        }(Node);
-        Style = function() {
-            Style.prototype._hasStyle = false;
-            function Style() {}
-            Style.prototype.setProperty = function(key, value) {
-                if (value == null) {
-                    value = "";
-                }
-                if (value === "") {
-                    delete this[key];
-                    return;
-                }
-                return this[key] = value;
-            };
-            Style.prototype.parse = function(styles) {
-                var sp, style, _i, _len, _ref, _results;
-                _ref = styles.split(/;\s*/);
-                _results = [];
-                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                    style = _ref[_i];
-                    sp = style.split(/:\s*/);
-                    if (sp[1] == null || sp[1] === "") {
-                        continue;
-                    }
-                    _results.push(this[sp[0]] = sp[1]);
-                }
-                return _results;
-            };
-            Style.prototype.toString = function() {
-                var buffer, key, v;
-                buffer = [];
-                for (key in this) {
-                    if (this.constructor.prototype[key] != null) {
-                        continue;
-                    }
-                    v = this[key];
-                    if (v === "") {
-                        continue;
-                    }
-                    buffer.push("" + key + ": " + this[key]);
-                }
-                if (!buffer.length) {
-                    return "";
-                }
-                return buffer.join("; ") + ";";
-            };
-            Style.prototype.hasStyles = function() {
-                var key;
-                if (this._hasStyle) {
-                    return true;
-                }
-                for (key in this) {
-                    if (this[key] != null && this.constructor.prototype[key] == null) {
-                        return this._hasStyle = true;
-                    }
-                }
-                return false;
-            };
-            return Style;
-        }();
-        Element = function(_super) {
-            __extends(Element, _super);
-            Element.prototype.nodeType = 3;
-            function Element(nodeName) {
-                Element.__super__.constructor.call(this);
-                this.nodeName = nodeName.toUpperCase();
-                this._name = nodeName.toLowerCase(0);
-                this.attributes = [];
-                this._attrsByKey = {};
-                this.style = new Style;
-            }
-            Element.prototype.setAttribute = function(name, value) {
-                var abk;
-                name = name.toLowerCase();
-                if (name === "style") {
-                    return this.style.parse(value);
-                }
-                if (value === void 0) {
-                    return this.removeAttribute(name);
-                }
-                if (!(abk = this._attrsByKey[name])) {
-                    this.attributes.push(abk = this._attrsByKey[name] = {});
-                }
-                abk.name = name;
-                return abk.value = value;
-            };
-            Element.prototype.removeAttribute = function(name) {
-                var attr, i, _i, _len, _ref;
-                _ref = this.attributes;
-                for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
-                    attr = _ref[i];
-                    if (attr.name === name) {
-                        this.attributes.splice(i, 1);
-                        break;
-                    }
-                }
-                return delete this._attrsByKey[name];
-            };
-            Element.prototype.getAttribute = function(name) {
-                var _ref;
-                return (_ref = this._attrsByKey[name]) != null ? _ref.value : void 0;
-            };
-            Element.prototype.toString = function() {
-                var attrbuff, attribs, buffer, name, v;
-                buffer = [ "<", this._name ];
-                attribs = [];
-                for (name in this._attrsByKey) {
-                    v = this._attrsByKey[name].value;
-                    attrbuff = name;
-                    if (v != null) {
-                        attrbuff += '="' + v + '"';
-                    }
-                    attribs.push(attrbuff);
-                }
-                if (this.style.hasStyles()) {
-                    attribs.push('style="' + this.style.toString() + '"');
-                }
-                if (attribs.length) {
-                    buffer.push(" ", attribs.join(" "));
-                }
-                buffer.push(">");
-                buffer.push.apply(buffer, this.childNodes);
-                buffer.push("</", this._name, ">");
-                return buffer.join("");
-            };
-            return Element;
-        }(Container);
-        Text = function(_super) {
-            __extends(Text, _super);
-            Text.prototype.nodeType = 3;
-            function Text(value) {
-                this.value = ent(value);
-            }
-            Text.prototype.toString = function() {
-                return this.value;
-            };
-            return Text;
-        }(Node);
-        Comment = function(_super) {
-            __extends(Comment, _super);
-            function Comment() {
-                _ref = Comment.__super__.constructor.apply(this, arguments);
-                return _ref;
-            }
-            Comment.prototype.nodeType = 8;
-            Comment.prototype.toString = function() {
-                return "<!--" + Comment.__super__.toString.call(this) + "-->";
-            };
-            return Comment;
-        }(Text);
-        Fragment = function(_super) {
-            __extends(Fragment, _super);
-            function Fragment() {
-                _ref1 = Fragment.__super__.constructor.apply(this, arguments);
-                return _ref1;
-            }
-            Fragment.prototype.nodeType = 11;
-            Fragment.prototype.toString = function() {
-                return this.childNodes.join("");
-            };
-            return Fragment;
-        }(Container);
-        StringNodeFactory = function(_super) {
-            __extends(StringNodeFactory, _super);
-            StringNodeFactory.prototype.name = "string";
-            function StringNodeFactory(context) {
-                this.context = context;
-                this.internal = new bindable.Object;
-            }
-            StringNodeFactory.prototype.createElement = function(name) {
-                return new Element(name);
-            };
-            StringNodeFactory.prototype.createTextNode = function(text) {
-                return new Text(text);
-            };
-            StringNodeFactory.prototype.createComment = function(text) {
-                return new Comment(text);
-            };
-            StringNodeFactory.prototype.createFragment = function(children) {
-                var child, childrenToArray, frag, _i, _len;
-                if (children == null) {
-                    children = [];
-                }
-                frag = new Fragment;
-                childrenToArray = Array.prototype.slice.call(children, 0);
-                for (_i = 0, _len = childrenToArray.length; _i < _len; _i++) {
-                    child = childrenToArray[_i];
-                    frag.appendChild(child);
-                }
-                return frag;
-            };
-            StringNodeFactory.prototype.parseHtml = function(buffer) {
-                return this.createTextNode(buffer);
-            };
-            return StringNodeFactory;
-        }(require("nofactor/lib/base.js"));
-        module.exports = new StringNodeFactory;
+        module.exports["default"] = typeof window !== "undefined" ? module.exports.dom : module.exports.string;
         return module.exports;
     });
-    define("nofactor/lib/dom.js", function(require, module, exports, __dirname, __filename) {
-        var DomFactory, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
+    define("paperclip/lib/paper/modifiers.js", function(require, module, exports, __dirname, __filename) {
+        module.exports = {
+            uppercase: function(value) {
+                return String(value).toUpperCase();
+            },
+            lowercase: function(value) {
+                return String(value).toLowerCase();
+            },
+            titlecase: function(value) {
+                var str;
+                str = String(value);
+                return str.substr(0, 1).toUpperCase() + str.substr(1);
+            },
+            json: function(value, count, delimiter) {
+                return JSON.stringify.apply(JSON, arguments);
             }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
         };
-        DomFactory = function(_super) {
-            __extends(DomFactory, _super);
-            DomFactory.prototype.name = "dom";
-            function DomFactory() {}
-            DomFactory.prototype.createElement = function(name) {
-                return document.createElement(name);
-            };
-            DomFactory.prototype.createTextNode = function(text) {
-                return document.createTextNode(text);
-            };
-            DomFactory.prototype.createFragment = function(children) {
-                var child, childrenToArray, frag, _i, _j, _len, _len1;
-                if (children == null) {
-                    children = [];
-                }
-                frag = document.createDocumentFragment();
-                childrenToArray = [];
-                for (_i = 0, _len = children.length; _i < _len; _i++) {
-                    child = children[_i];
-                    childrenToArray.push(child);
-                }
-                for (_j = 0, _len1 = childrenToArray.length; _j < _len1; _j++) {
-                    child = childrenToArray[_j];
-                    frag.appendChild(child);
-                }
-                return frag;
-            };
-            DomFactory.prototype.parseHtml = function(text) {
-                var div;
-                div = this.createElement("div");
-                div.innerHTML = text;
-                return this.createFragment.apply(this, div.childNodes);
-            };
-            return DomFactory;
-        }(require("nofactor/lib/base.js"));
-        module.exports = new DomFactory;
         return module.exports;
     });
-    define("paperclip/lib/paper/bindings/block/base.js", function(require, module, exports, __dirname, __filename) {
-        var BlockBinding, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
+    define("paperclip/lib/paper/bindings/index.js", function(require, module, exports, __dirname, __filename) {
+        module.exports = {
+            BaseBlockBinding: require("paperclip/lib/paper/bindings/block/base.js"),
+            blockBindingFactory: require("paperclip/lib/paper/bindings/block/factory.js"),
+            nodeBindingFactory: require("paperclip/lib/paper/bindings/node/factory.js"),
+            BaseNodeBinding: require("paperclip/lib/paper/bindings/node/base/index.js"),
+            BaseAttrDataBinding: require("paperclip/lib/paper/bindings/node/attrs/dataBind/handlers/base.js")
         };
-        BlockBinding = function(_super) {
-            __extends(BlockBinding, _super);
-            function BlockBinding(options) {
-                this.section = options.section;
-                this.clip = options.clip;
-                this.nodeFactory = options.nodeFactory;
-                this.contentTemplate = options.template;
-                this.scriptName = options.scriptName;
-                this.childBlockTemplate = options.childBlockTemplate;
-                this.script = this.clip.script(this.scriptName);
-                BlockBinding.__super__.constructor.call(this, this.clip, this.scriptName);
-            }
-            BlockBinding.prototype.bind = function(context) {
-                this.context = context;
-                this.clip.reset(this.context);
-                return BlockBinding.__super__.bind.call(this, this.context);
-            };
-            BlockBinding.test = function(node) {
-                return false;
-            };
-            return BlockBinding;
-        }(require("paperclip/lib/paper/bindings/base/script.js"));
-        module.exports = BlockBinding;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/bindings/block/factory.js", function(require, module, exports, __dirname, __filename) {
-        var BindingCollection, Factory, bindingClasses;
-        BindingCollection = require("paperclip/lib/paper/bindings/collection.js");
-        bindingClasses = {
-            html: require("paperclip/lib/paper/bindings/block/html.js"),
-            "if": require("paperclip/lib/paper/bindings/block/conditional.js"),
-            "else": require("paperclip/lib/paper/bindings/block/conditional.js"),
-            elseif: require("paperclip/lib/paper/bindings/block/conditional.js"),
-            value: require("paperclip/lib/paper/bindings/block/value.js")
-        };
-        Factory = function() {
-            function Factory() {}
-            Factory.prototype.getBindings = function(options) {
-                var bd, bindings, clipScriptNames, scriptName, _i, _len;
-                bindings = [];
-                clipScriptNames = options.clip.scripts.names;
-                for (_i = 0, _len = clipScriptNames.length; _i < _len; _i++) {
-                    scriptName = clipScriptNames[_i];
-                    if (bd = bindingClasses[scriptName]) {
-                        options.scriptName = scriptName;
-                        bindings.push(new bd(options));
-                    }
-                }
-                return bindings;
-            };
-            Factory.prototype.register = function(name, bindingClass) {
-                return bindingClasses[name] = bindingClass;
-            };
-            return Factory;
-        }();
-        module.exports = new Factory;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/bindings/node/factory.js", function(require, module, exports, __dirname, __filename) {
-        var NodeBindingFactory, allBindingClasses, bdble, classes, clazz, dataBind, defaultBindingClasses, nodeFactory, type, _i, _len;
-        bdble = require("bindable/lib/index.js");
-        allBindingClasses = {
-            node: {},
-            attr: {
-                "default": []
-            }
-        };
-        NodeBindingFactory = function() {
-            function NodeBindingFactory() {}
-            NodeBindingFactory.prototype.getBindings = function(options) {
-                var attrName, attributes, bindable, bindables, bindingClass, bindingClasses, bindings, context, node, nodeName, _i, _j, _len, _len1;
-                bindings = [];
-                attributes = options.attributes;
-                nodeName = options.nodeName;
-                node = options.node;
-                bindables = [ {
-                    name: nodeName,
-                    key: nodeName,
-                    value: node,
-                    type: "node",
-                    node: node
-                }, {
-                    name: nodeName,
-                    key: "default",
-                    value: node,
-                    type: "node",
-                    node: node
-                } ];
-                context = void 0;
-                for (attrName in attributes) {
-                    bindables.push({
-                        node: node,
-                        name: attrName,
-                        key: attrName,
-                        value: attributes[attrName],
-                        type: "attr"
-                    });
-                    bindables.push({
-                        node: node,
-                        name: attrName,
-                        key: "default",
-                        value: attributes[attrName],
-                        type: "attr"
-                    });
-                }
-                for (_i = 0, _len = bindables.length; _i < _len; _i++) {
-                    bindable = bindables[_i];
-                    bindingClasses = allBindingClasses[bindable.type][bindable.key] || [];
-                    for (_j = 0, _len1 = bindingClasses.length; _j < _len1; _j++) {
-                        bindingClass = bindingClasses[_j];
-                        if (bindingClass.prototype.test(bindable)) {
-                            if (!context) {
-                                context = new bdble.Object;
-                            }
-                            bindable.context = context;
-                            bindings.push(new bindingClass(bindable));
-                        }
-                    }
-                }
-                return bindings;
-            };
-            NodeBindingFactory.prototype.register = function(name, bindingClass) {
-                var classes, type;
-                type = bindingClass.type || bindingClass.prototype.type;
-                if (!/node|attr/.test(String(type))) {
-                    throw new Error('node binding class "' + bindingClass.name + "\" must have a type 'node', or 'attr'");
-                }
-                classes = allBindingClasses[type];
-                if (!bindingClass.prototype.test) {
-                    bindingClass.prototype.test = function() {
-                        return true;
-                    };
-                }
-                if (!classes[name]) {
-                    classes[name] = [];
-                }
-                classes[name].push(bindingClass);
-                return this;
-            };
-            return NodeBindingFactory;
-        }();
-        nodeFactory = module.exports = new NodeBindingFactory;
-        defaultBindingClasses = {
-            "default": [ require("paperclip/lib/paper/bindings/node/attrs/text/index.js") ],
-            "data-bind": [ dataBind = module.exports.dataBind = require("paperclip/lib/paper/bindings/node/attrs/dataBind/index.js") ]
-        };
-        for (type in defaultBindingClasses) {
-            classes = defaultBindingClasses[type];
-            for (_i = 0, _len = classes.length; _i < _len; _i++) {
-                clazz = classes[_i];
-                nodeFactory.register(type, clazz);
-            }
-        }
-        return module.exports;
-    });
-    define("paperclip/lib/paper/bindings/node/base/index.js", function(require, module, exports, __dirname, __filename) {
-        var BaseNodeBinding, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        BaseNodeBinding = function(_super) {
-            __extends(BaseNodeBinding, _super);
-            function BaseNodeBinding(options) {
-                this.name = options.name || this.name;
-                this.node = options.node;
-                this.value = options.value;
-                this.nodeModel = options.context;
-            }
-            BaseNodeBinding.prototype.bind = function(context) {
-                this.context = context;
-            };
-            BaseNodeBinding.prototype.unbind = function() {};
-            return BaseNodeBinding;
-        }(require("paperclip/lib/paper/bindings/base/index.js"));
-        module.exports = BaseNodeBinding;
-        return module.exports;
-    });
-    define("paperclip/lib/paper/bindings/node/attrs/dataBind/handlers/base.js", function(require, module, exports, __dirname, __filename) {
-        var BaseDataBindHandler, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        BaseDataBindHandler = function(_super) {
-            __extends(BaseDataBindHandler, _super);
-            function BaseDataBindHandler(node, clip, name) {
-                this.node = node;
-                this.clip = clip;
-                this.name = name;
-                BaseDataBindHandler.__super__.constructor.call(this, this.clip, this.name);
-            }
-            return BaseDataBindHandler;
-        }(require("paperclip/lib/paper/bindings/base/script.js"));
-        module.exports = BaseDataBindHandler;
         return module.exports;
     });
     define("bindable/lib/object/binding.js", function(require, module, exports, __dirname, __filename) {
@@ -2130,6 +1478,1202 @@
                 computedDelay: 0
             };
         }).call(this);
+        return module.exports;
+    });
+    define("paperclip/lib/paper/loader.js", function(require, module, exports, __dirname, __filename) {
+        var BindingCollection, BlockWriter, ElementWriter, FragmentWriter, Loader, ParseWriter, TextWriter, bindable, loaf, modifiers;
+        modifiers = require("paperclip/lib/paper/modifiers.js");
+        FragmentWriter = require("paperclip/lib/paper/writers/fragment.js");
+        BlockWriter = require("paperclip/lib/paper/writers/block.js");
+        TextWriter = require("paperclip/lib/paper/writers/text.js");
+        ElementWriter = require("paperclip/lib/paper/writers/element.js");
+        ParseWriter = require("paperclip/lib/paper/writers/parse.js");
+        BindingCollection = require("paperclip/lib/paper/bindings/collection.js");
+        bindable = require("bindable/lib/index.js");
+        loaf = require("loaf/lib/index.js");
+        Loader = function() {
+            Loader.prototype.__isLoader = true;
+            function Loader(template) {
+                this.template = template;
+                this.nodeFactory = template.nodeFactory;
+                this.paper = template.paper;
+                this.bindings = new BindingCollection;
+                this._writers = {
+                    fragment: new FragmentWriter(this),
+                    block: new BlockWriter(this),
+                    text: new TextWriter(this),
+                    element: new ElementWriter(this),
+                    parse: new ParseWriter(this)
+                };
+            }
+            Loader.prototype.load = function(context) {
+                var node;
+                if (context == null) {
+                    context = {};
+                }
+                if (!context.__isBindable) {
+                    context = new bindable.Object(context);
+                }
+                this.context = context;
+                node = this.paper(this._writers.fragment.write, this._writers.block.write, this._writers.element.write, this._writers.text.write, this._writers.parse.write, modifiers);
+                this.section = loaf();
+                this.section.append(node);
+                return this;
+            };
+            Loader.prototype.bind = function() {
+                this.bindings.bind(this.context);
+                return this;
+            };
+            Loader.prototype.dispose = function() {
+                this.unbind();
+                this.section.dispose();
+                return this;
+            };
+            Loader.prototype.unbind = function() {
+                this.bindings.unbind();
+                return this;
+            };
+            Loader.prototype.toString = function() {
+                var div, frag;
+                if (this.nodeFactory.name === "string") {
+                    return this.section.toString();
+                }
+                frag = this.section.toFragment();
+                div = document.createElement("div");
+                div.appendChild(frag.cloneNode(true));
+                return div.innerHTML;
+            };
+            return Loader;
+        }();
+        module.exports = Loader;
+        return module.exports;
+    });
+    define("nofactor/lib/string.js", function(require, module, exports, __dirname, __filename) {
+        var Comment, Container, Element, Fragment, Node, StringNodeFactory, Style, Text, bindable, ent, _ref, _ref1, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        bindable = require("bindable/lib/index.js");
+        ent = require("nofactor/lib/ent.js");
+        Node = function() {
+            function Node() {}
+            Node.prototype.__isNode = true;
+            return Node;
+        }();
+        Container = function(_super) {
+            __extends(Container, _super);
+            function Container() {
+                this.childNodes = [];
+            }
+            Container.prototype.appendChild = function(node) {
+                var child, _i, _len, _ref;
+                if (node.nodeType === 11) {
+                    _ref = node.childNodes.concat();
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        child = _ref[_i];
+                        this.appendChild(child);
+                    }
+                    return;
+                }
+                this._unlink(node);
+                this.childNodes.push(node);
+                return this._link(node);
+            };
+            Container.prototype.prependChild = function(node) {
+                if (!this.childNodes.length) {
+                    return this.appendChild(node);
+                } else {
+                    return this.insertBefore(node, this.childNodes[0]);
+                }
+            };
+            Container.prototype.removeChild = function(child) {
+                var i, _ref, _ref1;
+                i = this.childNodes.indexOf(child);
+                if (!~i) {
+                    return;
+                }
+                this.childNodes.splice(i, 1);
+                if ((_ref = child.previousSibling) != null) {
+                    _ref.nextSibling = child.nextSibling;
+                }
+                if ((_ref1 = child.nextSibling) != null) {
+                    _ref1.previousSibling = child.previousSibling;
+                }
+                return child.parentNode = child.nextSibling = child.previousSibling = void 0;
+            };
+            Container.prototype.insertBefore = function(newElement, before) {
+                var node, _i, _len, _ref;
+                if (newElement.nodeType === 11) {
+                    _ref = newElement.childNodes.concat().reverse();
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        node = _ref[_i];
+                        this.insertBefore(node, before);
+                        before = node;
+                    }
+                    return;
+                }
+                return this._splice(this.childNodes.indexOf(before), 0, newElement);
+            };
+            Container.prototype._splice = function(index, count, node) {
+                var _ref;
+                if (index == null) {
+                    index = -1;
+                }
+                if (!~index) {
+                    return;
+                }
+                if (node) {
+                    this._unlink(node);
+                }
+                (_ref = this.childNodes).splice.apply(_ref, arguments);
+                if (node) {
+                    return this._link(node);
+                }
+            };
+            Container.prototype._unlink = function(node) {
+                if (node.parentNode) {
+                    return node.parentNode.removeChild(node);
+                }
+            };
+            Container.prototype._link = function(node) {
+                var i, _ref, _ref1;
+                if (!node.__isNode) {
+                    throw new Error("cannot append non-node");
+                }
+                node.parentNode = this;
+                i = this.childNodes.indexOf(node);
+                node.previousSibling = i !== 0 ? this.childNodes[i - 1] : void 0;
+                node.nextSibling = i !== this.childNodes.length - 1 ? this.childNodes[i + 1] : void 0;
+                if ((_ref = node.previousSibling) != null) {
+                    _ref.nextSibling = node;
+                }
+                return (_ref1 = node.nextSibling) != null ? _ref1.previousSibling = node : void 0;
+            };
+            return Container;
+        }(Node);
+        Style = function() {
+            Style.prototype._hasStyle = false;
+            function Style() {}
+            Style.prototype.setProperty = function(key, value) {
+                if (value == null) {
+                    value = "";
+                }
+                if (value === "") {
+                    delete this[key];
+                    return;
+                }
+                return this[key] = value;
+            };
+            Style.prototype.parse = function(styles) {
+                var sp, style, _i, _len, _ref, _results;
+                _ref = styles.split(/;\s*/);
+                _results = [];
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                    style = _ref[_i];
+                    sp = style.split(/:\s*/);
+                    if (sp[1] == null || sp[1] === "") {
+                        continue;
+                    }
+                    _results.push(this[sp[0]] = sp[1]);
+                }
+                return _results;
+            };
+            Style.prototype.toString = function() {
+                var buffer, key, v;
+                buffer = [];
+                for (key in this) {
+                    if (this.constructor.prototype[key] != null) {
+                        continue;
+                    }
+                    v = this[key];
+                    if (v === "") {
+                        continue;
+                    }
+                    buffer.push("" + key + ": " + this[key]);
+                }
+                if (!buffer.length) {
+                    return "";
+                }
+                return buffer.join("; ") + ";";
+            };
+            Style.prototype.hasStyles = function() {
+                var key;
+                if (this._hasStyle) {
+                    return true;
+                }
+                for (key in this) {
+                    if (this[key] != null && this.constructor.prototype[key] == null) {
+                        return this._hasStyle = true;
+                    }
+                }
+                return false;
+            };
+            return Style;
+        }();
+        Element = function(_super) {
+            __extends(Element, _super);
+            Element.prototype.nodeType = 3;
+            function Element(nodeName) {
+                Element.__super__.constructor.call(this);
+                this.nodeName = nodeName.toUpperCase();
+                this._name = nodeName.toLowerCase(0);
+                this.attributes = [];
+                this._attrsByKey = {};
+                this.style = new Style;
+            }
+            Element.prototype.setAttribute = function(name, value) {
+                var abk;
+                name = name.toLowerCase();
+                if (name === "style") {
+                    return this.style.parse(value);
+                }
+                if (value === void 0) {
+                    return this.removeAttribute(name);
+                }
+                if (!(abk = this._attrsByKey[name])) {
+                    this.attributes.push(abk = this._attrsByKey[name] = {});
+                }
+                abk.name = name;
+                return abk.value = value;
+            };
+            Element.prototype.removeAttribute = function(name) {
+                var attr, i, _i, _len, _ref;
+                _ref = this.attributes;
+                for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+                    attr = _ref[i];
+                    if (attr.name === name) {
+                        this.attributes.splice(i, 1);
+                        break;
+                    }
+                }
+                return delete this._attrsByKey[name];
+            };
+            Element.prototype.getAttribute = function(name) {
+                var _ref;
+                return (_ref = this._attrsByKey[name]) != null ? _ref.value : void 0;
+            };
+            Element.prototype.toString = function() {
+                var attrbuff, attribs, buffer, name, v;
+                buffer = [ "<", this._name ];
+                attribs = [];
+                for (name in this._attrsByKey) {
+                    v = this._attrsByKey[name].value;
+                    attrbuff = name;
+                    if (v != null) {
+                        attrbuff += '="' + v + '"';
+                    }
+                    attribs.push(attrbuff);
+                }
+                if (this.style.hasStyles()) {
+                    attribs.push('style="' + this.style.toString() + '"');
+                }
+                if (attribs.length) {
+                    buffer.push(" ", attribs.join(" "));
+                }
+                buffer.push(">");
+                buffer.push.apply(buffer, this.childNodes);
+                buffer.push("</", this._name, ">");
+                return buffer.join("");
+            };
+            return Element;
+        }(Container);
+        Text = function(_super) {
+            __extends(Text, _super);
+            Text.prototype.nodeType = 3;
+            function Text(value) {
+                this.value = ent(value);
+            }
+            Text.prototype.toString = function() {
+                return this.value;
+            };
+            return Text;
+        }(Node);
+        Comment = function(_super) {
+            __extends(Comment, _super);
+            function Comment() {
+                _ref = Comment.__super__.constructor.apply(this, arguments);
+                return _ref;
+            }
+            Comment.prototype.nodeType = 8;
+            Comment.prototype.toString = function() {
+                return "<!--" + Comment.__super__.toString.call(this) + "-->";
+            };
+            return Comment;
+        }(Text);
+        Fragment = function(_super) {
+            __extends(Fragment, _super);
+            function Fragment() {
+                _ref1 = Fragment.__super__.constructor.apply(this, arguments);
+                return _ref1;
+            }
+            Fragment.prototype.nodeType = 11;
+            Fragment.prototype.toString = function() {
+                return this.childNodes.join("");
+            };
+            return Fragment;
+        }(Container);
+        StringNodeFactory = function(_super) {
+            __extends(StringNodeFactory, _super);
+            StringNodeFactory.prototype.name = "string";
+            function StringNodeFactory(context) {
+                this.context = context;
+                this.internal = new bindable.Object;
+            }
+            StringNodeFactory.prototype.createElement = function(name) {
+                return new Element(name);
+            };
+            StringNodeFactory.prototype.createTextNode = function(text) {
+                return new Text(text);
+            };
+            StringNodeFactory.prototype.createComment = function(text) {
+                return new Comment(text);
+            };
+            StringNodeFactory.prototype.createFragment = function(children) {
+                var child, childrenToArray, frag, _i, _len;
+                if (children == null) {
+                    children = [];
+                }
+                frag = new Fragment;
+                childrenToArray = Array.prototype.slice.call(children, 0);
+                for (_i = 0, _len = childrenToArray.length; _i < _len; _i++) {
+                    child = childrenToArray[_i];
+                    frag.appendChild(child);
+                }
+                return frag;
+            };
+            StringNodeFactory.prototype.parseHtml = function(buffer) {
+                return this.createTextNode(buffer);
+            };
+            return StringNodeFactory;
+        }(require("nofactor/lib/base.js"));
+        module.exports = new StringNodeFactory;
+        return module.exports;
+    });
+    define("nofactor/lib/dom.js", function(require, module, exports, __dirname, __filename) {
+        var DomFactory, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        DomFactory = function(_super) {
+            __extends(DomFactory, _super);
+            DomFactory.prototype.name = "dom";
+            function DomFactory() {}
+            DomFactory.prototype.createElement = function(name) {
+                return document.createElement(name);
+            };
+            DomFactory.prototype.createTextNode = function(text) {
+                return document.createTextNode(text);
+            };
+            DomFactory.prototype.createFragment = function(children) {
+                var child, childrenToArray, frag, _i, _j, _len, _len1;
+                if (children == null) {
+                    children = [];
+                }
+                frag = document.createDocumentFragment();
+                childrenToArray = [];
+                for (_i = 0, _len = children.length; _i < _len; _i++) {
+                    child = children[_i];
+                    childrenToArray.push(child);
+                }
+                for (_j = 0, _len1 = childrenToArray.length; _j < _len1; _j++) {
+                    child = childrenToArray[_j];
+                    frag.appendChild(child);
+                }
+                return frag;
+            };
+            DomFactory.prototype.parseHtml = function(text) {
+                var div;
+                div = this.createElement("div");
+                div.innerHTML = text;
+                return this.createFragment.apply(this, div.childNodes);
+            };
+            return DomFactory;
+        }(require("nofactor/lib/base.js"));
+        module.exports = new DomFactory;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/bindings/block/base.js", function(require, module, exports, __dirname, __filename) {
+        var BlockBinding, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        BlockBinding = function(_super) {
+            __extends(BlockBinding, _super);
+            function BlockBinding(options) {
+                this.section = options.section;
+                this.clip = options.clip;
+                this.nodeFactory = options.nodeFactory;
+                this.contentTemplate = options.template;
+                this.scriptName = options.scriptName;
+                this.childBlockTemplate = options.childBlockTemplate;
+                this.script = this.clip.script(this.scriptName);
+                BlockBinding.__super__.constructor.call(this, this.clip, this.scriptName);
+            }
+            BlockBinding.prototype.bind = function(context) {
+                this.context = context;
+                this.clip.reset(this.context);
+                return BlockBinding.__super__.bind.call(this, this.context);
+            };
+            BlockBinding.test = function(node) {
+                return false;
+            };
+            return BlockBinding;
+        }(require("paperclip/lib/paper/bindings/base/script.js"));
+        module.exports = BlockBinding;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/bindings/block/factory.js", function(require, module, exports, __dirname, __filename) {
+        var BindingCollection, Factory, bindingClasses;
+        BindingCollection = require("paperclip/lib/paper/bindings/collection.js");
+        bindingClasses = {
+            html: require("paperclip/lib/paper/bindings/block/html.js"),
+            "if": require("paperclip/lib/paper/bindings/block/conditional.js"),
+            "else": require("paperclip/lib/paper/bindings/block/conditional.js"),
+            elseif: require("paperclip/lib/paper/bindings/block/conditional.js"),
+            value: require("paperclip/lib/paper/bindings/block/value.js")
+        };
+        Factory = function() {
+            function Factory() {}
+            Factory.prototype.getBindings = function(options) {
+                var bd, bindings, clipScriptNames, scriptName, _i, _len;
+                bindings = [];
+                clipScriptNames = options.clip.scripts.names;
+                for (_i = 0, _len = clipScriptNames.length; _i < _len; _i++) {
+                    scriptName = clipScriptNames[_i];
+                    if (bd = bindingClasses[scriptName]) {
+                        options.scriptName = scriptName;
+                        bindings.push(new bd(options));
+                    }
+                }
+                return bindings;
+            };
+            Factory.prototype.register = function(name, bindingClass) {
+                return bindingClasses[name] = bindingClass;
+            };
+            return Factory;
+        }();
+        module.exports = new Factory;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/bindings/node/factory.js", function(require, module, exports, __dirname, __filename) {
+        var NodeBindingFactory, allBindingClasses, bdble, classes, clazz, dataBind, defaultBindingClasses, nodeFactory, type, _i, _len;
+        bdble = require("bindable/lib/index.js");
+        allBindingClasses = {
+            node: {},
+            attr: {
+                "default": []
+            }
+        };
+        NodeBindingFactory = function() {
+            function NodeBindingFactory() {}
+            NodeBindingFactory.prototype.getBindings = function(options) {
+                var attrName, attributes, bindable, bindables, bindingClass, bindingClasses, bindings, context, node, nodeName, _i, _j, _len, _len1;
+                bindings = [];
+                attributes = options.attributes;
+                nodeName = options.nodeName;
+                node = options.node;
+                bindables = [ {
+                    name: nodeName,
+                    key: nodeName,
+                    value: node,
+                    type: "node",
+                    node: node
+                }, {
+                    name: nodeName,
+                    key: "default",
+                    value: node,
+                    type: "node",
+                    node: node
+                } ];
+                context = void 0;
+                for (attrName in attributes) {
+                    bindables.push({
+                        node: node,
+                        name: attrName,
+                        key: attrName,
+                        value: attributes[attrName],
+                        type: "attr"
+                    });
+                    bindables.push({
+                        node: node,
+                        name: attrName,
+                        key: "default",
+                        value: attributes[attrName],
+                        type: "attr"
+                    });
+                }
+                for (_i = 0, _len = bindables.length; _i < _len; _i++) {
+                    bindable = bindables[_i];
+                    bindingClasses = allBindingClasses[bindable.type][bindable.key] || [];
+                    for (_j = 0, _len1 = bindingClasses.length; _j < _len1; _j++) {
+                        bindingClass = bindingClasses[_j];
+                        if (bindingClass.prototype.test(bindable)) {
+                            if (!context) {
+                                context = new bdble.Object;
+                            }
+                            bindable.context = context;
+                            bindings.push(new bindingClass(bindable));
+                        }
+                    }
+                }
+                return bindings;
+            };
+            NodeBindingFactory.prototype.register = function(name, bindingClass) {
+                var classes, type;
+                type = bindingClass.type || bindingClass.prototype.type;
+                if (!/node|attr/.test(String(type))) {
+                    throw new Error('node binding class "' + bindingClass.name + "\" must have a type 'node', or 'attr'");
+                }
+                classes = allBindingClasses[type];
+                if (!bindingClass.prototype.test) {
+                    bindingClass.prototype.test = function() {
+                        return true;
+                    };
+                }
+                if (!classes[name]) {
+                    classes[name] = [];
+                }
+                classes[name].push(bindingClass);
+                return this;
+            };
+            return NodeBindingFactory;
+        }();
+        nodeFactory = module.exports = new NodeBindingFactory;
+        defaultBindingClasses = {
+            "default": [ require("paperclip/lib/paper/bindings/node/attrs/text/index.js") ],
+            "data-bind": [ dataBind = module.exports.dataBind = require("paperclip/lib/paper/bindings/node/attrs/dataBind/index.js") ]
+        };
+        for (type in defaultBindingClasses) {
+            classes = defaultBindingClasses[type];
+            for (_i = 0, _len = classes.length; _i < _len; _i++) {
+                clazz = classes[_i];
+                nodeFactory.register(type, clazz);
+            }
+        }
+        return module.exports;
+    });
+    define("paperclip/lib/paper/bindings/node/base/index.js", function(require, module, exports, __dirname, __filename) {
+        var BaseNodeBinding, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        BaseNodeBinding = function(_super) {
+            __extends(BaseNodeBinding, _super);
+            function BaseNodeBinding(options) {
+                this.name = options.name || this.name;
+                this.node = options.node;
+                this.value = options.value;
+                this.nodeModel = options.context;
+            }
+            BaseNodeBinding.prototype.bind = function(context) {
+                this.context = context;
+            };
+            BaseNodeBinding.prototype.unbind = function() {};
+            return BaseNodeBinding;
+        }(require("paperclip/lib/paper/bindings/base/index.js"));
+        module.exports = BaseNodeBinding;
+        return module.exports;
+    });
+    define("paperclip/lib/paper/bindings/node/attrs/dataBind/handlers/base.js", function(require, module, exports, __dirname, __filename) {
+        var BaseDataBindHandler, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        BaseDataBindHandler = function(_super) {
+            __extends(BaseDataBindHandler, _super);
+            function BaseDataBindHandler(node, clip, name) {
+                this.node = node;
+                this.clip = clip;
+                this.name = name;
+                BaseDataBindHandler.__super__.constructor.call(this, this.clip, this.name);
+            }
+            return BaseDataBindHandler;
+        }(require("paperclip/lib/paper/bindings/base/script.js"));
+        module.exports = BaseDataBindHandler;
+        return module.exports;
+    });
+    define("bindable/lib/object/setters/factory.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var BindableSetter, CollectionSetter, FnSetter;
+            FnSetter = require("bindable/lib/object/setters/fn.js");
+            BindableSetter = require("bindable/lib/object/setters/bindable.js");
+            CollectionSetter = require("bindable/lib/object/setters/collection.js");
+            module.exports = function() {
+                function _Class() {}
+                _Class.prototype.createSetter = function(binding, target, property) {
+                    var callback, to, toProperty;
+                    to = null;
+                    toProperty = null;
+                    callback = null;
+                    if (!target && !property) {
+                        return null;
+                    }
+                    if (typeof property === "string") {
+                        to = target;
+                        toProperty = property;
+                    } else if (typeof target === "string") {
+                        to = binding._from;
+                        toProperty = target;
+                    } else if (typeof target === "function") {
+                        callback = target;
+                    } else if (typeof target === "object" && target) {
+                        if (target.__isBinding) {
+                            throw new Error("Cannot bind to a binding.");
+                        } else if (target.__isCollection) {
+                            return new CollectionSetter(binding, target);
+                        }
+                    }
+                    if (callback) {
+                        return new FnSetter(binding, callback);
+                    } else if (to && toProperty) {
+                        return new BindableSetter(binding, to, toProperty);
+                    }
+                    return null;
+                };
+                return _Class;
+            }();
+        }).call(this);
+        return module.exports;
+    });
+    define("bindable/lib/core/utils.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var hoist;
+            hoist = require("hoist/lib/index.js");
+            exports.tryTransform = function(transformer, method, value) {
+                if (!transformer) {
+                    return value[0];
+                }
+                return transformer[method].call(transformer, value);
+            };
+            exports.transformer = function(options) {
+                if (typeof options === "function") {
+                    options = {
+                        from: options,
+                        to: options
+                    };
+                }
+                if (!options.from) {
+                    options.from = function(value) {
+                        return value;
+                    };
+                }
+                if (!options.to) {
+                    options.to = function(value) {
+                        return value;
+                    };
+                }
+                return options;
+            };
+        }).call(this);
+        return module.exports;
+    });
+    define("toarray/index.js", function(require, module, exports, __dirname, __filename) {
+        module.exports = function(item) {
+            if (item === undefined) return [];
+            return Object.prototype.toString.call(item) === "[object Array]" ? item : [ item ];
+        };
+        return module.exports;
+    });
+    define("bindable/lib/object/deepPropertyWatcher.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var PropertyWatcher, options, type, __bind = function(fn, me) {
+                return function() {
+                    return fn.apply(me, arguments);
+                };
+            };
+            type = require("type-component/index.js");
+            options = require("bindable/lib/utils/options.js");
+            PropertyWatcher = function() {
+                function PropertyWatcher(options) {
+                    this._changed = __bind(this._changed, this);
+                    this.binding = options.biding;
+                    this.target = options.target;
+                    this.watch = options.watch;
+                    this.path = options.path;
+                    this.index = options.index;
+                    this.root = options.root || this;
+                    this.delay = options.delay;
+                    this.callback = options.callback;
+                    this.property = this.path[this.index];
+                    this._children = [];
+                    this._bindings = [];
+                    this._value = void 0;
+                    this._values = void 0;
+                    this._watching = false;
+                    this._updating = false;
+                    this._disposed = false;
+                    if (this._each = this.property.substr(0, 1) === "@") {
+                        this.root._computeEach = true;
+                        this.property = this.property.substr(1);
+                    }
+                    this._watch();
+                }
+                PropertyWatcher.prototype.value = function() {
+                    var values;
+                    values = [];
+                    this._addValues(values);
+                    if (this._computeEach) {
+                        return values;
+                    } else {
+                        return values[0];
+                    }
+                };
+                PropertyWatcher.prototype._addValues = function(values) {
+                    var child, _i, _len, _ref;
+                    if (!this._children.length) {
+                        if (this._values) {
+                            values.push.apply(values, this._values);
+                        } else if (this._value != null) {
+                            values.push(this._value);
+                        }
+                        return;
+                    }
+                    _ref = this._children;
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        child = _ref[_i];
+                        child._addValues(values);
+                    }
+                    return void 0;
+                };
+                PropertyWatcher.prototype.dispose = function() {
+                    var binding, child, _i, _j, _len, _len1, _ref, _ref1, _ref2;
+                    this._disposed = true;
+                    if ((_ref = this._listener) != null) {
+                        _ref.dispose();
+                    }
+                    this._listener = void 0;
+                    _ref1 = this._bindings;
+                    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+                        binding = _ref1[_i];
+                        binding.dispose();
+                    }
+                    _ref2 = this._children;
+                    for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
+                        child = _ref2[_j];
+                        child.dispose();
+                    }
+                    this._children = [];
+                    return this._bindings = [];
+                };
+                PropertyWatcher.prototype._update = function() {
+                    var _this = this;
+                    if (!~this.delay) {
+                        this._watch();
+                        this.callback();
+                        return;
+                    }
+                    if (this._updating) {
+                        return;
+                    }
+                    this._updating = true;
+                    this._disposed = false;
+                    return setTimeout(function() {
+                        if (_this._disposed) {
+                            return;
+                        }
+                        _this._watch();
+                        return _this.callback();
+                    }, this.delay);
+                };
+                PropertyWatcher.prototype._watch = function() {
+                    var nt, prop, ref, t, value, _i, _len, _ref;
+                    this._updating = false;
+                    if (this.target) {
+                        if (this.target.__isBindable) {
+                            if ((nt = this.target.get()).__isBindable) {
+                                this.target = nt;
+                            }
+                            this.watch = this.target;
+                            this.childPath = this.path.slice(this.index);
+                            this.childIndex = 1;
+                            value = this.target.get(this.property);
+                        } else {
+                            value = this.target[this.property];
+                            this.childPath = this.path;
+                            this.childIndex = this.index + 1;
+                        }
+                    } else {
+                        this.childPath = this.path;
+                        this.childIndex = this.index + 1;
+                    }
+                    if (this._listener) {
+                        this.dispose();
+                    }
+                    this._value = value;
+                    if ((t = type(value)) === "function" && value.refs) {
+                        _ref = value.refs;
+                        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                            ref = _ref[_i];
+                            this._watchRef(ref);
+                        }
+                    }
+                    prop = this.childPath.slice(0, this.childIndex - 1).concat(this.property).join(".");
+                    this._listener = this.watch.on("change:" + prop, this._changed);
+                    if (this._each) {
+                        this._watchEachValue(value, t);
+                    } else {
+                        this._watchValue(value);
+                    }
+                    return this.watch._watching(prop);
+                };
+                PropertyWatcher.prototype._watchEachValue = function(fnOrArray, t) {
+                    if (!~this.root.delay) {
+                        this.root.delay = options.computedDelay;
+                    }
+                    switch (t) {
+                      case "function":
+                        return this._callEach(fnOrArray);
+                      case "array":
+                        return this._loopEach(fnOrArray);
+                      case "undefined":
+                        break;
+                      default:
+                        throw Error("'@" + this._property + "' is a " + t + ". '@" + this._property + "' must be either an array, or function.");
+                    }
+                };
+                PropertyWatcher.prototype._callEach = function(fn) {
+                    var _this = this;
+                    this._values = [];
+                    return fn.call(this.target, function(value) {
+                        _this._values.push(value);
+                        return _this._watchValue(value);
+                    });
+                };
+                PropertyWatcher.prototype._loopEach = function(values) {
+                    var value, _i, _len;
+                    for (_i = 0, _len = values.length; _i < _len; _i++) {
+                        value = values[_i];
+                        this._watchValue(value);
+                    }
+                    return void 0;
+                };
+                PropertyWatcher.prototype._watchValue = function(value) {
+                    if (this.childIndex < this.childPath.length) {
+                        return this._children.push(new PropertyWatcher({
+                            watch: this.watch,
+                            target: value,
+                            path: this.childPath,
+                            index: this.childIndex,
+                            callback: this.callback,
+                            root: this.root,
+                            delay: this.delay
+                        }));
+                    }
+                };
+                PropertyWatcher.prototype._watchRef = function(ref) {
+                    return this._bindings.push(new PropertyWatcher({
+                        target: this.target,
+                        path: ref.split("."),
+                        index: 0,
+                        callback: this._changed,
+                        delay: this.delay
+                    }));
+                };
+                PropertyWatcher.prototype._changed = function(_value) {
+                    this._value = _value;
+                    return this.root._update();
+                };
+                return PropertyWatcher;
+            }();
+            module.exports = PropertyWatcher;
+        }).call(this);
+        return module.exports;
+    });
+    define("bindable/lib/object/dref.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            exports.get = function(target, key, flatten) {
+                var ct, i, k, keyParts, _i, _len;
+                if (flatten == null) {
+                    flatten = true;
+                }
+                if (!target) {
+                    return target;
+                }
+                keyParts = key ? key.split(".") : [];
+                ct = target;
+                for (i = _i = 0, _len = keyParts.length; _i < _len; i = ++_i) {
+                    k = keyParts[i];
+                    if (!ct) {
+                        return;
+                    }
+                    if (ct.__isBindable) {
+                        return ct.get(keyParts.slice(i).join("."));
+                    }
+                    ct = ct[k];
+                }
+                if (flatten && ct && ct.__isBindable) {
+                    return ct.get();
+                }
+                return ct;
+            };
+            exports.set = function(target, key, value) {
+                var ct, i, k, keyParts, n, nv, _i, _len;
+                if (!target || !key) {
+                    return;
+                }
+                keyParts = key.split(".");
+                ct = target.data;
+                n = keyParts.length;
+                for (i = _i = 0, _len = keyParts.length; _i < _len; i = ++_i) {
+                    k = keyParts[i];
+                    if (ct.__isBindable) {
+                        return ct.set(keyParts.slice(i).join("."), value);
+                    } else {
+                        if (i === n - 1) {
+                            if (ct[k] === value) {
+                                return false;
+                            }
+                            ct[k] = value;
+                            return true;
+                        } else {
+                            nv = ct[k];
+                            if (!nv || typeof nv !== "object") {
+                                nv = ct[k] = {};
+                            }
+                            ct = nv;
+                        }
+                    }
+                }
+            };
+        }).call(this);
+        return module.exports;
+    });
+    define("bindable/lib/collection/binding.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var SettersFactory, settersFactory, utils;
+            SettersFactory = require("bindable/lib/collection/setters/factory.js");
+            settersFactory = new SettersFactory;
+            utils = require("bindable/lib/core/utils.js");
+            module.exports = function() {
+                function _Class(_from) {
+                    this._from = _from;
+                    this._limit = -1;
+                    this._setters = [];
+                    this._listen();
+                    this.map(function(value) {
+                        return value;
+                    });
+                }
+                _Class.prototype.transform = function() {
+                    return this.map.apply(this, arguments);
+                };
+                _Class.prototype.map = function(value) {
+                    if (!arguments.length) {
+                        return this._transformer;
+                    }
+                    this._transformer = utils.transformer(value);
+                    return this;
+                };
+                _Class.prototype.now = function() {
+                    var item, setter, _i, _j, _len, _len1, _ref, _ref1;
+                    _ref = this._setters;
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        setter = _ref[_i];
+                        setter.now();
+                    }
+                    _ref1 = this._from.source();
+                    for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+                        item = _ref1[_j];
+                        this._callSetters("insert", item);
+                    }
+                    return this;
+                };
+                _Class.prototype.dispose = function() {
+                    this._dispose(this._setters);
+                    this._setters = void 0;
+                    this._dispose(this._listeners);
+                    return this._listeners = void 0;
+                };
+                _Class.prototype.copyId = function(value) {
+                    if (!arguments.length) {
+                        return this._copyId;
+                    }
+                    this._copyId = value;
+                    return this;
+                };
+                _Class.prototype._dispose = function(collection) {
+                    var disposable, _i, _len, _results;
+                    if (collection) {
+                        _results = [];
+                        for (_i = 0, _len = collection.length; _i < _len; _i++) {
+                            disposable = collection[_i];
+                            _results.push(disposable.dispose());
+                        }
+                        return _results;
+                    }
+                };
+                _Class.prototype.filter = function(search) {
+                    if (!arguments.length) {
+                        return this._filter;
+                    }
+                    this._filter = search;
+                    return this;
+                };
+                _Class.prototype.to = function(collection, now) {
+                    var setter;
+                    if (now == null) {
+                        now = true;
+                    }
+                    setter = settersFactory.createSetter(this, collection);
+                    if (setter) {
+                        this._setters.push(setter);
+                        if (now === true) {
+                            setter.now();
+                        }
+                    }
+                    return this;
+                };
+                _Class.prototype._listen = function() {
+                    var event, _i, _len, _ref, _results, _this = this;
+                    this._listeners = [];
+                    _ref = [ "insert", "remove", "reset" ];
+                    _results = [];
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        event = _ref[_i];
+                        _results.push(function(event) {
+                            return _this._listeners.push(_this._from.on(event, function(item, index) {
+                                return _this._callSetters(event, item, index);
+                            }));
+                        }(event));
+                    }
+                    return _results;
+                };
+                _Class.prototype._callSetters = function(method, item, index) {
+                    var setter, _i, _len, _ref, _results;
+                    _ref = this._setters;
+                    _results = [];
+                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                        setter = _ref[_i];
+                        _results.push(setter.change(method, item, index));
+                    }
+                    return _results;
+                };
+                return _Class;
+            }();
+        }).call(this);
+        return module.exports;
+    });
+    define("hoist/lib/index.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var method, transformer, _fn, _i, _len, _ref, _this = this;
+            transformer = require("hoist/lib/transformer.js");
+            module.exports = transformer;
+            _ref = [ "cast", "map", "preCast", "preMap", "postCast", "postMap" ];
+            _fn = function(method) {
+                return module.exports[method] = function() {
+                    var t;
+                    t = transformer();
+                    return t[method].apply(t, arguments);
+                };
+            };
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                method = _ref[_i];
+                _fn(method);
+            }
+        }).call(this);
+        return module.exports;
+    });
+    define("disposable/lib/index.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var _disposable = {};
+            _disposable.create = function() {
+                var self = {}, disposables = [];
+                self.add = function(disposable) {
+                    if (arguments.length > 1) {
+                        var collection = _disposable.create();
+                        for (var i = arguments.length; i--; ) {
+                            collection.add(arguments[i]);
+                        }
+                        return self.add(collection);
+                    }
+                    if (typeof disposable == "function") {
+                        var disposableFunc = disposable, args = Array.prototype.slice.call(arguments, 0);
+                        args.shift();
+                        disposable = {
+                            dispose: function() {
+                                disposableFunc.apply(null, args);
+                            }
+                        };
+                    } else if (!disposable || !disposable.dispose) {
+                        return false;
+                    }
+                    disposables.push(disposable);
+                    return {
+                        dispose: function() {
+                            var i = disposables.indexOf(disposable);
+                            if (i > -1) disposables.splice(i, 1);
+                        }
+                    };
+                };
+                self.addTimeout = function(timerId) {
+                    return self.add(function() {
+                        clearTimeout(timerId);
+                    });
+                };
+                self.addInterval = function(timerId) {
+                    return self.add(function() {
+                        clearInterval(timerId);
+                    });
+                };
+                self.addBinding = function(target) {
+                    self.add(function() {
+                        target.unbind();
+                    });
+                };
+                self.dispose = function() {
+                    for (var i = disposables.length; i--; ) {
+                        disposables[i].dispose();
+                    }
+                    disposables = [];
+                };
+                return self;
+            };
+            if (typeof module != "undefined") {
+                module.exports = _disposable;
+            } else if (typeof window != "undefined") {
+                window.disposable = _disposable;
+            }
+        })();
         return module.exports;
     });
     define("paperclip/lib/paper/writers/fragment.js", function(require, module, exports, __dirname, __filename) {
@@ -2913,41 +3457,156 @@
         module.exports = BaseBinding;
         return module.exports;
     });
-    define("bindable/lib/object/setters/factory.js", function(require, module, exports, __dirname, __filename) {
+    define("bindable/lib/object/setters/fn.js", function(require, module, exports, __dirname, __filename) {
         (function() {
-            var BindableSetter, CollectionSetter, FnSetter;
-            FnSetter = require("bindable/lib/object/setters/fn.js");
-            BindableSetter = require("bindable/lib/object/setters/bindable.js");
-            CollectionSetter = require("bindable/lib/object/setters/collection.js");
+            var Base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+                for (var key in parent) {
+                    if (__hasProp.call(parent, key)) child[key] = parent[key];
+                }
+                function ctor() {
+                    this.constructor = child;
+                }
+                ctor.prototype = parent.prototype;
+                child.prototype = new ctor;
+                child.__super__ = parent.prototype;
+                return child;
+            };
+            Base = require("bindable/lib/object/setters/base.js");
+            module.exports = function(_super) {
+                __extends(_Class, _super);
+                function _Class(binding, callback) {
+                    this.binding = binding;
+                    this.callback = callback;
+                    _Class.__super__.constructor.call(this, this.binding);
+                }
+                _Class.prototype._change = function(newValue, oldValue) {
+                    return this.callback(newValue, oldValue);
+                };
+                _Class.prototype.dispose = function() {
+                    return this.callback = null;
+                };
+                return _Class;
+            }(Base);
+        }).call(this);
+        return module.exports;
+    });
+    define("bindable/lib/object/setters/bindable.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var Base, type, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+                for (var key in parent) {
+                    if (__hasProp.call(parent, key)) child[key] = parent[key];
+                }
+                function ctor() {
+                    this.constructor = child;
+                }
+                ctor.prototype = parent.prototype;
+                child.prototype = new ctor;
+                child.__super__ = parent.prototype;
+                return child;
+            };
+            Base = require("bindable/lib/object/setters/base.js");
+            type = require("type-component/index.js");
+            module.exports = function(_super) {
+                __extends(_Class, _super);
+                function _Class(binding, to, property) {
+                    this.binding = binding;
+                    this.to = to;
+                    this.property = property;
+                    _Class.__super__.constructor.call(this, this.binding);
+                }
+                _Class.prototype._change = function(newValue) {
+                    this._ignoreBothWays = true;
+                    this.to.set(this.property, newValue);
+                    return this._ignoreBothWays = false;
+                };
+                _Class.prototype.dispose = function() {
+                    var _ref;
+                    if ((_ref = this._bothWaysBinding) != null) {
+                        _ref.dispose();
+                    }
+                    return this._bothWaysBinding = this.binding = this.to = this.properties = null;
+                };
+                _Class.prototype.bothWays = function() {
+                    var _this = this;
+                    return this._bothWaysBinding = this.to.bind(this.property).map({
+                        to: function() {
+                            var value, _ref;
+                            value = (_ref = _this.binding._map).from.apply(_ref, arguments);
+                            if (type(value) === "array") {
+                                return value;
+                            } else {
+                                return [ value ];
+                            }
+                        }
+                    }).to(function(values) {
+                        var i, prop, value, _i, _len;
+                        if (_this._ignoreBothWays) {
+                            return;
+                        }
+                        for (i = _i = 0, _len = values.length; _i < _len; i = ++_i) {
+                            value = values[i];
+                            prop = _this.binding._properties[i];
+                            _this.binding._from.set(prop, value);
+                        }
+                    });
+                };
+                return _Class;
+            }(Base);
+        }).call(this);
+        return module.exports;
+    });
+    define("bindable/lib/object/setters/collection.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var Base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+                for (var key in parent) {
+                    if (__hasProp.call(parent, key)) child[key] = parent[key];
+                }
+                function ctor() {
+                    this.constructor = child;
+                }
+                ctor.prototype = parent.prototype;
+                child.prototype = new ctor;
+                child.__super__ = parent.prototype;
+                return child;
+            };
+            Base = require("bindable/lib/object/setters/base.js");
+            module.exports = function(_super) {
+                __extends(_Class, _super);
+                function _Class(binding, to, property) {
+                    this.binding = binding;
+                    this.to = to;
+                    this.property = property;
+                    _Class.__super__.constructor.call(this, this.binding);
+                }
+                _Class.prototype._change = function(newValue, oldValue) {
+                    return this.to.reset(newValue, oldValue);
+                };
+                _Class.prototype.dispose = function() {
+                    return this.to.disposeSourceBinding();
+                };
+                return _Class;
+            }(Base);
+        }).call(this);
+        return module.exports;
+    });
+    define("bindable/lib/collection/setters/factory.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var CollectionSetter, FnSetter, ObjSetter;
+            FnSetter = require("bindable/lib/collection/setters/fn.js");
+            ObjSetter = require("bindable/lib/collection/setters/object.js");
+            CollectionSetter = require("bindable/lib/collection/setters/collection.js");
             module.exports = function() {
                 function _Class() {}
-                _Class.prototype.createSetter = function(binding, target, property) {
-                    var callback, to, toProperty;
-                    to = null;
-                    toProperty = null;
-                    callback = null;
-                    if (!target && !property) {
+                _Class.prototype.createSetter = function(binding, target) {
+                    if (!target) {
                         return null;
                     }
-                    if (typeof property === "string") {
-                        to = target;
-                        toProperty = property;
-                    } else if (typeof target === "string") {
-                        to = binding._from;
-                        toProperty = target;
-                    } else if (typeof target === "function") {
-                        callback = target;
-                    } else if (typeof target === "object" && target) {
-                        if (target.__isBinding) {
-                            throw new Error("Cannot bind to a binding.");
-                        } else if (target.__isCollection) {
-                            return new CollectionSetter(binding, target);
-                        }
-                    }
-                    if (callback) {
-                        return new FnSetter(binding, callback);
-                    } else if (to && toProperty) {
-                        return new BindableSetter(binding, to, toProperty);
+                    if (typeof target === "function") {
+                        return new FnSetter(binding, target);
+                    } else if (target.__isCollection) {
+                        return new CollectionSetter(binding, target);
+                    } else if (target.insert || target.update || target.remove || target.replace) {
+                        return new ObjSetter(binding, target);
                     }
                     return null;
                 };
@@ -2956,505 +3615,122 @@
         }).call(this);
         return module.exports;
     });
-    define("bindable/lib/core/utils.js", function(require, module, exports, __dirname, __filename) {
+    define("hoist/lib/transformer.js", function(require, module, exports, __dirname, __filename) {
         (function() {
-            var hoist;
-            hoist = require("hoist/lib/index.js");
-            exports.tryTransform = function(transformer, method, value) {
-                if (!transformer) {
-                    return value[0];
-                }
-                return transformer[method].call(transformer, value);
-            };
-            exports.transformer = function(options) {
-                if (typeof options === "function") {
-                    options = {
-                        from: options,
-                        to: options
-                    };
-                }
-                if (!options.from) {
-                    options.from = function(value) {
-                        return value;
-                    };
-                }
-                if (!options.to) {
-                    options.to = function(value) {
-                        return value;
-                    };
-                }
-                return options;
-            };
-        }).call(this);
-        return module.exports;
-    });
-    define("toarray/index.js", function(require, module, exports, __dirname, __filename) {
-        module.exports = function(item) {
-            if (item === undefined) return [];
-            return Object.prototype.toString.call(item) === "[object Array]" ? item : [ item ];
-        };
-        return module.exports;
-    });
-    define("bindable/lib/object/deepPropertyWatcher.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var PropertyWatcher, options, type, __bind = function(fn, me) {
-                return function() {
-                    return fn.apply(me, arguments);
-                };
-            };
+            var async, getArrayTypeCaster, getClassTypeCaster, getSimpleDataTypeCaster, getTypeCaster, type;
             type = require("type-component/index.js");
-            options = require("bindable/lib/utils/options.js");
-            PropertyWatcher = function() {
-                function PropertyWatcher(options) {
-                    this._changed = __bind(this._changed, this);
-                    this.binding = options.biding;
-                    this.target = options.target;
-                    this.watch = options.watch;
-                    this.path = options.path;
-                    this.index = options.index;
-                    this.root = options.root || this;
-                    this.delay = options.delay;
-                    this.callback = options.callback;
-                    this.property = this.path[this.index];
-                    this._children = [];
-                    this._bindings = [];
-                    this._value = void 0;
-                    this._values = void 0;
-                    this._watching = false;
-                    this._updating = false;
-                    this._disposed = false;
-                    if (this._each = this.property.substr(0, 1) === "@") {
-                        this.root._computeEach = true;
-                        this.property = this.property.substr(1);
-                    }
-                    this._watch();
-                }
-                PropertyWatcher.prototype.value = function() {
-                    var values;
-                    values = [];
-                    this._addValues(values);
-                    if (this._computeEach) {
-                        return values;
-                    } else {
-                        return values[0];
-                    }
-                };
-                PropertyWatcher.prototype._addValues = function(values) {
-                    var child, _i, _len, _ref;
-                    if (!this._children.length) {
-                        if (this._values) {
-                            values.push.apply(values, this._values);
-                        } else if (this._value != null) {
-                            values.push(this._value);
-                        }
-                        return;
-                    }
-                    _ref = this._children;
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        child = _ref[_i];
-                        child._addValues(values);
-                    }
-                    return void 0;
-                };
-                PropertyWatcher.prototype.dispose = function() {
-                    var binding, child, _i, _j, _len, _len1, _ref, _ref1, _ref2;
-                    this._disposed = true;
-                    if ((_ref = this._listener) != null) {
-                        _ref.dispose();
-                    }
-                    this._listener = void 0;
-                    _ref1 = this._bindings;
-                    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-                        binding = _ref1[_i];
-                        binding.dispose();
-                    }
-                    _ref2 = this._children;
-                    for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-                        child = _ref2[_j];
-                        child.dispose();
-                    }
-                    this._children = [];
-                    return this._bindings = [];
-                };
-                PropertyWatcher.prototype._update = function() {
-                    var _this = this;
-                    if (!~this.delay) {
-                        this._watch();
-                        this.callback();
-                        return;
-                    }
-                    if (this._updating) {
-                        return;
-                    }
-                    this._updating = true;
-                    this._disposed = false;
-                    return setTimeout(function() {
-                        if (_this._disposed) {
-                            return;
-                        }
-                        _this._watch();
-                        return _this.callback();
-                    }, this.delay);
-                };
-                PropertyWatcher.prototype._watch = function() {
-                    var nt, prop, ref, t, value, _i, _len, _ref;
-                    this._updating = false;
-                    if (this.target) {
-                        if (this.target.__isBindable) {
-                            if ((nt = this.target.get()).__isBindable) {
-                                this.target = nt;
-                            }
-                            this.watch = this.target;
-                            this.childPath = this.path.slice(this.index);
-                            this.childIndex = 1;
-                            value = this.target.get(this.property);
-                        } else {
-                            value = this.target[this.property];
-                            this.childPath = this.path;
-                            this.childIndex = this.index + 1;
-                        }
-                    } else {
-                        this.childPath = this.path;
-                        this.childIndex = this.index + 1;
-                    }
-                    if (this._listener) {
-                        this.dispose();
-                    }
-                    this._value = value;
-                    if ((t = type(value)) === "function" && value.refs) {
-                        _ref = value.refs;
-                        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                            ref = _ref[_i];
-                            this._watchRef(ref);
-                        }
-                    }
-                    prop = this.childPath.slice(0, this.childIndex - 1).concat(this.property).join(".");
-                    this._listener = this.watch.on("change:" + prop, this._changed);
-                    if (this._each) {
-                        this._watchEachValue(value, t);
-                    } else {
-                        this._watchValue(value);
-                    }
-                    return this.watch._watching(prop);
-                };
-                PropertyWatcher.prototype._watchEachValue = function(fnOrArray, t) {
-                    if (!~this.root.delay) {
-                        this.root.delay = options.computedDelay;
-                    }
-                    switch (t) {
-                      case "function":
-                        return this._callEach(fnOrArray);
-                      case "array":
-                        return this._loopEach(fnOrArray);
-                      case "undefined":
-                        break;
-                      default:
-                        throw Error("'@" + this._property + "' is a " + t + ". '@" + this._property + "' must be either an array, or function.");
-                    }
-                };
-                PropertyWatcher.prototype._callEach = function(fn) {
-                    var _this = this;
-                    this._values = [];
-                    return fn.call(this.target, function(value) {
-                        _this._values.push(value);
-                        return _this._watchValue(value);
-                    });
-                };
-                PropertyWatcher.prototype._loopEach = function(values) {
-                    var value, _i, _len;
-                    for (_i = 0, _len = values.length; _i < _len; _i++) {
-                        value = values[_i];
-                        this._watchValue(value);
-                    }
-                    return void 0;
-                };
-                PropertyWatcher.prototype._watchValue = function(value) {
-                    if (this.childIndex < this.childPath.length) {
-                        return this._children.push(new PropertyWatcher({
-                            watch: this.watch,
-                            target: value,
-                            path: this.childPath,
-                            index: this.childIndex,
-                            callback: this.callback,
-                            root: this.root,
-                            delay: this.delay
-                        }));
-                    }
-                };
-                PropertyWatcher.prototype._watchRef = function(ref) {
-                    return this._bindings.push(new PropertyWatcher({
-                        target: this.target,
-                        path: ref.split("."),
-                        index: 0,
-                        callback: this._changed,
-                        delay: this.delay
-                    }));
-                };
-                PropertyWatcher.prototype._changed = function(_value) {
-                    this._value = _value;
-                    return this.root._update();
-                };
-                return PropertyWatcher;
-            }();
-            module.exports = PropertyWatcher;
-        }).call(this);
-        return module.exports;
-    });
-    define("bindable/lib/object/dref.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            exports.get = function(target, key, flatten) {
-                var ct, i, k, keyParts, _i, _len;
-                if (flatten == null) {
-                    flatten = true;
-                }
-                if (!target) {
-                    return target;
-                }
-                keyParts = key ? key.split(".") : [];
-                ct = target;
-                for (i = _i = 0, _len = keyParts.length; _i < _len; i = ++_i) {
-                    k = keyParts[i];
-                    if (!ct) {
-                        return;
-                    }
-                    if (ct.__isBindable) {
-                        return ct.get(keyParts.slice(i).join("."));
-                    }
-                    ct = ct[k];
-                }
-                if (flatten && ct && ct.__isBindable) {
-                    return ct.get();
-                }
-                return ct;
-            };
-            exports.set = function(target, key, value) {
-                var ct, i, k, keyParts, n, nv, _i, _len;
-                if (!target || !key) {
-                    return;
-                }
-                keyParts = key.split(".");
-                ct = target.data;
-                n = keyParts.length;
-                for (i = _i = 0, _len = keyParts.length; _i < _len; i = ++_i) {
-                    k = keyParts[i];
-                    if (ct.__isBindable) {
-                        return ct.set(keyParts.slice(i).join("."), value);
-                    } else {
-                        if (i === n - 1) {
-                            if (ct[k] === value) {
-                                return false;
-                            }
-                            ct[k] = value;
-                            return true;
-                        } else {
-                            nv = ct[k];
-                            if (!nv || typeof nv !== "object") {
-                                nv = ct[k] = {};
-                            }
-                            ct = nv;
-                        }
-                    }
-                }
-            };
-        }).call(this);
-        return module.exports;
-    });
-    define("bindable/lib/collection/binding.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var SettersFactory, settersFactory, utils;
-            SettersFactory = require("bindable/lib/collection/setters/factory.js");
-            settersFactory = new SettersFactory;
-            utils = require("bindable/lib/core/utils.js");
-            module.exports = function() {
-                function _Class(_from) {
-                    this._from = _from;
-                    this._limit = -1;
-                    this._setters = [];
-                    this._listen();
-                    this.map(function(value) {
+            async = require("async/lib/async.js");
+            getArrayTypeCaster = function() {
+                return function(value) {
+                    if (type(value) === "array") {
                         return value;
-                    });
-                }
-                _Class.prototype.transform = function() {
-                    return this.map.apply(this, arguments);
-                };
-                _Class.prototype.map = function(value) {
-                    if (!arguments.length) {
-                        return this._transformer;
                     }
-                    this._transformer = utils.transformer(value);
-                    return this;
-                };
-                _Class.prototype.now = function() {
-                    var item, setter, _i, _j, _len, _len1, _ref, _ref1;
-                    _ref = this._setters;
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        setter = _ref[_i];
-                        setter.now();
-                    }
-                    _ref1 = this._from.source();
-                    for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-                        item = _ref1[_j];
-                        this._callSetters("insert", item);
-                    }
-                    return this;
-                };
-                _Class.prototype.dispose = function() {
-                    this._dispose(this._setters);
-                    this._setters = void 0;
-                    this._dispose(this._listeners);
-                    return this._listeners = void 0;
-                };
-                _Class.prototype.copyId = function(value) {
-                    if (!arguments.length) {
-                        return this._copyId;
-                    }
-                    this._copyId = value;
-                    return this;
-                };
-                _Class.prototype._dispose = function(collection) {
-                    var disposable, _i, _len, _results;
-                    if (collection) {
-                        _results = [];
-                        for (_i = 0, _len = collection.length; _i < _len; _i++) {
-                            disposable = collection[_i];
-                            _results.push(disposable.dispose());
-                        }
-                        return _results;
-                    }
-                };
-                _Class.prototype.filter = function(search) {
-                    if (!arguments.length) {
-                        return this._filter;
-                    }
-                    this._filter = search;
-                    return this;
-                };
-                _Class.prototype.to = function(collection, now) {
-                    var setter;
-                    if (now == null) {
-                        now = true;
-                    }
-                    setter = settersFactory.createSetter(this, collection);
-                    if (setter) {
-                        this._setters.push(setter);
-                        if (now === true) {
-                            setter.now();
-                        }
-                    }
-                    return this;
-                };
-                _Class.prototype._listen = function() {
-                    var event, _i, _len, _ref, _results, _this = this;
-                    this._listeners = [];
-                    _ref = [ "insert", "remove", "reset" ];
-                    _results = [];
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        event = _ref[_i];
-                        _results.push(function(event) {
-                            return _this._listeners.push(_this._from.on(event, function(item, index) {
-                                return _this._callSetters(event, item, index);
-                            }));
-                        }(event));
-                    }
-                    return _results;
-                };
-                _Class.prototype._callSetters = function(method, item, index) {
-                    var setter, _i, _len, _ref, _results;
-                    _ref = this._setters;
-                    _results = [];
-                    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                        setter = _ref[_i];
-                        _results.push(setter.change(method, item, index));
-                    }
-                    return _results;
-                };
-                return _Class;
-            }();
-        }).call(this);
-        return module.exports;
-    });
-    define("hoist/lib/index.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var method, transformer, _fn, _i, _len, _ref, _this = this;
-            transformer = require("hoist/lib/transformer.js");
-            module.exports = transformer;
-            _ref = [ "cast", "map", "preCast", "preMap", "postCast", "postMap" ];
-            _fn = function(method) {
-                return module.exports[method] = function() {
-                    var t;
-                    t = transformer();
-                    return t[method].apply(t, arguments);
+                    return [ value ];
                 };
             };
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                method = _ref[_i];
-                _fn(method);
-            }
-        }).call(this);
-        return module.exports;
-    });
-    define("disposable/lib/index.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var _disposable = {};
-            _disposable.create = function() {
-                var self = {}, disposables = [];
-                self.add = function(disposable) {
-                    if (arguments.length > 1) {
-                        var collection = _disposable.create();
-                        for (var i = arguments.length; i--; ) {
-                            collection.add(arguments[i]);
+            getSimpleDataTypeCaster = function(typeClass) {
+                return function(value) {
+                    return typeClass(value);
+                };
+            };
+            getClassTypeCaster = function(typeClass) {
+                return function(value) {
+                    if (value && value.constructor === typeClass) {
+                        return value;
+                    }
+                    return new typeClass(value);
+                };
+            };
+            getTypeCaster = function(typeClass) {
+                if (typeClass === Array) {
+                    return getArrayTypeCaster();
+                }
+                if (typeClass === String || typeClass === Number) {
+                    return getSimpleDataTypeCaster(typeClass);
+                }
+                return getClassTypeCaster(typeClass);
+            };
+            module.exports = function(options) {
+                var caster, mapper, self, _mid, _post, _pre, _transform;
+                if (options == null) {
+                    options = {};
+                }
+                _transform = [];
+                _pre = [];
+                _post = [];
+                _mid = [];
+                self = function(value, next) {
+                    if (arguments.length > 1 && type(arguments[arguments.length - 1]) === "function") {
+                        return self.async(value, next);
+                    } else {
+                        return self.sync.apply(null, arguments);
+                    }
+                };
+                self.async = function(value, next) {
+                    return async.eachSeries(_transform, function(transformer, next) {
+                        if (transformer.async) {
+                            return transformer.transform(value, function(err, result) {
+                                if (err) {
+                                    return next(err);
+                                }
+                                return next(null, value = result);
+                            });
+                        } else {
+                            value = transformer.transform(value);
+                            return next();
                         }
-                        return self.add(collection);
+                    }, function(err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+                        return next(null, value);
+                    });
+                };
+                self.sync = function() {
+                    var transformer, _i, _len;
+                    for (_i = 0, _len = _transform.length; _i < _len; _i++) {
+                        transformer = _transform[_i];
+                        arguments[0] = transformer.transform.apply(null, arguments);
                     }
-                    if (typeof disposable == "function") {
-                        var disposableFunc = disposable, args = Array.prototype.slice.call(arguments, 0);
-                        args.shift();
-                        disposable = {
-                            dispose: function() {
-                                disposableFunc.apply(null, args);
-                            }
-                        };
-                    } else if (!disposable || !disposable.dispose) {
-                        return false;
-                    }
-                    disposables.push(disposable);
+                    return arguments[0];
+                };
+                self.preCast = function(typeClass) {
+                    return self._push(caster(typeClass), _pre);
+                };
+                self.cast = function(typeClass) {
+                    return self._push(caster(typeClass), _mid);
+                };
+                self.postCast = function(typeClass) {
+                    return self._push(caster(typeClass), _post);
+                };
+                caster = function(typeClass) {
                     return {
-                        dispose: function() {
-                            var i = disposables.indexOf(disposable);
-                            if (i > -1) disposables.splice(i, 1);
-                        }
+                        transform: getTypeCaster(typeClass)
                     };
                 };
-                self.addTimeout = function(timerId) {
-                    return self.add(function() {
-                        clearTimeout(timerId);
-                    });
+                self.preMap = function(fn) {
+                    return self._push(mapper(fn), _pre);
                 };
-                self.addInterval = function(timerId) {
-                    return self.add(function() {
-                        clearInterval(timerId);
-                    });
+                self.map = function(fn) {
+                    return self._push(mapper(fn), _mid);
                 };
-                self.addBinding = function(target) {
-                    self.add(function() {
-                        target.unbind();
-                    });
+                self.postMap = function(fn) {
+                    return self._push(mapper(fn), _post);
                 };
-                self.dispose = function() {
-                    for (var i = disposables.length; i--; ) {
-                        disposables[i].dispose();
-                    }
-                    disposables = [];
+                mapper = function(fn) {
+                    return {
+                        async: fn.length > 1,
+                        transform: fn
+                    };
+                };
+                self._push = function(obj, stack) {
+                    stack.push(obj);
+                    _transform = _pre.concat(_mid).concat(_post);
+                    return this;
                 };
                 return self;
             };
-            if (typeof module != "undefined") {
-                module.exports = _disposable;
-            } else if (typeof window != "undefined") {
-                window.disposable = _disposable;
-            }
-        })();
+        }).call(this);
         return module.exports;
     });
     define("paperclip/lib/paper/writers/base.js", function(require, module, exports, __dirname, __filename) {
@@ -3526,6 +3802,113 @@
                 return c;
             }).join("");
         };
+        return module.exports;
+    });
+    define("paperclip/lib/clip/buffer.js", function(require, module, exports, __dirname, __filename) {
+        var Clip, ClippedBuffer, ClippedBufferPart, bindable, __bind = function(fn, me) {
+            return function() {
+                return fn.apply(me, arguments);
+            };
+        }, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
+            for (var key in parent) {
+                if (__hasProp.call(parent, key)) child[key] = parent[key];
+            }
+            function ctor() {
+                this.constructor = child;
+            }
+            ctor.prototype = parent.prototype;
+            child.prototype = new ctor;
+            child.__super__ = parent.prototype;
+            return child;
+        };
+        bindable = require("bindable/lib/index.js");
+        Clip = require("paperclip/lib/clip/index.js");
+        ClippedBufferPart = function() {
+            function ClippedBufferPart(clippedBuffer, script) {
+                this.clippedBuffer = clippedBuffer;
+                this.script = script;
+                this._onUpdated = __bind(this._onUpdated, this);
+                this.clip = new Clip({
+                    script: this.script
+                });
+                this.clip.bind("value").to(this._onUpdated);
+            }
+            ClippedBufferPart.prototype.dispose = function() {
+                return this.clip.dispose();
+            };
+            ClippedBufferPart.prototype.update = function() {
+                this.clip.reset(this.clippedBuffer._data);
+                this.clip.update();
+                return this.value = this.clip.get("value");
+            };
+            ClippedBufferPart.prototype._onUpdated = function(value) {
+                this.value = value;
+                if (this.clippedBuffer._updating) {
+                    return;
+                }
+                return this.clippedBuffer.update();
+            };
+            ClippedBufferPart.prototype.toString = function() {
+                var _ref;
+                return String((_ref = this.value) != null ? _ref : "");
+            };
+            return ClippedBufferPart;
+        }();
+        ClippedBuffer = function(_super) {
+            __extends(ClippedBuffer, _super);
+            function ClippedBuffer(buffer) {
+                var binding, bufferPart, _i, _len;
+                ClippedBuffer.__super__.constructor.call(this);
+                this.buffer = [];
+                this.bindings = [];
+                this._data = {};
+                for (_i = 0, _len = buffer.length; _i < _len; _i++) {
+                    bufferPart = buffer[_i];
+                    if (bufferPart.fn) {
+                        this.buffer.push(binding = new ClippedBufferPart(this, bufferPart));
+                        this.bindings.push(binding);
+                    } else {
+                        this.buffer.push(bufferPart);
+                    }
+                }
+            }
+            ClippedBuffer.prototype.reset = function(data) {
+                if (data == null) {
+                    data = {};
+                }
+                this._data = data;
+                this.update();
+                return this;
+            };
+            ClippedBuffer.prototype.dispose = function() {
+                var binding, _i, _len, _ref;
+                _ref = this.bindings;
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                    binding = _ref[_i];
+                    binding.dispose();
+                }
+                return this.bindings = [];
+            };
+            ClippedBuffer.prototype.update = function() {
+                var binding, _i, _len, _ref;
+                this._updating = true;
+                _ref = this.bindings;
+                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                    binding = _ref[_i];
+                    binding.update();
+                }
+                this.set("text", this.text = this.render());
+                return this._updating = false;
+            };
+            ClippedBuffer.prototype.render = function() {
+                return this.buffer.join("");
+            };
+            ClippedBuffer.prototype.toString = function() {
+                return this.text;
+            };
+            return ClippedBuffer;
+        }(bindable.Object);
+        module.exports = ClippedBuffer;
         return module.exports;
     });
     define("paperclip/lib/paper/bindings/node/attrs/dataBind/handlers/show.js", function(require, module, exports, __dirname, __filename) {
@@ -4122,1237 +4505,6 @@
             return ChangeAttrBinding;
         }(require("paperclip/lib/paper/bindings/node/attrs/dataBind/handlers/event.js"));
         module.exports = ChangeAttrBinding;
-        return module.exports;
-    });
-    define("paperclip/lib/clip/buffer.js", function(require, module, exports, __dirname, __filename) {
-        var Clip, ClippedBuffer, ClippedBufferPart, bindable, __bind = function(fn, me) {
-            return function() {
-                return fn.apply(me, arguments);
-            };
-        }, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-            for (var key in parent) {
-                if (__hasProp.call(parent, key)) child[key] = parent[key];
-            }
-            function ctor() {
-                this.constructor = child;
-            }
-            ctor.prototype = parent.prototype;
-            child.prototype = new ctor;
-            child.__super__ = parent.prototype;
-            return child;
-        };
-        bindable = require("bindable/lib/index.js");
-        Clip = require("paperclip/lib/clip/index.js");
-        ClippedBufferPart = function() {
-            function ClippedBufferPart(clippedBuffer, script) {
-                this.clippedBuffer = clippedBuffer;
-                this.script = script;
-                this._onUpdated = __bind(this._onUpdated, this);
-                this.clip = new Clip({
-                    script: this.script
-                });
-                this.clip.bind("value").to(this._onUpdated);
-            }
-            ClippedBufferPart.prototype.dispose = function() {
-                return this.clip.dispose();
-            };
-            ClippedBufferPart.prototype.update = function() {
-                this.clip.reset(this.clippedBuffer._data);
-                this.clip.update();
-                return this.value = this.clip.get("value");
-            };
-            ClippedBufferPart.prototype._onUpdated = function(value) {
-                this.value = value;
-                if (this.clippedBuffer._updating) {
-                    return;
-                }
-                return this.clippedBuffer.update();
-            };
-            ClippedBufferPart.prototype.toString = function() {
-                var _ref;
-                return String((_ref = this.value) != null ? _ref : "");
-            };
-            return ClippedBufferPart;
-        }();
-        ClippedBuffer = function(_super) {
-            __extends(ClippedBuffer, _super);
-            function ClippedBuffer(buffer) {
-                var binding, bufferPart, _i, _len;
-                ClippedBuffer.__super__.constructor.call(this);
-                this.buffer = [];
-                this.bindings = [];
-                this._data = {};
-                for (_i = 0, _len = buffer.length; _i < _len; _i++) {
-                    bufferPart = buffer[_i];
-                    if (bufferPart.fn) {
-                        this.buffer.push(binding = new ClippedBufferPart(this, bufferPart));
-                        this.bindings.push(binding);
-                    } else {
-                        this.buffer.push(bufferPart);
-                    }
-                }
-            }
-            ClippedBuffer.prototype.reset = function(data) {
-                if (data == null) {
-                    data = {};
-                }
-                this._data = data;
-                this.update();
-                return this;
-            };
-            ClippedBuffer.prototype.dispose = function() {
-                var binding, _i, _len, _ref;
-                _ref = this.bindings;
-                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                    binding = _ref[_i];
-                    binding.dispose();
-                }
-                return this.bindings = [];
-            };
-            ClippedBuffer.prototype.update = function() {
-                var binding, _i, _len, _ref;
-                this._updating = true;
-                _ref = this.bindings;
-                for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-                    binding = _ref[_i];
-                    binding.update();
-                }
-                this.set("text", this.text = this.render());
-                return this._updating = false;
-            };
-            ClippedBuffer.prototype.render = function() {
-                return this.buffer.join("");
-            };
-            ClippedBuffer.prototype.toString = function() {
-                return this.text;
-            };
-            return ClippedBuffer;
-        }(bindable.Object);
-        module.exports = ClippedBuffer;
-        return module.exports;
-    });
-    define("bindable/lib/object/setters/fn.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var Base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-                for (var key in parent) {
-                    if (__hasProp.call(parent, key)) child[key] = parent[key];
-                }
-                function ctor() {
-                    this.constructor = child;
-                }
-                ctor.prototype = parent.prototype;
-                child.prototype = new ctor;
-                child.__super__ = parent.prototype;
-                return child;
-            };
-            Base = require("bindable/lib/object/setters/base.js");
-            module.exports = function(_super) {
-                __extends(_Class, _super);
-                function _Class(binding, callback) {
-                    this.binding = binding;
-                    this.callback = callback;
-                    _Class.__super__.constructor.call(this, this.binding);
-                }
-                _Class.prototype._change = function(newValue, oldValue) {
-                    return this.callback(newValue, oldValue);
-                };
-                _Class.prototype.dispose = function() {
-                    return this.callback = null;
-                };
-                return _Class;
-            }(Base);
-        }).call(this);
-        return module.exports;
-    });
-    define("bindable/lib/object/setters/bindable.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var Base, type, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-                for (var key in parent) {
-                    if (__hasProp.call(parent, key)) child[key] = parent[key];
-                }
-                function ctor() {
-                    this.constructor = child;
-                }
-                ctor.prototype = parent.prototype;
-                child.prototype = new ctor;
-                child.__super__ = parent.prototype;
-                return child;
-            };
-            Base = require("bindable/lib/object/setters/base.js");
-            type = require("type-component/index.js");
-            module.exports = function(_super) {
-                __extends(_Class, _super);
-                function _Class(binding, to, property) {
-                    this.binding = binding;
-                    this.to = to;
-                    this.property = property;
-                    _Class.__super__.constructor.call(this, this.binding);
-                }
-                _Class.prototype._change = function(newValue) {
-                    this._ignoreBothWays = true;
-                    this.to.set(this.property, newValue);
-                    return this._ignoreBothWays = false;
-                };
-                _Class.prototype.dispose = function() {
-                    var _ref;
-                    if ((_ref = this._bothWaysBinding) != null) {
-                        _ref.dispose();
-                    }
-                    return this._bothWaysBinding = this.binding = this.to = this.properties = null;
-                };
-                _Class.prototype.bothWays = function() {
-                    var _this = this;
-                    return this._bothWaysBinding = this.to.bind(this.property).map({
-                        to: function() {
-                            var value, _ref;
-                            value = (_ref = _this.binding._map).from.apply(_ref, arguments);
-                            if (type(value) === "array") {
-                                return value;
-                            } else {
-                                return [ value ];
-                            }
-                        }
-                    }).to(function(values) {
-                        var i, prop, value, _i, _len;
-                        if (_this._ignoreBothWays) {
-                            return;
-                        }
-                        for (i = _i = 0, _len = values.length; _i < _len; i = ++_i) {
-                            value = values[i];
-                            prop = _this.binding._properties[i];
-                            _this.binding._from.set(prop, value);
-                        }
-                    });
-                };
-                return _Class;
-            }(Base);
-        }).call(this);
-        return module.exports;
-    });
-    define("bindable/lib/object/setters/collection.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var Base, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
-                for (var key in parent) {
-                    if (__hasProp.call(parent, key)) child[key] = parent[key];
-                }
-                function ctor() {
-                    this.constructor = child;
-                }
-                ctor.prototype = parent.prototype;
-                child.prototype = new ctor;
-                child.__super__ = parent.prototype;
-                return child;
-            };
-            Base = require("bindable/lib/object/setters/base.js");
-            module.exports = function(_super) {
-                __extends(_Class, _super);
-                function _Class(binding, to, property) {
-                    this.binding = binding;
-                    this.to = to;
-                    this.property = property;
-                    _Class.__super__.constructor.call(this, this.binding);
-                }
-                _Class.prototype._change = function(newValue, oldValue) {
-                    return this.to.reset(newValue, oldValue);
-                };
-                _Class.prototype.dispose = function() {
-                    return this.to.disposeSourceBinding();
-                };
-                return _Class;
-            }(Base);
-        }).call(this);
-        return module.exports;
-    });
-    define("bindable/lib/collection/setters/factory.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var CollectionSetter, FnSetter, ObjSetter;
-            FnSetter = require("bindable/lib/collection/setters/fn.js");
-            ObjSetter = require("bindable/lib/collection/setters/object.js");
-            CollectionSetter = require("bindable/lib/collection/setters/collection.js");
-            module.exports = function() {
-                function _Class() {}
-                _Class.prototype.createSetter = function(binding, target) {
-                    if (!target) {
-                        return null;
-                    }
-                    if (typeof target === "function") {
-                        return new FnSetter(binding, target);
-                    } else if (target.__isCollection) {
-                        return new CollectionSetter(binding, target);
-                    } else if (target.insert || target.update || target.remove || target.replace) {
-                        return new ObjSetter(binding, target);
-                    }
-                    return null;
-                };
-                return _Class;
-            }();
-        }).call(this);
-        return module.exports;
-    });
-    define("hoist/lib/transformer.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var async, getArrayTypeCaster, getClassTypeCaster, getSimpleDataTypeCaster, getTypeCaster, type;
-            type = require("type-component/index.js");
-            async = require("async/lib/async.js");
-            getArrayTypeCaster = function() {
-                return function(value) {
-                    if (type(value) === "array") {
-                        return value;
-                    }
-                    return [ value ];
-                };
-            };
-            getSimpleDataTypeCaster = function(typeClass) {
-                return function(value) {
-                    return typeClass(value);
-                };
-            };
-            getClassTypeCaster = function(typeClass) {
-                return function(value) {
-                    if (value && value.constructor === typeClass) {
-                        return value;
-                    }
-                    return new typeClass(value);
-                };
-            };
-            getTypeCaster = function(typeClass) {
-                if (typeClass === Array) {
-                    return getArrayTypeCaster();
-                }
-                if (typeClass === String || typeClass === Number) {
-                    return getSimpleDataTypeCaster(typeClass);
-                }
-                return getClassTypeCaster(typeClass);
-            };
-            module.exports = function(options) {
-                var caster, mapper, self, _mid, _post, _pre, _transform;
-                if (options == null) {
-                    options = {};
-                }
-                _transform = [];
-                _pre = [];
-                _post = [];
-                _mid = [];
-                self = function(value, next) {
-                    if (arguments.length > 1 && type(arguments[arguments.length - 1]) === "function") {
-                        return self.async(value, next);
-                    } else {
-                        return self.sync.apply(null, arguments);
-                    }
-                };
-                self.async = function(value, next) {
-                    return async.eachSeries(_transform, function(transformer, next) {
-                        if (transformer.async) {
-                            return transformer.transform(value, function(err, result) {
-                                if (err) {
-                                    return next(err);
-                                }
-                                return next(null, value = result);
-                            });
-                        } else {
-                            value = transformer.transform(value);
-                            return next();
-                        }
-                    }, function(err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-                        return next(null, value);
-                    });
-                };
-                self.sync = function() {
-                    var transformer, _i, _len;
-                    for (_i = 0, _len = _transform.length; _i < _len; _i++) {
-                        transformer = _transform[_i];
-                        arguments[0] = transformer.transform.apply(null, arguments);
-                    }
-                    return arguments[0];
-                };
-                self.preCast = function(typeClass) {
-                    return self._push(caster(typeClass), _pre);
-                };
-                self.cast = function(typeClass) {
-                    return self._push(caster(typeClass), _mid);
-                };
-                self.postCast = function(typeClass) {
-                    return self._push(caster(typeClass), _post);
-                };
-                caster = function(typeClass) {
-                    return {
-                        transform: getTypeCaster(typeClass)
-                    };
-                };
-                self.preMap = function(fn) {
-                    return self._push(mapper(fn), _pre);
-                };
-                self.map = function(fn) {
-                    return self._push(mapper(fn), _mid);
-                };
-                self.postMap = function(fn) {
-                    return self._push(mapper(fn), _post);
-                };
-                mapper = function(fn) {
-                    return {
-                        async: fn.length > 1,
-                        transform: fn
-                    };
-                };
-                self._push = function(obj, stack) {
-                    stack.push(obj);
-                    _transform = _pre.concat(_mid).concat(_post);
-                    return this;
-                };
-                return self;
-            };
-        }).call(this);
-        return module.exports;
-    });
-    define("underscore/underscore.js", function(require, module, exports, __dirname, __filename) {
-        (function() {
-            var root = this;
-            var previousUnderscore = root._;
-            var breaker = {};
-            var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
-            var push = ArrayProto.push, slice = ArrayProto.slice, concat = ArrayProto.concat, toString = ObjProto.toString, hasOwnProperty = ObjProto.hasOwnProperty;
-            var nativeForEach = ArrayProto.forEach, nativeMap = ArrayProto.map, nativeReduce = ArrayProto.reduce, nativeReduceRight = ArrayProto.reduceRight, nativeFilter = ArrayProto.filter, nativeEvery = ArrayProto.every, nativeSome = ArrayProto.some, nativeIndexOf = ArrayProto.indexOf, nativeLastIndexOf = ArrayProto.lastIndexOf, nativeIsArray = Array.isArray, nativeKeys = Object.keys, nativeBind = FuncProto.bind;
-            var _ = function(obj) {
-                if (obj instanceof _) return obj;
-                if (!(this instanceof _)) return new _(obj);
-                this._wrapped = obj;
-            };
-            if (typeof exports !== "undefined") {
-                if (typeof module !== "undefined" && module.exports) {
-                    exports = module.exports = _;
-                }
-                exports._ = _;
-            } else {
-                root._ = _;
-            }
-            _.VERSION = "1.4.4";
-            var each = _.each = _.forEach = function(obj, iterator, context) {
-                if (obj == null) return;
-                if (nativeForEach && obj.forEach === nativeForEach) {
-                    obj.forEach(iterator, context);
-                } else if (obj.length === +obj.length) {
-                    for (var i = 0, l = obj.length; i < l; i++) {
-                        if (iterator.call(context, obj[i], i, obj) === breaker) return;
-                    }
-                } else {
-                    for (var key in obj) {
-                        if (_.has(obj, key)) {
-                            if (iterator.call(context, obj[key], key, obj) === breaker) return;
-                        }
-                    }
-                }
-            };
-            _.map = _.collect = function(obj, iterator, context) {
-                var results = [];
-                if (obj == null) return results;
-                if (nativeMap && obj.map === nativeMap) return obj.map(iterator, context);
-                each(obj, function(value, index, list) {
-                    results[results.length] = iterator.call(context, value, index, list);
-                });
-                return results;
-            };
-            var reduceError = "Reduce of empty array with no initial value";
-            _.reduce = _.foldl = _.inject = function(obj, iterator, memo, context) {
-                var initial = arguments.length > 2;
-                if (obj == null) obj = [];
-                if (nativeReduce && obj.reduce === nativeReduce) {
-                    if (context) iterator = _.bind(iterator, context);
-                    return initial ? obj.reduce(iterator, memo) : obj.reduce(iterator);
-                }
-                each(obj, function(value, index, list) {
-                    if (!initial) {
-                        memo = value;
-                        initial = true;
-                    } else {
-                        memo = iterator.call(context, memo, value, index, list);
-                    }
-                });
-                if (!initial) throw new TypeError(reduceError);
-                return memo;
-            };
-            _.reduceRight = _.foldr = function(obj, iterator, memo, context) {
-                var initial = arguments.length > 2;
-                if (obj == null) obj = [];
-                if (nativeReduceRight && obj.reduceRight === nativeReduceRight) {
-                    if (context) iterator = _.bind(iterator, context);
-                    return initial ? obj.reduceRight(iterator, memo) : obj.reduceRight(iterator);
-                }
-                var length = obj.length;
-                if (length !== +length) {
-                    var keys = _.keys(obj);
-                    length = keys.length;
-                }
-                each(obj, function(value, index, list) {
-                    index = keys ? keys[--length] : --length;
-                    if (!initial) {
-                        memo = obj[index];
-                        initial = true;
-                    } else {
-                        memo = iterator.call(context, memo, obj[index], index, list);
-                    }
-                });
-                if (!initial) throw new TypeError(reduceError);
-                return memo;
-            };
-            _.find = _.detect = function(obj, iterator, context) {
-                var result;
-                any(obj, function(value, index, list) {
-                    if (iterator.call(context, value, index, list)) {
-                        result = value;
-                        return true;
-                    }
-                });
-                return result;
-            };
-            _.filter = _.select = function(obj, iterator, context) {
-                var results = [];
-                if (obj == null) return results;
-                if (nativeFilter && obj.filter === nativeFilter) return obj.filter(iterator, context);
-                each(obj, function(value, index, list) {
-                    if (iterator.call(context, value, index, list)) results[results.length] = value;
-                });
-                return results;
-            };
-            _.reject = function(obj, iterator, context) {
-                return _.filter(obj, function(value, index, list) {
-                    return !iterator.call(context, value, index, list);
-                }, context);
-            };
-            _.every = _.all = function(obj, iterator, context) {
-                iterator || (iterator = _.identity);
-                var result = true;
-                if (obj == null) return result;
-                if (nativeEvery && obj.every === nativeEvery) return obj.every(iterator, context);
-                each(obj, function(value, index, list) {
-                    if (!(result = result && iterator.call(context, value, index, list))) return breaker;
-                });
-                return !!result;
-            };
-            var any = _.some = _.any = function(obj, iterator, context) {
-                iterator || (iterator = _.identity);
-                var result = false;
-                if (obj == null) return result;
-                if (nativeSome && obj.some === nativeSome) return obj.some(iterator, context);
-                each(obj, function(value, index, list) {
-                    if (result || (result = iterator.call(context, value, index, list))) return breaker;
-                });
-                return !!result;
-            };
-            _.contains = _.include = function(obj, target) {
-                if (obj == null) return false;
-                if (nativeIndexOf && obj.indexOf === nativeIndexOf) return obj.indexOf(target) != -1;
-                return any(obj, function(value) {
-                    return value === target;
-                });
-            };
-            _.invoke = function(obj, method) {
-                var args = slice.call(arguments, 2);
-                var isFunc = _.isFunction(method);
-                return _.map(obj, function(value) {
-                    return (isFunc ? method : value[method]).apply(value, args);
-                });
-            };
-            _.pluck = function(obj, key) {
-                return _.map(obj, function(value) {
-                    return value[key];
-                });
-            };
-            _.where = function(obj, attrs, first) {
-                if (_.isEmpty(attrs)) return first ? null : [];
-                return _[first ? "find" : "filter"](obj, function(value) {
-                    for (var key in attrs) {
-                        if (attrs[key] !== value[key]) return false;
-                    }
-                    return true;
-                });
-            };
-            _.findWhere = function(obj, attrs) {
-                return _.where(obj, attrs, true);
-            };
-            _.max = function(obj, iterator, context) {
-                if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
-                    return Math.max.apply(Math, obj);
-                }
-                if (!iterator && _.isEmpty(obj)) return -Infinity;
-                var result = {
-                    computed: -Infinity,
-                    value: -Infinity
-                };
-                each(obj, function(value, index, list) {
-                    var computed = iterator ? iterator.call(context, value, index, list) : value;
-                    computed >= result.computed && (result = {
-                        value: value,
-                        computed: computed
-                    });
-                });
-                return result.value;
-            };
-            _.min = function(obj, iterator, context) {
-                if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
-                    return Math.min.apply(Math, obj);
-                }
-                if (!iterator && _.isEmpty(obj)) return Infinity;
-                var result = {
-                    computed: Infinity,
-                    value: Infinity
-                };
-                each(obj, function(value, index, list) {
-                    var computed = iterator ? iterator.call(context, value, index, list) : value;
-                    computed < result.computed && (result = {
-                        value: value,
-                        computed: computed
-                    });
-                });
-                return result.value;
-            };
-            _.shuffle = function(obj) {
-                var rand;
-                var index = 0;
-                var shuffled = [];
-                each(obj, function(value) {
-                    rand = _.random(index++);
-                    shuffled[index - 1] = shuffled[rand];
-                    shuffled[rand] = value;
-                });
-                return shuffled;
-            };
-            var lookupIterator = function(value) {
-                return _.isFunction(value) ? value : function(obj) {
-                    return obj[value];
-                };
-            };
-            _.sortBy = function(obj, value, context) {
-                var iterator = lookupIterator(value);
-                return _.pluck(_.map(obj, function(value, index, list) {
-                    return {
-                        value: value,
-                        index: index,
-                        criteria: iterator.call(context, value, index, list)
-                    };
-                }).sort(function(left, right) {
-                    var a = left.criteria;
-                    var b = right.criteria;
-                    if (a !== b) {
-                        if (a > b || a === void 0) return 1;
-                        if (a < b || b === void 0) return -1;
-                    }
-                    return left.index < right.index ? -1 : 1;
-                }), "value");
-            };
-            var group = function(obj, value, context, behavior) {
-                var result = {};
-                var iterator = lookupIterator(value || _.identity);
-                each(obj, function(value, index) {
-                    var key = iterator.call(context, value, index, obj);
-                    behavior(result, key, value);
-                });
-                return result;
-            };
-            _.groupBy = function(obj, value, context) {
-                return group(obj, value, context, function(result, key, value) {
-                    (_.has(result, key) ? result[key] : result[key] = []).push(value);
-                });
-            };
-            _.countBy = function(obj, value, context) {
-                return group(obj, value, context, function(result, key) {
-                    if (!_.has(result, key)) result[key] = 0;
-                    result[key]++;
-                });
-            };
-            _.sortedIndex = function(array, obj, iterator, context) {
-                iterator = iterator == null ? _.identity : lookupIterator(iterator);
-                var value = iterator.call(context, obj);
-                var low = 0, high = array.length;
-                while (low < high) {
-                    var mid = low + high >>> 1;
-                    iterator.call(context, array[mid]) < value ? low = mid + 1 : high = mid;
-                }
-                return low;
-            };
-            _.toArray = function(obj) {
-                if (!obj) return [];
-                if (_.isArray(obj)) return slice.call(obj);
-                if (obj.length === +obj.length) return _.map(obj, _.identity);
-                return _.values(obj);
-            };
-            _.size = function(obj) {
-                if (obj == null) return 0;
-                return obj.length === +obj.length ? obj.length : _.keys(obj).length;
-            };
-            _.first = _.head = _.take = function(array, n, guard) {
-                if (array == null) return void 0;
-                return n != null && !guard ? slice.call(array, 0, n) : array[0];
-            };
-            _.initial = function(array, n, guard) {
-                return slice.call(array, 0, array.length - (n == null || guard ? 1 : n));
-            };
-            _.last = function(array, n, guard) {
-                if (array == null) return void 0;
-                if (n != null && !guard) {
-                    return slice.call(array, Math.max(array.length - n, 0));
-                } else {
-                    return array[array.length - 1];
-                }
-            };
-            _.rest = _.tail = _.drop = function(array, n, guard) {
-                return slice.call(array, n == null || guard ? 1 : n);
-            };
-            _.compact = function(array) {
-                return _.filter(array, _.identity);
-            };
-            var flatten = function(input, shallow, output) {
-                each(input, function(value) {
-                    if (_.isArray(value)) {
-                        shallow ? push.apply(output, value) : flatten(value, shallow, output);
-                    } else {
-                        output.push(value);
-                    }
-                });
-                return output;
-            };
-            _.flatten = function(array, shallow) {
-                return flatten(array, shallow, []);
-            };
-            _.without = function(array) {
-                return _.difference(array, slice.call(arguments, 1));
-            };
-            _.uniq = _.unique = function(array, isSorted, iterator, context) {
-                if (_.isFunction(isSorted)) {
-                    context = iterator;
-                    iterator = isSorted;
-                    isSorted = false;
-                }
-                var initial = iterator ? _.map(array, iterator, context) : array;
-                var results = [];
-                var seen = [];
-                each(initial, function(value, index) {
-                    if (isSorted ? !index || seen[seen.length - 1] !== value : !_.contains(seen, value)) {
-                        seen.push(value);
-                        results.push(array[index]);
-                    }
-                });
-                return results;
-            };
-            _.union = function() {
-                return _.uniq(concat.apply(ArrayProto, arguments));
-            };
-            _.intersection = function(array) {
-                var rest = slice.call(arguments, 1);
-                return _.filter(_.uniq(array), function(item) {
-                    return _.every(rest, function(other) {
-                        return _.indexOf(other, item) >= 0;
-                    });
-                });
-            };
-            _.difference = function(array) {
-                var rest = concat.apply(ArrayProto, slice.call(arguments, 1));
-                return _.filter(array, function(value) {
-                    return !_.contains(rest, value);
-                });
-            };
-            _.zip = function() {
-                var args = slice.call(arguments);
-                var length = _.max(_.pluck(args, "length"));
-                var results = new Array(length);
-                for (var i = 0; i < length; i++) {
-                    results[i] = _.pluck(args, "" + i);
-                }
-                return results;
-            };
-            _.object = function(list, values) {
-                if (list == null) return {};
-                var result = {};
-                for (var i = 0, l = list.length; i < l; i++) {
-                    if (values) {
-                        result[list[i]] = values[i];
-                    } else {
-                        result[list[i][0]] = list[i][1];
-                    }
-                }
-                return result;
-            };
-            _.indexOf = function(array, item, isSorted) {
-                if (array == null) return -1;
-                var i = 0, l = array.length;
-                if (isSorted) {
-                    if (typeof isSorted == "number") {
-                        i = isSorted < 0 ? Math.max(0, l + isSorted) : isSorted;
-                    } else {
-                        i = _.sortedIndex(array, item);
-                        return array[i] === item ? i : -1;
-                    }
-                }
-                if (nativeIndexOf && array.indexOf === nativeIndexOf) return array.indexOf(item, isSorted);
-                for (; i < l; i++) if (array[i] === item) return i;
-                return -1;
-            };
-            _.lastIndexOf = function(array, item, from) {
-                if (array == null) return -1;
-                var hasIndex = from != null;
-                if (nativeLastIndexOf && array.lastIndexOf === nativeLastIndexOf) {
-                    return hasIndex ? array.lastIndexOf(item, from) : array.lastIndexOf(item);
-                }
-                var i = hasIndex ? from : array.length;
-                while (i--) if (array[i] === item) return i;
-                return -1;
-            };
-            _.range = function(start, stop, step) {
-                if (arguments.length <= 1) {
-                    stop = start || 0;
-                    start = 0;
-                }
-                step = arguments[2] || 1;
-                var len = Math.max(Math.ceil((stop - start) / step), 0);
-                var idx = 0;
-                var range = new Array(len);
-                while (idx < len) {
-                    range[idx++] = start;
-                    start += step;
-                }
-                return range;
-            };
-            _.bind = function(func, context) {
-                if (func.bind === nativeBind && nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
-                var args = slice.call(arguments, 2);
-                return function() {
-                    return func.apply(context, args.concat(slice.call(arguments)));
-                };
-            };
-            _.partial = function(func) {
-                var args = slice.call(arguments, 1);
-                return function() {
-                    return func.apply(this, args.concat(slice.call(arguments)));
-                };
-            };
-            _.bindAll = function(obj) {
-                var funcs = slice.call(arguments, 1);
-                if (funcs.length === 0) funcs = _.functions(obj);
-                each(funcs, function(f) {
-                    obj[f] = _.bind(obj[f], obj);
-                });
-                return obj;
-            };
-            _.memoize = function(func, hasher) {
-                var memo = {};
-                hasher || (hasher = _.identity);
-                return function() {
-                    var key = hasher.apply(this, arguments);
-                    return _.has(memo, key) ? memo[key] : memo[key] = func.apply(this, arguments);
-                };
-            };
-            _.delay = function(func, wait) {
-                var args = slice.call(arguments, 2);
-                return setTimeout(function() {
-                    return func.apply(null, args);
-                }, wait);
-            };
-            _.defer = function(func) {
-                return _.delay.apply(_, [ func, 1 ].concat(slice.call(arguments, 1)));
-            };
-            _.throttle = function(func, wait) {
-                var context, args, timeout, result;
-                var previous = 0;
-                var later = function() {
-                    previous = new Date;
-                    timeout = null;
-                    result = func.apply(context, args);
-                };
-                return function() {
-                    var now = new Date;
-                    var remaining = wait - (now - previous);
-                    context = this;
-                    args = arguments;
-                    if (remaining <= 0) {
-                        clearTimeout(timeout);
-                        timeout = null;
-                        previous = now;
-                        result = func.apply(context, args);
-                    } else if (!timeout) {
-                        timeout = setTimeout(later, remaining);
-                    }
-                    return result;
-                };
-            };
-            _.debounce = function(func, wait, immediate) {
-                var timeout, result;
-                return function() {
-                    var context = this, args = arguments;
-                    var later = function() {
-                        timeout = null;
-                        if (!immediate) result = func.apply(context, args);
-                    };
-                    var callNow = immediate && !timeout;
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
-                    if (callNow) result = func.apply(context, args);
-                    return result;
-                };
-            };
-            _.once = function(func) {
-                var ran = false, memo;
-                return function() {
-                    if (ran) return memo;
-                    ran = true;
-                    memo = func.apply(this, arguments);
-                    func = null;
-                    return memo;
-                };
-            };
-            _.wrap = function(func, wrapper) {
-                return function() {
-                    var args = [ func ];
-                    push.apply(args, arguments);
-                    return wrapper.apply(this, args);
-                };
-            };
-            _.compose = function() {
-                var funcs = arguments;
-                return function() {
-                    var args = arguments;
-                    for (var i = funcs.length - 1; i >= 0; i--) {
-                        args = [ funcs[i].apply(this, args) ];
-                    }
-                    return args[0];
-                };
-            };
-            _.after = function(times, func) {
-                if (times <= 0) return func();
-                return function() {
-                    if (--times < 1) {
-                        return func.apply(this, arguments);
-                    }
-                };
-            };
-            _.keys = nativeKeys || function(obj) {
-                if (obj !== Object(obj)) throw new TypeError("Invalid object");
-                var keys = [];
-                for (var key in obj) if (_.has(obj, key)) keys[keys.length] = key;
-                return keys;
-            };
-            _.values = function(obj) {
-                var values = [];
-                for (var key in obj) if (_.has(obj, key)) values.push(obj[key]);
-                return values;
-            };
-            _.pairs = function(obj) {
-                var pairs = [];
-                for (var key in obj) if (_.has(obj, key)) pairs.push([ key, obj[key] ]);
-                return pairs;
-            };
-            _.invert = function(obj) {
-                var result = {};
-                for (var key in obj) if (_.has(obj, key)) result[obj[key]] = key;
-                return result;
-            };
-            _.functions = _.methods = function(obj) {
-                var names = [];
-                for (var key in obj) {
-                    if (_.isFunction(obj[key])) names.push(key);
-                }
-                return names.sort();
-            };
-            _.extend = function(obj) {
-                each(slice.call(arguments, 1), function(source) {
-                    if (source) {
-                        for (var prop in source) {
-                            obj[prop] = source[prop];
-                        }
-                    }
-                });
-                return obj;
-            };
-            _.pick = function(obj) {
-                var copy = {};
-                var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
-                each(keys, function(key) {
-                    if (key in obj) copy[key] = obj[key];
-                });
-                return copy;
-            };
-            _.omit = function(obj) {
-                var copy = {};
-                var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
-                for (var key in obj) {
-                    if (!_.contains(keys, key)) copy[key] = obj[key];
-                }
-                return copy;
-            };
-            _.defaults = function(obj) {
-                each(slice.call(arguments, 1), function(source) {
-                    if (source) {
-                        for (var prop in source) {
-                            if (obj[prop] == null) obj[prop] = source[prop];
-                        }
-                    }
-                });
-                return obj;
-            };
-            _.clone = function(obj) {
-                if (!_.isObject(obj)) return obj;
-                return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
-            };
-            _.tap = function(obj, interceptor) {
-                interceptor(obj);
-                return obj;
-            };
-            var eq = function(a, b, aStack, bStack) {
-                if (a === b) return a !== 0 || 1 / a == 1 / b;
-                if (a == null || b == null) return a === b;
-                if (a instanceof _) a = a._wrapped;
-                if (b instanceof _) b = b._wrapped;
-                var className = toString.call(a);
-                if (className != toString.call(b)) return false;
-                switch (className) {
-                  case "[object String]":
-                    return a == String(b);
-                  case "[object Number]":
-                    return a != +a ? b != +b : a == 0 ? 1 / a == 1 / b : a == +b;
-                  case "[object Date]":
-                  case "[object Boolean]":
-                    return +a == +b;
-                  case "[object RegExp]":
-                    return a.source == b.source && a.global == b.global && a.multiline == b.multiline && a.ignoreCase == b.ignoreCase;
-                }
-                if (typeof a != "object" || typeof b != "object") return false;
-                var length = aStack.length;
-                while (length--) {
-                    if (aStack[length] == a) return bStack[length] == b;
-                }
-                aStack.push(a);
-                bStack.push(b);
-                var size = 0, result = true;
-                if (className == "[object Array]") {
-                    size = a.length;
-                    result = size == b.length;
-                    if (result) {
-                        while (size--) {
-                            if (!(result = eq(a[size], b[size], aStack, bStack))) break;
-                        }
-                    }
-                } else {
-                    var aCtor = a.constructor, bCtor = b.constructor;
-                    if (aCtor !== bCtor && !(_.isFunction(aCtor) && aCtor instanceof aCtor && _.isFunction(bCtor) && bCtor instanceof bCtor)) {
-                        return false;
-                    }
-                    for (var key in a) {
-                        if (_.has(a, key)) {
-                            size++;
-                            if (!(result = _.has(b, key) && eq(a[key], b[key], aStack, bStack))) break;
-                        }
-                    }
-                    if (result) {
-                        for (key in b) {
-                            if (_.has(b, key) && !(size--)) break;
-                        }
-                        result = !size;
-                    }
-                }
-                aStack.pop();
-                bStack.pop();
-                return result;
-            };
-            _.isEqual = function(a, b) {
-                return eq(a, b, [], []);
-            };
-            _.isEmpty = function(obj) {
-                if (obj == null) return true;
-                if (_.isArray(obj) || _.isString(obj)) return obj.length === 0;
-                for (var key in obj) if (_.has(obj, key)) return false;
-                return true;
-            };
-            _.isElement = function(obj) {
-                return !!(obj && obj.nodeType === 1);
-            };
-            _.isArray = nativeIsArray || function(obj) {
-                return toString.call(obj) == "[object Array]";
-            };
-            _.isObject = function(obj) {
-                return obj === Object(obj);
-            };
-            each([ "Arguments", "Function", "String", "Number", "Date", "RegExp" ], function(name) {
-                _["is" + name] = function(obj) {
-                    return toString.call(obj) == "[object " + name + "]";
-                };
-            });
-            if (!_.isArguments(arguments)) {
-                _.isArguments = function(obj) {
-                    return !!(obj && _.has(obj, "callee"));
-                };
-            }
-            if (typeof /./ !== "function") {
-                _.isFunction = function(obj) {
-                    return typeof obj === "function";
-                };
-            }
-            _.isFinite = function(obj) {
-                return isFinite(obj) && !isNaN(parseFloat(obj));
-            };
-            _.isNaN = function(obj) {
-                return _.isNumber(obj) && obj != +obj;
-            };
-            _.isBoolean = function(obj) {
-                return obj === true || obj === false || toString.call(obj) == "[object Boolean]";
-            };
-            _.isNull = function(obj) {
-                return obj === null;
-            };
-            _.isUndefined = function(obj) {
-                return obj === void 0;
-            };
-            _.has = function(obj, key) {
-                return hasOwnProperty.call(obj, key);
-            };
-            _.noConflict = function() {
-                root._ = previousUnderscore;
-                return this;
-            };
-            _.identity = function(value) {
-                return value;
-            };
-            _.times = function(n, iterator, context) {
-                var accum = Array(n);
-                for (var i = 0; i < n; i++) accum[i] = iterator.call(context, i);
-                return accum;
-            };
-            _.random = function(min, max) {
-                if (max == null) {
-                    max = min;
-                    min = 0;
-                }
-                return min + Math.floor(Math.random() * (max - min + 1));
-            };
-            var entityMap = {
-                escape: {
-                    "&": "&amp;",
-                    "<": "&lt;",
-                    ">": "&gt;",
-                    '"': "&quot;",
-                    "'": "&#x27;",
-                    "/": "&#x2F;"
-                }
-            };
-            entityMap.unescape = _.invert(entityMap.escape);
-            var entityRegexes = {
-                escape: new RegExp("[" + _.keys(entityMap.escape).join("") + "]", "g"),
-                unescape: new RegExp("(" + _.keys(entityMap.unescape).join("|") + ")", "g")
-            };
-            _.each([ "escape", "unescape" ], function(method) {
-                _[method] = function(string) {
-                    if (string == null) return "";
-                    return ("" + string).replace(entityRegexes[method], function(match) {
-                        return entityMap[method][match];
-                    });
-                };
-            });
-            _.result = function(object, property) {
-                if (object == null) return null;
-                var value = object[property];
-                return _.isFunction(value) ? value.call(object) : value;
-            };
-            _.mixin = function(obj) {
-                each(_.functions(obj), function(name) {
-                    var func = _[name] = obj[name];
-                    _.prototype[name] = function() {
-                        var args = [ this._wrapped ];
-                        push.apply(args, arguments);
-                        return result.call(this, func.apply(_, args));
-                    };
-                });
-            };
-            var idCounter = 0;
-            _.uniqueId = function(prefix) {
-                var id = ++idCounter + "";
-                return prefix ? prefix + id : id;
-            };
-            _.templateSettings = {
-                evaluate: /<%([\s\S]+?)%>/g,
-                interpolate: /<%=([\s\S]+?)%>/g,
-                escape: /<%-([\s\S]+?)%>/g
-            };
-            var noMatch = /(.)^/;
-            var escapes = {
-                "'": "'",
-                "\\": "\\",
-                "\r": "r",
-                "\n": "n",
-                "	": "t",
-                "\u2028": "u2028",
-                "\u2029": "u2029"
-            };
-            var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
-            _.template = function(text, data, settings) {
-                var render;
-                settings = _.defaults({}, settings, _.templateSettings);
-                var matcher = new RegExp([ (settings.escape || noMatch).source, (settings.interpolate || noMatch).source, (settings.evaluate || noMatch).source ].join("|") + "|$", "g");
-                var index = 0;
-                var source = "__p+='";
-                text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
-                    source += text.slice(index, offset).replace(escaper, function(match) {
-                        return "\\" + escapes[match];
-                    });
-                    if (escape) {
-                        source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
-                    }
-                    if (interpolate) {
-                        source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
-                    }
-                    if (evaluate) {
-                        source += "';\n" + evaluate + "\n__p+='";
-                    }
-                    index = offset + match.length;
-                    return match;
-                });
-                source += "';\n";
-                if (!settings.variable) source = "with(obj||{}){\n" + source + "}\n";
-                source = "var __t,__p='',__j=Array.prototype.join," + "print=function(){__p+=__j.call(arguments,'');};\n" + source + "return __p;\n";
-                try {
-                    render = new Function(settings.variable || "obj", "_", source);
-                } catch (e) {
-                    e.source = source;
-                    throw e;
-                }
-                if (data) return render(data, _);
-                var template = function(data) {
-                    return render.call(this, data, _);
-                };
-                template.source = "function(" + (settings.variable || "obj") + "){\n" + source + "}";
-                return template;
-            };
-            _.chain = function(obj) {
-                return _(obj).chain();
-            };
-            var result = function(obj) {
-                return this._chain ? _(obj).chain() : obj;
-            };
-            _.mixin(_);
-            each([ "pop", "push", "reverse", "shift", "sort", "splice", "unshift" ], function(name) {
-                var method = ArrayProto[name];
-                _.prototype[name] = function() {
-                    var obj = this._wrapped;
-                    method.apply(obj, arguments);
-                    if ((name == "shift" || name == "splice") && obj.length === 0) delete obj[0];
-                    return result.call(this, obj);
-                };
-            });
-            each([ "concat", "join", "slice" ], function(name) {
-                var method = ArrayProto[name];
-                _.prototype[name] = function() {
-                    return result.call(this, method.apply(this._wrapped, arguments));
-                };
-            });
-            _.extend(_.prototype, {
-                chain: function() {
-                    this._chain = true;
-                    return this;
-                },
-                value: function() {
-                    return this._wrapped;
-                }
-            });
-        }).call(this);
         return module.exports;
     });
     define("bindable/lib/object/setters/base.js", function(require, module, exports, __dirname, __filename) {
@@ -6386,6 +5538,854 @@
                 root.async = async;
             }
         })();
+        return module.exports;
+    });
+    define("underscore/underscore.js", function(require, module, exports, __dirname, __filename) {
+        (function() {
+            var root = this;
+            var previousUnderscore = root._;
+            var breaker = {};
+            var ArrayProto = Array.prototype, ObjProto = Object.prototype, FuncProto = Function.prototype;
+            var push = ArrayProto.push, slice = ArrayProto.slice, concat = ArrayProto.concat, toString = ObjProto.toString, hasOwnProperty = ObjProto.hasOwnProperty;
+            var nativeForEach = ArrayProto.forEach, nativeMap = ArrayProto.map, nativeReduce = ArrayProto.reduce, nativeReduceRight = ArrayProto.reduceRight, nativeFilter = ArrayProto.filter, nativeEvery = ArrayProto.every, nativeSome = ArrayProto.some, nativeIndexOf = ArrayProto.indexOf, nativeLastIndexOf = ArrayProto.lastIndexOf, nativeIsArray = Array.isArray, nativeKeys = Object.keys, nativeBind = FuncProto.bind;
+            var _ = function(obj) {
+                if (obj instanceof _) return obj;
+                if (!(this instanceof _)) return new _(obj);
+                this._wrapped = obj;
+            };
+            if (typeof exports !== "undefined") {
+                if (typeof module !== "undefined" && module.exports) {
+                    exports = module.exports = _;
+                }
+                exports._ = _;
+            } else {
+                root._ = _;
+            }
+            _.VERSION = "1.4.4";
+            var each = _.each = _.forEach = function(obj, iterator, context) {
+                if (obj == null) return;
+                if (nativeForEach && obj.forEach === nativeForEach) {
+                    obj.forEach(iterator, context);
+                } else if (obj.length === +obj.length) {
+                    for (var i = 0, l = obj.length; i < l; i++) {
+                        if (iterator.call(context, obj[i], i, obj) === breaker) return;
+                    }
+                } else {
+                    for (var key in obj) {
+                        if (_.has(obj, key)) {
+                            if (iterator.call(context, obj[key], key, obj) === breaker) return;
+                        }
+                    }
+                }
+            };
+            _.map = _.collect = function(obj, iterator, context) {
+                var results = [];
+                if (obj == null) return results;
+                if (nativeMap && obj.map === nativeMap) return obj.map(iterator, context);
+                each(obj, function(value, index, list) {
+                    results[results.length] = iterator.call(context, value, index, list);
+                });
+                return results;
+            };
+            var reduceError = "Reduce of empty array with no initial value";
+            _.reduce = _.foldl = _.inject = function(obj, iterator, memo, context) {
+                var initial = arguments.length > 2;
+                if (obj == null) obj = [];
+                if (nativeReduce && obj.reduce === nativeReduce) {
+                    if (context) iterator = _.bind(iterator, context);
+                    return initial ? obj.reduce(iterator, memo) : obj.reduce(iterator);
+                }
+                each(obj, function(value, index, list) {
+                    if (!initial) {
+                        memo = value;
+                        initial = true;
+                    } else {
+                        memo = iterator.call(context, memo, value, index, list);
+                    }
+                });
+                if (!initial) throw new TypeError(reduceError);
+                return memo;
+            };
+            _.reduceRight = _.foldr = function(obj, iterator, memo, context) {
+                var initial = arguments.length > 2;
+                if (obj == null) obj = [];
+                if (nativeReduceRight && obj.reduceRight === nativeReduceRight) {
+                    if (context) iterator = _.bind(iterator, context);
+                    return initial ? obj.reduceRight(iterator, memo) : obj.reduceRight(iterator);
+                }
+                var length = obj.length;
+                if (length !== +length) {
+                    var keys = _.keys(obj);
+                    length = keys.length;
+                }
+                each(obj, function(value, index, list) {
+                    index = keys ? keys[--length] : --length;
+                    if (!initial) {
+                        memo = obj[index];
+                        initial = true;
+                    } else {
+                        memo = iterator.call(context, memo, obj[index], index, list);
+                    }
+                });
+                if (!initial) throw new TypeError(reduceError);
+                return memo;
+            };
+            _.find = _.detect = function(obj, iterator, context) {
+                var result;
+                any(obj, function(value, index, list) {
+                    if (iterator.call(context, value, index, list)) {
+                        result = value;
+                        return true;
+                    }
+                });
+                return result;
+            };
+            _.filter = _.select = function(obj, iterator, context) {
+                var results = [];
+                if (obj == null) return results;
+                if (nativeFilter && obj.filter === nativeFilter) return obj.filter(iterator, context);
+                each(obj, function(value, index, list) {
+                    if (iterator.call(context, value, index, list)) results[results.length] = value;
+                });
+                return results;
+            };
+            _.reject = function(obj, iterator, context) {
+                return _.filter(obj, function(value, index, list) {
+                    return !iterator.call(context, value, index, list);
+                }, context);
+            };
+            _.every = _.all = function(obj, iterator, context) {
+                iterator || (iterator = _.identity);
+                var result = true;
+                if (obj == null) return result;
+                if (nativeEvery && obj.every === nativeEvery) return obj.every(iterator, context);
+                each(obj, function(value, index, list) {
+                    if (!(result = result && iterator.call(context, value, index, list))) return breaker;
+                });
+                return !!result;
+            };
+            var any = _.some = _.any = function(obj, iterator, context) {
+                iterator || (iterator = _.identity);
+                var result = false;
+                if (obj == null) return result;
+                if (nativeSome && obj.some === nativeSome) return obj.some(iterator, context);
+                each(obj, function(value, index, list) {
+                    if (result || (result = iterator.call(context, value, index, list))) return breaker;
+                });
+                return !!result;
+            };
+            _.contains = _.include = function(obj, target) {
+                if (obj == null) return false;
+                if (nativeIndexOf && obj.indexOf === nativeIndexOf) return obj.indexOf(target) != -1;
+                return any(obj, function(value) {
+                    return value === target;
+                });
+            };
+            _.invoke = function(obj, method) {
+                var args = slice.call(arguments, 2);
+                var isFunc = _.isFunction(method);
+                return _.map(obj, function(value) {
+                    return (isFunc ? method : value[method]).apply(value, args);
+                });
+            };
+            _.pluck = function(obj, key) {
+                return _.map(obj, function(value) {
+                    return value[key];
+                });
+            };
+            _.where = function(obj, attrs, first) {
+                if (_.isEmpty(attrs)) return first ? null : [];
+                return _[first ? "find" : "filter"](obj, function(value) {
+                    for (var key in attrs) {
+                        if (attrs[key] !== value[key]) return false;
+                    }
+                    return true;
+                });
+            };
+            _.findWhere = function(obj, attrs) {
+                return _.where(obj, attrs, true);
+            };
+            _.max = function(obj, iterator, context) {
+                if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
+                    return Math.max.apply(Math, obj);
+                }
+                if (!iterator && _.isEmpty(obj)) return -Infinity;
+                var result = {
+                    computed: -Infinity,
+                    value: -Infinity
+                };
+                each(obj, function(value, index, list) {
+                    var computed = iterator ? iterator.call(context, value, index, list) : value;
+                    computed >= result.computed && (result = {
+                        value: value,
+                        computed: computed
+                    });
+                });
+                return result.value;
+            };
+            _.min = function(obj, iterator, context) {
+                if (!iterator && _.isArray(obj) && obj[0] === +obj[0] && obj.length < 65535) {
+                    return Math.min.apply(Math, obj);
+                }
+                if (!iterator && _.isEmpty(obj)) return Infinity;
+                var result = {
+                    computed: Infinity,
+                    value: Infinity
+                };
+                each(obj, function(value, index, list) {
+                    var computed = iterator ? iterator.call(context, value, index, list) : value;
+                    computed < result.computed && (result = {
+                        value: value,
+                        computed: computed
+                    });
+                });
+                return result.value;
+            };
+            _.shuffle = function(obj) {
+                var rand;
+                var index = 0;
+                var shuffled = [];
+                each(obj, function(value) {
+                    rand = _.random(index++);
+                    shuffled[index - 1] = shuffled[rand];
+                    shuffled[rand] = value;
+                });
+                return shuffled;
+            };
+            var lookupIterator = function(value) {
+                return _.isFunction(value) ? value : function(obj) {
+                    return obj[value];
+                };
+            };
+            _.sortBy = function(obj, value, context) {
+                var iterator = lookupIterator(value);
+                return _.pluck(_.map(obj, function(value, index, list) {
+                    return {
+                        value: value,
+                        index: index,
+                        criteria: iterator.call(context, value, index, list)
+                    };
+                }).sort(function(left, right) {
+                    var a = left.criteria;
+                    var b = right.criteria;
+                    if (a !== b) {
+                        if (a > b || a === void 0) return 1;
+                        if (a < b || b === void 0) return -1;
+                    }
+                    return left.index < right.index ? -1 : 1;
+                }), "value");
+            };
+            var group = function(obj, value, context, behavior) {
+                var result = {};
+                var iterator = lookupIterator(value || _.identity);
+                each(obj, function(value, index) {
+                    var key = iterator.call(context, value, index, obj);
+                    behavior(result, key, value);
+                });
+                return result;
+            };
+            _.groupBy = function(obj, value, context) {
+                return group(obj, value, context, function(result, key, value) {
+                    (_.has(result, key) ? result[key] : result[key] = []).push(value);
+                });
+            };
+            _.countBy = function(obj, value, context) {
+                return group(obj, value, context, function(result, key) {
+                    if (!_.has(result, key)) result[key] = 0;
+                    result[key]++;
+                });
+            };
+            _.sortedIndex = function(array, obj, iterator, context) {
+                iterator = iterator == null ? _.identity : lookupIterator(iterator);
+                var value = iterator.call(context, obj);
+                var low = 0, high = array.length;
+                while (low < high) {
+                    var mid = low + high >>> 1;
+                    iterator.call(context, array[mid]) < value ? low = mid + 1 : high = mid;
+                }
+                return low;
+            };
+            _.toArray = function(obj) {
+                if (!obj) return [];
+                if (_.isArray(obj)) return slice.call(obj);
+                if (obj.length === +obj.length) return _.map(obj, _.identity);
+                return _.values(obj);
+            };
+            _.size = function(obj) {
+                if (obj == null) return 0;
+                return obj.length === +obj.length ? obj.length : _.keys(obj).length;
+            };
+            _.first = _.head = _.take = function(array, n, guard) {
+                if (array == null) return void 0;
+                return n != null && !guard ? slice.call(array, 0, n) : array[0];
+            };
+            _.initial = function(array, n, guard) {
+                return slice.call(array, 0, array.length - (n == null || guard ? 1 : n));
+            };
+            _.last = function(array, n, guard) {
+                if (array == null) return void 0;
+                if (n != null && !guard) {
+                    return slice.call(array, Math.max(array.length - n, 0));
+                } else {
+                    return array[array.length - 1];
+                }
+            };
+            _.rest = _.tail = _.drop = function(array, n, guard) {
+                return slice.call(array, n == null || guard ? 1 : n);
+            };
+            _.compact = function(array) {
+                return _.filter(array, _.identity);
+            };
+            var flatten = function(input, shallow, output) {
+                each(input, function(value) {
+                    if (_.isArray(value)) {
+                        shallow ? push.apply(output, value) : flatten(value, shallow, output);
+                    } else {
+                        output.push(value);
+                    }
+                });
+                return output;
+            };
+            _.flatten = function(array, shallow) {
+                return flatten(array, shallow, []);
+            };
+            _.without = function(array) {
+                return _.difference(array, slice.call(arguments, 1));
+            };
+            _.uniq = _.unique = function(array, isSorted, iterator, context) {
+                if (_.isFunction(isSorted)) {
+                    context = iterator;
+                    iterator = isSorted;
+                    isSorted = false;
+                }
+                var initial = iterator ? _.map(array, iterator, context) : array;
+                var results = [];
+                var seen = [];
+                each(initial, function(value, index) {
+                    if (isSorted ? !index || seen[seen.length - 1] !== value : !_.contains(seen, value)) {
+                        seen.push(value);
+                        results.push(array[index]);
+                    }
+                });
+                return results;
+            };
+            _.union = function() {
+                return _.uniq(concat.apply(ArrayProto, arguments));
+            };
+            _.intersection = function(array) {
+                var rest = slice.call(arguments, 1);
+                return _.filter(_.uniq(array), function(item) {
+                    return _.every(rest, function(other) {
+                        return _.indexOf(other, item) >= 0;
+                    });
+                });
+            };
+            _.difference = function(array) {
+                var rest = concat.apply(ArrayProto, slice.call(arguments, 1));
+                return _.filter(array, function(value) {
+                    return !_.contains(rest, value);
+                });
+            };
+            _.zip = function() {
+                var args = slice.call(arguments);
+                var length = _.max(_.pluck(args, "length"));
+                var results = new Array(length);
+                for (var i = 0; i < length; i++) {
+                    results[i] = _.pluck(args, "" + i);
+                }
+                return results;
+            };
+            _.object = function(list, values) {
+                if (list == null) return {};
+                var result = {};
+                for (var i = 0, l = list.length; i < l; i++) {
+                    if (values) {
+                        result[list[i]] = values[i];
+                    } else {
+                        result[list[i][0]] = list[i][1];
+                    }
+                }
+                return result;
+            };
+            _.indexOf = function(array, item, isSorted) {
+                if (array == null) return -1;
+                var i = 0, l = array.length;
+                if (isSorted) {
+                    if (typeof isSorted == "number") {
+                        i = isSorted < 0 ? Math.max(0, l + isSorted) : isSorted;
+                    } else {
+                        i = _.sortedIndex(array, item);
+                        return array[i] === item ? i : -1;
+                    }
+                }
+                if (nativeIndexOf && array.indexOf === nativeIndexOf) return array.indexOf(item, isSorted);
+                for (; i < l; i++) if (array[i] === item) return i;
+                return -1;
+            };
+            _.lastIndexOf = function(array, item, from) {
+                if (array == null) return -1;
+                var hasIndex = from != null;
+                if (nativeLastIndexOf && array.lastIndexOf === nativeLastIndexOf) {
+                    return hasIndex ? array.lastIndexOf(item, from) : array.lastIndexOf(item);
+                }
+                var i = hasIndex ? from : array.length;
+                while (i--) if (array[i] === item) return i;
+                return -1;
+            };
+            _.range = function(start, stop, step) {
+                if (arguments.length <= 1) {
+                    stop = start || 0;
+                    start = 0;
+                }
+                step = arguments[2] || 1;
+                var len = Math.max(Math.ceil((stop - start) / step), 0);
+                var idx = 0;
+                var range = new Array(len);
+                while (idx < len) {
+                    range[idx++] = start;
+                    start += step;
+                }
+                return range;
+            };
+            _.bind = function(func, context) {
+                if (func.bind === nativeBind && nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
+                var args = slice.call(arguments, 2);
+                return function() {
+                    return func.apply(context, args.concat(slice.call(arguments)));
+                };
+            };
+            _.partial = function(func) {
+                var args = slice.call(arguments, 1);
+                return function() {
+                    return func.apply(this, args.concat(slice.call(arguments)));
+                };
+            };
+            _.bindAll = function(obj) {
+                var funcs = slice.call(arguments, 1);
+                if (funcs.length === 0) funcs = _.functions(obj);
+                each(funcs, function(f) {
+                    obj[f] = _.bind(obj[f], obj);
+                });
+                return obj;
+            };
+            _.memoize = function(func, hasher) {
+                var memo = {};
+                hasher || (hasher = _.identity);
+                return function() {
+                    var key = hasher.apply(this, arguments);
+                    return _.has(memo, key) ? memo[key] : memo[key] = func.apply(this, arguments);
+                };
+            };
+            _.delay = function(func, wait) {
+                var args = slice.call(arguments, 2);
+                return setTimeout(function() {
+                    return func.apply(null, args);
+                }, wait);
+            };
+            _.defer = function(func) {
+                return _.delay.apply(_, [ func, 1 ].concat(slice.call(arguments, 1)));
+            };
+            _.throttle = function(func, wait) {
+                var context, args, timeout, result;
+                var previous = 0;
+                var later = function() {
+                    previous = new Date;
+                    timeout = null;
+                    result = func.apply(context, args);
+                };
+                return function() {
+                    var now = new Date;
+                    var remaining = wait - (now - previous);
+                    context = this;
+                    args = arguments;
+                    if (remaining <= 0) {
+                        clearTimeout(timeout);
+                        timeout = null;
+                        previous = now;
+                        result = func.apply(context, args);
+                    } else if (!timeout) {
+                        timeout = setTimeout(later, remaining);
+                    }
+                    return result;
+                };
+            };
+            _.debounce = function(func, wait, immediate) {
+                var timeout, result;
+                return function() {
+                    var context = this, args = arguments;
+                    var later = function() {
+                        timeout = null;
+                        if (!immediate) result = func.apply(context, args);
+                    };
+                    var callNow = immediate && !timeout;
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                    if (callNow) result = func.apply(context, args);
+                    return result;
+                };
+            };
+            _.once = function(func) {
+                var ran = false, memo;
+                return function() {
+                    if (ran) return memo;
+                    ran = true;
+                    memo = func.apply(this, arguments);
+                    func = null;
+                    return memo;
+                };
+            };
+            _.wrap = function(func, wrapper) {
+                return function() {
+                    var args = [ func ];
+                    push.apply(args, arguments);
+                    return wrapper.apply(this, args);
+                };
+            };
+            _.compose = function() {
+                var funcs = arguments;
+                return function() {
+                    var args = arguments;
+                    for (var i = funcs.length - 1; i >= 0; i--) {
+                        args = [ funcs[i].apply(this, args) ];
+                    }
+                    return args[0];
+                };
+            };
+            _.after = function(times, func) {
+                if (times <= 0) return func();
+                return function() {
+                    if (--times < 1) {
+                        return func.apply(this, arguments);
+                    }
+                };
+            };
+            _.keys = nativeKeys || function(obj) {
+                if (obj !== Object(obj)) throw new TypeError("Invalid object");
+                var keys = [];
+                for (var key in obj) if (_.has(obj, key)) keys[keys.length] = key;
+                return keys;
+            };
+            _.values = function(obj) {
+                var values = [];
+                for (var key in obj) if (_.has(obj, key)) values.push(obj[key]);
+                return values;
+            };
+            _.pairs = function(obj) {
+                var pairs = [];
+                for (var key in obj) if (_.has(obj, key)) pairs.push([ key, obj[key] ]);
+                return pairs;
+            };
+            _.invert = function(obj) {
+                var result = {};
+                for (var key in obj) if (_.has(obj, key)) result[obj[key]] = key;
+                return result;
+            };
+            _.functions = _.methods = function(obj) {
+                var names = [];
+                for (var key in obj) {
+                    if (_.isFunction(obj[key])) names.push(key);
+                }
+                return names.sort();
+            };
+            _.extend = function(obj) {
+                each(slice.call(arguments, 1), function(source) {
+                    if (source) {
+                        for (var prop in source) {
+                            obj[prop] = source[prop];
+                        }
+                    }
+                });
+                return obj;
+            };
+            _.pick = function(obj) {
+                var copy = {};
+                var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
+                each(keys, function(key) {
+                    if (key in obj) copy[key] = obj[key];
+                });
+                return copy;
+            };
+            _.omit = function(obj) {
+                var copy = {};
+                var keys = concat.apply(ArrayProto, slice.call(arguments, 1));
+                for (var key in obj) {
+                    if (!_.contains(keys, key)) copy[key] = obj[key];
+                }
+                return copy;
+            };
+            _.defaults = function(obj) {
+                each(slice.call(arguments, 1), function(source) {
+                    if (source) {
+                        for (var prop in source) {
+                            if (obj[prop] == null) obj[prop] = source[prop];
+                        }
+                    }
+                });
+                return obj;
+            };
+            _.clone = function(obj) {
+                if (!_.isObject(obj)) return obj;
+                return _.isArray(obj) ? obj.slice() : _.extend({}, obj);
+            };
+            _.tap = function(obj, interceptor) {
+                interceptor(obj);
+                return obj;
+            };
+            var eq = function(a, b, aStack, bStack) {
+                if (a === b) return a !== 0 || 1 / a == 1 / b;
+                if (a == null || b == null) return a === b;
+                if (a instanceof _) a = a._wrapped;
+                if (b instanceof _) b = b._wrapped;
+                var className = toString.call(a);
+                if (className != toString.call(b)) return false;
+                switch (className) {
+                  case "[object String]":
+                    return a == String(b);
+                  case "[object Number]":
+                    return a != +a ? b != +b : a == 0 ? 1 / a == 1 / b : a == +b;
+                  case "[object Date]":
+                  case "[object Boolean]":
+                    return +a == +b;
+                  case "[object RegExp]":
+                    return a.source == b.source && a.global == b.global && a.multiline == b.multiline && a.ignoreCase == b.ignoreCase;
+                }
+                if (typeof a != "object" || typeof b != "object") return false;
+                var length = aStack.length;
+                while (length--) {
+                    if (aStack[length] == a) return bStack[length] == b;
+                }
+                aStack.push(a);
+                bStack.push(b);
+                var size = 0, result = true;
+                if (className == "[object Array]") {
+                    size = a.length;
+                    result = size == b.length;
+                    if (result) {
+                        while (size--) {
+                            if (!(result = eq(a[size], b[size], aStack, bStack))) break;
+                        }
+                    }
+                } else {
+                    var aCtor = a.constructor, bCtor = b.constructor;
+                    if (aCtor !== bCtor && !(_.isFunction(aCtor) && aCtor instanceof aCtor && _.isFunction(bCtor) && bCtor instanceof bCtor)) {
+                        return false;
+                    }
+                    for (var key in a) {
+                        if (_.has(a, key)) {
+                            size++;
+                            if (!(result = _.has(b, key) && eq(a[key], b[key], aStack, bStack))) break;
+                        }
+                    }
+                    if (result) {
+                        for (key in b) {
+                            if (_.has(b, key) && !(size--)) break;
+                        }
+                        result = !size;
+                    }
+                }
+                aStack.pop();
+                bStack.pop();
+                return result;
+            };
+            _.isEqual = function(a, b) {
+                return eq(a, b, [], []);
+            };
+            _.isEmpty = function(obj) {
+                if (obj == null) return true;
+                if (_.isArray(obj) || _.isString(obj)) return obj.length === 0;
+                for (var key in obj) if (_.has(obj, key)) return false;
+                return true;
+            };
+            _.isElement = function(obj) {
+                return !!(obj && obj.nodeType === 1);
+            };
+            _.isArray = nativeIsArray || function(obj) {
+                return toString.call(obj) == "[object Array]";
+            };
+            _.isObject = function(obj) {
+                return obj === Object(obj);
+            };
+            each([ "Arguments", "Function", "String", "Number", "Date", "RegExp" ], function(name) {
+                _["is" + name] = function(obj) {
+                    return toString.call(obj) == "[object " + name + "]";
+                };
+            });
+            if (!_.isArguments(arguments)) {
+                _.isArguments = function(obj) {
+                    return !!(obj && _.has(obj, "callee"));
+                };
+            }
+            if (typeof /./ !== "function") {
+                _.isFunction = function(obj) {
+                    return typeof obj === "function";
+                };
+            }
+            _.isFinite = function(obj) {
+                return isFinite(obj) && !isNaN(parseFloat(obj));
+            };
+            _.isNaN = function(obj) {
+                return _.isNumber(obj) && obj != +obj;
+            };
+            _.isBoolean = function(obj) {
+                return obj === true || obj === false || toString.call(obj) == "[object Boolean]";
+            };
+            _.isNull = function(obj) {
+                return obj === null;
+            };
+            _.isUndefined = function(obj) {
+                return obj === void 0;
+            };
+            _.has = function(obj, key) {
+                return hasOwnProperty.call(obj, key);
+            };
+            _.noConflict = function() {
+                root._ = previousUnderscore;
+                return this;
+            };
+            _.identity = function(value) {
+                return value;
+            };
+            _.times = function(n, iterator, context) {
+                var accum = Array(n);
+                for (var i = 0; i < n; i++) accum[i] = iterator.call(context, i);
+                return accum;
+            };
+            _.random = function(min, max) {
+                if (max == null) {
+                    max = min;
+                    min = 0;
+                }
+                return min + Math.floor(Math.random() * (max - min + 1));
+            };
+            var entityMap = {
+                escape: {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#x27;",
+                    "/": "&#x2F;"
+                }
+            };
+            entityMap.unescape = _.invert(entityMap.escape);
+            var entityRegexes = {
+                escape: new RegExp("[" + _.keys(entityMap.escape).join("") + "]", "g"),
+                unescape: new RegExp("(" + _.keys(entityMap.unescape).join("|") + ")", "g")
+            };
+            _.each([ "escape", "unescape" ], function(method) {
+                _[method] = function(string) {
+                    if (string == null) return "";
+                    return ("" + string).replace(entityRegexes[method], function(match) {
+                        return entityMap[method][match];
+                    });
+                };
+            });
+            _.result = function(object, property) {
+                if (object == null) return null;
+                var value = object[property];
+                return _.isFunction(value) ? value.call(object) : value;
+            };
+            _.mixin = function(obj) {
+                each(_.functions(obj), function(name) {
+                    var func = _[name] = obj[name];
+                    _.prototype[name] = function() {
+                        var args = [ this._wrapped ];
+                        push.apply(args, arguments);
+                        return result.call(this, func.apply(_, args));
+                    };
+                });
+            };
+            var idCounter = 0;
+            _.uniqueId = function(prefix) {
+                var id = ++idCounter + "";
+                return prefix ? prefix + id : id;
+            };
+            _.templateSettings = {
+                evaluate: /<%([\s\S]+?)%>/g,
+                interpolate: /<%=([\s\S]+?)%>/g,
+                escape: /<%-([\s\S]+?)%>/g
+            };
+            var noMatch = /(.)^/;
+            var escapes = {
+                "'": "'",
+                "\\": "\\",
+                "\r": "r",
+                "\n": "n",
+                "	": "t",
+                "\u2028": "u2028",
+                "\u2029": "u2029"
+            };
+            var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
+            _.template = function(text, data, settings) {
+                var render;
+                settings = _.defaults({}, settings, _.templateSettings);
+                var matcher = new RegExp([ (settings.escape || noMatch).source, (settings.interpolate || noMatch).source, (settings.evaluate || noMatch).source ].join("|") + "|$", "g");
+                var index = 0;
+                var source = "__p+='";
+                text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {
+                    source += text.slice(index, offset).replace(escaper, function(match) {
+                        return "\\" + escapes[match];
+                    });
+                    if (escape) {
+                        source += "'+\n((__t=(" + escape + "))==null?'':_.escape(__t))+\n'";
+                    }
+                    if (interpolate) {
+                        source += "'+\n((__t=(" + interpolate + "))==null?'':__t)+\n'";
+                    }
+                    if (evaluate) {
+                        source += "';\n" + evaluate + "\n__p+='";
+                    }
+                    index = offset + match.length;
+                    return match;
+                });
+                source += "';\n";
+                if (!settings.variable) source = "with(obj||{}){\n" + source + "}\n";
+                source = "var __t,__p='',__j=Array.prototype.join," + "print=function(){__p+=__j.call(arguments,'');};\n" + source + "return __p;\n";
+                try {
+                    render = new Function(settings.variable || "obj", "_", source);
+                } catch (e) {
+                    e.source = source;
+                    throw e;
+                }
+                if (data) return render(data, _);
+                var template = function(data) {
+                    return render.call(this, data, _);
+                };
+                template.source = "function(" + (settings.variable || "obj") + "){\n" + source + "}";
+                return template;
+            };
+            _.chain = function(obj) {
+                return _(obj).chain();
+            };
+            var result = function(obj) {
+                return this._chain ? _(obj).chain() : obj;
+            };
+            _.mixin(_);
+            each([ "pop", "push", "reverse", "shift", "sort", "splice", "unshift" ], function(name) {
+                var method = ArrayProto[name];
+                _.prototype[name] = function() {
+                    var obj = this._wrapped;
+                    method.apply(obj, arguments);
+                    if ((name == "shift" || name == "splice") && obj.length === 0) delete obj[0];
+                    return result.call(this, obj);
+                };
+            });
+            each([ "concat", "join", "slice" ], function(name) {
+                var method = ArrayProto[name];
+                _.prototype[name] = function() {
+                    return result.call(this, method.apply(this._wrapped, arguments));
+                };
+            });
+            _.extend(_.prototype, {
+                chain: function() {
+                    this._chain = true;
+                    return this;
+                },
+                value: function() {
+                    return this._wrapped;
+                }
+            });
+        }).call(this);
         return module.exports;
     });
     define("bindable/lib/collection/setters/base.js", function(require, module, exports, __dirname, __filename) {
