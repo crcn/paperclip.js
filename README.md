@@ -12,11 +12,27 @@ npm install paperclip -g
 `hello-world.pc`
 
 ```html
-{{message}}
+{{message}}!
 ```
+
+Terminal:
 
 ```bash
 paperclip -i ./hello-world.pc -o ./hello-world.pc.js
+```
+
+Node.js:
+
+```javascript
+var pc = require("paperclip"),
+fs = require("fs"),
+pc.template(fs.readFileSync("./hello-world.pc", "utf8"));
+
+var info = pc.bind({
+  message: "Hello World"
+});
+
+console.log(String(info)); //Hello World!
 ```
 
 

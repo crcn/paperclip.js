@@ -23,7 +23,7 @@ tests: hello
 test-web: tests
 	rm -rf test-web;
 	cp -r test test-web;
-	for F in `ls test-web | grep test`; do ./node_modules/.bin/sardines "test-web/$$F" -o "test-web/$$F" -p browser; done
+	for F in `ls test-web | grep test`; do ./node_modules/.bin/browserify "test/$$F" -o "test-web/$$F" -p browser; done
 
 
 

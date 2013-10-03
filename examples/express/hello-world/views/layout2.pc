@@ -1,0 +1,5 @@
+{{#layout: "main_layout.pc" }}
+  <div>
+    {{ html: content }}
+  </div>
+{{/}}

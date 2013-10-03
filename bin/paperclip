@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 var argv = require('optimist').
 usage('Usage: $0 -i [paperclip_template_file] -o [js_file]').
-demand(['i','o']).
+demand(['i']).
 alias('i', 'input').
 alias('o', 'output').
 alias('w', 'watch').

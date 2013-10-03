@@ -6,16 +6,6 @@ class AttributesExpression extends require("./collection")
   constructor: (items) ->
     super items
 
-  ###
-  ###
-
-  toJsString: () ->
-  
-    params = []
-    for attr in @_children
-      params.push "'#{attr.name}':#{if attr.value then attr.value.toJsString() else 'true' }"
-
-    "{#{params.join(',')}}"
 
   ###
   ###
@@ -31,17 +21,12 @@ class AttributesExpression extends require("./collection")
 
   toString: () ->
 
+
     params = []
     for attr in @_children
-      buffer = []
-      buffer.push "#{attr.name}"
+      params.push "'#{attr.name}':[#{if attr.value then attr.value.toString() else 'true' }]"
 
-      if attr.value
-        buffer.push "=\"#{attr.value}\""
-
-      params.push buffer.join("")
-
-    params.join " "
+    "{#{params.join(',')}}"
 
 
 

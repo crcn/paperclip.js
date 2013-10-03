@@ -73,12 +73,14 @@ class PropertyChain
   value: (value) ->
     hasValue = arguments.length
 
+
     cv = if @_self then @clip else @clip.data
     n = @_commands.length
 
     for command, i in @_commands
 
-      @watcher._watch command.ref, cv
+      if cv.__isBindable
+        @watcher._watch command.ref, cv
 
       if i is n-1 and hasValue
         if cv.set then cv.set(command.ref, value) else dref.set cv, command.ref, value
@@ -138,7 +140,16 @@ class ClipScript extends events.EventEmitter
 
   watch: () ->
     @__watch = true
-    @update()
+    @
+
+  ###
+  ###
+
+  unwatch: () ->
+    @__watch = false
+    for key of @_watching
+      @_watching[key].dispose()
+    @_watching = {}
     @
 
   ###
@@ -168,23 +179,23 @@ class ClipScript extends events.EventEmitter
 
     lockUpdate = true
 
-
     @_watching[path] = 
       target  : target
       binding : binding = target.bind(path).to((value, oldValue) =>
-        return @_watchBindable(value, oldValue) if value?.__isBindable
-        return @_spyFunction(path, value, target) if type(value) is "function"
+
+        if value?.__isBindable
+          @_watchBindable(value, oldValue) 
+        else if type(value) is "function"
+          @_spyFunction(path, value, target)
 
         return if lockUpdate
         @update()
-
       ).now()
       dispose : () ->
         binding.dispose()
 
     lockUpdate = false
     
-
 
   ###
    watches a bindable object for any changes, then updates this binding asynchronously This is important
@@ -271,9 +282,6 @@ class ClipScript extends events.EventEmitter
     ###
 
     
-
-
-
   ###
   ###
 
@@ -301,6 +309,15 @@ class ClipScripts
     for key of @_scripts
       @_scripts[key].watch()
     @
+
+  ###
+  ###
+
+  unwatch: () ->
+    for key of @_scripts
+      @_scripts[key].unwatch()
+    @
+
 
   ###
   ###
@@ -334,6 +351,7 @@ class ClipScripts
     else
       for scriptName of scripts
         @_bindScript scriptName, scripts[scriptName]
+    return
 
   ###
   ###
@@ -357,7 +375,7 @@ class Clip
   ###
 
   constructor: (@options) ->
-    @_self = new bindable.Object()
+    @_self = @context = options.context or new bindable.Object()
     @reset options.data, false
     scripts = @options.scripts or @options.script
 
@@ -367,19 +385,37 @@ class Clip
     if options.watch isnt false
       @watch()
 
+  ###
+  ###
+
   reset: (data = {}, update = true) ->
     @data = if data.__isBindable then data else new bindable.Object data
     if update
       @update()
     @
 
+  ###
+  ###
+
   watch: () ->
     @scripts.watch()
     @
 
+  ###
+  ###
+
+  unwatch: () ->
+    @scripts.unwatch()
+
+  ###
+  ###
+
   update: () ->
     @scripts.update()
     @
+
+  ###
+  ###
 
   dispose: () -> 
 
@@ -390,6 +426,7 @@ class Clip
 
   script: (name) ->
     @scripts.get name
+
 
   get  : () -> @_self.get arguments...
   set  : () -> @_self.set arguments...

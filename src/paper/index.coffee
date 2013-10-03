@@ -1,40 +1,78 @@
-Context    = require "./context"
-Html       = require "./nodes/html"
-pilot      = require "pilot-block"       
-asyngleton = require "asyngleton"
-modifiers  = require "./defaultModifiers"
+Clip      = require "../clip"
+template  = require "./template"
+nofactor  = require "nofactor"
+modifiers = require "./modifiers"
+bindings  = require "./bindings"
+bindable  = require "bindable"
 
-class Paper
+
+module.exports = 
+  
+  ###
+  ###
+
+  Clip: Clip
+
+  ###
+  ###
+  bindable: bindable
+
+  ###
+   parses a template
+  ###
+
+  template: template
+
+  ###
+   registers a binding modifier 
+   {{ message | titlecase() }}
+  ###
+
+  modifier: (name, modifier)  ->
+    modifiers[name] = modifier
+
+  ###
+   expose the class so that one can be registered
+  ###
+
+  BaseBlockBinding: bindings.BaseBlockBinding
 
   ###
   ###
 
-  constructor: (@factory) ->
-    @modifiers = modifiers
-    @node = @factory @
+  BaseNodeBinding: bindings.BaseNodeBinding
 
   ###
   ###
 
-  load: (context) -> 
-    @node.load context
+  BaseAttrDataBinding: bindings.BaseAttrDataBinding
+
+  ###
+   adds a block binding class
+   {{#custom}}
+   {{/}}
+  ###
+
+  blockBinding: bindings.blockBindingFactory.register
+
+  ###
+   adds a node binding shim
+   <custom />
+   <div custom="" />
+  ###
+
+  nodeBinding: bindings.nodeBindingFactory.register
+  ###
+    data-bind="{{ custom: binding }}"
+  ###
+
+  attrDataBinding: bindings.nodeBindingFactory.dataBind.register
 
   ###
   ###
 
-  attach: (element, context) -> 
-    @node.attach element, context
-
-  ###
-  ###
-
-  create: () -> new Html()
+  use: (fn) -> fn @
 
 
-
-module.exports = (fn) -> new Paper(fn)
-module.exports.Context = Context
-module.exports.registerModifier = (name, modifier) ->
-  modifiers[name] = modifier
 
 

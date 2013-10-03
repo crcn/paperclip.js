@@ -13,18 +13,8 @@ class TextBindingExpression extends require("./base")
   ###
   ###
 
-  toString: () -> "').#{@toMethodString()}.html('"
+  toString: () -> "block(#{@binding})"
 
-  ###
-  ###
-
-  toJsString: () -> @binding
-
-
-  ###
-  ###
-
-  toMethodString: () -> "textBinding(#{@binding})"
 
 
 module.exports = TextBindingExpression
