@@ -83,7 +83,14 @@ class ModelAttrBinding extends require("./base")
 
   _parseValue: (value) ->
     return undefined if not value? or value is ""
-    if (isNaN(v = Number(value)) or (String(value).substr(0, 1) is "0" and String(value).length > 1)) then value else v
+
+    if type(value) isnt "string"
+      return value
+
+    if isNaN(v = Number(value)) or (String(value).substr(0, 1) is "0" and String(value).length > 1)
+      return value
+    else
+      return v
 
 
   ###
@@ -91,11 +98,9 @@ class ModelAttrBinding extends require("./base")
 
   _elementValue: (value) =>
 
-
     # cannot be undefined
     unless value?
       value = ""
-
 
     # Object.prototype.hasOwnProperty is a work-around for ffox and, ie
     isInput = Object.prototype.hasOwnProperty.call(@node, "value") or /input|textarea|checkbox/.test(@node.nodeName.toLowerCase())
@@ -128,7 +133,7 @@ class ModelAttrBinding extends require("./base")
 
     unless arguments.length
       if isRadioOrCheckbox
-        return $(@node).val()
+        return Boolean $(@node).is(":checked")
       else
         return @node.value
 
