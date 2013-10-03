@@ -61,13 +61,7 @@ class ValueAttrBinding extends require("./base")
     isInput = Object.prototype.hasOwnProperty.call(@node, "value") or /input|textarea|checkbox/.test(@node.nodeName.toLowerCase())
 
     unless arguments.length
-<<<<<<< HEAD:src/paper/decor/attr/value.coffee
-      return if isInput then @_checkedOrValue() else @element.innerHTML
-      
-    return if value is @_currentValue
-=======
       return if isInput then @_checkedOrValue() else @node.innerHTML
->>>>>>> 0.2.x:src/paper/bindings/node/attrs/dataBind/handlers/value.coffee
 
     @currentValue = value
 

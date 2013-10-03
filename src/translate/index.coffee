@@ -9,3 +9,7 @@ exports.compile = (content) ->
   module = { exports: { } }
   eval parse content
   module.exports
+
+
+if typeof window?.paperclip isnt "undefined"
+  window.paperclip.compile = exports.comple

@@ -37,11 +37,7 @@ class ModelAttrBinding extends require("./base")
         unless name
           model = @context
 
-<<<<<<< HEAD:src/paper/decor/attr/model.coffee
-        @_currentValue = value
-=======
         @currentValue = value
->>>>>>> 0.2.x:src/paper/bindings/node/attrs/dataBind/handlers/model.coffee
 
         if model
           if model.set
@@ -107,11 +103,7 @@ class ModelAttrBinding extends require("./base")
     unless arguments.length
       return if isInput then @_checkedOrValue() else @node.innerHTML
 
-<<<<<<< HEAD:src/paper/decor/attr/model.coffee
-    return if value is @_currentValue
-=======
     return if @currentValue is value
->>>>>>> 0.2.x:src/paper/bindings/node/attrs/dataBind/handlers/model.coffee
     
     @currentValue = value
 
