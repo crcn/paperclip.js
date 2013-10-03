@@ -2676,45 +2676,6 @@
         })();
         return module.exports;
     });
-    define("nofactor/lib/ent.js", function(require, module, exports, __dirname, __filename) {
-        var entities;
-        entities = {
-            "<": "lt",
-            "&": "amp",
-            ">": "gt",
-            '"': "quote"
-        };
-        module.exports = function(str) {
-            str = String(str);
-            return str.split("").map(function(c) {
-                var cc, e;
-                e = entities[c];
-                cc = c.charCodeAt(0);
-                if (e) {
-                    return "&" + e + ";";
-                } else if (c.match(/\s/)) {
-                    return c;
-                } else if (cc < 32 || cc > 126) {
-                    return "&#" + cc + ";";
-                }
-                return c;
-            }).join("");
-        };
-        return module.exports;
-    });
-    define("nofactor/lib/base.js", function(require, module, exports, __dirname, __filename) {
-        var BaseFactory;
-        BaseFactory = function() {
-            function BaseFactory() {}
-            BaseFactory.prototype.createElement = function(element) {};
-            BaseFactory.prototype.createFragment = function() {};
-            BaseFactory.prototype.createComment = function(text) {};
-            BaseFactory.prototype.createTextNode = function(text) {};
-            BaseFactory.prototype.parseHtml = function(content) {};
-            return BaseFactory;
-        }();
-        return module.exports;
-    });
     define("paperclip/lib/paper/writers/fragment.js", function(require, module, exports, __dirname, __filename) {
         var FragmentWriter, _ref, __bind = function(fn, me) {
             return function() {
@@ -3108,6 +3069,45 @@
         module.exports = loaf = function(nodeFactory) {
             return new Section(nodeFactory);
         };
+        return module.exports;
+    });
+    define("nofactor/lib/ent.js", function(require, module, exports, __dirname, __filename) {
+        var entities;
+        entities = {
+            "<": "lt",
+            "&": "amp",
+            ">": "gt",
+            '"': "quote"
+        };
+        module.exports = function(str) {
+            str = String(str);
+            return str.split("").map(function(c) {
+                var cc, e;
+                e = entities[c];
+                cc = c.charCodeAt(0);
+                if (e) {
+                    return "&" + e + ";";
+                } else if (c.match(/\s/)) {
+                    return c;
+                } else if (cc < 32 || cc > 126) {
+                    return "&#" + cc + ";";
+                }
+                return c;
+            }).join("");
+        };
+        return module.exports;
+    });
+    define("nofactor/lib/base.js", function(require, module, exports, __dirname, __filename) {
+        var BaseFactory;
+        BaseFactory = function() {
+            function BaseFactory() {}
+            BaseFactory.prototype.createElement = function(element) {};
+            BaseFactory.prototype.createFragment = function() {};
+            BaseFactory.prototype.createComment = function(text) {};
+            BaseFactory.prototype.createTextNode = function(text) {};
+            BaseFactory.prototype.parseHtml = function(content) {};
+            return BaseFactory;
+        }();
         return module.exports;
     });
     define("paperclip/lib/paper/bindings/base/script.js", function(require, module, exports, __dirname, __filename) {
