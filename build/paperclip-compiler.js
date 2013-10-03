@@ -51,7 +51,7 @@
                 options = {};
             }
             content = templateParser.parse(content);
-            return content;
+            return String(content);
         };
         exports.compile = function(content) {
             var module;
