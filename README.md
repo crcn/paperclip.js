@@ -41,13 +41,13 @@ module.exports = function(fragment, block, element, text, parse, modifiers) {
 - [paperclip-component](https://github.com/classdojo/paperclip-component) - used with [Mojo.js](https://github.com/classdojo/mojo.js). Allows for views to be instantiated within paperclip templates. This is similar to Ember.js's component, and Angular.js's directive implementation. 
 - [paperclip-placeholder-pollyfill](https://github.com/classdojo/paperclip-placeholder-pollyfill) - placeholder pollyfull for IE users.
 
-# Installation
+### Installation
 
 ```bash
 npm install paperclip -g
 ```
 
-# Compiling a script
+### Compiling a script
 
 ```bash
 paperclip -i template.pc -o template.pc.js
