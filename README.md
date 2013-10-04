@@ -53,11 +53,11 @@ npm install paperclip -g
 paperclip -i template.pc -o template.pc.js
 ```
 
-# Syntax
+## Syntax
 
 Paperclip takes on a mustache / handlebars approach with variables, blocks, and pollyfills. Paperclip also allows basic inline javascript, similar to angular.js.
 
-## Blocks
+### Blocks
 
 Paperclip support variable blocks, just like Angular.js. [For example](http://jsfiddle.net/JTxdM/15/):
 
@@ -78,10 +78,7 @@ If you want to add some sugar, go ahead and [drop-in some javascript](http://jsf
 hello {{ message || "world!" }}!
 ```
 
-
-
-
-## Modifiers
+### Modifiers
 
 Modifiers format data in a variable block. A good example of this might be presenting data to the user depending on their locale. For example:
 
