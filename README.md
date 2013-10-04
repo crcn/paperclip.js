@@ -23,7 +23,7 @@ module.exports = function(fragment, block, element, text, parse, modifiers) {
 };
 ```
 
-# Examples
+### Examples
 
 - [hello world](http://jsfiddle.net/JTxdM/3/)
 - [modifiers](http://jsfiddle.net/JTxdM/12/)
@@ -36,7 +36,7 @@ module.exports = function(fragment, block, element, text, parse, modifiers) {
 - [if / elseif / else block](http://jsfiddle.net/JTxdM/16/)
 - [html block helper](http://jsfiddle.net/JTxdM/16/)
 
-# Third-party components:
+### Third-party components:
 
 - [paperclip-component](https://github.com/classdojo/paperclip-component) - used with [Mojo.js](https://github.com/classdojo/mojo.js). Allows for views to be instantiated within paperclip templates. This is similar to Ember.js's component, and Angular.js's directive implementation. 
 - [paperclip-placeholder-pollyfill](https://github.com/classdojo/paperclip-placeholder-pollyfill) - placeholder pollyfull for IE users.
