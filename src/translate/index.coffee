@@ -9,9 +9,10 @@ exports.compile = (content) ->
   eval parse content
   module.exports
 
+scripts = {}
 
 exports.script = (name) ->
-  exports.compile $("script[data-template-name='#{name}']").html()
+  scripts[name] ? (scripts[name] = exports.compile($("script[data-template-name='#{name}']").html()))
 
 if typeof window?.paperclip isnt "undefined"
   window.paperclip.compile = exports.compile

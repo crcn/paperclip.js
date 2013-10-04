@@ -35,6 +35,8 @@ module.exports = function(fragment, block, element, text, parse, modifiers) {
 - [titlecase / lowercase modifiers](http://jsfiddle.net/JTxdM/14/)
 - [if / elseif / else block](http://jsfiddle.net/JTxdM/16/)
 - [html block helper](http://jsfiddle.net/JTxdM/16/)
+- [onEnter event](http://jsfiddle.net/JTxdM/15/)
+- [data-binding styles](http://jsfiddle.net/JTxdM/15/)
 
 ### Third-party components:
 
@@ -65,7 +67,7 @@ Paperclip support variable blocks, just like Angular.js. [For example](http://js
 hello {{ name.first }} {{ name.last }}!
 ```
 
-You can also specify placeholders within attributes. [For example](http://jsfiddle.net/JTxdM/10/):
+You can also specify blocks within attributes. [For example](http://jsfiddle.net/JTxdM/10/):
 
 ```html
 my favorite color is <span style="color: {{color}}">{{color}}</span>
@@ -154,9 +156,79 @@ TODO
 
 ## data-bind attributes
 
-data-bind attributes are borrowed from [knockout.js](http://knockoutjs.com/), and is 
+data-bind attributes are borrowed from [knockout.js](http://knockoutjs.com/). This is useful if you want to attach behavior to any DOM element. 
 
-### events
+### data-bind helpers
+
+#### {{ event: expression }}
+
+Executed when an event is fired on the DOM element. Here are all the available events:
+
+- `onChange` - called when an element changes
+- `onClick` - called when an element is clicked
+- `onLoad` - called when an element loads - useful for `<img />`
+- `onSubmit` - called on submit - useful for `<form />`
+- `onMouseDown` - called on mouse down
+- `onMouseUp` - called on mouse up
+- `onMouseOver` - called on mouse over
+- `onMouseOut` - called on mouse out
+- `onKeyDown` - called on key down
+- `onKeyUp` - called on key up
+- `onEnter` - called on enter key up
+- `onDepete` - called on delete key up
+
+[Basic example](http://jsfiddle.net/JTxdM/15/):
+
+```html
+<input type="text" data-bind="{{ model: name, onEnter: sayHello() }}"></input>
+```
+
+
+#### {{ show: bool }}
+
+Toggles the display mode of a given element. This is similar to the `{{#if: expression }}` conditional helper.
+
+
+#### {{ css: styles }}
+
+Sets the css of a given element. [For example](http://jsfiddle.net/JTxdM/20/):
+
+```html
+<strong data-bind="{{ 
+  css: {
+      cool    : temp > 0,
+      warm    : temp > 60,
+      hot     : temp > 90
+  } 
+}}"> It's pretty warm! </strong>
+```
+
+#### {{ style: styles }}
+
+Sets the style of a given element. [For example](http://jsfiddle.net/JTxdM/18/): 
+
+```
+<span data-bind="{{ 
+  style: {
+    color       : color,
+    'font-size' : size
+  } 
+}}"> Hello World </span>
+```
+
+#### {{ disable: bool }}
+
+Toggles the enabled state of an element.
+
+
+#### {{ model: context }}
+
+Input data-binding. [For example](http://jsfiddle.net/JTxdM/4/):
+
+```html
+<input type="text" name="message" data-bind="{{ model: this }}"></input> {{ message }}
+```
+
 
 ## Pollyfills
 
