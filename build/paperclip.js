@@ -3006,7 +3006,8 @@
             Section.prototype.toString = function() {
                 var buffer;
                 buffer = this.getChildNodes().map(function(node) {
-                    return node.innerHTML || String(node);
+                    var _ref;
+                    return node.innerHTML || ((_ref = node.nodeValue) != null ? _ref : String(node));
                 });
                 return buffer.join("");
             };
@@ -3295,6 +3296,21 @@
         module.exports = ValueDecor;
         return module.exports;
     });
+    define("paperclip/lib/paper/bindings/base/index.js", function(require, module, exports, __dirname, __filename) {
+        var BaseBinding;
+        BaseBinding = function() {
+            function BaseBinding(node) {
+                this.node = node;
+            }
+            BaseBinding.prototype.bind = function(context) {
+                this.context = context;
+            };
+            BaseBinding.prototype.unbind = function() {};
+            return BaseBinding;
+        }();
+        module.exports = BaseBinding;
+        return module.exports;
+    });
     define("paperclip/lib/paper/bindings/node/attrs/text/index.js", function(require, module, exports, __dirname, __filename) {
         var AttrTextBinding, ClippedBuffer, type, __bind = function(fn, me) {
             return function() {
@@ -3440,21 +3456,6 @@
         module.exports.register = function(name, dataBindClass) {
             return dataBindingClasses[name] = dataBindClass;
         };
-        return module.exports;
-    });
-    define("paperclip/lib/paper/bindings/base/index.js", function(require, module, exports, __dirname, __filename) {
-        var BaseBinding;
-        BaseBinding = function() {
-            function BaseBinding(node) {
-                this.node = node;
-            }
-            BaseBinding.prototype.bind = function(context) {
-                this.context = context;
-            };
-            BaseBinding.prototype.unbind = function() {};
-            return BaseBinding;
-        }();
-        module.exports = BaseBinding;
         return module.exports;
     });
     define("bindable/lib/object/setters/fn.js", function(require, module, exports, __dirname, __filename) {
@@ -4257,6 +4258,9 @@
                 if (value == null || value === "") {
                     return void 0;
                 }
+                if (type(value) !== "string") {
+                    return value;
+                }
                 if (isNaN(v = Number(value)) || String(value).substr(0, 1) === "0" && String(value).length > 1) {
                     return value;
                 } else {
@@ -4296,7 +4300,7 @@
                 isRadioOrCheckbox = isCheckbox || isRadio;
                 if (!arguments.length) {
                     if (isRadioOrCheckbox) {
-                        return $(this.node).val();
+                        return Boolean($(this.node).is(":checked"));
                     } else {
                         return this.node.value;
                     }
