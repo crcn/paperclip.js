@@ -53,22 +53,28 @@
             content = templateParser.parse(content);
             return String(content);
         };
-        exports.compile = function(content) {
-            var module;
+        scripts = {};
+        exports.compile = function(nameOrContent) {
+            var content, module;
             module = {
                 exports: {}
             };
+            if (scripts[nameOrContent]) {
+                return scripts[nameOrContent];
+            }
+            if (typeof $ !== "undefined") {
+                content = $("script[data-template-name='" + nameOrContent + "']").html();
+            }
+            if (!content) {
+                content = nameOrContent;
+            }
             eval(parse(content));
-            return module.exports;
-        };
-        scripts = {};
-        exports.script = function(name) {
-            var _ref;
-            return (_ref = scripts[name]) != null ? _ref : scripts[name] = exports.compile($("script[data-template-name='" + name + "']").html());
+            return scripts[nameOrContent] = module.exports;
         };
         if (typeof (typeof window !== "undefined" && window !== null ? window.paperclip : void 0) !== "undefined") {
             window.paperclip.compile = exports.compile;
             window.paperclip.script = exports.script;
+            window.paperclip.template.compiler = exports;
         }
         return module.exports;
     });
@@ -1098,6 +1104,86 @@
         module.exports = StringExpression;
         return module.exports;
     });
+    define("paperclip/lib/translate/base/tokenizer.js", function(require, module, exports, __dirname, __filename) {
+        var Tokenizer, strscan;
+        strscan = require("strscanner/lib/index.js");
+        Tokenizer = function() {
+            function Tokenizer() {
+                this._s = strscan("", {
+                    skipWhitespace: true
+                });
+                this._pool = [];
+            }
+            Tokenizer.prototype.peekNext = function() {
+                var c, next;
+                c = this.current;
+                next = this.next();
+                this.putBack();
+                this.current = c;
+                return next;
+            };
+            Tokenizer.prototype.source = function(value) {
+                if (!arguments.length) {
+                    return this._source;
+                }
+                this._s.source(this._source = value);
+                return this;
+            };
+            Tokenizer.prototype.skipWhitespace = function(value) {
+                if (!arguments.length) {
+                    return this._s.skipWhitespace();
+                }
+                return this._s.skipWhitespace(value);
+            };
+            Tokenizer.prototype.putBack = function() {
+                if (this.current) {
+                    return this._pool.push(this.current);
+                }
+            };
+            Tokenizer.prototype.next = function() {
+                if (this._pool.length) {
+                    return this.current = this._pool.pop();
+                }
+                if (this._s.eof()) {
+                    return this.current = null;
+                }
+                return this._next() || this._t(-1, this._s.cchar());
+            };
+            Tokenizer.prototype._tstring = function(code) {
+                var buffer, c, ccode, cscode, skip;
+                ccode = this._s.ccode();
+                if (ccode === 39 || ccode === 34) {
+                    skip = this._s.skipWhitespace();
+                    this._s.skipWhitespace(false);
+                    buffer = [];
+                    while ((c = this._s.nextChar()) && !this._s.eof()) {
+                        cscode = this._s.ccode();
+                        if (cscode === 92) {
+                            buffer.push(this._s.nextChar());
+                            continue;
+                        }
+                        if (cscode === ccode) {
+                            break;
+                        }
+                        buffer.push(c);
+                    }
+                    this._s.skipWhitespace(skip);
+                    return this._t(code, buffer.join(""));
+                }
+                return false;
+            };
+            Tokenizer.prototype._next = function() {};
+            Tokenizer.prototype._t = function(code, value) {
+                var p;
+                p = this._s.pos();
+                this._s.nextChar();
+                return this.current = [ code, value, p ];
+            };
+            return Tokenizer;
+        }();
+        module.exports = Tokenizer;
+        return module.exports;
+    });
     define("paperclip/lib/translate/binding/tokenizer.js", function(require, module, exports, __dirname, __filename) {
         var BaseTokenizer, Codes, Tokenizer, key, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
             for (var key in parent) {
@@ -1661,86 +1747,6 @@
         module.exports = CollectionExpression;
         return module.exports;
     });
-    define("paperclip/lib/translate/base/tokenizer.js", function(require, module, exports, __dirname, __filename) {
-        var Tokenizer, strscan;
-        strscan = require("strscanner/lib/index.js");
-        Tokenizer = function() {
-            function Tokenizer() {
-                this._s = strscan("", {
-                    skipWhitespace: true
-                });
-                this._pool = [];
-            }
-            Tokenizer.prototype.peekNext = function() {
-                var c, next;
-                c = this.current;
-                next = this.next();
-                this.putBack();
-                this.current = c;
-                return next;
-            };
-            Tokenizer.prototype.source = function(value) {
-                if (!arguments.length) {
-                    return this._source;
-                }
-                this._s.source(this._source = value);
-                return this;
-            };
-            Tokenizer.prototype.skipWhitespace = function(value) {
-                if (!arguments.length) {
-                    return this._s.skipWhitespace();
-                }
-                return this._s.skipWhitespace(value);
-            };
-            Tokenizer.prototype.putBack = function() {
-                if (this.current) {
-                    return this._pool.push(this.current);
-                }
-            };
-            Tokenizer.prototype.next = function() {
-                if (this._pool.length) {
-                    return this.current = this._pool.pop();
-                }
-                if (this._s.eof()) {
-                    return this.current = null;
-                }
-                return this._next() || this._t(-1, this._s.cchar());
-            };
-            Tokenizer.prototype._tstring = function(code) {
-                var buffer, c, ccode, cscode, skip;
-                ccode = this._s.ccode();
-                if (ccode === 39 || ccode === 34) {
-                    skip = this._s.skipWhitespace();
-                    this._s.skipWhitespace(false);
-                    buffer = [];
-                    while ((c = this._s.nextChar()) && !this._s.eof()) {
-                        cscode = this._s.ccode();
-                        if (cscode === 92) {
-                            buffer.push(this._s.nextChar());
-                            continue;
-                        }
-                        if (cscode === ccode) {
-                            break;
-                        }
-                        buffer.push(c);
-                    }
-                    this._s.skipWhitespace(skip);
-                    return this._t(code, buffer.join(""));
-                }
-                return false;
-            };
-            Tokenizer.prototype._next = function() {};
-            Tokenizer.prototype._t = function(code, value) {
-                var p;
-                p = this._s.pos();
-                this._s.nextChar();
-                return this.current = [ code, value, p ];
-            };
-            return Tokenizer;
-        }();
-        module.exports = Tokenizer;
-        return module.exports;
-    });
     define("paperclip/lib/translate/template/expressions/base.js", function(require, module, exports, __dirname, __filename) {
         var Base, _ref, __hasProp = {}.hasOwnProperty, __extends = function(child, parent) {
             for (var key in parent) {
@@ -1763,6 +1769,118 @@
             return Base;
         }(require("paperclip/lib/translate/base/expression.js").Expression);
         module.exports = Base;
+        return module.exports;
+    });
+    define("strscanner/lib/index.js", function(require, module, exports, __dirname, __filename) {
+        module.exports = function(source, options) {
+            if (!options) {
+                options = {
+                    skipWhitespace: true
+                };
+            }
+            var _cchar = "", _ccode = 0, _pos = 0, _len = 0, _src = source;
+            var self = {
+                source: function(value) {
+                    _src = value;
+                    _len = value.length;
+                    self.pos(0);
+                },
+                skipWhitespace: function(value) {
+                    if (!arguments.length) {
+                        return options.skipWhitespace;
+                    }
+                    options.skipWhitespace = value;
+                },
+                eof: function() {
+                    return _pos >= _len;
+                },
+                pos: function(value) {
+                    if (!arguments.length) return _pos;
+                    _pos = value;
+                    _cchar = _src.charAt(value);
+                    _ccode = _cchar.charCodeAt(0);
+                    self.skipWs();
+                },
+                skip: function(count) {
+                    return self.pos(Math.min(_pos + count, _len));
+                },
+                rewind: function(count) {
+                    _pos = Math.max(_pos - count || 1, 0);
+                    return _pos;
+                },
+                peek: function(count) {
+                    return _src.substr(_pos, count || 1);
+                },
+                nextChar: function() {
+                    self.pos(_pos + 1);
+                    self.skipWs();
+                    return _cchar;
+                },
+                skipWs: function() {
+                    if (options.skipWhitespace) {
+                        if (self.isWs()) {
+                            self.nextChar();
+                        }
+                    }
+                },
+                cchar: function() {
+                    return _cchar;
+                },
+                ccode: function() {
+                    return _ccode;
+                },
+                isAZ: function() {
+                    return _ccode > 64 && _ccode < 91 || _ccode > 96 && _ccode < 123;
+                },
+                is09: function() {
+                    return _ccode > 47 && _ccode < 58;
+                },
+                isWs: function() {
+                    return _ccode === 9 || _ccode === 10 || _ccode === 13 || _ccode === 32;
+                },
+                isAlpha: function() {
+                    return self.isAZ() || self.is09();
+                },
+                matches: function(search) {
+                    return !!_src.substr(_pos).match(search);
+                },
+                next: function(search) {
+                    var buffer = _src.substr(_pos), match = buffer.match(search);
+                    _pos += match.index + Math.max(0, match[0].length - 1);
+                    return match[0];
+                },
+                nextWord: function() {
+                    if (self.isAZ()) return self.next(/[a-zA-Z]+/);
+                },
+                nextNumber: function() {
+                    if (self.is09()) return self.next(/[0-9]+/);
+                },
+                nextAlpha: function() {
+                    if (self.isAlpha()) return self.next(/[a-zA-Z0-9]+/);
+                },
+                nextNonAlpha: function() {
+                    if (!self.isAlpha()) return self.next(/[^a-zA-Z0-9]+/);
+                },
+                nextWs: function() {
+                    if (self.isWs()) return self.next(/[\s\r\n\t]+/);
+                },
+                nextUntil: function(match) {
+                    var buffer = "";
+                    while (!self.eof() && !_cchar.match(match)) {
+                        buffer += _cchar;
+                        self.nextChar();
+                    }
+                    return buffer;
+                },
+                to: function(count) {
+                    var buffer = _src.substr(_pos, count);
+                    _pos += count;
+                    return buffer;
+                }
+            };
+            self.source(source);
+            return self;
+        };
         return module.exports;
     });
     define("paperclip/lib/translate/base/expression.js", function(require, module, exports, __dirname, __filename) {
@@ -2632,118 +2750,6 @@
                 }
             });
         }).call(this);
-        return module.exports;
-    });
-    define("strscanner/lib/index.js", function(require, module, exports, __dirname, __filename) {
-        module.exports = function(source, options) {
-            if (!options) {
-                options = {
-                    skipWhitespace: true
-                };
-            }
-            var _cchar = "", _ccode = 0, _pos = 0, _len = 0, _src = source;
-            var self = {
-                source: function(value) {
-                    _src = value;
-                    _len = value.length;
-                    self.pos(0);
-                },
-                skipWhitespace: function(value) {
-                    if (!arguments.length) {
-                        return options.skipWhitespace;
-                    }
-                    options.skipWhitespace = value;
-                },
-                eof: function() {
-                    return _pos >= _len;
-                },
-                pos: function(value) {
-                    if (!arguments.length) return _pos;
-                    _pos = value;
-                    _cchar = _src.charAt(value);
-                    _ccode = _cchar.charCodeAt(0);
-                    self.skipWs();
-                },
-                skip: function(count) {
-                    return self.pos(Math.min(_pos + count, _len));
-                },
-                rewind: function(count) {
-                    _pos = Math.max(_pos - count || 1, 0);
-                    return _pos;
-                },
-                peek: function(count) {
-                    return _src.substr(_pos, count || 1);
-                },
-                nextChar: function() {
-                    self.pos(_pos + 1);
-                    self.skipWs();
-                    return _cchar;
-                },
-                skipWs: function() {
-                    if (options.skipWhitespace) {
-                        if (self.isWs()) {
-                            self.nextChar();
-                        }
-                    }
-                },
-                cchar: function() {
-                    return _cchar;
-                },
-                ccode: function() {
-                    return _ccode;
-                },
-                isAZ: function() {
-                    return _ccode > 64 && _ccode < 91 || _ccode > 96 && _ccode < 123;
-                },
-                is09: function() {
-                    return _ccode > 47 && _ccode < 58;
-                },
-                isWs: function() {
-                    return _ccode === 9 || _ccode === 10 || _ccode === 13 || _ccode === 32;
-                },
-                isAlpha: function() {
-                    return self.isAZ() || self.is09();
-                },
-                matches: function(search) {
-                    return !!_src.substr(_pos).match(search);
-                },
-                next: function(search) {
-                    var buffer = _src.substr(_pos), match = buffer.match(search);
-                    _pos += match.index + Math.max(0, match[0].length - 1);
-                    return match[0];
-                },
-                nextWord: function() {
-                    if (self.isAZ()) return self.next(/[a-zA-Z]+/);
-                },
-                nextNumber: function() {
-                    if (self.is09()) return self.next(/[0-9]+/);
-                },
-                nextAlpha: function() {
-                    if (self.isAlpha()) return self.next(/[a-zA-Z0-9]+/);
-                },
-                nextNonAlpha: function() {
-                    if (!self.isAlpha()) return self.next(/[^a-zA-Z0-9]+/);
-                },
-                nextWs: function() {
-                    if (self.isWs()) return self.next(/[\s\r\n\t]+/);
-                },
-                nextUntil: function(match) {
-                    var buffer = "";
-                    while (!self.eof() && !_cchar.match(match)) {
-                        buffer += _cchar;
-                        self.nextChar();
-                    }
-                    return buffer;
-                },
-                to: function(count) {
-                    var buffer = _src.substr(_pos, count);
-                    _pos += count;
-                    return buffer;
-                }
-            };
-            self.source(source);
-            return self;
-        };
         return module.exports;
     });
     var entries = [ "paperclip/lib/translate/index.js" ];

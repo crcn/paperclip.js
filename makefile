@@ -12,7 +12,7 @@ all-watch:
 
 browser:
 	sardines ./lib/index.js -o ./build/paperclip.js -p browser
-	sardines ./lib/translate/index.js -o ./build/paperclip-compiler3.js -p browser
+	sardines ./lib/translate/index.js -o ./build/paperclip-compiler.js -p browser
 
 min:
 	closure-compiler --js ./build/paperclip.js --js_output_file ./build/paperclip.min.js

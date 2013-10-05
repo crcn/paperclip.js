@@ -85,6 +85,12 @@ class Loader
   ###
   ###
 
+  toFragment: () ->
+    @section.toFragment()
+
+  ###
+  ###
+
   toString: () -> 
 
     if @nodeFactory.name is "string"

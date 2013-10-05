@@ -44,7 +44,7 @@
         navigator.platform = "sardines";
     }
     define("paperclip/lib/translate/index.js", function(require, module, exports, __dirname, __filename) {
-        var parse, templateParser;
+        var parse, scripts, templateParser;
         templateParser = require("paperclip/lib/translate/template/parser.js");
         exports.parse = parse = function(content, options) {
             if (options == null) {
@@ -53,16 +53,28 @@
             content = templateParser.parse(content);
             return String(content);
         };
-        exports.compile = function(content) {
-            var module;
+        scripts = {};
+        exports.compile = function(nameOrContent) {
+            var content, module;
             module = {
                 exports: {}
             };
+            if (scripts[nameOrContent]) {
+                return scripts[nameOrContent];
+            }
+            if (typeof $ !== "undefined") {
+                content = $("script[data-template-name='" + nameOrContent + "']").html();
+            }
+            if (!content) {
+                content = nameOrContent;
+            }
             eval(parse(content));
-            return module.exports;
+            return scripts[nameOrContent] = module.exports;
         };
         if (typeof (typeof window !== "undefined" && window !== null ? window.paperclip : void 0) !== "undefined") {
             window.paperclip.compile = exports.compile;
+            window.paperclip.script = exports.script;
+            window.paperclip.template.compiler = exports;
         }
         return module.exports;
     });
