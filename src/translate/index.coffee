@@ -25,3 +25,4 @@ exports.script = (name) ->
 if typeof window?.paperclip isnt "undefined"
   window.paperclip.compile = exports.compile
   window.paperclip.script  = exports.script
+  window.paperclip.template.compiler = exports
