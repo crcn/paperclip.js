@@ -2,9 +2,10 @@
 
 Paperclip is a data-bindable templating system inspired by [Mustache](https://github.com/janl/mustache.js/), [Angular](http://angularjs.org/), [Derby](http://derbyjs.com/), and [Knockout](http://knockoutjs.com/). It's supported on all major browsers: IE8+, Firefox, Chrome, Safari, Opera, as well as Node.js.
 
+Paperclip works by listening to [bindable](https://github.com/classdojo/bindable.js) objects, and updating the template if anything changes. Unlike angular.js, paperclip takes a more explicit approach to updating templates. If you want to change a value in a template manually, you can easily do so by calling `bindable.set(property, value)`. [Here's an example](http://jsfiddle.net/JTxdM/37/).
 
-Paperclip works by translating HTML directly to JavaScript. For example, the following `hello.pc` file:
 
+Paperclip translates HTML directly to JavaScript. For example, the following `hello.pc` file:
 
 ```html
 hello {{message}}!
@@ -25,6 +26,7 @@ module.exports = function(fragment, block, element, text, parse, modifiers) {
 
 ### Features
 
+- template update automatically if the data changes
 - [block helpers](#block-helpers)
 - [data-bind attributes](#data-bind-attributes) (similar to knockout.js)
 - [declarative data-binding](#blocks), similar to angular.js
@@ -45,6 +47,7 @@ module.exports = function(fragment, block, element, text, parse, modifiers) {
 - [html block helper](http://jsfiddle.net/JTxdM/26/)
 - [onEnter event](http://jsfiddle.net/JTxdM/35/)
 - [data-binding styles](http://jsfiddle.net/JTxdM/22/)
+- [manually updating templates](http://jsfiddle.net/JTxdM/37/)
 
 ### Third-party components:
 
