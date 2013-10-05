@@ -23,6 +23,15 @@ module.exports = function(fragment, block, element, text, parse, modifiers) {
 };
 ```
 
+### Features
+
+- block helpers
+- data-bind attributes (similar to knockout.js)
+- declarative data-binding, similar to angular.js
+- node.js support
+- block modifiers, similar to angular filters
+- pollyfills, similar to angular directives
+
 ### Examples
 
 - [hello world](http://jsfiddle.net/JTxdM/30/)
