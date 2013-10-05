@@ -12,7 +12,15 @@ exports.compile = (content) ->
 scripts = {}
 
 exports.script = (name) ->
-  scripts[name] ? (scripts[name] = exports.compile($("script[data-template-name='#{name}']").html()))
+
+  if scripts[name] 
+    return scripts[name]
+
+  content = $("script[data-template-name='#{name}']").html()
+
+  return unless content
+
+  scripts[name] = exports.compile(content)
 
 if typeof window?.paperclip isnt "undefined"
   window.paperclip.compile = exports.compile
