@@ -153,11 +153,9 @@ Paperclip also allows you to register your own block helpers. This is similar to
 
 TODO
 
-## data-bind attributes
+### data-bind attributes
 
 data-bind attributes are borrowed from [knockout.js](http://knockoutjs.com/). This is useful if you want to attach behavior to any DOM element. 
-
-### data-bind helpers
 
 #### {{ event: expression }}
 
@@ -228,7 +226,7 @@ Input data-binding. [For example](http://jsfiddle.net/JTxdM/23/):
 <input type="text" name="message" data-bind="{{ model: this }}"></input> {{ message }}
 ```
 
-## Pollyfills
+### Pollyfills
 
 Pollyfills are similar to angular directives, but they should only be used to provide support for features not implemented in older browsers. A good example of this is [paperclip-placeholder-pollyfill](https://github.com/classdojo/paperclip-placeholder-pollyfill). If you need to create a custom component, create as a block helper.
 
