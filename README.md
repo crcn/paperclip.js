@@ -25,18 +25,17 @@ module.exports = function(fragment, block, element, text, parse, modifiers) {
 
 ### Examples
 
-- [hello world](http://jsfiddle.net/JTxdM/3/)
-- [modifiers](http://jsfiddle.net/JTxdM/12/)
-- [data-binding to input fields](http://jsfiddle.net/JTxdM/4/)
-- [conditional blocks](http://jsfiddle.net/JTxdM/6/)
-- [data-binding attributes](http://jsfiddle.net/JTxdM/10/)
-- [inline javascript](http://jsfiddle.net/JTxdM/11/)
-- [animal age calculator](http://jsfiddle.net/JTxdM/13/)
-- [titlecase / lowercase modifiers](http://jsfiddle.net/JTxdM/14/)
-- [if / elseif / else block](http://jsfiddle.net/JTxdM/16/)
-- [html block helper](http://jsfiddle.net/JTxdM/16/)
-- [onEnter event](http://jsfiddle.net/JTxdM/15/)
-- [data-binding styles](http://jsfiddle.net/JTxdM/15/)
+- [hello world](http://jsfiddle.net/JTxdM/30/)
+- [modifiers](http://jsfiddle.net/JTxdM/31/)
+- [data-binding to input fields](http://jsfiddle.net/JTxdM/32/)
+- [data-binding attributes](http://jsfiddle.net/JTxdM/29/)
+- [inline javascript](http://jsfiddle.net/JTxdM/28/)
+- [animal age calculator](http://jsfiddle.net/JTxdM/27/)
+- [titlecase / lowercase modifiers](http://jsfiddle.net/JTxdM/34/)
+- [if / elseif / else block](http://jsfiddle.net/JTxdM/25/)
+- [html block helper](http://jsfiddle.net/JTxdM/26/)
+- [onEnter event](http://jsfiddle.net/JTxdM/35/)
+- [data-binding styles](http://jsfiddle.net/JTxdM/22/)
 
 ### Third-party components:
 
@@ -61,20 +60,20 @@ Paperclip takes on a mustache / handlebars approach with variables, blocks, and 
 
 ### Blocks
 
-Paperclip support variable blocks, just like Angular.js. [For example](http://jsfiddle.net/JTxdM/15/):
+Paperclip support variable blocks, just like Angular.js. [For example](http://jsfiddle.net/JTxdM/24/):
 
 ```html
 hello {{ name.first }} {{ name.last }}!
 ```
 
-You can also specify blocks within attributes. [For example](http://jsfiddle.net/JTxdM/10/):
+You can also specify blocks within attributes. [For example](http://jsfiddle.net/JTxdM/29/):
 
 ```html
 my favorite color is <span style="color: {{color}}">{{color}}</span>
 ```
 
 
-If you want to add some sugar, go ahead and [drop-in some javascript](http://jsfiddle.net/JTxdM/11/):
+If you want to add some sugar, go ahead and [drop-in some javascript](http://jsfiddle.net/JTxdM/28/):
 
 ```html
 hello {{ message || "world!" }}!
@@ -110,7 +109,7 @@ Which might produce:
 HELLO WORLD!!!
 ```
 
-Modifiers also accept parameters. [For example](http://jsfiddle.net/JTxdM/13/):
+Modifiers also accept parameters. [For example](http://jsfiddle.net/JTxdM/27/):
 
 ```javascript
 paperclip.modifier("divide", function(value, num) {
@@ -129,7 +128,7 @@ A human that is {{age}} years old is like a {{ age | divide(5.6) }} year old dog
 
 #### {{ html: content }}
 
-Similar to escaping content in mustache (`{{{content}}}`). [For example](http://jsfiddle.net/JTxdM/17/):
+Similar to escaping content in mustache (`{{{content}}}`). [For example](http://jsfiddle.net/JTxdM/26/):
 
 ```html
 {{ html: content }}
@@ -139,7 +138,7 @@ Similar to escaping content in mustache (`{{{content}}}`). [For example](http://
 
 #### {{#if: condition }}
 
-Conditional block helper. [For example](http://jsfiddle.net/JTxdM/16/):
+Conditional block helper. [For example](http://jsfiddle.net/JTxdM/25/):
 
 ```
 {{#if: age > 18 }}
@@ -177,7 +176,7 @@ Executed when an event is fired on the DOM element. Here are all the available e
 - `onEnter` - called on enter key up
 - `onDepete` - called on delete key up
 
-[Basic example](http://jsfiddle.net/JTxdM/15/):
+[Basic example](http://jsfiddle.net/JTxdM/35/):
 
 ```html
 <input type="text" data-bind="{{ model: name, onEnter: sayHello() }}"></input>
@@ -191,7 +190,7 @@ Toggles the display mode of a given element. This is similar to the `{{#if: expr
 
 #### {{ css: styles }}
 
-Sets the css of a given element. [For example](http://jsfiddle.net/JTxdM/20/):
+Sets the css of a given element. [For example](http://jsfiddle.net/JTxdM/21/):
 
 ```html
 <strong data-bind="{{ 
@@ -205,7 +204,7 @@ Sets the css of a given element. [For example](http://jsfiddle.net/JTxdM/20/):
 
 #### {{ style: styles }}
 
-Sets the style of a given element. [For example](http://jsfiddle.net/JTxdM/18/): 
+Sets the style of a given element. [For example](http://jsfiddle.net/JTxdM/22/): 
 
 ```
 <span data-bind="{{ 
@@ -223,7 +222,7 @@ Toggles the enabled state of an element.
 
 #### {{ model: context }}
 
-Input data-binding. [For example](http://jsfiddle.net/JTxdM/4/):
+Input data-binding. [For example](http://jsfiddle.net/JTxdM/23/):
 
 ```html
 <input type="text" name="message" data-bind="{{ model: this }}"></input> {{ message }}
