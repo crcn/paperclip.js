@@ -124,7 +124,7 @@ A human that is {{age}} years old is like a {{ age | divide(5.6) }} year old dog
 ```
 
 
-### Default Block Helpers
+### Block Helpers
 
 #### {{ html: content }}
 
@@ -147,7 +147,7 @@ Conditional block helper. [For example](http://jsfiddle.net/JTxdM/25/):
 ```
 
 
-### Custom Block Helpers
+#### Custom Block Helpers
 
 Paperclip also allows you to register your own block helpers. This is similar to custom angular.js directives. [For example]():
 
@@ -225,6 +225,10 @@ Input data-binding. [For example](http://jsfiddle.net/JTxdM/23/):
 ```html
 <input type="text" name="message" data-bind="{{ model: this }}"></input> {{ message }}
 ```
+
+#### Custom data-bind helpers
+
+TODO
 
 ### Pollyfills
 
