@@ -232,19 +232,19 @@ Pollyfills are similar to angular directives, but they should only be used to pr
 
 ## API
 
-### template paperclip.template(sourceOrScriptName)
+#### template paperclip.template(sourceOrScriptName)
 
 translates the source, or script into a paperclip template. [For example](http://jsfiddle.net/JTxdM/36/).
 
-### elements template.bind(context)
+#### elements template.bind(context)
 
 Creates the DOM elements, and binds the elements to the given context. 
 
-### elements.toFragment()
+#### elements.toFragment()
 
 Casts the elements as a document fragment.
 
-### elements.unbind()
+#### elements.unbind()
 
 Unbinds the elements from the given context.
 
