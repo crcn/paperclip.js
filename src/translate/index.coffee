@@ -4,23 +4,25 @@ exports.parse = parse = (content, options = {}) ->
   content = templateParser.parse content
   String content
 
-exports.compile = (content) ->
-  module = { exports: { } }
-  eval parse content
-  module.exports
 
 scripts = {}
 
-exports.script = (name) ->
+exports.compile = (nameOrContent) ->
+  module = { exports: { } }
 
-  if scripts[name] 
-    return scripts[name]
+  if scripts[nameOrContent]
+    return scripts[nameOrContent]
 
-  content = $("script[data-template-name='#{name}']").html()
+  if typeof $ isnt "undefined"
+    content = $("script[data-template-name='#{nameOrContent}']").html()
 
-  return unless content
+  unless content
+    content = nameOrContent
 
-  scripts[name] = exports.compile(content)
+
+  eval parse content
+  scripts[nameOrContent] = module.exports
+
 
 if typeof window?.paperclip isnt "undefined"
   window.paperclip.compile = exports.compile
