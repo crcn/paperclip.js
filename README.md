@@ -228,8 +228,29 @@ Input data-binding. [For example](http://jsfiddle.net/JTxdM/23/):
 <input type="text" name="message" data-bind="{{ model: this }}"></input> {{ message }}
 ```
 
-
 ## Pollyfills
 
 Pollyfills are similar to angular directives, but they should only be used to provide support for features not implemented in older browsers. A good example of this is [paperclip-placeholder-pollyfill](https://github.com/classdojo/paperclip-placeholder-pollyfill). If you need to create a custom component, create as a block helper.
+
+## API
+
+### template paperclip.template(sourceOrScriptName)
+
+translates the source, or script into a paperclip template. [For example](http://jsfiddle.net/JTxdM/36/).
+
+### elements template.bind(context)
+
+Creates the DOM elements, and binds the elements to the given context. 
+
+### elements.toFragment()
+
+Casts the elements as a document fragment.
+
+### elements.unbind()
+
+Unbinds the elements from the given context.
+
+## Node.js Usage
+
+
 
