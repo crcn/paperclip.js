@@ -36,6 +36,7 @@ module.exports = function(fragment, block, element, text, parse, modifiers) {
 
 ### Examples
 
+- [hello input](http://jsfiddle.net/JTxdM/38/)
 - [hello world](http://jsfiddle.net/JTxdM/30/)
 - [modifiers](http://jsfiddle.net/JTxdM/31/)
 - [data-binding to input fields](http://jsfiddle.net/JTxdM/32/)
