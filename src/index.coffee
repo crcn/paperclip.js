@@ -10,7 +10,8 @@ require("./node")
 module.exports = browser
 
 # node
-module.exports.compile  = translate.compile
+module.exports.compile    = translate.compile
+module.exports.translator = translate
 
 # express
 module.exports.adapters = adapters
