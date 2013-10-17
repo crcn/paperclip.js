@@ -88,7 +88,6 @@ class PropertyChain
       pv = cv
       cv = if cv.get then cv.get(command.ref) else dref.get cv, command.ref
 
-      
       # reference
       if command.args
         if cv and typeof cv is "function"
@@ -326,7 +325,6 @@ class ClipScripts
     for key of @_scripts
       @_scripts[key].update()
     @
-
 
   ###
   ###

@@ -1,3 +1,7 @@
+###
+ Deprecated in favor of enable.coffee
+###
+
 class DisableAttrBinding extends require("./base")
 
   ###
