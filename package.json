@@ -1,11 +1,11 @@
 {
   "name": "paperclip",
-  "version": "0.2.21",
+  "version": "0.2.22",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "browserify": "./lib/browser.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --recursive --timeout 100"
   },
   "repository": {
     "type": "git",
@@ -21,20 +21,8 @@
     "mocha": "1.9.x",
     "karma": "~0.9.5",
     "structr": "~0.2.3",
-    "karma-script-launcher": "0.0.2",
-    "karma-chrome-launcher": "0.0.2",
-    "karma-firefox-launcher": "0.0.3",
-    "karma-html2js-preprocessor": "0.0.2",
-    "karma-jasmine": "0.0.3",
-    "karma-requirejs": "0.0.2",
-    "karma-coffee-preprocessor": "0.0.3",
-    "karma-phantomjs-launcher": "0.0.2",
-    "karma-mocha": "0.0.4",
     "browserify": "~2.25.1",
     "jquery": "~1.8.3",
-    "karma-opera-launcher": "0.0.2",
-    "karma-safari-launcher": "0.0.3",
-    "karma-eyebrowse-launcher": "0.0.0",
     "express": "~3.3.4"
   },
   "bin": {
