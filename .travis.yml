@@ -5,4 +5,4 @@ node_js:
 
 notifications:
   email: 
-	- craig.j.condon@gmail.com
+    - craig.j.condon@gmail.com
