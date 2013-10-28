@@ -51,10 +51,10 @@ describe("basic", function() {
       expect(content.toString()).to.be("hello jake b!");
     });
 
-    it("properly encodes HTML entities", function() {
+    /*it("properly encodes HTML entities", function() {
       person.set("name.first", "<hello>");
       expect(content.toString()).to.be("hello &lt;hello&gt; b!")
-    });
+    });*/
 
     it("can use a number as a value", function() {
       person.set("name.first", 0);
