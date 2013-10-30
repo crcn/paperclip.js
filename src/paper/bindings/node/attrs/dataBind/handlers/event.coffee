@@ -26,7 +26,7 @@ class EventDecor extends require("./base")
 
 
 
-    event = (@event or @name).toLowerCase()
+    event = @_event = (@event or @name).toLowerCase()
     name  = @name.toLowerCase()
 
     if name.substr(0, 2) is "on"
@@ -51,6 +51,13 @@ class EventDecor extends require("./base")
         @clip.set ev, @[prop]
 
     $(@node).bind event, @_onEvent
+
+  ###
+  ###
+
+  unbind: () ->
+    super()
+    $(@node).unbind @_event, @_onEvent
 
   ###
   ###
