@@ -37,7 +37,7 @@ class ValueAttrBinding extends require("./base")
   ###
   ###
 
-  dispose: () ->
+  unbind: () ->
     @$element?.unbind ChangeDecor.events, @_onElementChange
 
   ###

@@ -12,7 +12,7 @@ class ModelAttrBinding extends require("./base")
     super arguments...
     (@$element = $(@node)).bind ChangeDecor.events, @_onElementChange
     @_onChange()
-    @clip.context.bind "name", @_onChange
+    @_nameBinding = @clip.context.bind "name", @_onChange
   
 
   ###
@@ -51,9 +51,11 @@ class ModelAttrBinding extends require("./base")
   ###
   ###
 
-  dispose: () ->
+  unbind: () ->
+    super()
     @_modelBinding?.dispose()
-    @$element?.unbind ChangeDecor.events, @_onElementChange
+    @_nameBinding.dispose()
+    @$element.unbind ChangeDecor.events, @_onElementChange
 
   ###
   ###
