@@ -196,6 +196,7 @@ class ClipScript extends events.EventEmitter
         @update()
       ).now()
       dispose : () ->
+        bindableBinding?.dispose()
         binding.dispose()
 
     lockUpdate = false
