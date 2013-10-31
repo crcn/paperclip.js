@@ -178,12 +178,17 @@ class ClipScript extends events.EventEmitter
 
     lockUpdate = true
 
+    bindableBinding = undefined
+
     @_watching[path] = 
       target  : target
       binding : binding = target.bind(path).to((value, oldValue) =>
 
+        if bindableBinding
+          bindableBinding.dispoe()
+
         if value?.__isBindable
-          @_watchBindable(value, oldValue) 
+          bindableBinding = @_watchBindable(value, oldValue) 
         else if type(value) is "function"
           @_spyFunction(path, value, target)
 
@@ -207,7 +212,7 @@ class ClipScript extends events.EventEmitter
       return if not @_updated
       @_debounceUpdate()
 
-    disposeBinding: () =>
+    dispose: () =>
       value.off "change", onChange
 
   ### 
