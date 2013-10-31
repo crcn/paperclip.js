@@ -26,7 +26,7 @@ class EventDecor extends require("./base")
 
 
 
-    event = @_event = (@event or @name).toLowerCase()
+    event = (@event or @name).toLowerCase()
     name  = @name.toLowerCase()
 
     if name.substr(0, 2) is "on"
@@ -50,7 +50,7 @@ class EventDecor extends require("./base")
       if not @clip.get(ev)? and not @clip.get(prop)? and @[prop]?
         @clip.set ev, @[prop]
 
-    $(@node).bind event, @_onEvent
+    $(@node).bind @_event = event, @_onEvent
 
   ###
   ###
