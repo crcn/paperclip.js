@@ -42,6 +42,13 @@ class BlockDecor extends require("./base")
     else if oldChild?
       oldChild.section.hide()
 
+  ###
+  ###
+
+  unbind: () ->
+    super()
+    @child?.dispose()
+
 
 
 
