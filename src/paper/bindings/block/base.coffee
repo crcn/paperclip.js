@@ -23,6 +23,11 @@ class BlockBinding extends require("../base/script")
     @clip.reset @context
     super @context
 
+
+  unbind: () ->
+    super()
+    @clip.reset().unwatch().watch()
+
   ###
   ###
 

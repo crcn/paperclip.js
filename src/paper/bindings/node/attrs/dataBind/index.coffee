@@ -69,6 +69,7 @@ class AttrDataBinding extends require("../../base")
 
   unbind: () ->
     @_bindings.unbind()
+    @clip.dispose()
 
 
 

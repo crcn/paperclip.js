@@ -26,6 +26,7 @@ class AttrTextBinding extends require("../../base")
 
   unbind: () ->
     @_binding?.dispose()
+    @clippedBuffer.dispose()
     @_binding
 
   ###
