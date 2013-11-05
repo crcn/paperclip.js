@@ -50,7 +50,7 @@ describe("basic", function() {
       content.bind();
       expect(content.toString()).to.be("hello jake b!");
     });
-
+    
     it("properly encodes HTML entities", function() {
       person.set("name.first", "<hello>");
       expect(content.toString()).to.be("hello &lt;hello&gt; b!")

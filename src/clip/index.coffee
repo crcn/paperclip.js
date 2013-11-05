@@ -185,7 +185,7 @@ class ClipScript extends events.EventEmitter
       binding : binding = target.bind(path).to((value, oldValue) =>
 
         if bindableBinding
-          bindableBinding.dispoe()
+          bindableBinding.dispose()
 
         if value?.__isBindable
           bindableBinding = @_watchBindable(value, oldValue) 
