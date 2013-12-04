@@ -13,8 +13,8 @@ class BlockWriter extends require("./base")
   write: (script, contentFactory, childBlockFactory) =>
 
 
-    tpl      = if contentFactory then @template.creator(contentFactory) else undefined
-    childTpl = if childBlockFactory then @template.creator(childBlockFactory) else undefined
+    tpl      = if contentFactory then @template.creator(contentFactory, @application) else undefined
+    childTpl = if childBlockFactory then @template.creator(childBlockFactory, @application) else undefined
 
     # creates a document fragment which can be modified in a document
     section = loaf @nodeFactory
