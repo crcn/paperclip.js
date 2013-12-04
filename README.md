@@ -159,6 +159,17 @@ Conditional block helper. [For example](http://jsfiddle.net/JTxdM/25/):
 {{/}}
 ```
 
+#### {{#for: array or object }}
+
+Iterative block helper.
+
+```
+{{#for: users }}
+  <li>Id: {{ key }}, Name: {{ value }}</li>
+{{/}}
+```
+
+
 
 #### Custom Block Helpers
 
