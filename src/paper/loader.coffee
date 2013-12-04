@@ -72,6 +72,20 @@ class Loader
   ###
   ###
 
+  render: () ->
+    @section.show()
+    @section
+
+  ###
+  ###
+
+  remove: () ->
+    @section.hide()
+    @
+
+  ###
+  ###
+
   dispose: () ->
     @unbind()
     @section.dispose()
