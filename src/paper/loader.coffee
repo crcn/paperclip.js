@@ -57,7 +57,7 @@ class Loader
     @_writers.parse.write,
     modifiers
 
-    @section = loaf()
+    @section = loaf @nodeFactory
     @section.append node
 
     @
