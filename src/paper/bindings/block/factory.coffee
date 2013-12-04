@@ -1,11 +1,12 @@
 BindingCollection = require "../collection"
 
-bindingClasses = 
+bindingClasses =
   html   : require("./html")
   if     : require("./conditional")
   else   : require("./conditional")
   elseif : require("./conditional")
   value  : require("./value")
+  for    : require("./for")
 
 
 class Factory
