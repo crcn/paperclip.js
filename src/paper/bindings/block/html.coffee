@@ -6,7 +6,9 @@ class HtmlDecor extends require("./base")
   ###
   ###
 
-  _onChange: (value, oldValue) -> 
+  _onChange: (@value, @oldValue) -> 
+
+    oldValue?.remove?()
 
     unless value
       return @section.removeAll() 
@@ -33,6 +35,13 @@ class HtmlDecor extends require("./base")
         node = @nodeFactory.createFragment dom.childNodes
 
     @section.replaceChildNodes node
+
+  ###
+  ###
+
+  unbind: () ->
+    super()
+    @_onChange undefined, @value
 
 
 module.exports = HtmlDecor
