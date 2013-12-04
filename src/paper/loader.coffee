@@ -22,7 +22,9 @@ class Loader
 
   constructor: (@template) ->
 
-    @nodeFactory = template.nodeFactory
+    # application is a replacement for DOM window
+    @application = @template.application
+    @nodeFactory = @application.nodeFactory
     @paper       = template.paper
 
     @bindings = new BindingCollection()
@@ -98,7 +100,6 @@ class Loader
 
     frag = @section.toFragment()
 
-    
     div = document.createElement "div"
     div.appendChild frag.cloneNode true
     return div.innerHTML

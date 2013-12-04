@@ -13,7 +13,7 @@ class ValueAttrBinding extends require("./base")
 
   bind: () ->
     super()
-    (@$element = $(@node)).bind ChangeDecor.events, @_onElementChange
+    (@$element = @$(@node)).bind ChangeDecor.events, @_onElementChange
     @_onChange @clip.get("value")
   
 

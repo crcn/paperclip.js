@@ -30,7 +30,7 @@ class BlockWriter extends require("./base")
       section: section
       clip: clip,
       template: tpl,
-      nodeFactory: @nodeFactory,
+      application: @application,
       childBlockTemplate: childTpl
     })...
 

@@ -4,7 +4,8 @@ class BaseWriter
   ###
 
   constructor: (@loader) ->
-    @nodeFactory = loader.nodeFactory
+    @nodeFactory = loader.application.nodeFactory
+    @application = @loader.application
     @bindings    = loader.bindings
     @template    = loader.template
 

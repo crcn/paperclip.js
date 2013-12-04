@@ -6,7 +6,7 @@ class Template
   ###
   ###
 
-  constructor: (@paper, @nodeFactory) ->
+  constructor: (@paper, @application) ->
 
   ###
   ###
@@ -16,7 +16,15 @@ class Template
 
 
 
-Template.prototype.creator = module.exports = tpl = (paperOrSrc, nodeFactory = nofactor.default) ->
+Template.prototype.creator = module.exports = tpl = (paperOrSrc, application) ->
+
+  # no application? create a fake application
+  # context
+  unless application
+    application = {
+      nodeFactory : nofactor.default # creates DOM elements
+      $           : $?               # universal selector for DOM elements.
+    }
 
   if typeof paperOrSrc is "string"
 
@@ -29,4 +37,4 @@ Template.prototype.creator = module.exports = tpl = (paperOrSrc, nodeFactory = n
     paper = paperOrSrc
 
 
-  new Template paper, nodeFactory
+  new Template paper, application

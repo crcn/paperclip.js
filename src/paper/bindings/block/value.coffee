@@ -10,7 +10,7 @@ class ValueDecor extends require("./base")
     unless value?
       value = ""
 
-    @section.replaceChildNodes @nodeFactory.createTextNode String(value), true
+    @section.replaceChildNodes @application.nodeFactory.createTextNode String(value), true
 
 
 module.exports = ValueDecor
