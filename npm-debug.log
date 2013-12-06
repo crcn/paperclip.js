@@ -1,0 +1,596 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'publish' ]
+2 info using npm@1.3.14
+3 info using node@v0.10.22
+4 verbose publish [ '.' ]
+5 verbose cache add [ '.', null ]
+6 verbose cache add name=undefined spec="." args=[".",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: '.',
+7 verbose parsed url   path: '.',
+7 verbose parsed url   href: '.' }
+8 silly lockFile 3a52ce78- .
+9 verbose lock . /Users/craig/.npm/3a52ce78-.lock
+10 verbose tar pack [ '/var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/tmp.tgz',
+10 verbose tar pack   '.' ]
+11 verbose tarball /var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/tmp.tgz
+12 verbose folder .
+13 info prepublish paperclip@0.3.0
+14 silly lockFile 1f1177db-tar tar://.
+15 verbose lock tar://. /Users/craig/.npm/1f1177db-tar.lock
+16 silly lockFile 2fad843a-13216-0-2940438736695796-tmp-tgz tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/tmp.tgz
+17 verbose lock tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/tmp.tgz /Users/craig/.npm/2fad843a-13216-0-2940438736695796-tmp-tgz.lock
+18 silly lockFile 1f1177db-tar tar://.
+19 silly lockFile 1f1177db-tar tar://.
+20 silly lockFile 2fad843a-13216-0-2940438736695796-tmp-tgz tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/tmp.tgz
+21 silly lockFile 2fad843a-13216-0-2940438736695796-tmp-tgz tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/tmp.tgz
+22 verbose tar unpack /var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/tmp.tgz
+23 silly lockFile 51d80fda-13216-0-2940438736695796-package tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/package
+24 verbose lock tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/package /Users/craig/.npm/51d80fda-13216-0-2940438736695796-package.lock
+25 silly lockFile 2fad843a-13216-0-2940438736695796-tmp-tgz tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/tmp.tgz
+26 verbose lock tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/tmp.tgz /Users/craig/.npm/2fad843a-13216-0-2940438736695796-tmp-tgz.lock
+27 silly gunzTarPerm modes [ '755', '644' ]
+28 silly gunzTarPerm extractEntry package.json
+29 silly gunzTarPerm extractEntry .npmignore
+30 silly gunzTarPerm extractEntry README.md
+31 silly gunzTarPerm extractEntry LICENSE
+32 silly gunzTarPerm extractEntry .browsers.js
+33 silly gunzTarPerm extractEntry karma.conf.js
+34 silly gunzTarPerm extractEntry build/paperclip-compiler.js
+35 silly gunzTarPerm extractEntry build/paperclip-compiler2.js
+36 silly gunzTarPerm extractEntry build/paperclip-compiler3.js
+37 silly gunzTarPerm extractEntry build/paperclip.js
+38 silly gunzTarPerm extractEntry build/paperclip.min.js
+39 silly gunzTarPerm extractEntry docs/brainstorm/template-compiling.md
+40 silly gunzTarPerm extractEntry docs/brainstorm/usage.md
+41 silly gunzTarPerm extractEntry docs/terminology.md
+42 silly gunzTarPerm extractEntry examples/browser/jquery.js
+43 silly gunzTarPerm extractEntry examples/browser/paperclip.js
+44 silly gunzTarPerm extractEntry examples/browser/hello-world/paper.js
+45 silly gunzTarPerm extractEntry examples/browser/hello-world/template.js
+46 silly gunzTarPerm extractEntry examples/browser/hello-world/template.pc.js
+47 silly gunzTarPerm extractEntry examples/browser/hello-world/index.html
+48 silly gunzTarPerm extractEntry examples/browser/hello-world/template.pc
+49 silly gunzTarPerm extractEntry examples/browser/makefile
+50 silly gunzTarPerm extractEntry examples/browser/tpl/template.js
+51 silly gunzTarPerm extractEntry examples/express/hello-world/index.js
+52 silly gunzTarPerm extractEntry examples/express/hello-world/public/index.html
+53 silly gunzTarPerm extractEntry examples/express/hello-world/views/complete.pc
+54 silly gunzTarPerm extractEntry examples/express/hello-world/views/index.pc
+55 silly gunzTarPerm extractEntry examples/express/hello-world/views/layout2.pc
+56 silly gunzTarPerm extractEntry examples/express/hello-world/views/main_layout.pc
+57 silly gunzTarPerm extractEntry test/binding-test.js
+58 silly gunzTarPerm extractEntry test/block-html-test.js
+59 silly gunzTarPerm extractEntry test/block-value-test.js
+60 silly gunzTarPerm extractEntry test/dom-event-test.js
+61 silly gunzTarPerm extractEntry test/block-conditional-test.js
+62 silly gunzTarPerm extractEntry test/node-bind-test.js
+63 silly gunzTarPerm extractEntry test/shim-test.js
+64 silly gunzTarPerm extractEntry test/hello-test.js
+65 silly gunzTarPerm extractEntry test/old/clip-test.js
+66 silly gunzTarPerm extractEntry test/old/dom-test.js
+67 silly gunzTarPerm extractEntry test/old/template-test.js
+68 silly gunzTarPerm extractEntry test/templates/hello.js
+69 silly gunzTarPerm extractEntry test/templates/hello.pc
+70 silly gunzTarPerm extractEntry test/utils/browser.js
+71 silly gunzTarPerm extractEntry test/utils/index.js
+72 silly gunzTarPerm extractEntry .travis.yml
+73 silly gunzTarPerm extractEntry lib/browser.js
+74 silly gunzTarPerm extractEntry lib/index.js
+75 silly gunzTarPerm extractEntry lib/build/index.js
+76 silly gunzTarPerm extractEntry lib/clip/buffer.js
+77 silly gunzTarPerm extractEntry lib/clip/index.js
+78 silly gunzTarPerm extractEntry lib/node/index.js
+79 silly gunzTarPerm extractEntry lib/node/adapters/express.js
+80 silly gunzTarPerm extractEntry lib/node/adapters/index.js
+81 silly gunzTarPerm extractEntry lib/node/paper/bindings/block/base.js
+82 silly gunzTarPerm extractEntry lib/node/paper/bindings/block/index.js
+83 silly gunzTarPerm extractEntry lib/node/paper/bindings/block/layout.js
+84 silly gunzTarPerm extractEntry lib/paper/context.js
+85 silly gunzTarPerm extractEntry lib/paper/defaultModifiers.js
+86 silly gunzTarPerm extractEntry lib/paper/index.js
+87 silly gunzTarPerm extractEntry lib/paper/loader.js
+88 silly gunzTarPerm extractEntry lib/paper/modifiers.js
+89 silly gunzTarPerm extractEntry lib/paper/template.js
+90 silly gunzTarPerm extractEntry lib/paper/bindings/clip.js
+91 silly gunzTarPerm extractEntry lib/paper/bindings/collection.js
+92 silly gunzTarPerm extractEntry lib/paper/bindings/index.js
+93 silly gunzTarPerm extractEntry lib/paper/bindings/base/index.js
+94 silly gunzTarPerm extractEntry lib/paper/bindings/base/script.js
+95 silly gunzTarPerm extractEntry lib/paper/bindings/block/base.js
+96 silly gunzTarPerm extractEntry lib/paper/bindings/block/conditional.js
+97 silly gunzTarPerm extractEntry lib/paper/bindings/block/factory.js
+98 silly gunzTarPerm extractEntry lib/paper/bindings/block/html.js
+99 silly gunzTarPerm extractEntry lib/paper/bindings/block/value.js
+100 silly gunzTarPerm extractEntry lib/paper/bindings/node/factory.js
+101 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/index.js
+102 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/base.js
+103 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/css.js
+104 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/delete.js
+105 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/disable.js
+106 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/enable.js
+107 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/change.js
+108 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/event.js
+109 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/model.js
+110 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/show.js
+111 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/style.js
+112 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/value.js
+113 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/enter.js
+114 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/text/index.js
+115 silly gunzTarPerm extractEntry lib/paper/bindings/node/base/index.js
+116 silly gunzTarPerm extractEntry lib/paper/nodes/base.js
+117 silly gunzTarPerm extractEntry lib/paper/nodes/bindable.js
+118 silly gunzTarPerm extractEntry lib/paper/nodes/blockBinding.js
+119 silly gunzTarPerm extractEntry lib/paper/nodes/html.js
+120 silly gunzTarPerm extractEntry lib/paper/nodes/nodeBinding.js
+121 silly gunzTarPerm extractEntry lib/paper/nodes/string.js
+122 silly gunzTarPerm extractEntry lib/paper/utils/escapeHTML.js
+123 silly gunzTarPerm extractEntry lib/paper/writers/base.js
+124 silly gunzTarPerm extractEntry lib/paper/writers/block.js
+125 silly gunzTarPerm extractEntry lib/paper/writers/element.js
+126 silly gunzTarPerm extractEntry lib/paper/writers/fragment.js
+127 silly gunzTarPerm extractEntry lib/paper/writers/parse.js
+128 silly gunzTarPerm extractEntry lib/paper/writers/text.js
+129 silly gunzTarPerm extractEntry lib/translate/index.js
+130 silly gunzTarPerm extractEntry lib/translate/base/collectionExpression.js
+131 silly gunzTarPerm extractEntry lib/translate/base/expression.js
+132 silly gunzTarPerm extractEntry lib/translate/base/parser.js
+133 silly gunzTarPerm extractEntry lib/translate/base/tokenizer.js
+134 silly gunzTarPerm extractEntry lib/translate/binding/parser.js
+135 silly gunzTarPerm extractEntry lib/translate/binding/tokenizer.js
+136 silly gunzTarPerm extractEntry lib/translate/binding/expressions/fn.js
+137 silly gunzTarPerm extractEntry lib/translate/binding/expressions/js.js
+138 silly gunzTarPerm extractEntry lib/translate/binding/expressions/modifier.js
+139 silly gunzTarPerm extractEntry lib/translate/binding/expressions/option.js
+140 silly gunzTarPerm extractEntry lib/translate/binding/expressions/options.js
+141 silly gunzTarPerm extractEntry lib/translate/binding/expressions/group.js
+142 silly gunzTarPerm extractEntry lib/translate/binding/expressions/ref.js
+143 silly gunzTarPerm extractEntry lib/translate/binding/expressions/refPath.js
+144 silly gunzTarPerm extractEntry lib/translate/binding/expressions/script.js
+145 silly gunzTarPerm extractEntry lib/translate/binding/expressions/scripts.js
+146 silly gunzTarPerm extractEntry lib/translate/binding/expressions/string.js
+147 silly gunzTarPerm extractEntry lib/translate/binding/expressions/params.js
+148 silly gunzTarPerm extractEntry lib/translate/template/formatter.js
+149 silly gunzTarPerm extractEntry lib/translate/template/parser.js
+150 silly gunzTarPerm extractEntry lib/translate/template/tokenizer.js
+151 silly gunzTarPerm extractEntry lib/translate/template/expressions/attribute.js
+152 silly gunzTarPerm extractEntry lib/translate/template/expressions/binding.js
+153 silly gunzTarPerm extractEntry lib/translate/template/expressions/children.js
+154 silly gunzTarPerm extractEntry lib/translate/template/expressions/collection.js
+155 silly gunzTarPerm extractEntry lib/translate/template/expressions/base.js
+156 silly gunzTarPerm extractEntry lib/translate/template/expressions/root.js
+157 silly gunzTarPerm extractEntry lib/translate/template/expressions/string.js
+158 silly gunzTarPerm extractEntry lib/translate/template/expressions/stringNode.js
+159 silly gunzTarPerm extractEntry lib/translate/template/expressions/text.js
+160 silly gunzTarPerm extractEntry lib/translate/template/expressions/textBinding.js
+161 silly gunzTarPerm extractEntry lib/translate/template/expressions/attributes.js
+162 silly gunzTarPerm extractEntry lib/translate/template/expressions/textString.js
+163 silly gunzTarPerm extractEntry lib/translate/template/expressions/node.js
+164 silly gunzTarPerm extractEntry libpeerconnection.log
+165 silly gunzTarPerm extractEntry makefile
+166 silly gunzTarPerm extractEntry src/browser.coffee
+167 silly gunzTarPerm extractEntry src/build/index.coffee
+168 silly gunzTarPerm extractEntry src/clip/buffer.coffee
+169 silly gunzTarPerm extractEntry src/clip/index.coffee
+170 silly gunzTarPerm extractEntry src/index.coffee
+171 silly gunzTarPerm extractEntry src/node/adapters/express.coffee
+172 silly gunzTarPerm extractEntry src/node/adapters/index.coffee
+173 silly gunzTarPerm extractEntry src/node/index.coffee
+174 silly gunzTarPerm extractEntry src/node/paper/bindings/block/base.coffee
+175 silly gunzTarPerm extractEntry src/node/paper/bindings/block/index.coffee
+176 silly gunzTarPerm extractEntry src/node/paper/bindings/block/layout.coffee
+177 silly gunzTarPerm extractEntry src/paper/bindings/base/index.coffee
+178 silly gunzTarPerm extractEntry src/paper/bindings/base/script.coffee
+179 silly gunzTarPerm extractEntry src/paper/bindings/block/base.coffee
+180 silly gunzTarPerm extractEntry src/paper/bindings/block/conditional.coffee
+181 silly gunzTarPerm extractEntry src/paper/bindings/block/factory.coffee
+182 silly gunzTarPerm extractEntry src/paper/bindings/block/html.coffee
+183 silly gunzTarPerm extractEntry src/paper/bindings/block/value.coffee
+184 silly gunzTarPerm extractEntry src/paper/bindings/clip.coffee
+185 silly gunzTarPerm extractEntry src/paper/bindings/collection.coffee
+186 silly gunzTarPerm extractEntry src/paper/bindings/index.coffee
+187 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/enter.coffee
+188 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/base.coffee
+189 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/css.coffee
+190 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/delete.coffee
+191 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/disable.coffee
+192 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/enable.coffee
+193 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/change.coffee
+194 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/event.coffee
+195 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/model.coffee
+196 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/show.coffee
+197 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/style.coffee
+198 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/value.coffee
+199 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/index.coffee
+200 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/text/index.coffee
+201 silly gunzTarPerm extractEntry src/paper/bindings/node/base/index.coffee
+202 silly gunzTarPerm extractEntry src/paper/bindings/node/factory.coffee
+203 silly gunzTarPerm extractEntry src/paper/context.coffee
+204 silly gunzTarPerm extractEntry src/paper/defaultModifiers.coffee
+205 silly gunzTarPerm extractEntry src/paper/index.coffee
+206 silly gunzTarPerm extractEntry src/paper/loader.coffee
+207 silly gunzTarPerm extractEntry src/paper/modifiers.coffee
+208 silly gunzTarPerm extractEntry src/paper/template.coffee
+209 silly gunzTarPerm extractEntry src/paper/utils/escapeHTML.coffee
+210 silly gunzTarPerm extractEntry src/paper/writers/base.coffee
+211 silly gunzTarPerm extractEntry src/paper/writers/block.coffee
+212 silly gunzTarPerm extractEntry src/paper/writers/element.coffee
+213 silly gunzTarPerm extractEntry src/paper/writers/fragment.coffee
+214 silly gunzTarPerm extractEntry src/paper/writers/parse.coffee
+215 silly gunzTarPerm extractEntry src/paper/writers/text.coffee
+216 silly gunzTarPerm extractEntry src/translate/base/collectionExpression.coffee
+217 silly gunzTarPerm extractEntry src/translate/base/expression.coffee
+218 silly gunzTarPerm extractEntry src/translate/base/parser.coffee
+219 silly gunzTarPerm extractEntry src/translate/base/tokenizer.coffee
+220 silly gunzTarPerm extractEntry src/translate/binding/expressions/params.coffee
+221 silly gunzTarPerm extractEntry src/translate/binding/expressions/fn.coffee
+222 silly gunzTarPerm extractEntry src/translate/binding/expressions/js.coffee
+223 silly gunzTarPerm extractEntry src/translate/binding/expressions/modifier.coffee
+224 silly gunzTarPerm extractEntry src/translate/binding/expressions/option.coffee
+225 silly gunzTarPerm extractEntry src/translate/binding/expressions/options.coffee
+226 silly gunzTarPerm extractEntry src/translate/binding/expressions/group.coffee
+227 silly gunzTarPerm extractEntry src/translate/binding/expressions/ref.coffee
+228 silly gunzTarPerm extractEntry src/translate/binding/expressions/refPath.coffee
+229 silly gunzTarPerm extractEntry src/translate/binding/expressions/script.coffee
+230 silly gunzTarPerm extractEntry src/translate/binding/expressions/scripts.coffee
+231 silly gunzTarPerm extractEntry src/translate/binding/expressions/string.coffee
+232 silly gunzTarPerm extractEntry src/translate/binding/parser.coffee
+233 silly gunzTarPerm extractEntry src/translate/binding/tokenizer.coffee
+234 silly gunzTarPerm extractEntry src/translate/index.coffee
+235 silly gunzTarPerm extractEntry src/translate/template/expressions/node.coffee
+236 silly gunzTarPerm extractEntry src/translate/template/expressions/attribute.coffee
+237 silly gunzTarPerm extractEntry src/translate/template/expressions/base.coffee
+238 silly gunzTarPerm extractEntry src/translate/template/expressions/binding.coffee
+239 silly gunzTarPerm extractEntry src/translate/template/expressions/children.coffee
+240 silly gunzTarPerm extractEntry src/translate/template/expressions/collection.coffee
+241 silly gunzTarPerm extractEntry src/translate/template/expressions/attributes.coffee
+242 silly gunzTarPerm extractEntry src/translate/template/expressions/root.coffee
+243 silly gunzTarPerm extractEntry src/translate/template/expressions/string.coffee
+244 silly gunzTarPerm extractEntry src/translate/template/expressions/stringNode.coffee
+245 silly gunzTarPerm extractEntry src/translate/template/expressions/text.coffee
+246 silly gunzTarPerm extractEntry src/translate/template/expressions/textBinding.coffee
+247 silly gunzTarPerm extractEntry src/translate/template/expressions/textString.coffee
+248 silly gunzTarPerm extractEntry src/translate/template/formatter.coffee
+249 silly gunzTarPerm extractEntry src/translate/template/parser.coffee
+250 silly gunzTarPerm extractEntry src/translate/template/tokenizer.coffee
+251 silly gunzTarPerm extractEntry bin/paperclip
+252 silly gunzTarPerm extractEntry inc/jquery.js
+253 silly lockFile 51d80fda-13216-0-2940438736695796-package tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/package
+254 silly lockFile 51d80fda-13216-0-2940438736695796-package tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/package
+255 silly lockFile 2fad843a-13216-0-2940438736695796-tmp-tgz tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/tmp.tgz
+256 silly lockFile 2fad843a-13216-0-2940438736695796-tmp-tgz tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/tmp.tgz
+257 verbose tar pack [ '/Users/craig/.npm/paperclip/0.3.0/package.tgz',
+257 verbose tar pack   '/var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/package' ]
+258 verbose tarball /Users/craig/.npm/paperclip/0.3.0/package.tgz
+259 verbose folder /var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/package
+260 silly lockFile 51d80fda-13216-0-2940438736695796-package tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/package
+261 verbose lock tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/package /Users/craig/.npm/51d80fda-13216-0-2940438736695796-package.lock
+262 silly lockFile dbd98dc5--npm-paperclip-0-3-0-package-tgz tar:///Users/craig/.npm/paperclip/0.3.0/package.tgz
+263 verbose lock tar:///Users/craig/.npm/paperclip/0.3.0/package.tgz /Users/craig/.npm/dbd98dc5--npm-paperclip-0-3-0-package-tgz.lock
+264 silly lockFile 51d80fda-13216-0-2940438736695796-package tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/package
+265 silly lockFile 51d80fda-13216-0-2940438736695796-package tar:///var/folders/33/qyt5ls6j7bs37v5c49lfx6km0000gq/T/npm-3198-jNkzk1VR/1386289413216-0.2940438736695796/package
+266 silly lockFile dbd98dc5--npm-paperclip-0-3-0-package-tgz tar:///Users/craig/.npm/paperclip/0.3.0/package.tgz
+267 silly lockFile dbd98dc5--npm-paperclip-0-3-0-package-tgz tar:///Users/craig/.npm/paperclip/0.3.0/package.tgz
+268 silly lockFile de47d39e-raig-npm-paperclip-0-3-0-package /Users/craig/.npm/paperclip/0.3.0/package
+269 verbose lock /Users/craig/.npm/paperclip/0.3.0/package /Users/craig/.npm/de47d39e-raig-npm-paperclip-0-3-0-package.lock
+270 silly lockFile de47d39e-raig-npm-paperclip-0-3-0-package /Users/craig/.npm/paperclip/0.3.0/package
+271 silly lockFile de47d39e-raig-npm-paperclip-0-3-0-package /Users/craig/.npm/paperclip/0.3.0/package
+272 verbose tar unpack /Users/craig/.npm/paperclip/0.3.0/package.tgz
+273 silly lockFile 0d344f03-raig-npm-paperclip-0-3-0-package tar:///Users/craig/.npm/paperclip/0.3.0/package
+274 verbose lock tar:///Users/craig/.npm/paperclip/0.3.0/package /Users/craig/.npm/0d344f03-raig-npm-paperclip-0-3-0-package.lock
+275 silly lockFile dbd98dc5--npm-paperclip-0-3-0-package-tgz tar:///Users/craig/.npm/paperclip/0.3.0/package.tgz
+276 verbose lock tar:///Users/craig/.npm/paperclip/0.3.0/package.tgz /Users/craig/.npm/dbd98dc5--npm-paperclip-0-3-0-package-tgz.lock
+277 silly gunzTarPerm modes [ '755', '644' ]
+278 silly gunzTarPerm extractEntry package.json
+279 silly gunzTarPerm extractEntry .npmignore
+280 silly gunzTarPerm extractEntry README.md
+281 silly gunzTarPerm extractEntry LICENSE
+282 silly gunzTarPerm extractEntry .browsers.js
+283 silly gunzTarPerm extractEntry karma.conf.js
+284 silly gunzTarPerm extractEntry build/paperclip-compiler.js
+285 silly gunzTarPerm extractEntry build/paperclip-compiler2.js
+286 silly gunzTarPerm extractEntry build/paperclip-compiler3.js
+287 silly gunzTarPerm extractEntry build/paperclip.js
+288 silly gunzTarPerm extractEntry build/paperclip.min.js
+289 silly gunzTarPerm extractEntry docs/brainstorm/template-compiling.md
+290 silly gunzTarPerm extractEntry docs/brainstorm/usage.md
+291 silly gunzTarPerm extractEntry docs/terminology.md
+292 silly gunzTarPerm extractEntry test/binding-test.js
+293 silly gunzTarPerm extractEntry test/block-html-test.js
+294 silly gunzTarPerm extractEntry test/block-value-test.js
+295 silly gunzTarPerm extractEntry test/dom-event-test.js
+296 silly gunzTarPerm extractEntry test/block-conditional-test.js
+297 silly gunzTarPerm extractEntry test/node-bind-test.js
+298 silly gunzTarPerm extractEntry test/shim-test.js
+299 silly gunzTarPerm extractEntry test/hello-test.js
+300 silly gunzTarPerm extractEntry test/old/clip-test.js
+301 silly gunzTarPerm extractEntry test/old/dom-test.js
+302 silly gunzTarPerm extractEntry test/old/template-test.js
+303 silly gunzTarPerm extractEntry test/templates/hello.js
+304 silly gunzTarPerm extractEntry test/templates/hello.pc
+305 silly gunzTarPerm extractEntry test/utils/browser.js
+306 silly gunzTarPerm extractEntry test/utils/index.js
+307 silly gunzTarPerm extractEntry inc/jquery.js
+308 silly gunzTarPerm extractEntry .travis.yml
+309 silly gunzTarPerm extractEntry lib/browser.js
+310 silly gunzTarPerm extractEntry lib/index.js
+311 silly gunzTarPerm extractEntry lib/build/index.js
+312 silly gunzTarPerm extractEntry lib/clip/buffer.js
+313 silly gunzTarPerm extractEntry lib/clip/index.js
+314 silly gunzTarPerm extractEntry lib/node/index.js
+315 silly gunzTarPerm extractEntry lib/node/adapters/express.js
+316 silly gunzTarPerm extractEntry lib/node/adapters/index.js
+317 silly gunzTarPerm extractEntry lib/node/paper/bindings/block/base.js
+318 silly gunzTarPerm extractEntry lib/node/paper/bindings/block/index.js
+319 silly gunzTarPerm extractEntry lib/node/paper/bindings/block/layout.js
+320 silly gunzTarPerm extractEntry lib/paper/context.js
+321 silly gunzTarPerm extractEntry lib/paper/defaultModifiers.js
+322 silly gunzTarPerm extractEntry lib/paper/index.js
+323 silly gunzTarPerm extractEntry lib/paper/loader.js
+324 silly gunzTarPerm extractEntry lib/paper/modifiers.js
+325 silly gunzTarPerm extractEntry lib/paper/template.js
+326 silly gunzTarPerm extractEntry lib/paper/bindings/clip.js
+327 silly gunzTarPerm extractEntry lib/paper/bindings/collection.js
+328 silly gunzTarPerm extractEntry lib/paper/bindings/index.js
+329 silly gunzTarPerm extractEntry lib/paper/bindings/base/index.js
+330 silly gunzTarPerm extractEntry lib/paper/bindings/base/script.js
+331 silly gunzTarPerm extractEntry lib/paper/bindings/block/base.js
+332 silly gunzTarPerm extractEntry lib/paper/bindings/block/conditional.js
+333 silly gunzTarPerm extractEntry lib/paper/bindings/block/factory.js
+334 silly gunzTarPerm extractEntry lib/paper/bindings/block/html.js
+335 silly gunzTarPerm extractEntry lib/paper/bindings/block/value.js
+336 silly gunzTarPerm extractEntry lib/paper/bindings/node/factory.js
+337 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/index.js
+338 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/base.js
+339 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/css.js
+340 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/delete.js
+341 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/disable.js
+342 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/enable.js
+343 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/change.js
+344 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/event.js
+345 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/model.js
+346 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/show.js
+347 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/style.js
+348 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/value.js
+349 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/enter.js
+350 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/text/index.js
+351 silly gunzTarPerm extractEntry lib/paper/bindings/node/base/index.js
+352 silly gunzTarPerm extractEntry lib/paper/nodes/base.js
+353 silly gunzTarPerm extractEntry lib/paper/nodes/bindable.js
+354 silly gunzTarPerm extractEntry lib/paper/nodes/blockBinding.js
+355 silly gunzTarPerm extractEntry lib/paper/nodes/html.js
+356 silly gunzTarPerm extractEntry lib/paper/nodes/nodeBinding.js
+357 silly gunzTarPerm extractEntry lib/paper/nodes/string.js
+358 silly gunzTarPerm extractEntry lib/paper/utils/escapeHTML.js
+359 silly gunzTarPerm extractEntry lib/paper/writers/base.js
+360 silly gunzTarPerm extractEntry lib/paper/writers/block.js
+361 silly gunzTarPerm extractEntry lib/paper/writers/element.js
+362 silly gunzTarPerm extractEntry lib/paper/writers/fragment.js
+363 silly gunzTarPerm extractEntry lib/paper/writers/parse.js
+364 silly gunzTarPerm extractEntry lib/paper/writers/text.js
+365 silly gunzTarPerm extractEntry lib/translate/index.js
+366 silly gunzTarPerm extractEntry lib/translate/base/collectionExpression.js
+367 silly gunzTarPerm extractEntry lib/translate/base/expression.js
+368 silly gunzTarPerm extractEntry lib/translate/base/parser.js
+369 silly gunzTarPerm extractEntry lib/translate/base/tokenizer.js
+370 silly gunzTarPerm extractEntry lib/translate/binding/parser.js
+371 silly gunzTarPerm extractEntry lib/translate/binding/tokenizer.js
+372 silly gunzTarPerm extractEntry lib/translate/binding/expressions/fn.js
+373 silly gunzTarPerm extractEntry lib/translate/binding/expressions/js.js
+374 silly gunzTarPerm extractEntry lib/translate/binding/expressions/modifier.js
+375 silly gunzTarPerm extractEntry lib/translate/binding/expressions/option.js
+376 silly gunzTarPerm extractEntry lib/translate/binding/expressions/options.js
+377 silly gunzTarPerm extractEntry lib/translate/binding/expressions/group.js
+378 silly gunzTarPerm extractEntry lib/translate/binding/expressions/ref.js
+379 silly gunzTarPerm extractEntry lib/translate/binding/expressions/refPath.js
+380 silly gunzTarPerm extractEntry lib/translate/binding/expressions/script.js
+381 silly gunzTarPerm extractEntry lib/translate/binding/expressions/scripts.js
+382 silly gunzTarPerm extractEntry lib/translate/binding/expressions/string.js
+383 silly gunzTarPerm extractEntry lib/translate/binding/expressions/params.js
+384 silly gunzTarPerm extractEntry lib/translate/template/formatter.js
+385 silly gunzTarPerm extractEntry lib/translate/template/parser.js
+386 silly gunzTarPerm extractEntry lib/translate/template/tokenizer.js
+387 silly gunzTarPerm extractEntry lib/translate/template/expressions/attribute.js
+388 silly gunzTarPerm extractEntry lib/translate/template/expressions/binding.js
+389 silly gunzTarPerm extractEntry lib/translate/template/expressions/children.js
+390 silly gunzTarPerm extractEntry lib/translate/template/expressions/collection.js
+391 silly gunzTarPerm extractEntry lib/translate/template/expressions/base.js
+392 silly gunzTarPerm extractEntry lib/translate/template/expressions/root.js
+393 silly gunzTarPerm extractEntry lib/translate/template/expressions/string.js
+394 silly gunzTarPerm extractEntry lib/translate/template/expressions/stringNode.js
+395 silly gunzTarPerm extractEntry lib/translate/template/expressions/text.js
+396 silly gunzTarPerm extractEntry lib/translate/template/expressions/textBinding.js
+397 silly gunzTarPerm extractEntry lib/translate/template/expressions/attributes.js
+398 silly gunzTarPerm extractEntry lib/translate/template/expressions/textString.js
+399 silly gunzTarPerm extractEntry lib/translate/template/expressions/node.js
+400 silly gunzTarPerm extractEntry libpeerconnection.log
+401 silly gunzTarPerm extractEntry makefile
+402 silly gunzTarPerm extractEntry bin/paperclip
+403 silly gunzTarPerm extractEntry src/browser.coffee
+404 silly gunzTarPerm extractEntry src/build/index.coffee
+405 silly gunzTarPerm extractEntry src/clip/buffer.coffee
+406 silly gunzTarPerm extractEntry src/clip/index.coffee
+407 silly gunzTarPerm extractEntry src/index.coffee
+408 silly gunzTarPerm extractEntry src/node/adapters/express.coffee
+409 silly gunzTarPerm extractEntry src/node/adapters/index.coffee
+410 silly gunzTarPerm extractEntry src/node/index.coffee
+411 silly gunzTarPerm extractEntry src/node/paper/bindings/block/base.coffee
+412 silly gunzTarPerm extractEntry src/node/paper/bindings/block/index.coffee
+413 silly gunzTarPerm extractEntry src/node/paper/bindings/block/layout.coffee
+414 silly gunzTarPerm extractEntry src/paper/bindings/base/index.coffee
+415 silly gunzTarPerm extractEntry src/paper/bindings/base/script.coffee
+416 silly gunzTarPerm extractEntry src/paper/bindings/block/base.coffee
+417 silly gunzTarPerm extractEntry src/paper/bindings/block/conditional.coffee
+418 silly gunzTarPerm extractEntry src/paper/bindings/block/factory.coffee
+419 silly gunzTarPerm extractEntry src/paper/bindings/block/html.coffee
+420 silly gunzTarPerm extractEntry src/paper/bindings/block/value.coffee
+421 silly gunzTarPerm extractEntry src/paper/bindings/clip.coffee
+422 silly gunzTarPerm extractEntry src/paper/bindings/collection.coffee
+423 silly gunzTarPerm extractEntry src/paper/bindings/index.coffee
+424 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/enter.coffee
+425 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/base.coffee
+426 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/css.coffee
+427 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/delete.coffee
+428 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/disable.coffee
+429 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/enable.coffee
+430 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/change.coffee
+431 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/event.coffee
+432 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/model.coffee
+433 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/show.coffee
+434 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/style.coffee
+435 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/handlers/value.coffee
+436 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/dataBind/index.coffee
+437 silly gunzTarPerm extractEntry src/paper/bindings/node/attrs/text/index.coffee
+438 silly gunzTarPerm extractEntry src/paper/bindings/node/base/index.coffee
+439 silly gunzTarPerm extractEntry src/paper/bindings/node/factory.coffee
+440 silly gunzTarPerm extractEntry src/paper/context.coffee
+441 silly gunzTarPerm extractEntry src/paper/defaultModifiers.coffee
+442 silly gunzTarPerm extractEntry src/paper/index.coffee
+443 silly gunzTarPerm extractEntry src/paper/loader.coffee
+444 silly gunzTarPerm extractEntry src/paper/modifiers.coffee
+445 silly gunzTarPerm extractEntry src/paper/template.coffee
+446 silly gunzTarPerm extractEntry src/paper/utils/escapeHTML.coffee
+447 silly gunzTarPerm extractEntry src/paper/writers/base.coffee
+448 silly gunzTarPerm extractEntry src/paper/writers/block.coffee
+449 silly gunzTarPerm extractEntry src/paper/writers/element.coffee
+450 silly gunzTarPerm extractEntry src/paper/writers/fragment.coffee
+451 silly gunzTarPerm extractEntry src/paper/writers/parse.coffee
+452 silly gunzTarPerm extractEntry src/paper/writers/text.coffee
+453 silly gunzTarPerm extractEntry src/translate/base/collectionExpression.coffee
+454 silly gunzTarPerm extractEntry src/translate/base/expression.coffee
+455 silly gunzTarPerm extractEntry src/translate/base/parser.coffee
+456 silly gunzTarPerm extractEntry src/translate/base/tokenizer.coffee
+457 silly gunzTarPerm extractEntry src/translate/binding/expressions/params.coffee
+458 silly gunzTarPerm extractEntry src/translate/binding/expressions/fn.coffee
+459 silly gunzTarPerm extractEntry src/translate/binding/expressions/js.coffee
+460 silly gunzTarPerm extractEntry src/translate/binding/expressions/modifier.coffee
+461 silly gunzTarPerm extractEntry src/translate/binding/expressions/option.coffee
+462 silly gunzTarPerm extractEntry src/translate/binding/expressions/options.coffee
+463 silly gunzTarPerm extractEntry src/translate/binding/expressions/group.coffee
+464 silly gunzTarPerm extractEntry src/translate/binding/expressions/ref.coffee
+465 silly gunzTarPerm extractEntry src/translate/binding/expressions/refPath.coffee
+466 silly gunzTarPerm extractEntry src/translate/binding/expressions/script.coffee
+467 silly gunzTarPerm extractEntry src/translate/binding/expressions/scripts.coffee
+468 silly gunzTarPerm extractEntry src/translate/binding/expressions/string.coffee
+469 silly gunzTarPerm extractEntry src/translate/binding/parser.coffee
+470 silly gunzTarPerm extractEntry src/translate/binding/tokenizer.coffee
+471 silly gunzTarPerm extractEntry src/translate/index.coffee
+472 silly gunzTarPerm extractEntry src/translate/template/expressions/node.coffee
+473 silly gunzTarPerm extractEntry src/translate/template/expressions/attribute.coffee
+474 silly gunzTarPerm extractEntry src/translate/template/expressions/base.coffee
+475 silly gunzTarPerm extractEntry src/translate/template/expressions/binding.coffee
+476 silly gunzTarPerm extractEntry src/translate/template/expressions/children.coffee
+477 silly gunzTarPerm extractEntry src/translate/template/expressions/collection.coffee
+478 silly gunzTarPerm extractEntry src/translate/template/expressions/attributes.coffee
+479 silly gunzTarPerm extractEntry src/translate/template/expressions/root.coffee
+480 silly gunzTarPerm extractEntry src/translate/template/expressions/string.coffee
+481 silly gunzTarPerm extractEntry src/translate/template/expressions/stringNode.coffee
+482 silly gunzTarPerm extractEntry src/translate/template/expressions/text.coffee
+483 silly gunzTarPerm extractEntry src/translate/template/expressions/textBinding.coffee
+484 silly gunzTarPerm extractEntry src/translate/template/expressions/textString.coffee
+485 silly gunzTarPerm extractEntry src/translate/template/formatter.coffee
+486 silly gunzTarPerm extractEntry src/translate/template/parser.coffee
+487 silly gunzTarPerm extractEntry src/translate/template/tokenizer.coffee
+488 silly gunzTarPerm extractEntry examples/browser/jquery.js
+489 silly gunzTarPerm extractEntry examples/browser/paperclip.js
+490 silly gunzTarPerm extractEntry examples/browser/hello-world/paper.js
+491 silly gunzTarPerm extractEntry examples/browser/hello-world/template.js
+492 silly gunzTarPerm extractEntry examples/browser/hello-world/template.pc.js
+493 silly gunzTarPerm extractEntry examples/browser/hello-world/index.html
+494 silly gunzTarPerm extractEntry examples/browser/hello-world/template.pc
+495 silly gunzTarPerm extractEntry examples/browser/makefile
+496 silly gunzTarPerm extractEntry examples/browser/tpl/template.js
+497 silly gunzTarPerm extractEntry examples/express/hello-world/index.js
+498 silly gunzTarPerm extractEntry examples/express/hello-world/public/index.html
+499 silly gunzTarPerm extractEntry examples/express/hello-world/views/complete.pc
+500 silly gunzTarPerm extractEntry examples/express/hello-world/views/index.pc
+501 silly gunzTarPerm extractEntry examples/express/hello-world/views/layout2.pc
+502 silly gunzTarPerm extractEntry examples/express/hello-world/views/main_layout.pc
+503 silly lockFile 0d344f03-raig-npm-paperclip-0-3-0-package tar:///Users/craig/.npm/paperclip/0.3.0/package
+504 silly lockFile 0d344f03-raig-npm-paperclip-0-3-0-package tar:///Users/craig/.npm/paperclip/0.3.0/package
+505 silly lockFile dbd98dc5--npm-paperclip-0-3-0-package-tgz tar:///Users/craig/.npm/paperclip/0.3.0/package.tgz
+506 silly lockFile dbd98dc5--npm-paperclip-0-3-0-package-tgz tar:///Users/craig/.npm/paperclip/0.3.0/package.tgz
+507 verbose chmod /Users/craig/.npm/paperclip/0.3.0/package.tgz 644
+508 verbose chown /Users/craig/.npm/paperclip/0.3.0/package.tgz [ 503, 20 ]
+509 silly lockFile 3a52ce78- .
+510 silly lockFile 3a52ce78- .
+511 silly publish { name: 'paperclip',
+511 silly publish   version: '0.3.0',
+511 silly publish   description: 'controller logic:',
+511 silly publish   main: './lib/index.js',
+511 silly publish   browserify: './lib/browser.js',
+511 silly publish   scripts: { test: 'mocha --recursive --timeout 100' },
+511 silly publish   repository:
+511 silly publish    { type: 'git',
+511 silly publish      url: 'git://github.com/classdojo/paperclip.js.git' },
+511 silly publish   author: '',
+511 silly publish   license: 'MIT',
+511 silly publish   gitHead: '1336ca5b7f1f0c344a291ace63ddf211d5a94acd',
+511 silly publish   readmeFilename: 'README.md',
+511 silly publish   devDependencies:
+511 silly publish    { jsdom: '*',
+511 silly publish      'expect.js': '0.2.x',
+511 silly publish      mocha: '1.9.x',
+511 silly publish      karma: '~0.9.5',
+511 silly publish      structr: '~0.2.3',
+511 silly publish      browserify: '~2.25.1',
+511 silly publish      jquery: '~1.8.3',
+511 silly publish      express: '~3.3.4' },
+511 silly publish   bin: { paperclip: './bin/paperclip' },
+511 silly publish   dependencies:
+511 silly publish    { strscanner: '0.0.x',
+511 silly publish      bindable: '0.4.x',
+511 silly publish      dref: '0.0.x',
+511 silly publish      hoist: '0.0.x',
+511 silly publish      async: '0.2.x',
+511 silly publish      'uglify-js': '1.3.x',
+511 silly publish      optimist: '0.4.x',
+511 silly publish      'pilot-block': '0.0.x',
+511 silly publish      asyngleton: '0.1.x',
+511 silly publish      walkr: '0.0.x',
+511 silly publish      watch_r: '0.0.x',
+511 silly publish      underscore: '1.4.x',
+511 silly publish      'type-component': '0.0.x',
+511 silly publish      nofactor: '0.0.x',
+511 silly publish      loaf: '0.0.x' },
+511 silly publish   readme: '# Paperclip.js [![Alt ci](https://travis-ci.org/classdojo/paperclip.js.png)](https://travis-ci.org/classdojo/paperclip.js)\n\nPaperclip is a data-bindable templating system inspired by [Mustache](https://github.com/janl/mustache.js/), [Angular](http://angularjs.org/), [Derby](http://derbyjs.com/), and [Knockout](http://knockoutjs.com/). It\'s supported on all major browsers: IE8+, Firefox, Chrome, Safari, Opera, as well as Node.js.\n\nPaperclip works by listening to [bindable](https://github.com/classdojo/bindable.js) objects, and updating the template if anything changes. Unlike angular.js, paperclip takes a more explicit approach to updating templates. If you want to change a value in a template manually, you can easily do so by calling `bindable.set(property, value)`. [Here\'s an example](http://jsfiddle.net/JTxdM/37/).\n\n\nPaperclip translates HTML directly to JavaScript. For example, the following `hello.pc` file:\n\n```html\nhello {{message}}!\n```\n\nis translated to:\n\n```javascript\nmodule.exports = function(fragment, block, element, text, parse, modifiers) {\n    return fragment([ text("hello "), block({\n        fn: function() {\n            return this.ref("message").value();\n        },\n        refs: [ "message" ]\n    }), text("! ") ]);\n};\n```\n\n### Features\n\n- template update automatically if the data changes\n- [block helpers](#block-helpers)\n- [data-bind attributes](#data-bind-attributes) (similar to knockout.js)\n- [declarative data-binding](#blocks), similar to angular.js\n- node.js support\n- [block modifiers](#modifiers), similar to angular filters\n- [pollyfills](#pollyfills), similar to angular directives\n\n### Examples\n\n- [hello input](http://jsfiddle.net/JTxdM/38/)\n- [hello world](http://jsfiddle.net/JTxdM/30/)\n- [modifiers](http://jsfiddle.net/JTxdM/31/)\n- [data-binding to input fields](http://jsfiddle.net/JTxdM/32/)\n- [data-binding attributes](http://jsfiddle.net/JTxdM/29/)\n- [inline javascript](http://jsfiddle.net/JTxdM/28/)\n- [animal age calculator](http://jsfiddle.net/JTxdM/27/)\n- [titlecase / lowercase modifiers](http://jsfiddle.net/JTxdM/34/)\n- [if / elseif / else block](http://jsfiddle.net/JTxdM/25/)\n- [html block helper](http://jsfiddle.net/JTxdM/26/)\n- [onEnter event](http://jsfiddle.net/JTxdM/35/)\n- [data-binding styles](http://jsfiddle.net/JTxdM/22/)\n- [manually updating templates](http://jsfiddle.net/JTxdM/37/)\n\n### Third-party components:\n\n- [paperclip-component](https://github.com/classdojo/paperclip-component) - used with [Mojo.js](https://github.com/classdojo/mojo.js). Allows for views to be instantiated within paperclip templates. This is similar to Ember.js\'s component, and Angular.js\'s directive implementation. \n- [paperclip-placeholder-pollyfill](https://github.com/classdojo/paperclip-placeholder-pollyfill) - placeholder pollyfull for IE users.\n\n### Installation\n\n```bash\nnpm install paperclip -g\n```\n\n### Compiling a script\n\n```bash\npaperclip -i template.pc -o template.pc.js\n```\n\n## Syntax\n\nPaperclip takes on a mustache / handlebars approach with variables, blocks, and pollyfills. Paperclip also allows basic inline javascript, similar to angular.js.\n\n### Blocks\n\nPaperclip support variable blocks, just like Angular.js. [For example](http://jsfiddle.net/JTxdM/24/):\n\n```html\nhello {{ name.first }} {{ name.last }}!\n```\n\nYou can also specify blocks within attributes. [For example](http://jsfiddle.net/JTxdM/29/):\n\n```html\nmy favorite color is <span style="color: {{color}}">{{color}}</span>\n```\n\n\nIf you want to add some sugar, go ahead and [drop-in some javascript](http://jsfiddle.net/JTxdM/28/):\n\n```html\nhello {{ message || "world!" }}!\n```\n\n### Modifiers\n\nModifiers format data in a variable block. A good example of this might be presenting data to the user depending on their locale. For example:\n\ntranslation modifier:\n\n```javascript\npaperclip.modifier("t", function(value) {\n  return i18n.t(value);\n})\n```\n\ntemplate usage:\n\n```html\n{{ "hello.world" | t() }}\n```\n\nModifiers can be chained together. For example, you can send a strong message to your users by writing something like:\n\n```html\n{{ "hello.world" | t() | uppercase() }}!!!\n```\n\nWhich might produce:\n\n```bash\nHELLO WORLD!!!\n```\n\nModifiers also accept parameters. [For example](http://jsfiddle.net/JTxdM/27/):\n\n```javascript\npaperclip.modifier("divide", function(value, num) {\n  return Math.round((value || 0) / num);\n});\n```\n\ntemplate usage:\n\n```html\nA human that is {{age}} years old is like a {{ age | divide(5.6) }} year old dog!\n```\n\n\n### Block Helpers\n\n#### {{ html: content }}\n\nSimilar to escaping content in mustache (`{{{content}}}`). [For example](http://jsfiddle.net/JTxdM/26/):\n\n```html\n{{ html: content }}\n```\n\n\n\n#### {{#if: condition }}\n\nConditional block helper. [For example](http://jsfiddle.net/JTxdM/25/):\n\n```\n{{#if: age > 18 }}\n  You\'re legally able to vote in the U.S.\n{{/}}\n```\n\n\n#### Custom Block Helpers\n\nPaperclip also allows you to register your own block helpers. This is similar to custom angular.js directives. [For example]():\n\nTODO\n\n### data-bind attributes\n\ndata-bind attributes are borrowed from [knockout.js](http://knockoutjs.com/). This is useful if you want to attach behavior to any DOM element. \n\n#### {{ event: expression }}\n\nExecuted when an event is fired on the DOM element. Here are all the available events:\n\n- `onChange` - called when an element changes\n- `onClick` - called when an element is clicked\n- `onLoad` - called when an element loads - useful for `<img />`\n- `onSubmit` - called on submit - useful for `<form />`\n- `onMouseDown` - called on mouse down\n- `onMouseUp` - called on mouse up\n- `onMouseOver` - called on mouse over\n- `onMouseOut` - called on mouse out\n- `onKeyDown` - called on key down\n- `onKeyUp` - called on key up\n- `onEnter` - called on enter key up\n- `onDepete` - called on delete key up\n\n[Basic example](http://jsfiddle.net/JTxdM/35/):\n\n```html\n<input type="text" data-bind="{{ model: name, onEnter: sayHello() }}"></input>\n```\n\n\n#### {{ show: bool }}\n\nToggles the display mode of a given element. This is similar to the `{{#if: expression }}` conditional helper.\n\n\n#### {{ css: styles }}\n\nSets the css of a given element. [For example](http://jsfiddle.net/JTxdM/21/):\n\n```html\n<strong data-bind="{{ \n  css: {\n      cool    : temp > 0,\n      warm    : temp > 60,\n      hot     : temp > 90\n  } \n}}"> It\'s pretty warm! </strong>\n```\n\n#### {{ style: styles }}\n\nSets the style of a given element. [For example](http://jsfiddle.net/JTxdM/22/): \n\n```\n<span data-bind="{{ \n  style: {\n    color       : color,\n    \'font-size\' : size\n  } \n}}"> Hello World </span>\n```\n\n#### {{ disable: bool }}\n\nToggles the enabled state of an element.\n\n\n#### {{ model: context }}\n\nInput data-binding. [For example](http://jsfiddle.net/JTxdM/23/):\n\n```html\n<input type="text" name="message" data-bind="{{ model: this }}"></input> {{ message }}\n```\n\n#### Custom data-bind helpers\n\nTODO\n\n### Pollyfills\n\nPollyfills are similar to angular directives, but they should only be used to provide support for features not implemented in older browsers. A good example of this is [paperclip-placeholder-pollyfill](https://github.com/classdojo/paperclip-placeholder-pollyfill). If you need to create a custom component, [create as a block helper](#custom-block-helpers).\n\n## API\n\n#### template paperclip.template(sourceOrScriptName)\n\ntranslates the source, or script into a paperclip template. [For example](http://jsfiddle.net/JTxdM/36/).\n\n#### elements template.bind(context)\n\nCreates the DOM elements, and binds the elements to the given context. \n\n#### elements.toFragment()\n\nCasts the elements as a document fragment.\n\n#### elements.unbind()\n\nUnbinds the elements from the given context.\n\n## Node.js Usage\n\n\n\n',
+511 silly publish   bugs: { url: 'https://github.com/classdojo/paperclip.js/issues' },
+511 silly publish   homepage: 'https://github.com/classdojo/paperclip.js',
+511 silly publish   _id: 'paperclip@0.3.0',
+511 silly publish   dist: { shasum: 'ccca00ba49588d539605eecddf1f18c0c38a1d75' },
+511 silly publish   _from: '.' }
+512 verbose url raw paperclip
+513 verbose url resolving [ 'https://registry.npmjs.org/', './paperclip' ]
+514 verbose url resolved https://registry.npmjs.org/paperclip
+515 info trying registry request attempt 1 at 16:23:35
+516 http PUT https://registry.npmjs.org/paperclip
+517 http 409 https://registry.npmjs.org/paperclip
+518 verbose url raw paperclip
+519 verbose url resolving [ 'https://registry.npmjs.org/', './paperclip' ]
+520 verbose url resolved https://registry.npmjs.org/paperclip
+521 info trying registry request attempt 1 at 16:23:36
+522 http GET https://registry.npmjs.org/paperclip
+523 http 200 https://registry.npmjs.org/paperclip
+524 error publish fail Cannot publish over existing version.
+524 error publish fail Update the 'version' field in package.json and try again.
+524 error publish fail
+524 error publish fail If the previous version was published in error, see:
+524 error publish fail     npm help unpublish
+524 error publish fail
+524 error publish fail To automatically increment version numbers, see:
+524 error publish fail     npm help version
+525 error System Darwin 13.0.0
+526 error command "node" "/usr/local/bin/npm" "publish"
+527 error cwd /Users/craig/Developer/jobs/classdojo/paperclip.js
+528 error node -v v0.10.22
+529 error npm -v 1.3.14
+530 error code EPUBLISHCONFLICT
+531 verbose exit [ 1, true ]
