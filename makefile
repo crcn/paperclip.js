@@ -1,38 +1,23 @@
-
 all:
-	coffee -b -o lib -c src;
-	
+	coffee -o lib -c src;
+
+all-watch:
+	coffee -o lib -cw src;
+
 clean:
 	rm -rf lib;
 
+testt:
+	./node_modules/.bin/_mocha ./test/**-test.js --timeout 100
 
-all-watch:
-	coffee -b -o lib -cw src;
+test-cov:
+	./node_modules/.bin/istanbul cover \
+	./node_modules/.bin/_mocha ./test/**-test.js --timeout 100
 
+test-coveralls:
+	./node_modules/.bin/istanbul cover \
+	./node_modules/.bin/_mocha ./test/**-test.js --timeout 100 --report lcovonly -- -R spec && \
+	cat ./coverage/lcov.info | ./node_modules/.bin/coveralls --verbose
+	
 
-browser:
-	sardines ./lib/index.js -o ./build/paperclip.js -p browser
-	sardines ./lib/translate/index.js -o ./build/paperclip-compiler.js -p browser
-
-min:
-	closure-compiler --js ./build/paperclip.js --js_output_file ./build/paperclip.min.js
-
-
-tests: hello
-
-
-test-web: tests
-	rm -rf test-web;
-	cp -r test test-web;
-	for F in `ls test-web | grep test`; do ./node_modules/.bin/browserify "test/$$F" -o "test-web/$$F" -p browser; done
-
-
-
-
-
-
-
-
-hello:
-	paperclip -i test/templates/hello.pc -o test/templates/hello.js -p
 
