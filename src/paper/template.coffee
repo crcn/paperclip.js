@@ -23,7 +23,6 @@ Template.prototype.creator = module.exports = tpl = (paperOrSrc, application) ->
   unless application
     application = {
       nodeFactory : nofactor.default # creates DOM elements
-      $           : $?               # universal selector for DOM elements.
     }
 
   if typeof paperOrSrc is "string"
