@@ -19,3 +19,6 @@ module.exports.adapters = adapters
 # register so that strings are compiled
 paper.template.compiler = translate
 
+
+require.extensions[".pc"] = (module, filename) ->
+  module.exports = translate.compile(fs.readFileSync(filename, "utf8"))
