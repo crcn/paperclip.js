@@ -3,6 +3,7 @@ paper     = require "./paper"
 browser   = require "./browser"
 translate = require "./translate"
 adapters  = require "./node/adapters"
+fs        = require "fs"
 
 
 require("./node")
@@ -18,4 +19,8 @@ module.exports.adapters = adapters
 
 # register so that strings are compiled
 paper.template.compiler = translate
+
+
+require.extensions[".pc"] = (module, filename) ->
+  module.exports = translate.compile(fs.readFileSync(filename, "utf8"))
 
