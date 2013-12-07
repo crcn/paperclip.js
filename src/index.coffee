@@ -3,6 +3,7 @@ paper     = require "./paper"
 browser   = require "./browser"
 translate = require "./translate"
 adapters  = require "./node/adapters"
+fs = require "fs"
 
 
 require("./node")
