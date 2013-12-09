@@ -1,21 +1,9 @@
 type = require "type-component"
+subindable = require "subindable"
 
 # HTML section for 
 class ForDecor extends require("./base")
     
-  ###
-   TODO - should not clone the object - needs to be a subindable context
-  ###
-
-  _clone: (obj) ->
-    if not obj? or typeof obj isnt 'object'
-      return obj
-    newInstance = new obj.constructor()
-
-    for key of obj
-      newInstance[key] = clone obj[key]
-    return newInstance
-
   ###
   ###
 
@@ -30,7 +18,7 @@ class ForDecor extends require("./base")
     for key of value
 
       # create the new subindable context
-      subContext = @_clone(context)
+      subContext = new subindable.Object undefined, @context
 
       # TODO - this needs to be .set("key", key), and .set("value", value[key])
       subContext.key    = key
