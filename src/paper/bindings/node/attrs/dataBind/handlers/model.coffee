@@ -10,7 +10,7 @@ class ModelAttrBinding extends require("./base")
 
   bind: () ->
     super arguments...
-    (@$element = @$(@node)).bind ChangeDecor.events, @_onElementChange
+    (@$element = $(@node)).bind ChangeDecor.events, @_onElementChange
     @_onChange()
     @_nameBinding = @clip.context.bind "name", @_onChange
   
@@ -122,7 +122,7 @@ class ModelAttrBinding extends require("./base")
   ###
   ###
 
-  _elementName: () -> @$(@node).attr("name")
+  _elementName: () -> $(@node).attr("name")
 
   ###
   ###
@@ -135,14 +135,14 @@ class ModelAttrBinding extends require("./base")
 
     unless arguments.length
       if isRadioOrCheckbox
-        return Boolean @$(@node).is(":checked")
+        return Boolean $(@node).is(":checked")
       else
         return @node.value
 
     if isRadioOrCheckbox
       if isRadio
-        if String(value) is String(@$(@node).val())
-          @$(@node).prop("checked", true)
+        if String(value) is String($(@node).val())
+          $(@node).prop("checked", true)
       else
         @node.checked = value
     else 

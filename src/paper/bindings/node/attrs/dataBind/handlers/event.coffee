@@ -50,7 +50,7 @@ class EventDecor extends require("./base")
       if not @clip.get(ev)? and not @clip.get(prop)? and @[prop]?
         @clip.set ev, @[prop]
 
-    (@$node = @$(@node)).bind @_event = event, @_onEvent
+    (@$node = $(@node)).bind @_event = event, @_onEvent
 
   ###
   ###
