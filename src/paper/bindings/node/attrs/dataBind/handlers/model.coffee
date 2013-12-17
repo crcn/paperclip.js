@@ -133,8 +133,9 @@ class ModelAttrBinding extends require("./base")
     isRadio           = /radio/.test @node.type
     isRadioOrCheckbox = isCheckbox or isRadio
 
+
     unless arguments.length
-      if isRadioOrCheckbox
+      if isCheckbox
         return Boolean $(@node).is(":checked")
       else
         return @node.value
