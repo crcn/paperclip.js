@@ -7,7 +7,8 @@ var tpls = {
   one: pc.template("{{'message'}}"),
   two: pc.template("{{message}}"),
   three: pc.template("hello"),
-  four: pc.template("{{'message'}} {{'message'}}")
+  four: pc.template("{{'message'}} {{'message'}}"),
+  five: pc.template("{{'message'}} {{'message'}} {{'message'}}")
 }
 
 
@@ -26,6 +27,11 @@ suite.add("{{message}}", function () {
 
 suite.add("{{'message'}} {{'message'}}", function () {
   tpls.four.bind(new bindable.Object());
+});
+
+
+suite.add("{{'message'}} {{'message'}} {{'message'}}", function () {
+  tpls.five.bind(new bindable.Object());
 });
 
 
