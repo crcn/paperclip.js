@@ -8,13 +8,23 @@ var tpls = {
   two: pc.template("{{message}}"),
   three: pc.template("hello"),
   four: pc.template("{{'message'}} {{'message'}}"),
-  five: pc.template("{{'message'}} {{'message'}} {{'message'}}")
+  five: pc.template("{{'message'}} {{'message'}} {{'message'}}"),
+  six: pc.template("<div></div><div></div><div></div>"),
+  seven: pc.template("hello <br /> hello <br /> hello <br /> hello <br /> hello <br /> hello <br /> hello hello")
 }
 
 
-suite.add("hello!", function () {
-  tpls.three.bind(new bindable.Object());
+console.log(tpls.seven.paper.toString())
+
+
+suite.add("<div></div><div></div><div></div>", function () {
+  tpls.six.bind(new bindable.Object());
 });
+
+suite.add("hello hello hello hello hello hello hello hello", function () {
+  tpls.seven.bind(new bindable.Object());
+});
+
 
 suite.add("{{'message'}}", function () {
   tpls.one.bind(new bindable.Object());
@@ -32,6 +42,11 @@ suite.add("{{'message'}} {{'message'}}", function () {
 
 suite.add("{{'message'}} {{'message'}} {{'message'}}", function () {
   tpls.five.bind(new bindable.Object());
+});
+
+
+suite.add("hello!", function () {
+  tpls.three.bind(new bindable.Object());
 });
 
 
