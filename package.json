@@ -46,6 +46,7 @@
     "underscore": "1.4.x",
     "type-component": "0.0.x",
     "nofactor": "0.0.x",
-    "loaf": "0.0.x"
+    "loaf": "0.0.x",
+    "ent": "~0.1.0"
   }
 }

@@ -1,3 +1,5 @@
+ent = require("ent")
+
 class StringExpression extends require("./base")
     
   _type: "string"
@@ -5,7 +7,8 @@ class StringExpression extends require("./base")
   ###
   ###
 
-  constructor: (@value) ->
+  constructor: (value) ->
+    @value = ent.decode(value)
     super()
 
   ###
