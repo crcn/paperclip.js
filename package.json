@@ -25,7 +25,8 @@
     "express": "~3.3.4",
     "istanbul": "~0.1.46",
     "coveralls": "~2.5.0",
-    "mocha": "~1.15.1"
+    "mocha": "~1.15.1",
+    "benchmark": "~1.0.0"
   },
   "bin": {
     "paperclip": "./bin/paperclip"
