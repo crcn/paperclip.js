@@ -6,7 +6,8 @@ bindable = require("bindable");
 var tpls = {
   one: pc.template("{{'message'}}"),
   two: pc.template("{{message}}"),
-  three: pc.template("hello")
+  three: pc.template("hello"),
+  four: pc.template("{{'message'}} {{'message'}}")
 }
 
 
@@ -20,6 +21,11 @@ suite.add("{{'message'}}", function () {
 
 suite.add("{{message}}", function () {
   tpls.two.bind(new bindable.Object());
+});
+
+
+suite.add("{{'message'}} {{'message'}}", function () {
+  tpls.four.bind(new bindable.Object());
 });
 
 
