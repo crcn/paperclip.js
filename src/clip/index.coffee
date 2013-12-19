@@ -124,7 +124,8 @@ class ClipScript extends events.EventEmitter
 
     @_watching = {}
 
-  ###
+  ### 
+   TODO - some 
   ###
 
   update: () ->
@@ -295,7 +296,9 @@ class ClipScript extends events.EventEmitter
 
   _debounceUpdate: () =>
     clearTimeout @_debounceTimeout
-    @_debounceTimeout = setTimeout @update, 0
+    @_debounceTimeout = setTimeout (() =>
+      @update()
+    ), 0
 
 
 
