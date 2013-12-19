@@ -108,7 +108,7 @@ class ClipScript extends events.EventEmitter
   ###
   ###
 
-  constructor: (@script, @clip) ->
+  constructor: (@name, @script, @clip) ->
 
     @options    = @clip.options
     @_watching  = {}
@@ -127,11 +127,13 @@ class ClipScript extends events.EventEmitter
   ###
   ###
 
-  update: () =>
+  update: () ->
     newValue = @script.fn.call @
     return newValue if newValue is @value
     @_updated = true
-    @emit "change", @value = newValue
+
+    # TODO - optmization - set 
+    @clip.set @name, @value = newValue
     newValue
 
   ###
@@ -179,6 +181,7 @@ class ClipScript extends events.EventEmitter
     lockUpdate = true
 
     bindableBinding = undefined
+
 
     @_watching[path] = 
       target  : target
@@ -362,15 +365,8 @@ class ClipScripts
 
   _bindScript: (name, script, watch) ->
     @names.push name
-    clipScript = new ClipScript script, @clip
+    clipScript = new ClipScript name, script, @clip
     @_scripts[name] = clipScript
-    clipScript.on "change", (value) =>
-      @clip.set name, value
-
-
-
-
-
 
 
 class Clip

@@ -21,7 +21,9 @@ class BlockBinding extends require("../base/script")
   ###
 
   bind: (@context) ->
-    @clip.reset @context
+
+    # don't update the scripts - causes them to be called twice
+    @clip.reset @context, false
     super @context
 
 

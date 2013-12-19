@@ -2,7 +2,6 @@
 loaf                = require "loaf"
 blockBindingFactory = require "../bindings/block/factory"
 Clip                = require "../../clip"
-ClipBinding         = require "../bindings/clip"
 
 class BlockWriter extends require("./base")
   
@@ -21,9 +20,6 @@ class BlockWriter extends require("./base")
 
     # clips the scripts to the context
     clip = new Clip { script: script, watch: false }
-
-    # binds the context to the particular script - needed for the block bindings
-    # @bindings.push new ClipBinding clip
 
     # add any bindings that might exist
     @bindings.push blockBindingFactory.getBindings({

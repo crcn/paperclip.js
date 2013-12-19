@@ -13,10 +13,10 @@ class ValueDecor extends require("./base")
     if typeof window isnt "undefined"
 
       # minor optimization - don't create text node if not necessary
-      cn = @section.getChildNodes()
+      cn = @section.start.nextSibling
 
-      if cn.length
-        cn[0].nodeValue = value
+      if cn isnt @section.end
+        cn.nodeValue = value
         return
 
     @section.replaceChildNodes @application.nodeFactory.createTextNode String(value), true
