@@ -23,42 +23,44 @@ class RefPathExpression extends CollectionExpression
   ###
 
   toString: () ->
-    buffer = ["this"]
+    buffer = ["this."]
     currentChain = []
     self = false
 
-    if @castAs
-      buffer.push(".castAs('#{@castAs}')")
+
+    callChain = []
+
+    #if @castAs
+    #  buffer.push(".castAs('#{@castAs}')")
 
     for part in @items
       if part._type is "fn"
 
-        @_pushRef buffer, currentChain, self
+        if currentChain.length
+          callChain.push '"'+currentChain.join(".")+'"'
 
-        buffer.push ".call('", part.name, "', ["
-        buffer.push part.params.toString(), "])"
+        callChain.push "['" + part.name + "'" + (if part.params.items.length then "," + part.params.toString() else "") + "]"
+
         currentChain = []
         self = false
       else
         currentChain.push part.name
         self = self or part.self
     
+    if currentChain.length
+      callChain.push '"'+currentChain.join(".")+'"'
 
 
-    @_pushRef buffer, currentChain, self
+    if @assign isnt ""
+      buffer.push "_s"
+      callChain.push @assign
+    else
+      buffer.push "_g"
 
-    buffer.push ".value(#{@assign})"
+    buffer.push "("+callChain.join(",")+")"
 
 
     buffer.join ""
-
-  ###
-  ###
-
-  _pushRef: (buffer, chain, self) ->
-    if chain.length
-      command = if self then "self" else "ref"
-      buffer.push ".#{command}('", chain.join("."), "')"
 
 
 

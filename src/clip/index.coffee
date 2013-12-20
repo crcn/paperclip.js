@@ -4,103 +4,6 @@ bindable         = require "bindable"
 type             = require "type-component"
 
 ###
- Reads a property chain 
-###
-
-class PropertyChain
-  
-  ###
-  ###
-
-  __isPropertyChain: true
-
-  ###
-  ###
-
-  constructor: (@watcher) ->
-    @_commands = []
-    @clip = @watcher.clip
-
-  ###
-  ###
-
-  ref: (path) ->
-    @_commands.push { ref: path }
-    @
-
-  ###
-  ###
-
-  castAs: (name) ->
-    @watcher.cast[name] = @
-    @
-
-  ###
-  ###
-
-  path: () ->
-    path = []
-    for c in @_commands
-      path.push c.ref
-
-    path.join(".")
-
-  ###
-  ###
-
-  self: (path) ->
-    @_self = true
-    @ref path
-    @
-
-  ###
-  ###
-
-  call: (path, args) -> 
-    @_commands.push { ref: path, args: args }
-    @
-
-  ###
-  ###
-
-  exec: () ->
-    @currentValue = @value()
-    @
-
-  ###
-  ###
-
-  value: (value) ->
-    hasValue = arguments.length
-
-
-    cv = if @_self then @clip else @clip.data
-    n = @_commands.length
-
-    for command, i in @_commands
-
-      if cv.__isBindable
-        @watcher._watch command.ref, cv
-
-      if i is n-1 and hasValue
-        if cv.set then cv.set(command.ref, value) else dref.set cv, command.ref, value
-
-      pv = cv
-      cv = if cv.get then cv.get(command.ref) else dref.get cv, command.ref
-
-      # reference
-      if command.args
-        if cv and typeof cv is "function"
-          cv = cv?.apply pv, command.args
-        else
-          cv = undefined
-
-      break if not cv
-
-    return cv
-
-
-###
 ###
 
 class ClipScript extends events.EventEmitter
@@ -136,6 +39,24 @@ class ClipScript extends events.EventEmitter
     # TODO - optmization - set 
     @emit "change", @value = newValue
     newValue
+
+  ###
+  ###
+
+  _g: (path) ->
+    cv = @clip.data.get(path)
+    @_watch path, @clip.data
+    cv
+
+  ###
+  ###
+
+  _s: (path, value) ->
+    @clip.data.set(path, value)
+    @_watch path, @clip.data
+    value
+
+
 
   ###
   ###
