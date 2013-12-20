@@ -19,23 +19,23 @@
 7 verbose parsed url   href: '.' }
 8 silly lockFile 3a52ce78- .
 9 verbose lock . /Users/craig/.npm/3a52ce78-.lock
-10 verbose tar pack [ '/var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/tmp.tgz',
+10 verbose tar pack [ '/var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/tmp.tgz',
 10 verbose tar pack   '.' ]
-11 verbose tarball /var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/tmp.tgz
+11 verbose tarball /var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/tmp.tgz
 12 verbose folder .
 13 silly lockFile 1f1177db-tar tar://.
 14 verbose lock tar://. /Users/craig/.npm/1f1177db-tar.lock
-15 silly lockFile 036b3b33-20841-0-9616392436437309-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/tmp.tgz
-16 verbose lock tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/tmp.tgz /Users/craig/.npm/036b3b33-20841-0-9616392436437309-tmp-tgz.lock
+15 silly lockFile c9b31eda-7576-0-03295819507911801-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/tmp.tgz
+16 verbose lock tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/tmp.tgz /Users/craig/.npm/c9b31eda-7576-0-03295819507911801-tmp-tgz.lock
 17 silly lockFile 1f1177db-tar tar://.
 18 silly lockFile 1f1177db-tar tar://.
-19 silly lockFile 036b3b33-20841-0-9616392436437309-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/tmp.tgz
-20 silly lockFile 036b3b33-20841-0-9616392436437309-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/tmp.tgz
-21 verbose tar unpack /var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/tmp.tgz
-22 silly lockFile 9bc1e2a5-20841-0-9616392436437309-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/package
-23 verbose lock tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/package /Users/craig/.npm/9bc1e2a5-20841-0-9616392436437309-package.lock
-24 silly lockFile 036b3b33-20841-0-9616392436437309-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/tmp.tgz
-25 verbose lock tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/tmp.tgz /Users/craig/.npm/036b3b33-20841-0-9616392436437309-tmp-tgz.lock
+19 silly lockFile c9b31eda-7576-0-03295819507911801-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/tmp.tgz
+20 silly lockFile c9b31eda-7576-0-03295819507911801-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/tmp.tgz
+21 verbose tar unpack /var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/tmp.tgz
+22 silly lockFile afb24453-7576-0-03295819507911801-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/package
+23 verbose lock tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/package /Users/craig/.npm/afb24453-7576-0-03295819507911801-package.lock
+24 silly lockFile c9b31eda-7576-0-03295819507911801-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/tmp.tgz
+25 verbose lock tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/tmp.tgz /Users/craig/.npm/c9b31eda-7576-0-03295819507911801-tmp-tgz.lock
 26 silly gunzTarPerm modes [ '755', '644' ]
 27 silly gunzTarPerm extractEntry package.json
 28 silly gunzTarPerm extractEntry .npmignore
@@ -411,31 +411,31 @@
 368 silly gunzTarPerm modified mode [ 'src/translate/template/tokenizer.coffee', 511, 493 ]
 369 silly gunzTarPerm extractEntry inc/jquery.js
 370 silly gunzTarPerm modified mode [ 'inc/jquery.js', 511, 493 ]
-371 silly lockFile 9bc1e2a5-20841-0-9616392436437309-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/package
-372 silly lockFile 9bc1e2a5-20841-0-9616392436437309-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/package
-373 silly lockFile 036b3b33-20841-0-9616392436437309-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/tmp.tgz
-374 silly lockFile 036b3b33-20841-0-9616392436437309-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/tmp.tgz
-375 verbose tar pack [ '/Users/craig/.npm/paperclip/0.3.11/package.tgz',
-375 verbose tar pack   '/var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/package' ]
-376 verbose tarball /Users/craig/.npm/paperclip/0.3.11/package.tgz
-377 verbose folder /var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/package
-378 silly lockFile 9bc1e2a5-20841-0-9616392436437309-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/package
-379 verbose lock tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/package /Users/craig/.npm/9bc1e2a5-20841-0-9616392436437309-package.lock
-380 silly lockFile 2f730bf1-npm-paperclip-0-3-11-package-tgz tar:///Users/craig/.npm/paperclip/0.3.11/package.tgz
-381 verbose lock tar:///Users/craig/.npm/paperclip/0.3.11/package.tgz /Users/craig/.npm/2f730bf1-npm-paperclip-0-3-11-package-tgz.lock
-382 silly lockFile 9bc1e2a5-20841-0-9616392436437309-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/package
-383 silly lockFile 9bc1e2a5-20841-0-9616392436437309-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4348-4LtG8pwG/1387502120841-0.9616392436437309/package
-384 silly lockFile 2f730bf1-npm-paperclip-0-3-11-package-tgz tar:///Users/craig/.npm/paperclip/0.3.11/package.tgz
-385 silly lockFile 2f730bf1-npm-paperclip-0-3-11-package-tgz tar:///Users/craig/.npm/paperclip/0.3.11/package.tgz
-386 silly lockFile 2ec54fe6-aig-npm-paperclip-0-3-11-package /Users/craig/.npm/paperclip/0.3.11/package
-387 verbose lock /Users/craig/.npm/paperclip/0.3.11/package /Users/craig/.npm/2ec54fe6-aig-npm-paperclip-0-3-11-package.lock
-388 silly lockFile 2ec54fe6-aig-npm-paperclip-0-3-11-package /Users/craig/.npm/paperclip/0.3.11/package
-389 silly lockFile 2ec54fe6-aig-npm-paperclip-0-3-11-package /Users/craig/.npm/paperclip/0.3.11/package
-390 verbose tar unpack /Users/craig/.npm/paperclip/0.3.11/package.tgz
-391 silly lockFile 37b663cf-aig-npm-paperclip-0-3-11-package tar:///Users/craig/.npm/paperclip/0.3.11/package
-392 verbose lock tar:///Users/craig/.npm/paperclip/0.3.11/package /Users/craig/.npm/37b663cf-aig-npm-paperclip-0-3-11-package.lock
-393 silly lockFile 2f730bf1-npm-paperclip-0-3-11-package-tgz tar:///Users/craig/.npm/paperclip/0.3.11/package.tgz
-394 verbose lock tar:///Users/craig/.npm/paperclip/0.3.11/package.tgz /Users/craig/.npm/2f730bf1-npm-paperclip-0-3-11-package-tgz.lock
+371 silly lockFile afb24453-7576-0-03295819507911801-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/package
+372 silly lockFile afb24453-7576-0-03295819507911801-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/package
+373 silly lockFile c9b31eda-7576-0-03295819507911801-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/tmp.tgz
+374 silly lockFile c9b31eda-7576-0-03295819507911801-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/tmp.tgz
+375 verbose tar pack [ '/Users/craig/.npm/paperclip/0.3.12/package.tgz',
+375 verbose tar pack   '/var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/package' ]
+376 verbose tarball /Users/craig/.npm/paperclip/0.3.12/package.tgz
+377 verbose folder /var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/package
+378 silly lockFile afb24453-7576-0-03295819507911801-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/package
+379 verbose lock tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/package /Users/craig/.npm/afb24453-7576-0-03295819507911801-package.lock
+380 silly lockFile aaf67d50-npm-paperclip-0-3-12-package-tgz tar:///Users/craig/.npm/paperclip/0.3.12/package.tgz
+381 verbose lock tar:///Users/craig/.npm/paperclip/0.3.12/package.tgz /Users/craig/.npm/aaf67d50-npm-paperclip-0-3-12-package-tgz.lock
+382 silly lockFile afb24453-7576-0-03295819507911801-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/package
+383 silly lockFile afb24453-7576-0-03295819507911801-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-4457-1yF3GBeo/1387502927576-0.03295819507911801/package
+384 silly lockFile aaf67d50-npm-paperclip-0-3-12-package-tgz tar:///Users/craig/.npm/paperclip/0.3.12/package.tgz
+385 silly lockFile aaf67d50-npm-paperclip-0-3-12-package-tgz tar:///Users/craig/.npm/paperclip/0.3.12/package.tgz
+386 silly lockFile 2a6b5601-aig-npm-paperclip-0-3-12-package /Users/craig/.npm/paperclip/0.3.12/package
+387 verbose lock /Users/craig/.npm/paperclip/0.3.12/package /Users/craig/.npm/2a6b5601-aig-npm-paperclip-0-3-12-package.lock
+388 silly lockFile 2a6b5601-aig-npm-paperclip-0-3-12-package /Users/craig/.npm/paperclip/0.3.12/package
+389 silly lockFile 2a6b5601-aig-npm-paperclip-0-3-12-package /Users/craig/.npm/paperclip/0.3.12/package
+390 verbose tar unpack /Users/craig/.npm/paperclip/0.3.12/package.tgz
+391 silly lockFile 645e49a3-aig-npm-paperclip-0-3-12-package tar:///Users/craig/.npm/paperclip/0.3.12/package
+392 verbose lock tar:///Users/craig/.npm/paperclip/0.3.12/package /Users/craig/.npm/645e49a3-aig-npm-paperclip-0-3-12-package.lock
+393 silly lockFile aaf67d50-npm-paperclip-0-3-12-package-tgz tar:///Users/craig/.npm/paperclip/0.3.12/package.tgz
+394 verbose lock tar:///Users/craig/.npm/paperclip/0.3.12/package.tgz /Users/craig/.npm/aaf67d50-npm-paperclip-0-3-12-package-tgz.lock
 395 silly gunzTarPerm modes [ '755', '644' ]
 396 silly gunzTarPerm extractEntry package.json
 397 silly gunzTarPerm extractEntry .npmignore
@@ -668,16 +668,16 @@
 624 silly gunzTarPerm extractEntry examples/express/hello-world/views/index.pc
 625 silly gunzTarPerm extractEntry examples/express/hello-world/views/layout2.pc
 626 silly gunzTarPerm extractEntry examples/express/hello-world/views/main_layout.pc
-627 silly lockFile 37b663cf-aig-npm-paperclip-0-3-11-package tar:///Users/craig/.npm/paperclip/0.3.11/package
-628 silly lockFile 37b663cf-aig-npm-paperclip-0-3-11-package tar:///Users/craig/.npm/paperclip/0.3.11/package
-629 silly lockFile 2f730bf1-npm-paperclip-0-3-11-package-tgz tar:///Users/craig/.npm/paperclip/0.3.11/package.tgz
-630 silly lockFile 2f730bf1-npm-paperclip-0-3-11-package-tgz tar:///Users/craig/.npm/paperclip/0.3.11/package.tgz
-631 verbose chmod /Users/craig/.npm/paperclip/0.3.11/package.tgz 644
-632 verbose chown /Users/craig/.npm/paperclip/0.3.11/package.tgz [ 501, 20 ]
+627 silly lockFile 645e49a3-aig-npm-paperclip-0-3-12-package tar:///Users/craig/.npm/paperclip/0.3.12/package
+628 silly lockFile 645e49a3-aig-npm-paperclip-0-3-12-package tar:///Users/craig/.npm/paperclip/0.3.12/package
+629 silly lockFile aaf67d50-npm-paperclip-0-3-12-package-tgz tar:///Users/craig/.npm/paperclip/0.3.12/package.tgz
+630 silly lockFile aaf67d50-npm-paperclip-0-3-12-package-tgz tar:///Users/craig/.npm/paperclip/0.3.12/package.tgz
+631 verbose chmod /Users/craig/.npm/paperclip/0.3.12/package.tgz 644
+632 verbose chown /Users/craig/.npm/paperclip/0.3.12/package.tgz [ 501, 20 ]
 633 silly lockFile 3a52ce78- .
 634 silly lockFile 3a52ce78- .
 635 silly publish { name: 'paperclip',
-635 silly publish   version: '0.3.11',
+635 silly publish   version: '0.3.12',
 635 silly publish   description: 'controller logic:',
 635 silly publish   main: './lib/index.js',
 635 silly publish   browserify: './lib/browser.js',
@@ -721,33 +721,52 @@
 635 silly publish      ent: '~0.1.0' },
 635 silly publish   readme: '# Paperclip.js [![Alt ci](https://travis-ci.org/classdojo/paperclip.js.png)](https://travis-ci.org/classdojo/paperclip.js)\n\nPaperclip is a data-bindable templating system inspired by [Mustache](https://github.com/janl/mustache.js/), [Angular](http://angularjs.org/), [Derby](http://derbyjs.com/), and [Knockout](http://knockoutjs.com/). It\'s supported on all major browsers: IE8+, Firefox, Chrome, Safari, Opera, as well as Node.js.\n\nPaperclip works by listening to [bindable](https://github.com/classdojo/bindable.js) objects, and updating the template if anything changes. Unlike angular.js, paperclip takes a more explicit approach to updating templates. If you want to change a value in a template manually, you can easily do so by calling `bindable.set(property, value)`. [Here\'s an example](http://jsfiddle.net/JTxdM/37/).\n\n\nPaperclip translates HTML directly to JavaScript. For example, the following `hello.pc` file:\n\n```html\nhello {{message}}!\n```\n\nis translated to:\n\n```javascript\nmodule.exports = function(fragment, block, element, text, parse, modifiers) {\n    return fragment([ text("hello "), block({\n        fn: function() {\n            return this.ref("message").value();\n        },\n        refs: [ "message" ]\n    }), text("! ") ]);\n};\n```\n\n### Features\n\n- template update automatically if the data changes\n- [block helpers](#block-helpers)\n- [data-bind attributes](#data-bind-attributes) (similar to knockout.js)\n- [declarative data-binding](#blocks), similar to angular.js\n- node.js support\n- [block modifiers](#modifiers), similar to angular filters\n- [pollyfills](#pollyfills), similar to angular directives\n\n### Examples\n\n- [hello input](http://jsfiddle.net/JTxdM/38/)\n- [hello world](http://jsfiddle.net/JTxdM/30/)\n- [modifiers](http://jsfiddle.net/JTxdM/31/)\n- [data-binding to input fields](http://jsfiddle.net/JTxdM/32/)\n- [data-binding attributes](http://jsfiddle.net/JTxdM/29/)\n- [inline javascript](http://jsfiddle.net/JTxdM/28/)\n- [animal age calculator](http://jsfiddle.net/JTxdM/27/)\n- [titlecase / lowercase modifiers](http://jsfiddle.net/JTxdM/34/)\n- [if / elseif / else block](http://jsfiddle.net/JTxdM/25/)\n- [html block helper](http://jsfiddle.net/JTxdM/26/)\n- [onEnter event](http://jsfiddle.net/JTxdM/35/)\n- [data-binding styles](http://jsfiddle.net/JTxdM/22/)\n- [manually updating templates](http://jsfiddle.net/JTxdM/37/)\n\n### Third-party components:\n\n- [paperclip-component](https://github.com/classdojo/paperclip-component) - used with [Mojo.js](https://github.com/classdojo/mojo.js). Allows for views to be instantiated within paperclip templates. This is similar to Ember.js\'s component, and Angular.js\'s directive implementation. \n- [paperclip-placeholder-pollyfill](https://github.com/classdojo/paperclip-placeholder-pollyfill) - placeholder pollyfull for IE users.\n\n### Installation\n\n```bash\nnpm install paperclip -g\n```\n\n### Compiling a script\n\n```bash\npaperclip -i template.pc -o template.pc.js\n```\n\n## Syntax\n\nPaperclip takes on a mustache / handlebars approach with variables, blocks, and pollyfills. Paperclip also allows basic inline javascript, similar to angular.js.\n\n### Blocks\n\nPaperclip support variable blocks, just like Angular.js. [For example](http://jsfiddle.net/JTxdM/24/):\n\n```html\nhello {{ name.first }} {{ name.last }}!\n```\n\nYou can also specify blocks within attributes. [For example](http://jsfiddle.net/JTxdM/29/):\n\n```html\nmy favorite color is <span style="color: {{color}}">{{color}}</span>\n```\n\n\nIf you want to add some sugar, go ahead and [drop-in some javascript](http://jsfiddle.net/JTxdM/28/):\n\n```html\nhello {{ message || "world!" }}!\n```\n\n### Modifiers\n\nModifiers format data in a variable block. A good example of this might be presenting data to the user depending on their locale. For example:\n\ntranslation modifier:\n\n```javascript\npaperclip.modifier("t", function(value) {\n  return i18n.t(value);\n})\n```\n\ntemplate usage:\n\n```html\n{{ "hello.world" | t() }}\n```\n\nModifiers can be chained together. For example, you can send a strong message to your users by writing something like:\n\n```html\n{{ "hello.world" | t() | uppercase() }}!!!\n```\n\nWhich might produce:\n\n```bash\nHELLO WORLD!!!\n```\n\nModifiers also accept parameters. [For example](http://jsfiddle.net/JTxdM/27/):\n\n```javascript\npaperclip.modifier("divide", function(value, num) {\n  return Math.round((value || 0) / num);\n});\n```\n\ntemplate usage:\n\n```html\nA human that is {{age}} years old is like a {{ age | divide(5.6) }} year old dog!\n```\n\n\n### Block Helpers\n\n#### {{ html: content }}\n\nSimilar to escaping content in mustache (`{{{content}}}`). [For example](http://jsfiddle.net/JTxdM/26/):\n\n```html\n{{ html: content }}\n```\n\n\n\n#### {{#if: condition }}\n\nConditional block helper. [For example](http://jsfiddle.net/JTxdM/25/):\n\n```\n{{#if: age > 18 }}\n  You\'re legally able to vote in the U.S.\n{{/}}\n```\n\n\n#### Custom Block Helpers\n\nPaperclip also allows you to register your own block helpers. This is similar to custom angular.js directives. [For example]():\n\nTODO\n\n### data-bind attributes\n\ndata-bind attributes are borrowed from [knockout.js](http://knockoutjs.com/). This is useful if you want to attach behavior to any DOM element. \n\n#### {{ event: expression }}\n\nExecuted when an event is fired on the DOM element. Here are all the available events:\n\n- `onChange` - called when an element changes\n- `onClick` - called when an element is clicked\n- `onLoad` - called when an element loads - useful for `<img />`\n- `onSubmit` - called on submit - useful for `<form />`\n- `onMouseDown` - called on mouse down\n- `onMouseUp` - called on mouse up\n- `onMouseOver` - called on mouse over\n- `onMouseOut` - called on mouse out\n- `onKeyDown` - called on key down\n- `onKeyUp` - called on key up\n- `onEnter` - called on enter key up\n- `onDepete` - called on delete key up\n\n[Basic example](http://jsfiddle.net/JTxdM/35/):\n\n```html\n<input type="text" data-bind="{{ model: name, onEnter: sayHello() }}"></input>\n```\n\n\n#### {{ show: bool }}\n\nToggles the display mode of a given element. This is similar to the `{{#if: expression }}` conditional helper.\n\n\n#### {{ css: styles }}\n\nSets the css of a given element. [For example](http://jsfiddle.net/JTxdM/21/):\n\n```html\n<strong data-bind="{{ \n  css: {\n      cool    : temp > 0,\n      warm    : temp > 60,\n      hot     : temp > 90\n  } \n}}"> It\'s pretty warm! </strong>\n```\n\n#### {{ style: styles }}\n\nSets the style of a given element. [For example](http://jsfiddle.net/JTxdM/22/): \n\n```\n<span data-bind="{{ \n  style: {\n    color       : color,\n    \'font-size\' : size\n  } \n}}"> Hello World </span>\n```\n\n#### {{ disable: bool }}\n\nToggles the enabled state of an element.\n\n\n#### {{ model: context }}\n\nInput data-binding. [For example](http://jsfiddle.net/JTxdM/23/):\n\n```html\n<input type="text" name="message" data-bind="{{ model: this }}"></input> {{ message }}\n```\n\n#### Custom data-bind helpers\n\nTODO\n\n### Pollyfills\n\nPollyfills are similar to angular directives, but they should only be used to provide support for features not implemented in older browsers. A good example of this is [paperclip-placeholder-pollyfill](https://github.com/classdojo/paperclip-placeholder-pollyfill). If you need to create a custom component, [create as a block helper](#custom-block-helpers).\n\n## API\n\n#### template paperclip.template(sourceOrScriptName)\n\ntranslates the source, or script into a paperclip template. [For example](http://jsfiddle.net/JTxdM/36/).\n\n#### elements template.bind(context)\n\nCreates the DOM elements, and binds the elements to the given context. \n\n#### elements.toFragment()\n\nCasts the elements as a document fragment.\n\n#### elements.unbind()\n\nUnbinds the elements from the given context.\n\n## Node.js Usage\n\n\n\n',
 635 silly publish   bugs: { url: 'https://github.com/classdojo/paperclip.js/issues' },
-635 silly publish   _id: 'paperclip@0.3.11',
-635 silly publish   dist: { shasum: 'cc6d584b9f79908687ecbd1daa55872a74d02107' },
+635 silly publish   _id: 'paperclip@0.3.12',
+635 silly publish   dist: { shasum: 'f8ec2f9ebd479c197add7e85fd30203d6b7c4bf4' },
 635 silly publish   _from: '.' }
 636 verbose url raw paperclip
 637 verbose url resolving [ 'http://registry.npmjs.org/', './paperclip' ]
 638 verbose url resolved http://registry.npmjs.org/paperclip
-639 info trying registry request attempt 1 at 17:15:22
+639 info trying registry request attempt 1 at 17:28:49
 640 http PUT http://registry.npmjs.org/paperclip
 641 http 409 http://registry.npmjs.org/paperclip
 642 verbose url raw paperclip
 643 verbose url resolving [ 'http://registry.npmjs.org/', './paperclip' ]
 644 verbose url resolved http://registry.npmjs.org/paperclip
-645 info trying registry request attempt 1 at 17:15:23
+645 info trying registry request attempt 1 at 17:28:50
 646 http GET http://registry.npmjs.org/paperclip
 647 http 200 http://registry.npmjs.org/paperclip
-648 error publish fail Cannot publish over existing version.
-648 error publish fail Update the 'version' field in package.json and try again.
-648 error publish fail
-648 error publish fail If the previous version was published in error, see:
-648 error publish fail     npm help unpublish
-648 error publish fail
-648 error publish fail To automatically increment version numbers, see:
-648 error publish fail     npm help version
-649 error System Darwin 13.0.0
-650 error command "node" "/usr/local/bin/npm" "publish"
-651 error cwd /Users/craig/Developer/Public/paperclip.js
-652 error node -v v0.10.21
-653 error npm -v 1.3.11
-654 error code EPUBLISHCONFLICT
-655 verbose exit [ 1, true ]
+648 verbose uploading [ 'paperclip/-/paperclip-0.3.12.tgz/-rev/324-a69a954ad069956be241418288acf3bf',
+648 verbose uploading   '/Users/craig/.npm/paperclip/0.3.12/package.tgz' ]
+649 verbose url raw paperclip/-/paperclip-0.3.12.tgz/-rev/324-a69a954ad069956be241418288acf3bf
+650 verbose url resolving [ 'http://registry.npmjs.org/',
+650 verbose url resolving   './paperclip/-/paperclip-0.3.12.tgz/-rev/324-a69a954ad069956be241418288acf3bf' ]
+651 verbose url resolved http://registry.npmjs.org/paperclip/-/paperclip-0.3.12.tgz/-rev/324-a69a954ad069956be241418288acf3bf
+652 info trying registry request attempt 1 at 17:28:51
+653 http PUT http://registry.npmjs.org/paperclip/-/paperclip-0.3.12.tgz/-rev/324-a69a954ad069956be241418288acf3bf
+654 http 201 http://registry.npmjs.org/paperclip/-/paperclip-0.3.12.tgz/-rev/324-a69a954ad069956be241418288acf3bf
+655 verbose publish attached [ 'paperclip',
+655 verbose publish   '/Users/craig/.npm/paperclip/0.3.12/package.tgz',
+655 verbose publish   'paperclip-0.3.12.tgz' ]
+656 verbose url raw paperclip/0.3.12/-tag/latest
+657 verbose url resolving [ 'http://registry.npmjs.org/',
+657 verbose url resolving   './paperclip/0.3.12/-tag/latest' ]
+658 verbose url resolved http://registry.npmjs.org/paperclip/0.3.12/-tag/latest
+659 info trying registry request attempt 1 at 17:28:52
+660 http PUT http://registry.npmjs.org/paperclip/0.3.12/-tag/latest
+661 http 409 http://registry.npmjs.org/paperclip/0.3.12/-tag/latest
+662 error publish fail Cannot publish over existing version.
+662 error publish fail Update the 'version' field in package.json and try again.
+662 error publish fail
+662 error publish fail If the previous version was published in error, see:
+662 error publish fail     npm help unpublish
+662 error publish fail
+662 error publish fail To automatically increment version numbers, see:
+662 error publish fail     npm help version
+663 error System Darwin 13.0.0
+664 error command "node" "/usr/local/bin/npm" "publish"
+665 error cwd /Users/craig/Developer/Public/paperclip.js
+666 error node -v v0.10.21
+667 error npm -v 1.3.11
+668 error code EPUBLISHCONFLICT
+669 verbose exit [ 1, true ]
