@@ -4,20 +4,6 @@ utils     = require("./utils");
 
 describe("node", function() {
 
-  it("removes the attribute if the value is undefined", function() {
-
-        var v = pc.template("<input value=\"{{value}}\"></input>").
-        bind({
-          value: "b"
-        });
-
-        expect(String(v)).to.contain("<input value=\"b\">");
-        v.context.set("value", undefined);
-        expect(String(v)).to.contain("<input>");
-      });
-  
-  return
-
   describe("attribute", function() {
 
     var firefox = utils.browser.mozilla,

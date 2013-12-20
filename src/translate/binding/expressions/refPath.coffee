@@ -36,13 +36,18 @@ class RefPathExpression extends CollectionExpression
     #if @castAs
     #  buffer.push(".castAs('#{@castAs}')")
 
+    call = false
+
     for part in @items
       if part._type is "fn"
+        call = true
 
         if currentChain.length
           callChain.push '"'+currentChain.join(".")+'"'
 
-        callChain.push "['" + part.name + "'" + (if part.params.items.length then "," + part.params.toString() else "") + "]"
+        callChain.push '"'+part.name+'"'
+
+        callChain.push "[" + part.params.toString() + "]"
 
         currentChain = []
         self = false
@@ -53,8 +58,9 @@ class RefPathExpression extends CollectionExpression
     if currentChain.length
       callChain.push '"'+currentChain.join(".")+'"'
 
-
-    if @assign
+    if call
+      buffer.push "call"
+    else if @assign
       buffer.push "set"
       callChain.push @assign
     else

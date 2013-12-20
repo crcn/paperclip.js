@@ -30,7 +30,7 @@ class ClipScript extends events.EventEmitter
     @_watchRefs()
 
     @_locked = true
-    newValue = @script.fn.call @__context
+    newValue = @script.fn.call @
     @_locked = false
 
     return newValue if newValue is @value
@@ -40,6 +40,31 @@ class ClipScript extends events.EventEmitter
     @emit "change", @value = newValue
 
     newValue
+
+  ###
+  ###
+
+  get: (path) -> @__context.get(path)
+
+  ###
+  ###
+
+  set: (path, value) -> @__context.set(path, value)
+
+  ###
+  ###
+
+  call: (ctxPath, key, params) -> 
+
+    if arguments.length is 2
+      params = key
+      ctx    = @__context
+      fn     = ctx.get(ctxPath)
+    else
+      ctx  = @__context
+      fn  = ctx.get(ctxPath + "." + key)
+
+    fn?.apply(ctx, params)
 
   ###
   ###
