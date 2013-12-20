@@ -15,8 +15,6 @@ class ValueDecor extends require("./base")
       # minor optimization - don't create text node if not necessary
       cn = @section.start.nextSibling
 
-      console.log cn
-
       if cn isnt @section.end
         cn.nodeValue = value
         return
