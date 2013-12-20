@@ -10,8 +10,11 @@ class RefPathExpression extends CollectionExpression
   ###
   ###
 
-  constructor: (items, @castAs, @assign = "") ->
+  constructor: (items, @castAs, @assign) ->
     super items
+
+    if @assign
+      @_children.push @assign
 
   ###
   ###
@@ -51,11 +54,11 @@ class RefPathExpression extends CollectionExpression
       callChain.push '"'+currentChain.join(".")+'"'
 
 
-    if @assign isnt ""
-      buffer.push "_s"
+    if @assign
+      buffer.push "set"
       callChain.push @assign
     else
-      buffer.push "_g"
+      buffer.push "get"
 
     buffer.push "("+callChain.join(",")+")"
 

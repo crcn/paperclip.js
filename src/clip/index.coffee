@@ -12,51 +12,34 @@ class ClipScript extends events.EventEmitter
   ###
 
   constructor: (@script, @clip) ->
-
     @options    = @clip.options
-    @_watching  = {}
-    @cast       = {}
+    @_bindings  = []
 
   ###
   ###
 
   dispose: () ->
-
-    for key of @_watching
-      @_watching[key].dispose()
-
-    @_watching = {}
+    binding.dispose() for binding in @_bindings
 
   ### 
    TODO - some 
   ###
 
   update: () ->
-    newValue = @script.fn.call @
+    return if @_locked
+    @_watchRefs()
+
+    @_locked = true
+    newValue = @script.fn.call @__context
+    @_locked = false
+
     return newValue if newValue is @value
     @_updated = true
 
     # TODO - optmization - set 
     @emit "change", @value = newValue
+
     newValue
-
-  ###
-  ###
-
-  _g: (path) ->
-    cv = @clip.data.get(path)
-    @_watch path, @clip.data
-    cv
-
-  ###
-  ###
-
-  _s: (path, value) ->
-    @clip.data.set(path, value)
-    @_watch path, @clip.data
-    value
-
-
 
   ###
   ###
@@ -70,9 +53,7 @@ class ClipScript extends events.EventEmitter
 
   unwatch: () ->
     @__watch = false
-    for key of @_watching
-      @_watching[key].dispose()
-    @_watching = {}
+    @dispose()
     @
 
   ###
@@ -83,48 +64,35 @@ class ClipScript extends events.EventEmitter
   ###
   ###
 
-  ref    : (path) -> new PropertyChain(@).ref path
-  self   : (path) -> new PropertyChain(@).self path
-  call   : (path, args) -> new PropertyChain(@).call path, args
-  castAs : (name) -> new PropertyChain(@).castAs name
+  _watchRefs: () ->
+    return if @__context is @clip.data
+    @__context = @clip.data
+    return unless @script.refs
+    for ref in @script.refs then do (ref) =>
+      bindableBinding = undefined
 
-  ###
-   watches 
-  ###
-
-  _watch: (path, target) ->
-
-    return if not @__watch
-
-    if @_watching[path]
-      return if @_watching[path].target is target
-      @_watching[path].dispose()
-
-    lockUpdate = true
-
-    bindableBinding = undefined
-
-
-    @_watching[path] = 
-      target  : target
-      binding : binding = target.bind(path).to((value, oldValue) =>
+      # this is a bug with bindable.js. We don't want to call
+      # .now() since it adds more overhead - we just want to listen for any changes
+      # on the given value. This causes some wierd edge cases though where a value might have
+      # been assigned, then emitted as undefined. "locked" is a quick fix
+      locked = true
+      @_bindings.push binding = @__context.bind ref, (value, oldValue) =>
 
         if bindableBinding
           bindableBinding.dispose()
+          @_bindings.splice(@_bindings.indexOf(bindableBinding), 1)
 
         if value?.__isBindable
-          bindableBinding = @_watchBindable(value, oldValue) 
-        else if type(value) is "function"
-          @_spyFunction(path, value, target)
+          @_bindings.push bindableBinding = @_watchBindable(value, oldValue) 
 
-        return if lockUpdate
+        return if locked
+
         @update()
-      ).now()
-      dispose : () ->
-        bindableBinding?.dispose()
-        binding.dispose()
 
-    lockUpdate = false
+      binding.now()
+      locked = false
+
+
     
 
   ###
@@ -141,85 +109,17 @@ class ClipScript extends events.EventEmitter
     dispose: () =>
       value.off "change", onChange
 
-  ### 
-   temporarily overwrites an existing, referenced function, and finds *all* the references
-   called within the given function. This is needed incase a function is called inline, and *might*
-   be updated. For example:
-
-   getSum = () -> @get("someNum") + @get("anotherNum")
-
-   and 
-
-   {{ getSum() }}
-
-   _spyFunction would find the references to "someNum", and "anotherSum", and listen for *those* to change,
-   then re-call getSum()
-
+  ###
   ###
 
-  _spyFunction: (path, fn, target) ->
-    oldFn = fn
-
-    # if the function is a spying function, then ignore it
-    return if fn.__isCallSpy
-
-
-    self = @
-
-    # need to fetch the owner of the function so proper items are 
-    # references
-    target = target.owner?(path) or target
-
-
-    # references attached to the function? watch them!
-    if fn.refs
-      for ref in fn.refs
-        @_watch ref, target
-      return
-    else
-      return
-
-    # DEPRECATED
-    ###
-    fn = () ->
-      refs   = []
-      oldGet = @get
-
-      # override this.get temporarily
-      @get = (key) ->
-        refs.push(key) if key and key.length
-        oldGet.call @, key
-
-      # call the old function
-      ret = oldFn.apply @, arguments
-
-      # reset the old this.get function
-      @get = oldGet
-
-      oldFn.refs = refs
-
-      #reset the old function
-      @set path, oldFn
-
-      ret
-
-    # set callspy to the overridden function, since _spyFunction
-    # will be called again after it's overridden. We want to prevent an infinite loop!
-    fn.__isCallSpy = true
-
-    # override the old function *temporarily*
-    target.set path, fn
-    ###
-
+  _update2: () => @update()
     
   ###
   ###
 
   _debounceUpdate: () =>
     clearTimeout @_debounceTimeout
-    @_debounceTimeout = setTimeout (() =>
-      @update()
-    ), 0
+    @_debounceTimeout = setTimeout @_update2, 0
 
 
 
@@ -314,8 +214,8 @@ class Clip
   ###
   ###
 
-  reset: (data = {}, update = true) ->
-    @data = if data.__isBindable then data else new bindable.Object data
+  reset: (data, update = true) ->
+    @data = if data then data else new bindable.Object()
     if update
       @update()
     @

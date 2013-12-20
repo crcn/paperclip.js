@@ -1,7 +1,10 @@
 pc = require(".."),
-expect = require("expect.js");
+expect = require("expect.js"),
+bindable = require("bindable");
 
 describe("binding", function() {
+
+
 
   describe("respect expr", function() {
     it("boolean", function() {
@@ -273,7 +276,6 @@ describe("binding", function() {
       expect(v.context.get("c")).to.be("ha");
       expect(v.context.get("d")).to.be("ha");
       expect(v.context.get("a")).to.be("ha");
-
       v.context.set("c", "bah");
       expect(v.context.get("c")).to.be("ha");
       v.context.set("a", "bah");
