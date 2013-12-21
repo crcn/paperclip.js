@@ -47,6 +47,7 @@
     "type-component": "0.0.x",
     "nofactor": "0.0.x",
     "loaf": "0.1.x",
-    "ent": "~0.1.0"
+    "ent": "~0.1.0",
+    "runlater": "0.0.2"
   }
 }
