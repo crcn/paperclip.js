@@ -15,11 +15,9 @@ class ElementWriter extends require("./base")
  
     # separate bound attributes from attributes that never change
     for attrName of attributes
-      v = attributes[attrName]
-
-      if v.length is 1 and type(v[0]) is "string"
-        element.setAttribute attrName, v[0]
-
+      value = attributes[attrName]
+      continue if typeof value is "object"
+      element.setAttribute attrName, value
 
     @bindings.push nodeBindingFactory.getBindings({
       node: element,

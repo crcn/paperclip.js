@@ -14,8 +14,6 @@ var tpls = {
 }
 
 
-console.log(tpls.seven.paper.toString())
-
 
 suite.add("<div></div><div></div><div></div>", function () {
   tpls.six.bind(new bindable.Object());

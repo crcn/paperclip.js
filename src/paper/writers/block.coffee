@@ -24,6 +24,7 @@ class BlockWriter extends require("./base")
     # add any bindings that might exist
     @bindings.push blockBindingFactory.getBindings({
       section: section
+      #marker: node = @nodeFactory.createComment("block")
       clip: clip,
       template: tpl,
       application: @application,
@@ -33,6 +34,7 @@ class BlockWriter extends require("./base")
     # returns a collection of the elements that this block owns, controlled
     # by the loaf specified above
     section.toFragment()
+    # node
 
 
 module.exports = BlockWriter

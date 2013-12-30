@@ -21,10 +21,20 @@ class AttributesExpression extends require("./collection")
 
   toString: () ->
 
-
     params = []
     for attr in @_children
-      params.push "'#{attr.name}':[#{if attr.value then attr.value.toString() else 'true' }]"
+      isScript = !!attr.value.items.filter((item) ->
+        item._type is "script"
+      ).length
+
+      name = attr.name
+
+      if isScript or name is "data-bind"
+        attrValue = "[" + attr.value.toString() + "]"
+      else
+        attrValue = if attr.value then attr.value.items[0].toString() else 'true'
+
+      params.push "'#{name}':#{attrValue}"
 
     "{#{params.join(',')}}"
 

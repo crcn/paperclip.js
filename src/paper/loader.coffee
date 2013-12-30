@@ -43,6 +43,8 @@ class Loader
 
   load: (context = {}) ->
 
+    @_createTemplateNode()
+
     unless context.__isBindable
       context = new bindable.Object context
 
@@ -60,6 +62,15 @@ class Loader
     @section.append node
 
     @
+
+  ###
+   creates 
+  ###
+
+  _createTemplateNode: () ->
+    if @template.node
+      return
+
 
   ###
   ###
