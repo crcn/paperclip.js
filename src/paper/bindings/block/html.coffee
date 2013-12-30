@@ -10,6 +10,7 @@ class HtmlDecor extends require("./base")
 
     oldValue?.remove?()
 
+
     unless value
       return @section.removeAll() 
 

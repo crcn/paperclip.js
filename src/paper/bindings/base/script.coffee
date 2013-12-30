@@ -14,14 +14,11 @@ class ScriptBinding extends require("./index")
     if @watch isnt false
       @script.watch().update()
   
-    @_binding = @clip.bind(@scriptName)
+    @_binding = @clip.bind(@scriptName, {
+      map: @_map,
+      to: @_onChange
+    }).now()
 
-    if @_map
-      @_binding.map @_map
-
-    @_binding.to @_onChange
-
-    @_binding.now()
     @
 
   ###

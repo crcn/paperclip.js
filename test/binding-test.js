@@ -5,7 +5,6 @@ bindable = require("bindable");
 describe("binding", function() {
 
 
-
   describe("respect expr", function() {
     it("boolean", function() {
       var v = pc.
@@ -342,6 +341,9 @@ describe("binding", function() {
       expect(v.context.get("d")).to.be("ha");
       expect(v.context.get("a")).to.be("ha");
       v.context.set("c", "bah");
+
+      // script is re-evaluated when 'c' is set, and since
+      // a is still 'ha', it 
       expect(v.context.get("c")).to.be("ha");
       v.context.set("a", "bah");
       expect(v.context.get("c")).to.be("bah");

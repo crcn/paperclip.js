@@ -69,7 +69,7 @@ class ModelAttrBinding extends require("./base")
 
     
     if name
-      @_modelBinding = model?.bind(name).to(@_onValueChange).now()
+      @_modelBinding = model?.bind(name, @_onValueChange).now()
     else if type(model) isnt "object"
       @_onValueChange model
 

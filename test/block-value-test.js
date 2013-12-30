@@ -16,10 +16,10 @@ describe("basic", function() {
     }
   });
 
-
   it("can load the context", function() {
     var content = helloTemplate.bind(person);
     expect(content.toString()).to.be("hello craig condon!");
+    content.unbind()
   });
 
   describe("bind/unbind", function() {
@@ -33,7 +33,7 @@ describe("basic", function() {
       expect(content.toString()).to.be("hello jake condon!");
       person.set("name.last", "jeff");
       expect(content.toString()).to.be("hello jake jeff!");
-      person.set({ name: { first: "a", last: "b" }})
+      person.setProperties({ name: { first: "a", last: "b" }})
       expect(content.toString()).to.be("hello a b!");
     });
 
@@ -44,7 +44,6 @@ describe("basic", function() {
       person.set("name.first", "jake");
       expect(content.toString()).to.be("hello john b!");
     });
-
 
     it("can be re-bound", function() {
       content.bind();

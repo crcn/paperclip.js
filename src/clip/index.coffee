@@ -14,15 +14,15 @@ class ClipScript extends events.EventEmitter
   constructor: (@script, @clip) ->
     @options    = @clip.options
     @_bindings  = []
-
+    
   ###
   ###
 
   dispose: () ->
     binding.dispose() for binding in @_bindings
+    @__context = undefined
 
   ### 
-   TODO - some 
   ###
 
   update: () ->
@@ -32,6 +32,7 @@ class ClipScript extends events.EventEmitter
     @_locked = true
     newValue = @script.fn.call @
     @_locked = false
+
 
     return newValue if newValue is @value
     @_updated = true
@@ -44,12 +45,16 @@ class ClipScript extends events.EventEmitter
   ###
   ###
 
-  get: (path) -> @__context.get(path)
+  get: (path) -> 
+    v = @__context.get(path)
+    v
 
   ###
   ###
 
-  set: (path, value) -> @__context.set(path, value)
+  set: (path, value) -> 
+    v = @__context.set(path, value)
+    return v
 
   ###
   ###
@@ -92,16 +97,11 @@ class ClipScript extends events.EventEmitter
   _watchRefs: () ->
     return if @__context is @clip.data
     @__context = @clip.data
-    return unless @script.refs
+    return unless @script.refs or not @__watch
     for ref in @script.refs then do (ref) =>
       bindableBinding = undefined
 
-      # this is a bug with bindable.js. We don't want to call
-      # .now() since it adds more overhead - we just want to listen for any changes
-      # on the given value. This causes some wierd edge cases though where a value might have
-      # been assigned, then emitted as undefined. "locked" is a quick fix
-      locked = true
-      @_bindings.push binding = @__context.bind ref, (value, oldValue) =>
+      @_bindings.push @__context.bind ref, (value, oldValue) =>
 
         if bindableBinding
           bindableBinding.dispose()
@@ -110,15 +110,7 @@ class ClipScript extends events.EventEmitter
         if value?.__isBindable
           @_bindings.push bindableBinding = @_watchBindable(value, oldValue) 
 
-        return if locked
-
         @update()
-
-      binding.now()
-      locked = false
-
-
-    
 
   ###
    watches a bindable object for any changes, then updates this binding asynchronously This is important
@@ -191,7 +183,7 @@ class ClipScripts
     for key of @_scripts
       @_scripts[key].dispose()
 
-    @_scripts = {}
+    @_scripts  = {}
 
   ###
   ###
@@ -269,7 +261,6 @@ class Clip
   ###
 
   dispose: () -> 
-
     @_self?.dispose()
     @scripts?.dispose()
 

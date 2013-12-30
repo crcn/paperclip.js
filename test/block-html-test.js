@@ -10,7 +10,23 @@ bindable  = require("bindable");
 
 describe("html sections", function() {
 
+  it("can add, remove, and re-add a used block", function() {
+    var v = pc.template("hello {{ html: content }}"),
+    v2 = pc.template("world"),
+    v3 = pc.template("Craig");
 
+    var b2, b3, b = v.bind({
+      content: b2 = v2.bind()
+    });
+
+    expect(String(b)).to.be("hello world");
+    b.context.setProperties({ content: b3 = v3.bind() })
+    expect(String(b)).to.be("hello Craig");
+    b.context.setProperties({ content: b2 })
+    expect(String(b)).to.be("hello world");
+  });
+
+  return;
   var sectionTemplate = pc.template("\
       A message to our nice friends: \
         \"{{ html: sections.blockValue }}\" \

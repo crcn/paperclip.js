@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "0.3.12",
+  "version": "0.3.13",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "browserify": "./lib/browser.js",
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "strscanner": "0.0.x",
-    "bindable": "0.4.x",
+    "bindable": "0.5.x",
     "dref": "0.0.x",
     "hoist": "0.0.x",
     "async": "0.2.x",

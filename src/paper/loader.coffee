@@ -48,7 +48,6 @@ class Loader
 
     @context = context
 
-
     # writes the DOM
     node = @paper @_writers.fragment.write,
     @_writers.block.write,
