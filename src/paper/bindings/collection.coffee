@@ -16,10 +16,11 @@ class Collection extends BaseBinding
   ###
   ###
 
-  bind: (@context) -> 
+  bind: (context, node) -> 
     return if @_bound
     @_bound = true
-    binding.bind(@context) for binding in @_source
+    for binding in @_source
+      binding.bind(context, node) 
     return
 
   ###

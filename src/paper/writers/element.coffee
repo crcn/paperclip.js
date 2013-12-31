@@ -11,7 +11,6 @@ class ElementWriter extends require("./base")
 
     # create the DOM element here first
     element = @nodeFactory.createElement name
-
  
     # separate bound attributes from attributes that never change
     for attrName of attributes

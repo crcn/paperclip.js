@@ -42,13 +42,27 @@ class Loader
   ###
 
   load: (context = {}) ->
-
-    @_createTemplateNode()
+    
 
     unless context.__isBindable
       context = new bindable.Object context
 
     @context = context
+
+    @section = loaf @nodeFactory
+    @section.append @_templateNodeClone = @_createTemplateNodeClone()
+
+    @
+
+  ###
+   creates 
+  ###
+
+  _createTemplateNodeClone: () ->
+
+    # TOOD
+    #if @template.node
+    #  return @template.node.cloneNode(true)
 
     # writes the DOM
     node = @paper @_writers.fragment.write,
@@ -58,31 +72,22 @@ class Loader
     @_writers.parse.write,
     modifiers
 
-    @section = loaf @nodeFactory
-    @section.append node
-
-    @
-
-  ###
-   creates 
-  ###
-
-  _createTemplateNode: () ->
-    if @template.node
-      return
+    @template.node = node
+    #@_createTemplateNodeClone()
 
 
   ###
   ###
 
   bind:() ->
-    @bindings.bind @context
+    @bindings.bind @context, @_templateNodeClone
     @
 
   ###
   ###
 
   render: () ->
+
     @section.show()
     @section
 
