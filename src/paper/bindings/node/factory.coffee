@@ -1,4 +1,5 @@
 bdble = require "bindable"
+_ = require("underscore")
 
 allBindingClasses = {
   node: { }, # node shim
@@ -7,6 +8,55 @@ allBindingClasses = {
     ]
   }
 }
+
+
+class Binder
+
+  ###
+  ###
+
+  constructor: (@options) ->
+
+  ###
+  ###
+
+  getBinding: (templateNode) ->
+
+    cn = templateNode
+
+    while cn.parentNode
+      cn = cn.parentNode
+
+
+    for index in @path()
+      cn = cn.childNodes[index]
+
+    clazz = @options.class
+
+    new clazz(_.extend({}, @options, {
+      node: cn
+    }))
+      
+
+
+  ###
+  ###
+
+  path: () ->
+    if @_path
+      return @_path
+    paths = []
+    cn = @options.node
+    while cn.parentNode
+      paths.unshift Array.prototype.slice.call(cn.parentNode.childNodes, 0).indexOf(cn)
+      cn = cn.parentNode
+
+    @_path = paths
+
+
+
+
+
 
 
 class NodeBindingFactory
@@ -69,6 +119,60 @@ class NodeBindingFactory
           bindings.push new bindingClass bindable
 
     bindings
+
+  ###
+  ###
+
+  getBinders: (options) ->
+
+    binders = []
+
+    attributes = options.attributes
+    nodeName   = options.nodeName
+    node       = options.node
+
+    bindables = [{
+      name: nodeName
+      key: nodeName
+      value: node
+      type: "node"
+      node: node
+    },
+    {
+      name: nodeName
+      key: "default"
+      value: node,
+      type: "node"
+      node: node
+    }]
+
+
+    context = undefined
+
+    for attrName of attributes
+
+      bindables.push 
+        node: node
+        name: attrName
+        key: attrName
+        value: attributes[attrName]
+        type: "attr"
+
+      bindables.push 
+        node: node
+        name: attrName
+        key: "default"
+        value: attributes[attrName]
+        type: "attr"
+    
+    for bindable in bindables
+      bindingClasses = allBindingClasses[bindable.type][bindable.key] or []
+      for bindingClass in bindingClasses
+        if bindingClass.prototype.test bindable
+          bindable.class = bindingClass
+          binders.push new Binder bindable
+
+    binders
 
 
 

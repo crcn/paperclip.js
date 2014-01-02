@@ -10,6 +10,12 @@ utils     = require("./utils");
 
 describe("conditional sections", function() {
 
+  it("show up with a true statement", function() {
+    var v = pc.template("hello{{#if:true}} world{{/}}!").bind();
+    expect(String(v)).to.be("hello world!");
+  });
+  return;
+
   it("don't show up with an undefined value", function() {
     var v = pc.template("hello{{#if:undefined}} world{{/}}!").bind();
 

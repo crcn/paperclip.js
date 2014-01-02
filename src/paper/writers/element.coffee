@@ -18,7 +18,7 @@ class ElementWriter extends require("./base")
       continue if typeof value is "object"
       element.setAttribute attrName, value
 
-    @bindings.push nodeBindingFactory.getBindings({
+    @binders.push nodeBindingFactory.getBinders({
       node: element,
       nodeName: name,
       attributes: attributes

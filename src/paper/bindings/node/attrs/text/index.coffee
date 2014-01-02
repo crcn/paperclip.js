@@ -39,7 +39,7 @@ class AttrTextBinding extends require("../../base")
       return
 
     @node.setAttribute @name, text
-    @nodeModel.set @name, text
+    #@nodeModel.set @name, text
 
 
   ###

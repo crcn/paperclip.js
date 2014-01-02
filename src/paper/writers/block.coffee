@@ -11,7 +11,6 @@ class BlockWriter extends require("./base")
 
   write: (script, contentFactory, childBlockFactory) =>
 
-
     tpl      = if contentFactory then @template.creator(contentFactory, @application) else undefined
     childTpl = if childBlockFactory then @template.creator(childBlockFactory, @application) else undefined
 
@@ -21,11 +20,9 @@ class BlockWriter extends require("./base")
     # clips the scripts to the context
     clip = new Clip { script: script, watch: false }
 
-    # add any bindings that might exist
-    @bindings.push blockBindingFactory.getBindings({
-      section: section
-      #marker: node = @nodeFactory.createComment("block")
-      clip: clip,
+    @binders.push blockBindingFactory.getBinders({
+      section: section,
+      script: script,
       template: tpl,
       application: @application,
       childBlockTemplate: childTpl

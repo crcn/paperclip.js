@@ -23,7 +23,7 @@ class AttributesExpression extends require("./collection")
 
     params = []
     for attr in @_children
-      isScript = !!attr.value.items.filter((item) ->
+      isScript = !!attr.value?.items?.filter((item) ->
         item._type is "script"
       ).length
 
@@ -32,7 +32,9 @@ class AttributesExpression extends require("./collection")
       if isScript or name is "data-bind"
         attrValue = "[" + attr.value.toString() + "]"
       else
-        attrValue = if attr.value then attr.value.items[0].toString() else 'true'
+        attrValue = String(if attr.value then attr.value.toString() else 'true')
+        if attrValue is ""
+          attrValue = "''"
 
       params.push "'#{name}':#{attrValue}"
 

@@ -1,4 +1,5 @@
 BaseBinding = require "./base/index"
+BindingCollection = require "./collection"
 
 class Collection extends BaseBinding
   
@@ -16,17 +17,12 @@ class Collection extends BaseBinding
   ###
   ###
 
-  bind: (context, node) -> 
-    for binding in @_source
-      binding.bind(context, node) 
-    return
+  getBindings: (node) -> 
+    bindings = new BindingCollection()
+    for binder in @_source
+      bindings.push binder.getBinding(node) 
+    return bindings
 
-  ###
-  ###
-
-  unbind: () ->
-    binding.unbind() for binding in @_source
-    return
 
 
 module.exports = Collection

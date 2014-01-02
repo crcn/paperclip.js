@@ -8,6 +8,7 @@ class BaseWriter
     @application  = @loader.application
     @bindings     = loader.bindings
     @template     = loader.template
+    @binders      = loader.binders
     @bindingPaths = loader.bindingPaths
 
   ###

@@ -7,6 +7,7 @@ ElementWriter  = require "./writers/element"
 ParseWriter    = require "./writers/parse"
 
 BindingCollection = require "./bindings/collection"
+BinderCollection  = require "./bindings/binders"
 bindable = require "bindable"
 loaf = require "loaf"
 
@@ -29,13 +30,6 @@ class Loader
 
     @bindings = new BindingCollection()
 
-    # writers needed for access to the binding collection
-    @_writers = 
-      fragment : new FragmentWriter @
-      block    : new BlockWriter @
-      text     : new TextWriter @
-      element  : new ElementWriter @
-      parse    : new ParseWriter @
 
 
   ###
@@ -43,14 +37,12 @@ class Loader
 
   load: (context = {}) ->
     
-
     unless context.__isBindable
       context = new bindable.Object context
 
     @context = context
 
-    @section = loaf @nodeFactory
-    @section.append @_templateNodeClone = @_createTemplateNodeClone()
+    @_templateNodeClone = @_createTemplateNodeClone()
 
     @
 
@@ -61,26 +53,48 @@ class Loader
   _createTemplateNodeClone: () ->
 
     # TOOD
-    #if @template.node
-    #  return @template.node.cloneNode(true)
+    if @paper.node
+      @binders = @paper.binders
+      return @paper.node.cloneNode(true)
 
+    @binders = new BinderCollection()
+
+    # writers needed for access to the binding collection
+    writers = 
+      fragment : new FragmentWriter @
+      block    : new BlockWriter @
+      text     : new TextWriter @
+      element  : new ElementWriter @
+      parse    : new ParseWriter @
+
+    
     # writes the DOM
-    node = @paper @_writers.fragment.write,
-    @_writers.block.write,
-    @_writers.element.write,
-    @_writers.text.write,
-    @_writers.parse.write,
+    node = @paper writers.fragment.write,
+    writers.block.write,
+    writers.element.write,
+    writers.text.write,
+    writers.parse.write,
     modifiers
 
-    @template.node = node
-    #@_createTemplateNodeClone()
+
+    @paper.binders = @binders
+    @paper.node = node
+    @_createTemplateNodeClone()
 
 
   ###
   ###
 
   bind:() ->
-    @bindings.bind @context, @_templateNodeClone
+
+    if @_bindings
+      @_bindings.bind @context
+      return
+
+    @_bindings = @binders.getBindings(@_templateNodeClone)
+    @_bindings.bind(@context)
+    @section = loaf @nodeFactory
+    @section.append @_templateNodeClone
     @
 
   ###
@@ -110,7 +124,7 @@ class Loader
   ###
 
   unbind: () -> 
-    @bindings.unbind()
+    @_bindings.unbind()
     @
 
   ###
