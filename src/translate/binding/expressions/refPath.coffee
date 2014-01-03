@@ -56,7 +56,10 @@ class RefPathExpression extends CollectionExpression
         self = self or part.self
     
     if currentChain.length
-      callChain.push '['+currentChain.join(",")+']'
+      if currentChain.length is 1
+        callChain.push currentChain[0]
+      else
+        callChain.push '['+currentChain.join(",")+']'
 
     if call
       buffer.push "call"
