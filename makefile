@@ -4,9 +4,6 @@ all:
 all-watch:
 	coffee -o lib -cw src;
 
-clean:
-	rm -rf lib;
-
 testt:
 	./node_modules/.bin/_mocha ./test/**-test.js --timeout 100
 
