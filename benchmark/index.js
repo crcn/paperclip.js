@@ -15,6 +15,7 @@ var tpls = {
 
 
 
+
 suite.add("<div></div><div></div><div></div>", function () {
   tpls.six.bind(new bindable.Object());
 });
