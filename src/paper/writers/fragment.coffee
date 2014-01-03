@@ -3,7 +3,7 @@ class FragmentWriter extends require("./base")
   ###
   ###
 
-  write: (children) => 
+  write: (children) =>  
     return children[0] if children.length is 1
     @nodeFactory.createFragment children
 

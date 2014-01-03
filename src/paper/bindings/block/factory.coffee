@@ -23,6 +23,18 @@ class Binder
   ###
   ###
 
+  getNode: () ->
+    @options.class.getNode?(@options)
+
+  ###
+  ###
+
+  prepare: () ->
+    @options.class.prepare?(@options)
+
+  ###
+  ###
+
   getBinding: (templateNode) ->
 
     cn = templateNode
@@ -35,11 +47,15 @@ class Binder
 
     clazz = @options.class
 
-
-    new clazz(_.extend({}, @options, {
-      section: loaf(@options.section.nodeFactory, cn, cn.nextSibling),
+    ops = {
+      node: cn,
       clip: new Clip({ script: @options.script, watch: false })
-    }))
+    }
+
+    if @options.section
+      ops.section = loaf(@options.section.nodeFactory, cn, cn.nextSibling)
+
+    new clazz(_.extend({}, @options, ops))
 
   ###
   ###
@@ -49,12 +65,10 @@ class Binder
       return @_path
 
     paths = []
-    cn = @options.section.start
+    cn = @options.node || @options.section.start
     while cn.parentNode
       paths.unshift Array.prototype.slice.call(cn.parentNode.childNodes, 0).indexOf(cn)
       cn = cn.parentNode
-
-
 
     @_path = paths
 
@@ -67,25 +81,7 @@ class Factory
   ###
   ###
 
-  getBindings: (options) ->
-
-    bindings = []
-
-    clipScriptNames = options.clip.scripts.names
-
-    for scriptName in clipScriptNames
-      if bd = bindingClasses[scriptName]
-        options.scriptName = scriptName
-        bindings.push new bd options
-
-    bindings
-
-  ###
-  ###
-
-  getBinders: (options) ->
-
-    binders = []
+  getBinder: (options) ->
 
     clipScriptNames = if options.script.fn then ["value"] else Object.keys(options.script)
 
@@ -94,9 +90,8 @@ class Factory
         options.scriptName = scriptName
         options.class = bd
         bd.prepare? options
-        binders.push new Binder options
+        return new Binder options
 
-    binders
 
   ###
   ###
