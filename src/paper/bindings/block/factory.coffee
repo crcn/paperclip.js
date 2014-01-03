@@ -93,6 +93,7 @@ class Factory
       if bd = bindingClasses[scriptName]
         options.scriptName = scriptName
         options.class = bd
+        bd.prepare? options
         binders.push new Binder options
 
     binders
