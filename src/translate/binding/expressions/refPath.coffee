@@ -43,7 +43,7 @@ class RefPathExpression extends CollectionExpression
         call = true
 
         if currentChain.length
-          callChain.push '"'+currentChain.join(".")+'"'
+          callChain.push '['+currentChain.join(",")+']'
 
         callChain.push '"'+part.name+'"'
 
@@ -52,11 +52,11 @@ class RefPathExpression extends CollectionExpression
         currentChain = []
         self = false
       else
-        currentChain.push part.name
+        currentChain.push "'" + part.name + "'"
         self = self or part.self
     
     if currentChain.length
-      callChain.push '"'+currentChain.join(".")+'"'
+      callChain.push '['+currentChain.join(",")+']'
 
     if call
       buffer.push "call"
