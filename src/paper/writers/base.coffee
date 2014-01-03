@@ -3,13 +3,10 @@ class BaseWriter
   ###
   ###
 
-  constructor: (@loader) ->
-    @nodeFactory  = loader.application.nodeFactory
-    @application  = @loader.application
-    @bindings     = loader.bindings
-    @template     = loader.template
-    @binders      = loader.binders
-    @bindingPaths = loader.bindingPaths
+  constructor: (@template) ->
+    @nodeFactory  = template.application.nodeFactory
+    @application  = @template.application
+    @binders      = template.binders
 
   ###
   ###
