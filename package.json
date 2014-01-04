@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "0.3.19",
+  "version": "0.3.20",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "browserify": "./lib/browser.js",
@@ -48,6 +48,7 @@
     "nofactor": "0.0.x",
     "loaf": "0.1.x",
     "ent": "~0.1.0",
-    "runlater": "0.0.2"
+    "runlater": "0.0.2",
+    "protoclass": "0.0.5"
   }
 }
