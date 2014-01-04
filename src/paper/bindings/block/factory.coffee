@@ -1,7 +1,6 @@
 BindingCollection = require "../collection"
 loaf = require("loaf")
 Clip                = require "../../../clip"
-_ = require("underscore")
 
 bindingClasses = 
   html   : require("./html")
@@ -55,7 +54,11 @@ class Binder
     if @options.section
       ops.section = loaf(@options.section.nodeFactory, cn, cn.nextSibling)
 
-    new clazz(_.extend({}, @options, ops))
+    for key of @options
+      continue if ops[key]?
+      ops[key] = @options[key]
+
+    new clazz(ops)
 
   ###
   ###
