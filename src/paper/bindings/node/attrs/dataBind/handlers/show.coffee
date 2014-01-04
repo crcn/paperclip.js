@@ -13,11 +13,6 @@ class ShowAttrBinding extends require("./base")
   ###
   ###
 
-  _map: (value) -> !!value
-  
-  ###
-  ###
-
   _onChange: (value) ->
     @node.style.display = if value then @_displayStyle else "none"
 

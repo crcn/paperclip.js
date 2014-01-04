@@ -13,12 +13,7 @@ class BlockDecor extends require("./base")
   ###
   ###
 
-  _map: (value) -> !!value
-
-  ###
-  ###
-
-  _onChange: (value) ->
+  _onChange: (value, oldValue) ->
 
     oldChild = @child
 
@@ -40,7 +35,7 @@ class BlockDecor extends require("./base")
       @child = childTemplate.bind(@context)
       @section.replaceChildNodes @child.section.toFragment()
     else if oldChild?
-      oldChild.section.hide()
+      oldChild.remove()
 
   ###
   ###
