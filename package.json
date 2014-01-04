@@ -48,7 +48,7 @@
     "nofactor": "0.0.x",
     "loaf": "0.1.x",
     "ent": "~0.1.0",
-    "runlater": "0.0.2",
-    "protoclass": "0.0.5"
+    "runlater": "0.0.x",
+    "protoclass": "0.0.x"
   }
 }
