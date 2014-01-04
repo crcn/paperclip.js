@@ -64,65 +64,6 @@ class NodeBindingFactory
   ###
   ###
 
-  getBindings: (options) ->
-
-    bindings = []
-
-    attributes = options.attributes
-    nodeName   = options.nodeName
-    node       = options.node
-
-    bindables = [{
-      name: nodeName
-      key: nodeName
-      value: node
-      type: "node"
-      node: node
-    },
-    {
-      name: nodeName
-      key: "default"
-      value: node,
-      type: "node"
-      node: node
-    }]
-
-
-    context = undefined
-
-    for attrName of attributes
-
-      bindables.push 
-        node: node
-        name: attrName
-        key: attrName
-        value: attributes[attrName]
-        type: "attr"
-
-      bindables.push 
-        node: node
-        name: attrName
-        key: "default"
-        value: attributes[attrName]
-        type: "attr"
-    
-    for bindable in bindables
-      bindingClasses = allBindingClasses[bindable.type][bindable.key] or []
-      for bindingClass in bindingClasses
-        if bindingClass.prototype.test bindable
-
-          unless context
-            context = new bdble.Object()
-
-          bindable.context = context
-          
-          bindings.push new bindingClass bindable
-
-    bindings
-
-  ###
-  ###
-
   getBinders: (options) ->
 
     binders = []
@@ -170,6 +111,7 @@ class NodeBindingFactory
       for bindingClass in bindingClasses
         if bindingClass.prototype.test bindable
           bindable.class = bindingClass
+          bindable.application = options.application
           binders.push new Binder bindable
 
     binders

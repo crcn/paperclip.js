@@ -6,7 +6,8 @@ class HtmlDecor extends require("./base")
   ###
   ###
 
-  _onChange: (@value, @oldValue) -> 
+  _onChange: (value, oldValue) -> 
+
 
     oldValue?.remove?()
 

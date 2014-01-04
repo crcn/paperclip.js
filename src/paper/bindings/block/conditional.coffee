@@ -18,7 +18,7 @@ class BlockDecor extends require("./base")
   ###
   ###
 
-  _onChange: (value) =>
+  _onChange: (value) ->
 
     oldChild = @child
 

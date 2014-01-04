@@ -3,7 +3,7 @@ class BaseDataBindHandler extends require("../../../../base/script")
   ###
   ###
 
-  constructor: (@node, @clip, @name) ->
-    super @clip, @name
+  constructor: (application, @node, clip, @name) ->
+    super application, clip, name
 
 module.exports = BaseDataBindHandler

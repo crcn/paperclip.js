@@ -3,7 +3,7 @@ class CssAttrBinding extends require("./base")
   ###
   ###
   
-  _onChange: (classes) => 
+  _onChange: (classes) -> 
 
     classesToUse = @node.getAttribute("class")?.split(" ") or []
 

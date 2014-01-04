@@ -21,6 +21,7 @@ class ElementWriter extends require("./base")
     @binders.push nodeBindingFactory.getBinders({
       node: element,
       nodeName: name,
+      application: @application,
       attributes: attributes
     })...
 

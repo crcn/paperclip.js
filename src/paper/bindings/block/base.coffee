@@ -5,17 +5,17 @@ class BlockBinding extends require("../base/script")
 
   constructor: (options) ->
 
+    clip = options.clip
     @section            = options.section
-    @clip               = options.clip
     @application        = options.application
     @nodeFactory        = @application.nodeFactory
     @contentTemplate    = options.template
     @scriptName         = options.scriptName
     @childBlockTemplate = options.childBlockTemplate
 
-    @script = @clip.script @scriptName
+    @script = clip.script @scriptName
 
-    super @clip, @scriptName
+    super @application, clip, @scriptName
 
   ###
   ###

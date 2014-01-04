@@ -23,9 +23,6 @@ class EventDecor extends require("./base")
     super arguments...
 
     # keyup keydown mouseup mousedown 
-
-
-
     event = (@event or @name).toLowerCase()
     name  = @name.toLowerCase()
 

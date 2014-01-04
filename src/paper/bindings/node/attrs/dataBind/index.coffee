@@ -9,7 +9,6 @@ dataBindingClasses =
   # deprecated for enable
   disable : require("./handlers/disable")
   enable  : require("./handlers/enable")
-  value   : require("./handlers/value")
   model   : require("./handlers/model")
 
   click      : require("./handlers/event")
@@ -55,7 +54,7 @@ class AttrDataBinding extends require("../../base")
 
     for scriptName in @clip.scripts.names
       continue unless (bc = dataBindingClasses[scriptName])
-      @_bindings.push new bc @node, @clip, scriptName
+      @_bindings.push new bc options.application, @node, @clip, scriptName
 
   ###
   ###
