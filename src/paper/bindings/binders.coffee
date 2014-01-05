@@ -27,6 +27,13 @@ class Collection extends BaseBinding
       bindings.push binder.getBinding(node) 
     return bindings
 
+  ###
+  ###
+
+  init: () ->
+    for binder in @_source
+      binder.init()
+
 
 
 module.exports = Collection

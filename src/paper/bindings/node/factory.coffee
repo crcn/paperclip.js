@@ -20,6 +20,11 @@ class Binder
   ###
   ###
 
+  init: () ->
+
+  ###
+  ###
+
   getBinding: (templateNode) ->
 
     cn = templateNode

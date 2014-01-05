@@ -34,6 +34,12 @@ class Binder
   ###
   ###
 
+  init: () ->
+    @_path = @path()
+
+  ###
+  ###
+
   getBinding: (templateNode) ->
 
     cn = templateNode
@@ -41,7 +47,7 @@ class Binder
     while cn.parentNode
       cn = cn.parentNode
 
-    for index in @path()
+    for index in @_path
       cn = cn.childNodes[index]
 
     clazz = @options.class
