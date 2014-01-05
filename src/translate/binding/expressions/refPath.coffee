@@ -22,6 +22,15 @@ class RefPathExpression extends CollectionExpression
   toPathString: () ->
     @items.join(".")
 
+
+  ###
+  ###
+
+  toArrayString: () ->
+    "[" + @items.map((item) ->
+      "'" + item + "'"
+    ).join(",") + "]"
+
   ###
   ###
 

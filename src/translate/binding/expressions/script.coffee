@@ -32,7 +32,7 @@ class ActionExpression extends base.Expression
 
   toString: () -> 
 
-    refs      = _.uniq findRefs(@options).map((ref) -> "'" + (ref.toPathString()) + "'" )
+    refs      = _.uniq findRefs(@options).map((ref) -> ref.toArrayString() )
     refBuffer = ["[", refs.join(","), "]"].join("")
 
     "{ fn: function(){ return #{if @options then @options.toString() else 'true'}; }, refs: #{refBuffer} }"
