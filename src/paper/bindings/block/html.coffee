@@ -38,7 +38,9 @@ class HtmlDecor extends require("./base")
     if node is @section.start.parentNode
       return
 
+
     @section.replaceChildNodes node
+
 
   ###
   ###
