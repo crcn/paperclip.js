@@ -22,11 +22,10 @@ describe("html sections", function() {
     expect(String(b)).to.be("hello world");
     b.context.setProperties({ content: b3 = v3.bind() })
     expect(String(b)).to.be("hello Craig");
-    b.context.setProperties({ content: b2 })
+    b.context.setProperties({ content: b2 });
     expect(String(b)).to.be("hello world");
   });
 
-  return;
   var sectionTemplate = pc.template("\
       A message to our nice friends: \
         \"{{ html: sections.blockValue }}\" \
@@ -124,9 +123,9 @@ describe("html sections", function() {
     });
 
     expect(String(b)).to.be("hello world");
-    b.context.set({ content: b3 = v3.bind() })
+    b.context.setProperties({ content: b3 = v3.bind() })
     expect(String(b)).to.be("hello Craig");
-    b.context.set({ content: b2 })
+    b.context.setProperties({ content: b2 })
     expect(String(b)).to.be("hello world");
   });
 });

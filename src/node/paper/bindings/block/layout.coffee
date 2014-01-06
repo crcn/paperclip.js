@@ -17,10 +17,10 @@ class LayoutBlockBinding extends require("./base")
     tpl = pc.template fs.readFileSync realPath, "utf8"
 
     loader = tpl.bind({
-      content: @contentTemplate.bind(@context).section.toFragment()
+      content: @contentTemplate.bind(@context).section.render()
     })
 
-    @section.replaceChildNodes loader.section.toFragment()
+    @section.replaceChildNodes loader.section.render()
 
 
 

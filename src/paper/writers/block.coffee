@@ -34,7 +34,7 @@ class BlockWriter extends require("./base")
 
   getDefaultNode: (ops) ->
     ops.section = section = loaf(@nodeFactory)
-    section.toFragment()
+    section.render()
 
 
 

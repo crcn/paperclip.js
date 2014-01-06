@@ -60,6 +60,7 @@ class Binder
     if @options.section
       ops.section = loaf(@options.section.nodeFactory, cn, cn.nextSibling)
 
+
     for key of @options
       continue if ops[key]?
       ops[key] = @options[key]

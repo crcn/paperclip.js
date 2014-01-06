@@ -8,16 +8,13 @@ class HtmlDecor extends require("./base")
 
   _onChange: (value, oldValue) -> 
 
-
     oldValue?.remove?()
-
 
     unless value
       return @section.removeAll() 
 
-
     if value.render?
-      node = value.render().toFragment()
+      node = value.render()
 
     # DOM element?
     else if value.nodeType?
