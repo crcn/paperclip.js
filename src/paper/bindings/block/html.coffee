@@ -32,6 +32,11 @@ class HtmlDecor extends require("./base")
         dom = @nodeFactory.createElement "div"
         dom.innerHTML = String value
         node = @nodeFactory.createFragment dom.childNodes
+            
+    # since sections are flat, it's possible for
+    # the node to be the parent node of this section
+    if node is @section.start.parentNode
+      return
 
     @section.replaceChildNodes node
 
