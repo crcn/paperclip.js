@@ -77,12 +77,10 @@ class Binder
     paths = []
     cn = @options.node || @options.section.start
     while cn.parentNode
-
       children = []
       for child in cn.parentNode.childNodes
         children.push child
-
-      paths.unshift children.indexOf(cn)
+      paths.unshift Array.prototype.slice.call(children, 0).indexOf(cn)
       cn = cn.parentNode
 
     @_path = paths
