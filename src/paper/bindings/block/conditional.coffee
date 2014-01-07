@@ -15,7 +15,7 @@ class BlockDecor extends require("./base")
 
   _onChange: (value, oldValue) ->
 
-    oldChild = @child
+    child = @child
 
     # remove the previous child if it exists
     @child?.unbind()
@@ -33,9 +33,9 @@ class BlockDecor extends require("./base")
     # child template might not exist - check for it
     if childTemplate
       @child = childTemplate.bind(@context)
-      @section.replaceChildNodes @child.section.render()
-    else if oldChild?
-      oldChild.remove()
+      @section.replaceChildNodes @child.render()
+    else if child?
+      child.dispose()
 
   ###
   ###
