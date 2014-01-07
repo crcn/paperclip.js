@@ -14,6 +14,7 @@ class HtmlDecor extends require("./base")
       return @section.removeAll() 
 
     if value.render?
+      value.remove()
       node = value.render()
 
     # DOM element?
@@ -33,10 +34,6 @@ class HtmlDecor extends require("./base")
         dom.innerHTML = String value
         node = @nodeFactory.createFragment dom.childNodes
             
-    # since sections are flat, it's possible for
-    # the node to be the parent node of this section
-    if node is @section.start.parentNode
-      return
 
 
     @section.replaceChildNodes node
