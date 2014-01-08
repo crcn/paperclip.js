@@ -26,6 +26,7 @@ describe("html sections", function() {
     expect(String(b)).to.be("hello world");
   });
 
+
   var sectionTemplate = pc.template("\
       A message to our nice friends: \
         \"{{ html: sections.blockValue }}\" \
