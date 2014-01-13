@@ -33,6 +33,10 @@ class EventDecor extends require("./base")
       event = event.substr(2)
 
 
+    @clip.script("propagateEvent")?.update()
+    @clip.script("preventDefault")?.update()
+
+
     if name in ["click", "mouseup", "mousedown", "submit"]
       @preventDefault = true
       @propagateEvent = false
@@ -55,6 +59,7 @@ class EventDecor extends require("./base")
   unbind: () ->
     super()
     @$node.unbind @_event, @_onEvent
+
 
   ###
   ###
