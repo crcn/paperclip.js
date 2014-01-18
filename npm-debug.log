@@ -1,0 +1,135 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'i',
+1 verbose cli   'git+ssh://git@github.com:bestiejs/platform.js.git' ]
+2 info using npm@1.3.11
+3 info using node@v0.10.21
+4 warn package.json expect.js@0.2.0 No repository field.
+5 warn package.json type-component@0.0.1 No repository field.
+6 verbose readDependencies using package.json deps
+7 verbose cache add [ 'git+ssh://git@github.com:bestiejs/platform.js.git', null ]
+8 verbose cache add name=undefined spec="git+ssh://git@github.com:bestiejs/platform.js.git" args=["git+ssh://git@github.com:bestiejs/platform.js.git",null]
+9 verbose parsed url { protocol: 'git+ssh:',
+9 verbose parsed url   slashes: true,
+9 verbose parsed url   auth: 'git',
+9 verbose parsed url   host: 'github.com',
+9 verbose parsed url   port: null,
+9 verbose parsed url   hostname: 'github.com',
+9 verbose parsed url   hash: null,
+9 verbose parsed url   search: null,
+9 verbose parsed url   query: null,
+9 verbose parsed url   pathname: '/:bestiejs/platform.js.git',
+9 verbose parsed url   path: '/:bestiejs/platform.js.git',
+9 verbose parsed url   href: 'git+ssh://git@github.com/:bestiejs/platform.js.git' }
+10 silly lockFile 71a2d6ac-hub-com-bestiejs-platform-js-git git+ssh://git@github.com:bestiejs/platform.js.git
+11 verbose lock git+ssh://git@github.com:bestiejs/platform.js.git /Users/craig/.npm/71a2d6ac-hub-com-bestiejs-platform-js-git.lock
+12 verbose addRemoteGit [ 'git@github.com:bestiejs/platform.js.git', 'master' ]
+13 verbose git clone git@github.com:bestiejs/platform.js.git Cloning into bare repository '/Users/craig/.npm/_git-remotes/git-github-com-bestiejs-platform-js-git-157f14ab'...
+13 verbose git clone git@github.com:bestiejs/platform.js.git Checking connectivity... done
+14 verbose git fetch -a origin (git@github.com:bestiejs/platform.js.git)
+15 verbose git rev-list -n1 master 74ee1a3cab1871b27d6590061b8c9a2c10d59730
+16 verbose resolved git url git+ssh://git@github.com:bestiejs/platform.js.git#74ee1a3cab1871b27d6590061b8c9a2c10d59730
+17 verbose tar unpack /var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-1664-8KK5Um72/1390004010211-0.13207122636958957/tmp.tgz
+18 silly lockFile 6d05146a-0211-0-13207122636958957-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-1664-8KK5Um72/1390004010211-0.13207122636958957/package
+19 verbose lock tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-1664-8KK5Um72/1390004010211-0.13207122636958957/package /Users/craig/.npm/6d05146a-0211-0-13207122636958957-package.lock
+20 silly lockFile 98100012-0211-0-13207122636958957-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-1664-8KK5Um72/1390004010211-0.13207122636958957/tmp.tgz
+21 verbose lock tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-1664-8KK5Um72/1390004010211-0.13207122636958957/tmp.tgz /Users/craig/.npm/98100012-0211-0-13207122636958957-tmp-tgz.lock
+22 silly gunzTarPerm modes [ '755', '644' ]
+23 silly gunzTarPerm extractEntry
+24 silly gunzTarPerm modified mode [ '', 509, 493 ]
+25 silly gunzTarPerm extractEntry .gitattributes
+26 silly gunzTarPerm modified mode [ '.gitattributes', 436, 420 ]
+27 silly gunzTarPerm extractEntry .gitignore
+28 silly gunzTarPerm modified mode [ '.gitignore', 436, 420 ]
+29 silly gunzTarPerm extractEntry LICENSE.txt
+30 silly gunzTarPerm modified mode [ 'LICENSE.txt', 436, 420 ]
+31 silly gunzTarPerm extractEntry README.md
+32 silly gunzTarPerm modified mode [ 'README.md', 436, 420 ]
+33 silly gunzTarPerm extractEntry doc/
+34 silly gunzTarPerm modified mode [ 'doc/', 509, 493 ]
+35 silly gunzTarPerm extractEntry doc/README.md
+36 silly gunzTarPerm modified mode [ 'doc/README.md', 436, 420 ]
+37 silly gunzTarPerm extractEntry doc/parse.php
+38 silly gunzTarPerm modified mode [ 'doc/parse.php', 436, 420 ]
+39 silly gunzTarPerm extractEntry package.json
+40 silly gunzTarPerm modified mode [ 'package.json', 436, 420 ]
+41 silly gunzTarPerm extractEntry platform.js
+42 silly gunzTarPerm modified mode [ 'platform.js', 436, 420 ]
+43 silly gunzTarPerm extractEntry test/
+44 silly gunzTarPerm modified mode [ 'test/', 509, 493 ]
+45 silly gunzTarPerm extractEntry test/index.html
+46 silly gunzTarPerm modified mode [ 'test/index.html', 436, 420 ]
+47 silly gunzTarPerm extractEntry test/run-test.sh
+48 silly gunzTarPerm modified mode [ 'test/run-test.sh', 509, 493 ]
+49 silly gunzTarPerm extractEntry test/test.js
+50 silly gunzTarPerm modified mode [ 'test/test.js', 436, 420 ]
+51 silly gunzTarPerm extractEntry vendor/
+52 silly gunzTarPerm modified mode [ 'vendor/', 509, 493 ]
+53 silly gunzTarPerm extractEntry vendor/docdown/
+54 silly gunzTarPerm modified mode [ 'vendor/docdown/', 509, 493 ]
+55 silly gunzTarPerm extractEntry vendor/docdown/LICENSE.txt
+56 silly gunzTarPerm modified mode [ 'vendor/docdown/LICENSE.txt', 436, 420 ]
+57 silly gunzTarPerm extractEntry vendor/docdown/README.md
+58 silly gunzTarPerm modified mode [ 'vendor/docdown/README.md', 436, 420 ]
+59 silly gunzTarPerm extractEntry vendor/docdown/docdown.php
+60 silly gunzTarPerm modified mode [ 'vendor/docdown/docdown.php', 436, 420 ]
+61 silly gunzTarPerm extractEntry vendor/docdown/src/
+62 silly gunzTarPerm modified mode [ 'vendor/docdown/src/', 509, 493 ]
+63 silly gunzTarPerm extractEntry vendor/docdown/src/DocDown/
+64 silly gunzTarPerm modified mode [ 'vendor/docdown/src/DocDown/', 509, 493 ]
+65 silly gunzTarPerm extractEntry vendor/docdown/src/DocDown/Alias.php
+66 silly gunzTarPerm modified mode [ 'vendor/docdown/src/DocDown/Alias.php', 436, 420 ]
+67 silly gunzTarPerm extractEntry vendor/docdown/src/DocDown/Entry.php
+68 silly gunzTarPerm modified mode [ 'vendor/docdown/src/DocDown/Entry.php', 436, 420 ]
+69 silly gunzTarPerm extractEntry vendor/docdown/src/DocDown/MarkdownGenerator.php
+70 silly gunzTarPerm modified mode [ 'vendor/docdown/src/DocDown/MarkdownGenerator.php', 436, 420 ]
+71 silly gunzTarPerm extractEntry vendor/qunit-extras/
+72 silly gunzTarPerm modified mode [ 'vendor/qunit-extras/', 509, 493 ]
+73 silly gunzTarPerm extractEntry vendor/qunit-extras/LICENSE.txt
+74 silly gunzTarPerm modified mode [ 'vendor/qunit-extras/LICENSE.txt', 436, 420 ]
+75 silly gunzTarPerm extractEntry vendor/qunit-extras/README.md
+76 silly gunzTarPerm modified mode [ 'vendor/qunit-extras/README.md', 436, 420 ]
+77 silly gunzTarPerm extractEntry vendor/qunit-extras/qunit-extras.js
+78 silly gunzTarPerm modified mode [ 'vendor/qunit-extras/qunit-extras.js', 436, 420 ]
+79 silly gunzTarPerm extractEntry vendor/qunit/
+80 silly gunzTarPerm modified mode [ 'vendor/qunit/', 509, 493 ]
+81 silly gunzTarPerm extractEntry vendor/qunit/MIT-LICENSE.txt
+82 silly gunzTarPerm modified mode [ 'vendor/qunit/MIT-LICENSE.txt', 436, 420 ]
+83 silly gunzTarPerm extractEntry vendor/qunit/README.md
+84 silly gunzTarPerm modified mode [ 'vendor/qunit/README.md', 436, 420 ]
+85 silly gunzTarPerm extractEntry vendor/qunit/qunit/
+86 silly gunzTarPerm modified mode [ 'vendor/qunit/qunit/', 509, 493 ]
+87 silly gunzTarPerm extractEntry vendor/qunit/qunit/qunit.css
+88 silly gunzTarPerm modified mode [ 'vendor/qunit/qunit/qunit.css', 436, 420 ]
+89 silly gunzTarPerm extractEntry vendor/qunit/qunit/qunit.js
+90 silly gunzTarPerm modified mode [ 'vendor/qunit/qunit/qunit.js', 436, 420 ]
+91 silly gunzTarPerm extractEntry vendor/requirejs/
+92 silly gunzTarPerm modified mode [ 'vendor/requirejs/', 509, 493 ]
+93 silly gunzTarPerm extractEntry vendor/requirejs/LICENSE
+94 silly gunzTarPerm modified mode [ 'vendor/requirejs/LICENSE', 436, 420 ]
+95 silly gunzTarPerm extractEntry vendor/requirejs/README.md
+96 silly gunzTarPerm modified mode [ 'vendor/requirejs/README.md', 436, 420 ]
+97 silly gunzTarPerm extractEntry vendor/requirejs/require.js
+98 silly gunzTarPerm modified mode [ 'vendor/requirejs/require.js', 436, 420 ]
+99 silly lockFile 6d05146a-0211-0-13207122636958957-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-1664-8KK5Um72/1390004010211-0.13207122636958957/package
+100 silly lockFile 6d05146a-0211-0-13207122636958957-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-1664-8KK5Um72/1390004010211-0.13207122636958957/package
+101 silly lockFile 98100012-0211-0-13207122636958957-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-1664-8KK5Um72/1390004010211-0.13207122636958957/tmp.tgz
+102 silly lockFile 98100012-0211-0-13207122636958957-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-1664-8KK5Um72/1390004010211-0.13207122636958957/tmp.tgz
+103 silly lockFile 157f14ab-hub-com-bestiejs-platform-js-git git@github.com:bestiejs/platform.js.git
+104 error Failed to parse json
+104 error Unexpected token }
+105 error File: /var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-1664-8KK5Um72/1390004010211-0.13207122636958957/package/package.json
+106 error Failed to parse package.json data.
+106 error package.json must be actual JSON, not just JavaScript.
+106 error
+106 error This is not a bug in npm.
+106 error Tell the package author to fix their package.json file. JSON.parse
+107 error System Darwin 13.0.0
+108 error command "node" "/usr/local/bin/npm" "i" "git+ssh://git@github.com:bestiejs/platform.js.git"
+109 error cwd /Users/craig/Developer/Public/paperclip.js
+110 error node -v v0.10.21
+111 error npm -v 1.3.11
+112 error file /var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-1664-8KK5Um72/1390004010211-0.13207122636958957/package/package.json
+113 error code EJSONPARSE
+114 verbose exit [ 1, true ]
