@@ -13,8 +13,10 @@ exports.compile = (nameOrContent) ->
   if scripts[nameOrContent]
     return scripts[nameOrContent]
 
-  if typeof $ isnt "undefined"
-    content = $("script[data-template-name='#{nameOrContent}']").html()
+  try
+    if typeof $ isnt "undefined"
+      content = $("script[data-template-name='#{nameOrContent}']").html()
+  catch e
 
   unless content
     content = nameOrContent
