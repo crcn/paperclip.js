@@ -24,7 +24,7 @@ class ModelAttrBinding extends require("./base")
     clearTimeout @_changeTimeout
     # need to delay so that the input value can catch up
 
-    applyChange = () ->
+    applyChange = () =>
       value = @_parseValue @_elementValue()
       name  = @_elementName()
       refs  = @script.script.refs
