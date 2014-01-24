@@ -23,8 +23,8 @@ class ModelAttrBinding extends require("./base")
     event.stopPropagation()
     clearTimeout @_changeTimeout
     # need to delay so that the input value can catch up
-    @_changeTimeout = setTimeout (() =>
 
+    applyChange = () ->
       value = @_parseValue @_elementValue()
       name  = @_elementName()
       refs  = @script.script.refs
@@ -46,7 +46,12 @@ class ModelAttrBinding extends require("./base")
             dref.set model, ref, value
 
 
-    ), 5
+    unless process.browser
+      applyChange()
+    else
+      @_changeTimeout = setTimeout applyChange, 5
+
+    
 
   ###
   ###
