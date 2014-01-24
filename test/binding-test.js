@@ -2,6 +2,7 @@ pc = require(".."),
 expect = require("expect.js"),
 bindable = require("bindable");
 
+
 describe("binding", function() {
 
 
@@ -349,6 +350,31 @@ describe("binding", function() {
       expect(v.context.get("c")).to.be("bah");
       expect(v.context.get("b")).to.be("bah");
       expect(v.context.get("d")).to.be("bah");
+    });
+
+
+    it("can bind to a model and listen for specific changes", function () {
+      pc.modifier("fullName", function(v) {
+        return [v.get("firstName"), v.get("lastName")].join(" ");
+      });
+
+      var context = new bindable.Object({
+        firstName: "a",
+        lastName: "b"
+      });
+
+      var v = pc.
+      template("{{ ctx | fullName() }}").
+      bind({
+        ctx: context
+      });
+
+      expect(v.toString()).to.be("a b");
+      context.set("lastName", "c");
+      expect(v.toString()).to.be("a c");
+      context.set("firstName", "b");
+      expect(v.toString()).to.be("b c");
+
     })
   });
 
