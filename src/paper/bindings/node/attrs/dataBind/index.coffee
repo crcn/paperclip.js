@@ -48,7 +48,7 @@ class AttrDataBinding extends require("../../base")
   constructor: (options) ->
     super options
 
-    @clip = new Clip { scripts: options.value[0], watch: false }
+    @clip = new Clip { scripts: options.value[0], watch: false, application: options.application }
 
     @_bindings = new BindingCollection()
 

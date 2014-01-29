@@ -54,7 +54,7 @@ class Binder
 
     ops = {
       node: cn,
-      clip: new Clip({ script: @options.script, watch: false })
+      clip: new Clip({ script: @options.script, watch: false, application: @options.application })
     }
 
     if @options.section

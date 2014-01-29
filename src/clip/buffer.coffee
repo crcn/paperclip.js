@@ -13,7 +13,7 @@ class ClippedBufferPart
   constructor: (@clippedBuffer, @script) ->
 
     # clip into the renderer data with the function that binds to it.
-    @clip = new Clip { script: @script  }
+    @clip = new Clip { script: @script, application: @clippedBuffer.application  }
 
     # bind to update, but ONLY bind on changes. This won't get fired if value
     # isn't undefined.
@@ -61,7 +61,7 @@ class ClippedBuffer extends bindable.Object
   ###
   ###
 
-  constructor: (buffer) ->
+  constructor: (buffer, @application) ->
     super()
 
     @buffer   = []

@@ -13,7 +13,7 @@ class AttrTextBinding extends require("../../base")
 
   constructor: (options) ->
     super options
-    @clippedBuffer = new ClippedBuffer @value
+    @clippedBuffer = new ClippedBuffer @value, options.application
 
   ###
   ###
