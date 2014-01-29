@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "0.3.51",
+  "version": "0.3.52",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "browserify": "./lib/browser.js",
@@ -26,7 +26,8 @@
     "istanbul": "~0.1.46",
     "coveralls": "~2.5.0",
     "mocha": "~1.15.1",
-    "benchmark": "~1.0.0"
+    "benchmark": "~1.0.0",
+    "nofactor": "0.0.36"
   },
   "bin": {
     "paperclip": "./bin/paperclip"
