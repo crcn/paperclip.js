@@ -8,7 +8,7 @@ testt:
 	./node_modules/.bin/_mocha ./test/**-test.js --timeout 100
 
 browser:
-	./node_modules/.bin/browserify ./lib/index.js -o ./build/paperclip2.js
+	./node_modules/.bin/browserify ./lib/index.js -o ./build/paperclip.js
 	./node_modules/.bin/browserify ./lib/translate/index.js -o ./build/paperclip-compiler.js
 
 test-cov:
