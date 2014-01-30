@@ -28,6 +28,7 @@ class Codes
   @HASH    =  @COMMENT << 1 # #
   @WS      =  @HASH    << 1 # #
   @SN      =  @WS      << 1
+  @UNBOUND_VAR = @SN   << 1
 
 class Tokenizer extends BaseTokenizer
   
@@ -95,6 +96,7 @@ class Tokenizer extends BaseTokenizer
           return @_t Codes.ETAG, word
 
         return @_t Codes.LT, "<"
+        
 
     else if cchar is "/"
       if @_s.peek(2) is "/>"

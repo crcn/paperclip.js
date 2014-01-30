@@ -10,7 +10,7 @@ class RefPathExpression extends CollectionExpression
   ###
   ###
 
-  constructor: (items, @castAs, @assign) ->
+  constructor: (items, @castAs, @assign, @unbound) ->
     super items
 
     if @assign

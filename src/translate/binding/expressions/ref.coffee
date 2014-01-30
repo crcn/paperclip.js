@@ -9,7 +9,7 @@ class RefExpression
   ###
   ###
 
-  constructor: (name) ->
+  constructor: (name, @unbound) ->
     @_children = []
     if name.substr(0, 1) is "@"
       @self = true

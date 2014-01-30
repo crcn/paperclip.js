@@ -6,7 +6,8 @@ class Codes
   @WORD   = 256         # something
   @STRING = @WORD   + 1 # "something"
   @VAR    = @STRING + 1 # variable
-  @WS     = @VAR    + 1 # \s
+  @U_VAR  = @VAR    + 1 
+  @WS     = @U_VAR  + 1 # \s
   @NUMBER = @WS     + 1 # 0-9
   @BOOL   = @NUMBER + 1 # true / false
   @UNDEF  = @BOOL   + 1 # true / false
@@ -70,6 +71,10 @@ class Tokenizer extends BaseTokenizer
       return @_t(Codes.UNDEF, word) if /undefined|null/.test word
       return @_t(Codes.AS, word) if word is "as"
       return @_t Codes.VAR, word
+
+    # unbound var `
+    else if ccode is 96
+      return @_t Codes.U_VAR, "`"
 
     # string?
     else if (t = @_tstring(Codes.STRING))

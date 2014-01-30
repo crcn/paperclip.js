@@ -117,7 +117,7 @@ class Parser extends BaseParser
 
     while c = @_currentCode()
 
-      if c is TokenCodes.VAR
+      if c is TokenCodes.VAR or c is TokenCodes.U_VAR
         expressions.push @_parseRef()
         c = @_currentCode()
 
@@ -200,13 +200,22 @@ class Parser extends BaseParser
     c = @_currentCode()
     refs = []
     assign = null
+
+    if c is TokenCodes.U_VAR
+      unbound = true
+      c = @_nextCode()
     
 
     while c is TokenCodes.VAR
       name = @_currentString()
 
+      c = @_nextCode()
+
+      if c is TokenCodes.U_VAR
+        c = @_nextCode()
+
       # function all
-      if (c = @_nextCode()) is TokenCodes.LP
+      if c is TokenCodes.LP
         refs.push new FnExpression name, @_parseParams()
         c = @_currentCode()
       else
@@ -225,6 +234,6 @@ class Parser extends BaseParser
       @_nextCode()
       assign = @_parseReference()
 
-    new RefPathExpression refs, castAs, assign
+    new RefPathExpression refs, castAs, assign, unbound
 
 module.exports = new Parser()

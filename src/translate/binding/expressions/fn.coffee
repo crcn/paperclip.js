@@ -10,7 +10,7 @@ class FnExpression extends base.Expression
   ###
   ###
 
-  constructor: (@name, @params) ->
+  constructor: (@name, @params, @unbound) ->
     super()
     @addChild @params
 
