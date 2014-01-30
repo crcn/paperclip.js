@@ -33,6 +33,7 @@ module.exports = function(fragment, block, element, text, parse, modifiers) {
 - node.js support
 - [block modifiers](#modifiers), similar to angular filters
 - [pollyfills](#pollyfills), similar to angular directives
+- [unbound helpers](#unbound-helpers) - tells paperclip not to watch specific references
 
 ### Examples
 
@@ -135,6 +136,16 @@ template usage:
 ```html
 A human that is {{age}} years old is like a {{ age | divide(5.6) }} year old dog!
 ```
+
+### Unbound Helpers
+
+Unbound helpers tell paperclip not to watch specific references. The basic syntax for this is:
+
+```
+{{ `name` }}
+```
+
+Where the backticks tell paperclip specifically which refs not to watch. Note that if `name` changes, your template won't get updated. 
 
 
 ### Block Helpers
