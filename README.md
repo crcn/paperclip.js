@@ -51,6 +51,7 @@ module.exports = function(fragment, block, element, text, parse, modifiers) {
 - [data-binding styles](http://jsfiddle.net/JTxdM/22/)
 - [manually updating templates](http://jsfiddle.net/JTxdM/37/)
 - [list benchmark](http://jsfiddle.net/JTxdM/39/)
+- [dots benchmark](http://jsfiddle.net/JTxdM/49/)
 
 ### Third-party components:
 
