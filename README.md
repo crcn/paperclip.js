@@ -50,6 +50,7 @@ module.exports = function(fragment, block, element, text, parse, modifiers) {
 - [onEnter event](http://jsfiddle.net/JTxdM/35/)
 - [data-binding styles](http://jsfiddle.net/JTxdM/22/)
 - [manually updating templates](http://jsfiddle.net/JTxdM/37/)
+- [list benchmark](http://jsfiddle.net/JTxdM/39/)
 
 ### Third-party components:
 
