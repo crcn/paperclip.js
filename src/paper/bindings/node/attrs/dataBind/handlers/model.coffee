@@ -9,6 +9,10 @@ class ModelAttrBinding extends require("./base")
   ###
 
   bind: () ->
+
+    # poll for changes in the input field
+    @_autocompleteCheckInterval = setInterval @_onElementChange, 500
+
     super arguments...
     (@$element = $(@node)).bind ChangeDecor.events, @_onElementChange
     @_onChange()
@@ -20,7 +24,7 @@ class ModelAttrBinding extends require("./base")
 
   _onElementChange: (event) =>
 
-    event.stopPropagation()
+    event?.stopPropagation()
     clearTimeout @_changeTimeout
     # need to delay so that the input value can catch up
 
@@ -58,6 +62,7 @@ class ModelAttrBinding extends require("./base")
 
   unbind: () ->
     super()
+    clearInterval @_autocompleteCheckInterval
     @_modelBinding?.dispose()
     @_nameBinding?.dispose()
     @$element.unbind ChangeDecor.events, @_onElementChange
