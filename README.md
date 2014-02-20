@@ -287,5 +287,21 @@ Unbinds the elements from the given context.
 
 ## Node.js Usage
 
+You can easily run paperclip in node. All you need to do is swap out the DOM factory.
+
+```javascript
+var paperclip = require("paperclip"),
+nofactor      = require("nofactor"),
+bindable      = require("bindable");
+
+var template = paperclip.template("<h1>Hello {{name}}</h1>", { nodeFactory: nofactor.string });
+
+var element = template.bind(new bindable.Object({ name: "Jon" })).render();
+
+console.log(renderer.toString());
+```
+
+Here's an example: http://runnable.com/UwVueJLcL9ZTAABN/hello-paperclip-for-node-js
+
 
 
