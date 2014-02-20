@@ -20,7 +20,6 @@
     "expect.js": "0.2.x",
     "karma": "~0.9.5",
     "structr": "~0.2.3",
-    "browserify": "~3.24.2",
     "jquery": "~1.8.3",
     "express": "~3.3.4",
     "istanbul": "~0.1.46",
@@ -50,6 +49,7 @@
     "ent": "~0.1.0",
     "runlater": "0.0.x",
     "protoclass": "0.0.x",
-    "platform": "1.0.x"
+    "platform": "1.0.x",
+    "browserify": "~3.30.1"
   }
 }
