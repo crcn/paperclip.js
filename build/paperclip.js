@@ -550,9 +550,8 @@ protoclass(PaperclipApplication, {
 
     requestAnimationFrame(function () {
 
-      for (var i = self._animationQueue.length; i--;) {
-        var animatable = self._animationQueue[i];
-        animatable.update();
+      for (var i = 0; i < self._animationQueue.length; i++) {
+        self._animationQueue[i].update();
       }
 
       self._animationQueue = [];
