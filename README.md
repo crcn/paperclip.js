@@ -33,6 +33,7 @@ This means a few things:
 ### Features
 
 - template update automatically if the data changes
+- write javascript expressions directly inline. Just like Angular.js.
 - [block helpers](#block-helpers)
 - [data-bind attributes](#data-bind-attributes) (similar to knockout.js)
 - [declarative data-binding](#blocks), similar to angular.js
