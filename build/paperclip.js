@@ -2492,6 +2492,7 @@ BaseBinder.extend(TextBlockBinder, {
 
   getBinding: function (templateNode) {
     var mark = this._findMark(templateNode);
+    console.log("RET BINDING")
     return new TextBinding(mark, this.blocks, this.application);
   }
 });
