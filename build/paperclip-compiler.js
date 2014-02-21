@@ -210,6 +210,7 @@ module.exports = {
         content = $("script[data-template-name='" + nameOrContent + "']").html();
       }
     } catch (e) {
+
     }
 
     if (!content) {
@@ -217,7 +218,7 @@ module.exports = {
     }
 
 
-    return scripts[nameOrContent] = eval(parser.parse(nameOrContent).toJavaScript());
+    return scripts[nameOrContent] = eval(parser.parse(content).toJavaScript());
   }
 }
 
