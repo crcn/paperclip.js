@@ -2531,8 +2531,8 @@ BaseBinding.extend(TextBlockBinding, {
 
   _onChange: function (text) {
 
-    console.log(String(text));
     this.node.nodeValue = String(text);
+    console.log(this.node);
 
     if (this.node.replaceText) {
       this.node.replaceText(text, true);
