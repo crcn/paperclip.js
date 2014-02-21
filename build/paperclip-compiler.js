@@ -222,9 +222,9 @@ module.exports = {
 }
 
 if (typeof (typeof window !== "undefined" && window !== null ? window.paperclip : void 0) !== "undefined") {
-  window.paperclip.compile = module.exports.compile;
-  window.paperclip.script = module.exports.script;
-  window.paperclip.template.compiler = modle.exports;
+  window.paperclip.compile           = module.exports.compile;
+  window.paperclip.script            = module.exports.script;
+  window.paperclip.template.compiler = module.exports;
 }
 },{"./xml":31}],5:[function(require,module,exports){
 var BaseExpression = require("../../base/expression");
