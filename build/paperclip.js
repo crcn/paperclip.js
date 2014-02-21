@@ -675,6 +675,10 @@ protoclass(BaseBinder, {
 
     var cn = node;
 
+    while (cn.parentNode) {
+      cn = cn.parentNode;
+    }
+
     for (var i = 0, n = this.pathLength; i < n; i++) {
       cn = cn.childNodes[this.path[i]];
     }
@@ -2532,7 +2536,7 @@ BaseBinding.extend(TextBlockBinding, {
   _onChange: function (text) {
 
     this.node.nodeValue = String(text);
-    console.log(this.node);
+
 
     if (this.node.replaceText) {
       this.node.replaceText(text, true);
