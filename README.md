@@ -24,9 +24,16 @@ module.exports = function(fragment, block, element, text, parse, modifiers) {
 };
 ```
 
+This means a few things:
+
+1. You have full control over the DOM. If you want to user paperclip.js as a backend template system, you can.
+2. Generating data-bound elements from templates is incredibly fast. Here's an example of 10k items being generated in 500 ms: http://jsfiddle.net/JTxdM/53/ (Current bug in chrome makes it a bit slower. Try Firefox).
+3. No metamorph tags, or other things that pollute the DOM, and cause strange bugs. 
+
 ### Features
 
 - template update automatically if the data changes
+- write javascript expressions directly inline. Just like Angular.js.
 - [block helpers](#block-helpers)
 - [data-bind attributes](#data-bind-attributes) (similar to knockout.js)
 - [declarative data-binding](#blocks), similar to angular.js
@@ -50,8 +57,8 @@ module.exports = function(fragment, block, element, text, parse, modifiers) {
 - [onEnter event](http://jsfiddle.net/JTxdM/35/)
 - [data-binding styles](http://jsfiddle.net/JTxdM/22/)
 - [manually updating templates](http://jsfiddle.net/JTxdM/37/)
-- [list benchmark](http://jsfiddle.net/JTxdM/39/)
-- [dots benchmark](http://jsfiddle.net/JTxdM/49/)
+- [list benchmark](http://jsfiddle.net/JTxdM/53/)
+- [dots benchmark](http://jsfiddle.net/JTxdM/54/)
 
 ### Third-party components:
 
@@ -279,6 +286,22 @@ Casts the elements as a document fragment.
 Unbinds the elements from the given context.
 
 ## Node.js Usage
+
+You can easily run paperclip in node. All you need to do is swap out the DOM factory.
+
+```javascript
+var paperclip = require("paperclip"),
+nofactor      = require("nofactor"),
+bindable      = require("bindable");
+
+var template = paperclip.template("<h1>Hello {{name}}</h1>", { nodeFactory: nofactor.string });
+
+var element = template.bind(new bindable.Object({ name: "Jon" })).render();
+
+console.log(renderer.toString());
+```
+
+Here's an example: http://runnable.com/UwVueJLcL9ZTAABN/hello-paperclip-for-node-js
 
 
 
