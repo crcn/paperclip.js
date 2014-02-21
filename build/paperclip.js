@@ -2537,6 +2537,7 @@ BaseBinding.extend(TextBlockBinding, {
 
     this.node.nodeValue = String(text);
 
+    console.log(this.node);
 
     if (this.node.replaceText) {
       this.node.replaceText(text, true);
@@ -3046,7 +3047,7 @@ BaseWriter.extend(TextBlockWriter, {
   write: function (blocks) {
 
     var node = this.nodeFactory.createTextNode("");
-
+    
     this.binders.push(new TextBlockBinder({
       marker      : node,
       blocks      : blocks,
