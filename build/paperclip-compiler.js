@@ -889,7 +889,7 @@ var codes = utils.makeTokenCodes([
   "pipe"        , // |
   "rb"          , // }
   "us"          , // _
-  "tick"        , // `
+  "tick"         // `
 ]);
 
 var codeMap = {
@@ -1677,7 +1677,7 @@ var codes = utils.makeTokenCodes([
   "escript" ,  // {{/}}
   "quote"   ,  // "
   "sqoute"  ,  // '
-  "char"    ,  // anything else
+  "char"      // anything else
 ]);
 
 
