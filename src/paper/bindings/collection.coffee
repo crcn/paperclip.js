@@ -1,4 +1,4 @@
-BaseBinding = require "./base/index"
+BaseBinding = require "./base/binding"
 
 class Collection extends BaseBinding
   

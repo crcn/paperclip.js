@@ -1,4 +1,4 @@
-class BaseNodeBinding extends require("../../base")
+class BaseNodeBinding extends require("../../base/binding")
   
   ###
   ###
