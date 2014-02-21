@@ -2,8 +2,8 @@ watch_r    = require "watch_r"
 walkr     = require "walkr"
 path      = require "path"
 _         = require "underscore"
-parser    = require "../translate/template/parser"
-formatter = require "../translate/template/formatter"
+parser    = require "../parser"
+formatter = require "../parser/formatter"
 
 ###
  Compiles node.js files

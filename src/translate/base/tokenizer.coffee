@@ -49,6 +49,11 @@ class Tokenizer
   ###
   ###
 
+  _current: (value) ->
+
+  ###
+  ###
+
   next: () ->
     return (@current = @_pool.pop()) if @_pool.length
     return (@current = null) if @_s.eof()
