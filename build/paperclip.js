@@ -2516,6 +2516,7 @@ BaseBinding.extend(TextBlockBinding, {
    */
 
   bind: function (context) {
+    console.log("BIND")
     return this._binding = this.clip.reset(context).bind("text", _.bind(this._onChange, this)).now();
   },
 
@@ -2532,6 +2533,8 @@ BaseBinding.extend(TextBlockBinding, {
   _onChange: function (text) {
 
     this.node.nodeValue = String(text);
+
+    console.log(text);
 
     if (this.node.replaceText) {
       this.node.replaceText(text, true);
