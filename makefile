@@ -9,7 +9,7 @@ testt:
 
 browser:
 	./node_modules/.bin/browserify ./lib/index.js -o ./build/paperclip.js
-	./node_modules/.bin/browserify ./lib/translate/index.js -o ./build/paperclip-compiler3.js
+	./node_modules/.bin/browserify ./lib/parser/index.js -o ./build/paperclip-compiler.js
 
 test-cov:
 	./node_modules/.bin/istanbul cover \
