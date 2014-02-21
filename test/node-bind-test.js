@@ -119,9 +119,10 @@ describe("node", function() {
               color: color, \
               'background-color': backgroundColor \
             } \
-          ").bind({
+          }}\"></div>").bind({
             color: "red"
           });
+
 
           expect(utils.trimEl(v)).to.be('<div style="color:red;"></div>');
           v.context.set("backgroundColor", "blue");
