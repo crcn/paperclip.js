@@ -58,7 +58,7 @@ This means a few things:
 - [data-binding styles](http://jsfiddle.net/JTxdM/22/)
 - [manually updating templates](http://jsfiddle.net/JTxdM/37/)
 - [list benchmark](http://jsfiddle.net/JTxdM/60/)
-- [dots benchmark](http://jsfiddle.net/JTxdM/61/)
+- [dots benchmark](http://jsfiddle.net/JTxdM/62/)
 
 ### Third-party components:
 
