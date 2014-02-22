@@ -1356,7 +1356,13 @@ BaseParser.extend(XMLParser, {
       expressions.push(this._parseExpression());
     }
 
-    return prune.combineTextBlocks(new RootExpression(this._trimTextNodes(expressions)));
+    var root = new RootExpression(this._trimTextNodes(expressions));
+
+    if (false) {
+      root = rune.combineTextBlocks(root); // rendering is a bit slower
+    }
+
+    return root;
   },
 
   /**
