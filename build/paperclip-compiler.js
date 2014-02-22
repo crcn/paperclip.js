@@ -1638,7 +1638,7 @@ function combineTextBlocks (expression) {
 
     if (child.type === "textNode") {
       currentTextBlock.push(new StringExpression(child.value));
-    } else if (child.type === "block" && child.script.expressions[0].name === "value" && !child.contentTemplate && !child.childBlock) {
+    } else if (child.type === "block" && child.script.expressions[0].name === "value" && !child.contentTemplate.expressions.length && !child.childBlock) {
       currentTextBlock.push(child.script.expressions[0]);
       hasBlock = true;
     } else {
@@ -1652,7 +1652,9 @@ function combineTextBlocks (expression) {
     }
   }
 
+
   if (!hasBlock) return;
+
 
   if(currentTextBlock.length) {
     newChildren.push(new TextBlockExpression(currentTextBlock));

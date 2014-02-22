@@ -53,7 +53,7 @@ protoclass(ClippedBufferPart, {
 
 
 function ClippedBuffer (buffer, application) {
-  bindable.Object.call(this);
+  bindable.Object.call(this, this);
 
   var self = this;
   this.application = application;
@@ -108,7 +108,7 @@ bindable.Object.extend(ClippedBuffer, {
       this.bindings[i].update();
     }
     this._updating = false;
-    this.set("value", this.text = this._getText());
+    this.set("value", this._getText());
   },
 
   /**
@@ -119,7 +119,8 @@ bindable.Object.extend(ClippedBuffer, {
     var buffer = "";
 
     for (var i = 0, n = this.bufferLength; i < n; i++) {
-      buffer += this.buffer[i].value || "";
+      var v = this.buffer[i].value;
+      buffer += v != null ? v : "";
     }
 
 
@@ -2470,7 +2471,7 @@ BaseBinding.extend(TextBlockBinding, {
    */
 
   bind: function (context) {
-    return this._binding = this.clip.reset(context).bind("value", _.bind(this.animate, this)).now();
+    return this._binding = this.clip.reset(context).bind("value", _.bind(this.update, this)).now();
   },
 
   /**
@@ -2484,6 +2485,7 @@ BaseBinding.extend(TextBlockBinding, {
    */
 
   update: function () {
+
     this.node.nodeValue = String(this.clip.value);
 
     if (this.node.replaceText) {
