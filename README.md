@@ -57,8 +57,8 @@ This means a few things:
 - [onEnter event](http://jsfiddle.net/JTxdM/35/)
 - [data-binding styles](http://jsfiddle.net/JTxdM/22/)
 - [manually updating templates](http://jsfiddle.net/JTxdM/37/)
-- [list benchmark](http://jsfiddle.net/JTxdM/53/)
-- [dots benchmark](http://jsfiddle.net/JTxdM/54/)
+- [list benchmark](http://jsfiddle.net/JTxdM/60/)
+- [dots benchmark](http://jsfiddle.net/JTxdM/61/)
 
 ### Third-party components:
 
