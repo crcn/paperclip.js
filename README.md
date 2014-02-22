@@ -1,6 +1,6 @@
 # Paperclip.js [![Alt ci](https://travis-ci.org/classdojo/paperclip.js.png)](https://travis-ci.org/classdojo/paperclip.js)
 
-Paperclip is a data-bindable templating system inspired by [Mustache](https://github.com/janl/mustache.js/), [Angular](http://angularjs.org/), [Derby](http://derbyjs.com/), and [Knockout](http://knockoutjs.com/). It's supported on all major browsers: IE8+, Firefox, Chrome, Safari, Opera, as well as Node.js.
+Paperclip is a super fast, data-bindable templating system inspired by [Mustache](https://github.com/janl/mustache.js/), [Angular](http://angularjs.org/), [Derby](http://derbyjs.com/), and [Knockout](http://knockoutjs.com/). It's supported on all major browsers: IE8+, Firefox, Chrome, Safari, Opera, as well as Node.js.
 
 Paperclip works by listening to [bindable](https://github.com/classdojo/bindable.js) objects, and updating the template if anything changes. Unlike angular.js, paperclip takes a more explicit approach to updating templates. If you want to change a value in a template manually, you can easily do so by calling `bindable.set(property, value)`. [Here's an example](http://jsfiddle.net/JTxdM/79/).
 
@@ -8,27 +8,32 @@ Paperclip works by listening to [bindable](https://github.com/classdojo/bindable
 Paperclip translates HTML directly to JavaScript. For example, the following `hello.pc` file:
 
 ```html
-hello {{message}}!
+hello {{name}}!
 ```
 
 is translated to:
 
 ```javascript
-module.exports = function(fragment, block, element, text, parse, modifiers) {
+module.exports = function(fragment, block, element, text, textBlock, parser, modifiers) {
     return fragment([ text("hello "), block({
-        fn: function() {
-            return this.ref("message").value();
-        },
-        refs: [ "message" ]
-    }), text("! ") ]);
+        value: {
+            fn: function() {
+                return this.get([ "name" ]);
+            },
+            refs: [ [ "name" ] ]
+        }
+    }, void 0), text("! ") ]);
 };
 ```
 
-This means a few things:
+### Performance
 
-1. You have full control over the DOM. If you want to user paperclip.js as a backend template system, you can.
-2. Generating data-bound elements from templates is incredibly fast. Here's an example of 10k items being generated in ~500 ms: http://jsfiddle.net/JTxdM/65/.
-3. No metamorph tags, or other things that pollute the DOM, and cause strange bugs. 
+- [10k list items in ~ 500 MS](http://jsfiddle.net/JTxdM/65/). 
+- Paperclip caches templates, and uses the browser's `cloneNode` function to re-create elements whenever they're needed. 
+- [Unbound helpers](#unbound-helpers) tell paperclip what to data-bind to. This allows you to optimize even further, especially with large lists of items.
+- Paperclip knows where data-bindings are, so there's no traversal of the DOM whenever a template is needed.
+- No metamorph tags, or other things that pollute the DOM, and cause strange bugs.  
+
 
 ### Features
 
