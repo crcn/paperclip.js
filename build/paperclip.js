@@ -707,7 +707,7 @@ protoclass(BaseBinder, {
     }
 
     this.path = path;
-    this.pathLength = 0;
+    this.pathLength = path.length;
   }
 });
 
@@ -2536,8 +2536,6 @@ BaseBinding.extend(TextBlockBinding, {
   _onChange: function (text) {
 
     this.node.nodeValue = String(text);
-
-    console.log(this.node);
 
     if (this.node.replaceText) {
       this.node.replaceText(text, true);

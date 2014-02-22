@@ -14,6 +14,7 @@ describe("conditional sections", function() {
     var v = pc.template("hello{{#if:true}} world{{/}}!").bind();
     expect(String(v)).to.be("hello world!");
   });
+
   return;
 
   it("don't show up with an undefined value", function() {
