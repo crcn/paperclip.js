@@ -27,7 +27,7 @@ module.exports = function(fragment, block, element, text, parse, modifiers) {
 This means a few things:
 
 1. You have full control over the DOM. If you want to user paperclip.js as a backend template system, you can.
-2. Generating data-bound elements from templates is incredibly fast. Here's an example of 10k items being generated in 500 ms: http://jsfiddle.net/JTxdM/53/ (Current bug in chrome makes it a bit slower. Try Firefox).
+2. Generating data-bound elements from templates is incredibly fast. Here's an example of 10k items being generated in ~500 ms: http://jsfiddle.net/JTxdM/65/.
 3. No metamorph tags, or other things that pollute the DOM, and cause strange bugs. 
 
 ### Features
