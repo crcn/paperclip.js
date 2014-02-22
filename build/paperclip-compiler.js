@@ -1523,7 +1523,14 @@ BaseParser.extend(XMLParser, {
 
   _parseScriptBlockExpression: function () {
 
-    var script = this._scriptParser.parse(this._t.current[1]),
+    var source = this._t.current[1];
+
+    // if block, or end script, scripts must be defined. If something like {{/else}} , it needs to be else:true
+    if ((this._t.currentCode & (TokenCodes.ESCRIPT|TokenCodes.BSCRIPT)) && !~source.indexOf(":")) {
+      source += ":true";
+    }
+
+    var script = this._scriptParser.parse(source),
     ccode      = this._t.current[0];
 
     this._t.next(); // eat script
@@ -1631,7 +1638,7 @@ function combineTextBlocks (expression) {
 
     if (child.type === "textNode") {
       currentTextBlock.push(new StringExpression(child.value));
-    } else if (child.type === "block" && child.script.expressions[0].name === "value") {
+    } else if (child.type === "block" && child.script.expressions[0].name === "value" && !child.contentTemplate && !child.childBlock) {
       currentTextBlock.push(child.script.expressions[0]);
       hasBlock = true;
     } else {

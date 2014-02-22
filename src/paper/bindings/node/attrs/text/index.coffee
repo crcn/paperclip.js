@@ -19,7 +19,7 @@ class AttrTextBinding extends require("../../base")
   ###
 
   bind: (@context) ->
-    @_binding = @clippedBuffer.reset(@context).bind("text", @_onChange).now()
+    @_binding = @clippedBuffer.reset(@context).bind("value", @_onChange).now()
 
   ###
   ###
