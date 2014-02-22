@@ -46,7 +46,7 @@ protoclass(ClippedBufferPart, {
 
   _onUpdated: function (value) {
     this.value = value;
-    if (this.clippedBuffer._updated) return;
+    if (this.clippedBuffer._updating) return;
     this.clippedBuffer.update();
   }
 });
@@ -107,6 +107,7 @@ bindable.Object.extend(ClippedBuffer, {
     for (var i = this.bindingsLength; i--;) {
       this.bindings[i].update();
     }
+    this._updating = false;
     this.set("value", this.text = this._getText());
   },
 
