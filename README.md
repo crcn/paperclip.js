@@ -2,7 +2,7 @@
 
 Paperclip is a data-bindable templating system inspired by [Mustache](https://github.com/janl/mustache.js/), [Angular](http://angularjs.org/), [Derby](http://derbyjs.com/), and [Knockout](http://knockoutjs.com/). It's supported on all major browsers: IE8+, Firefox, Chrome, Safari, Opera, as well as Node.js.
 
-Paperclip works by listening to [bindable](https://github.com/classdojo/bindable.js) objects, and updating the template if anything changes. Unlike angular.js, paperclip takes a more explicit approach to updating templates. If you want to change a value in a template manually, you can easily do so by calling `bindable.set(property, value)`. [Here's an example](http://jsfiddle.net/JTxdM/37/).
+Paperclip works by listening to [bindable](https://github.com/classdojo/bindable.js) objects, and updating the template if anything changes. Unlike angular.js, paperclip takes a more explicit approach to updating templates. If you want to change a value in a template manually, you can easily do so by calling `bindable.set(property, value)`. [Here's an example](http://jsfiddle.net/JTxdM/79/).
 
 
 Paperclip translates HTML directly to JavaScript. For example, the following `hello.pc` file:
@@ -44,20 +44,20 @@ This means a few things:
 
 ### Examples
 
-- [hello input](http://jsfiddle.net/JTxdM/38/)
-- [hello world](http://jsfiddle.net/JTxdM/30/)
-- [modifiers](http://jsfiddle.net/JTxdM/31/)
-- [data-binding to input fields](http://jsfiddle.net/JTxdM/32/)
-- [data-binding attributes](http://jsfiddle.net/JTxdM/29/)
-- [inline javascript](http://jsfiddle.net/JTxdM/28/)
-- [animal age calculator](http://jsfiddle.net/JTxdM/27/)
-- [titlecase / lowercase modifiers](http://jsfiddle.net/JTxdM/34/)
-- [if / elseif / else block](http://jsfiddle.net/JTxdM/25/)
-- [html block helper](http://jsfiddle.net/JTxdM/26/)
-- [onEnter event](http://jsfiddle.net/JTxdM/35/)
-- [data-binding styles](http://jsfiddle.net/JTxdM/22/)
-- [manually updating templates](http://jsfiddle.net/JTxdM/37/)
-- [list benchmark](http://jsfiddle.net/JTxdM/65/)
+- [hello input](http://jsfiddle.net/JTxdM/67/)
+- [hello world](http://jsfiddle.net/JTxdM/68/)
+- [modifiers](http://jsfiddle.net/JTxdM/69/)
+- [data-binding attributes](http://jsfiddle.net/JTxdM/71/)
+- [inline javascript](http://jsfiddle.net/JTxdM/72/)
+- [animal age calculator](http://jsfiddle.net/JTxdM/73/)
+- [titlecase / lowercase modifiers](http://jsfiddle.net/JTxdM/74/)
+- [if / elseif / else block](http://jsfiddle.net/JTxdM/75/)
+- [html block helper](http://jsfiddle.net/JTxdM/76/)
+- [onEnter event](http://jsfiddle.net/JTxdM/77/)
+- [data-binding css](http://jsfiddle.net/JTxdM/81/)
+- [data-binding styles](http://jsfiddle.net/JTxdM/78/)
+- [manually updating templates](http://jsfiddle.net/JTxdM/79/)
+- [list benchmark](http://jsfiddle.net/JTxdM/65/) - 10k items
 - [dots benchmark](http://jsfiddle.net/JTxdM/62/)
 
 ### Third-party components:
@@ -83,20 +83,20 @@ Paperclip takes on a mustache / handlebars approach with variables, blocks, and 
 
 ### Blocks
 
-Paperclip support variable blocks, just like Angular.js. [For example](http://jsfiddle.net/JTxdM/24/):
+Paperclip support variable blocks, just like Angular.js. [For example](http://jsfiddle.net/JTxdM/80/):
 
 ```html
 hello {{ name.first }} {{ name.last }}!
 ```
 
-You can also specify blocks within attributes. [For example](http://jsfiddle.net/JTxdM/29/):
+You can also specify blocks within attributes. [For example](http://jsfiddle.net/JTxdM/71/):
 
 ```html
 my favorite color is <span style="color: {{color}}">{{color}}</span>
 ```
 
 
-If you want to add some sugar, go ahead and [drop-in some javascript](http://jsfiddle.net/JTxdM/28/):
+If you want to add some sugar, go ahead and [drop-in some javascript](http://jsfiddle.net/JTxdM/72/):
 
 ```html
 hello {{ message || "world!" }}!
@@ -132,7 +132,7 @@ Which might produce:
 HELLO WORLD!!!
 ```
 
-Modifiers also accept parameters. [For example](http://jsfiddle.net/JTxdM/27/):
+Modifiers also accept parameters. [For example](http://jsfiddle.net/JTxdM/73/):
 
 ```javascript
 paperclip.modifier("divide", function(value, num) {
@@ -161,7 +161,7 @@ Where the backticks tell paperclip specifically which refs not to watch. Note th
 
 #### {{ html: content }}
 
-Similar to escaping content in mustache (`{{{content}}}`). [For example](http://jsfiddle.net/JTxdM/26/):
+Similar to escaping content in mustache (`{{{content}}}`). [For example](http://jsfiddle.net/JTxdM/76/):
 
 ```html
 {{ html: content }}
@@ -171,7 +171,7 @@ Similar to escaping content in mustache (`{{{content}}}`). [For example](http://
 
 #### {{#if: condition }}
 
-Conditional block helper. [For example](http://jsfiddle.net/JTxdM/25/):
+Conditional block helper. [For example](http://jsfiddle.net/JTxdM/75/):
 
 ```
 {{#if: age > 18 }}
@@ -182,9 +182,9 @@ Conditional block helper. [For example](http://jsfiddle.net/JTxdM/25/):
 
 #### Custom Block Helpers
 
-Paperclip also allows you to register your own block helpers. This is similar to custom angular.js directives. [For example]():
+Paperclip also allows you to register your own block helpers. This is similar to custom angular.js directives. 
 
-TODO
+TODO example
 
 ### data-bind attributes
 
@@ -207,7 +207,7 @@ Executed when an event is fired on the DOM element. Here are all the available e
 - `onEnter` - called on enter key up
 - `onDepete` - called on delete key up
 
-[Basic example](http://jsfiddle.net/JTxdM/35/):
+[Basic example](http://jsfiddle.net/JTxdM/77/):
 
 ```html
 <input type="text" data-bind="{{ model: name, onEnter: sayHello() }}"></input>
@@ -221,7 +221,7 @@ Toggles the display mode of a given element. This is similar to the `{{#if: expr
 
 #### {{ css: styles }}
 
-Sets the css of a given element. [For example](http://jsfiddle.net/JTxdM/21/):
+Sets the css of a given element. [For example](http://jsfiddle.net/JTxdM/81/):
 
 ```html
 <strong data-bind="{{ 
@@ -235,7 +235,7 @@ Sets the css of a given element. [For example](http://jsfiddle.net/JTxdM/21/):
 
 #### {{ style: styles }}
 
-Sets the style of a given element. [For example](http://jsfiddle.net/JTxdM/22/): 
+Sets the style of a given element. [For example](http://jsfiddle.net/JTxdM/78/): 
 
 ```
 <span data-bind="{{ 
@@ -253,7 +253,7 @@ Toggles the enabled state of an element.
 
 #### {{ model: context }}
 
-Input data-binding. [For example](http://jsfiddle.net/JTxdM/23/):
+Input data-binding. [For example](http://jsfiddle.net/JTxdM/67/):
 
 ```html
 <input type="text" name="message" data-bind="{{ model: this }}"></input> {{ message }}
@@ -271,7 +271,7 @@ Pollyfills are similar to angular directives, but they should only be used to pr
 
 #### template paperclip.template(sourceOrScriptName)
 
-translates the source, or script into a paperclip template. [For example](http://jsfiddle.net/JTxdM/36/).
+translates the source, or script into a paperclip template. [For example](http://jsfiddle.net/JTxdM/83/).
 
 #### elements template.bind(context)
 
