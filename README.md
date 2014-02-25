@@ -1,6 +1,6 @@
 # Paperclip.js [![Alt ci](https://travis-ci.org/classdojo/paperclip.js.png)](https://travis-ci.org/classdojo/paperclip.js)
 
-Paperclip is a super fast, data-bindable templating system inspired by [Mustache](https://github.com/janl/mustache.js/), [Angular](http://angularjs.org/), [Derby](http://derbyjs.com/), and [Knockout](http://knockoutjs.com/). It's supported on all major browsers: IE8+, Firefox, Chrome, Safari, Opera, as well as Node.js.
+Paperclip is a fast, data-bindable templating system inspired by [Mustache](https://github.com/janl/mustache.js/), [Angular](http://angularjs.org/), [Derby](http://derbyjs.com/), and [Knockout](http://knockoutjs.com/). It's supported on all major browsers: IE8+, Firefox, Chrome, Safari, Opera, as well as Node.js.
 
 Paperclip works by listening to [bindable](https://github.com/classdojo/bindable.js) objects, and updating the template if anything changes. Unlike angular.js, paperclip takes a more explicit approach to updating templates. If you want to change a value in a template manually, you can easily do so by calling `bindable.set(property, value)`. [Here's an example](http://jsfiddle.net/JTxdM/79/).
 
@@ -26,13 +26,13 @@ module.exports = function(fragment, block, element, text, textBlock, parser, mod
 };
 ```
 
-### Performance
 
-- [10k list items in ~ 500 MS](http://jsfiddle.net/JTxdM/65/). 
-- Paperclip caches templates, and uses the browser's `cloneNode` function to re-create elements whenever they're needed. 
-- [Unbound helpers](#unbound-helpers) tell paperclip what to data-bind to. This allows you to optimize even further, especially with large lists of items.
-- Paperclip knows where data-bindings are, so there's no traversal of the DOM whenever a template is needed.
-- No metamorph tags, or other things that pollute the DOM, and cause strange bugs.  
+This means a few things:
+
+- Super fast. [10k list items in ~ 500 MS](http://jsfiddle.net/JTxdM/65/).
+- Works very well on older browsers such as IE8. 
+- You can customize paperclip to generate your own sort of markup language. 
+- No metamorph tags, or other things that pollute the DOM, and cause strange bugs.
 
 
 ### Features
