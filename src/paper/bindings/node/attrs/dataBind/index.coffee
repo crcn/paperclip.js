@@ -5,6 +5,7 @@ dataBindingClasses =
   show    : require("./handlers/show")
   css     : require("./handlers/css")
   style   : require("./handlers/style")
+  focus   : require("./handlers/focus")
 
   # deprecated for enable
   disable : require("./handlers/disable")
