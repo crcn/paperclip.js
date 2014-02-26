@@ -10,7 +10,7 @@ class ModelAttrBinding extends require("./base")
 
   bind: () ->
 
-    if /text|password/.test @node.getAttribute("type")
+    if /^(text|password)$/.test @node.getAttribute("type")
       @_autocompleteCheckInterval = setInterval (() =>
         @_onElementChange()
       ), 500
