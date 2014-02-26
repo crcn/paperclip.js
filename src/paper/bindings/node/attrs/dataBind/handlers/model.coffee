@@ -10,10 +10,10 @@ class ModelAttrBinding extends require("./base")
 
   bind: () ->
 
-    # poll for changes in the input field
-    @_autocompleteCheckInterval = setInterval (() =>
-      @_onElementChange()
-    ), 500
+    if /text|password/.test @node.getAttribute("type")
+      @_autocompleteCheckInterval = setInterval (() =>
+        @_onElementChange()
+      ), 500
 
     super arguments...
     (@$element = $(@node)).bind ChangeDecor.events, @_onElementChange
