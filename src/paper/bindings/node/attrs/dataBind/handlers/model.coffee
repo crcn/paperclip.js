@@ -31,7 +31,7 @@ class ModelAttrBinding extends require("./base")
     # need to delay so that the input value can catch up
 
     applyChange = () =>
-      value = @_parseValue @_elementValue()
+      value = @_castValue @_elementValue()
       name  = @_elementName()
       refs  = @script.script.refs
       model = @clip.get("model")
@@ -90,7 +90,17 @@ class ModelAttrBinding extends require("./base")
   ###
 
   _onValueChange: (value) =>
-    @_elementValue @_parseValue value
+    @_elementValue @_castValue value
+
+  ###
+  ###
+
+  _castValue: (value) ->
+    # TODO - get type from clip data
+
+    value
+
+
 
   ###
   ###
