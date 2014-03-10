@@ -1,7 +1,7 @@
-_ = require "underscore"
+_            = require "underscore"
 ChangeDecor  = require("./change")
 type         = require "type-component"
-dref = require "dref"
+dref         = require "dref"
 
 class ModelAttrBinding extends require("./base")
 
@@ -19,7 +19,7 @@ class ModelAttrBinding extends require("./base")
     (@$element = $(@node)).bind ChangeDecor.events, @_onElementChange
     @_onChange()
     @_nameBinding = @clip.data.bind "name", @_onChange
-  
+
 
   ###
   ###
@@ -57,7 +57,7 @@ class ModelAttrBinding extends require("./base")
     else
       @_changeTimeout = setTimeout applyChange, 5
 
-    
+
 
   ###
   ###
@@ -79,7 +79,7 @@ class ModelAttrBinding extends require("./base")
     name = @_elementName()
     @_modelBinding?.dispose()
 
-    
+
     if name
       @_modelBinding = model?.bind(name, @_onValueChange).now()
     else if type(model) isnt "object"
@@ -133,7 +133,7 @@ class ModelAttrBinding extends require("./base")
       return if isInput then @_checkedOrValue() else @node.innerHTML
 
     return if @currentValue is value
-    
+
     @currentValue = value
 
     if isInput
@@ -168,7 +168,7 @@ class ModelAttrBinding extends require("./base")
           $(@node).prop("checked", true)
       else
         @node.checked = value
-    else 
+    else
       @node.value = value
 
 

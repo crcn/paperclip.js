@@ -1,1 +1,0 @@
-/Users/craig/Developer/Public/paperclip.js
