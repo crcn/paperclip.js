@@ -31,7 +31,7 @@ class ModelAttrBinding extends require("./base")
     # need to delay so that the input value can catch up
 
     applyChange = () =>
-      value = @_castValue @_elementValue()
+      value = @_parseValue @_elementValue()
       name  = @_elementName()
       refs  = @script.script.refs
       model = @clip.get("model")
@@ -90,7 +90,7 @@ class ModelAttrBinding extends require("./base")
   ###
 
   _onValueChange: (value) =>
-    @_elementValue @_castValue value
+    @_elementValue @_parseValue value
 
   ###
   ###
@@ -107,14 +107,7 @@ class ModelAttrBinding extends require("./base")
 
   _parseValue: (value) ->
     return undefined if not value? or value is ""
-
-    if type(value) isnt "string"
-      return value
-
-    if isNaN(v = Number(value)) or (String(value).substr(0, 1) is "0" and String(value).length > 1)
-      return value
-    else
-      return v
+    return value
 
 
   ###
