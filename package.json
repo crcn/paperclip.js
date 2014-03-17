@@ -1,56 +1,56 @@
 {
-  "name": "paperclip",
-  "version": "0.3.85",
-  "description": "controller logic:",
-  "main": "./lib/index.js",
-  "browserify": "./lib/browser.js",
-  "scripts": {
-    "test": "make testt"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/classdojo/paperclip.js.git"
-  },
-  "author": "",
-  "license": "MIT",
-  "gitHead": "1336ca5b7f1f0c344a291ace63ddf211d5a94acd",
-  "readmeFilename": "README.md",
-  "devDependencies": {
-    "jsdom": "*",
-    "expect.js": "0.2.x",
-    "karma": "~0.9.5",
-    "structr": "~0.2.3",
-    "jquery": "~1.8.3",
-    "express": "~3.3.4",
-    "istanbul": "~0.1.46",
-    "coveralls": "~2.5.0",
-    "mocha": "~1.15.1",
-    "benchmark": "~1.0.0",
-    "nofactor": "0.0.36"
-  },
-  "bin": {
-    "paperclip": "./bin/paperclip"
-  },
-  "dependencies": {
-    "strscanner": "0.0.x",
-    "bindable": "0.5.x",
-    "dref": "0.0.x",
-    "hoist": "0.0.x",
-    "async": "0.2.x",
-    "uglify-js": "1.3.x",
-    "optimist": "0.4.x",
-    "asyngleton": "0.1.x",
-    "walkr": "0.0.x",
-    "watch_r": "0.0.x",
-    "underscore": "1.4.x",
-    "type-component": "0.0.x",
-    "nofactor": "0.0.x",
-    "loaf": "0.2.x",
-    "ent": "~0.1.0",
-    "runlater": "0.0.x",
-    "protoclass": "0.0.x",
-    "platform": "1.0.x",
-    "browserify": "~3.30.1",
-    "sift": "0.0.12"
-  }
+    "name": "paperclip",
+    "version": "0.3.92",
+    "description": "controller logic:",
+    "main": "./lib/index.js",
+    "browserify": "./lib/browser.js",
+    "scripts": {
+        "test": "make testt"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/classdojo/paperclip.js.git"
+    },
+    "author": "",
+    "license": "MIT",
+    "gitHead": "1336ca5b7f1f0c344a291ace63ddf211d5a94acd",
+    "readmeFilename": "README.md",
+    "devDependencies": {
+        "jsdom": "*",
+        "expect.js": "0.2.x",
+        "karma": "~0.9.5",
+        "structr": "~0.2.3",
+        "jquery": "~1.8.3",
+        "express": "~3.3.4",
+        "istanbul": "~0.1.46",
+        "coveralls": "~2.5.0",
+        "mocha": "~1.15.1",
+        "benchmark": "~1.0.0",
+        "nofactor": "0.0.36"
+    },
+    "bin": {
+        "paperclip": "./bin/paperclip"
+    },
+    "dependencies": {
+        "strscanner": "0.0.x",
+        "bindable": "0.5.x",
+        "dref": "0.0.x",
+        "hoist": "0.0.x",
+        "async": "0.2.x",
+        "uglify-js": "1.3.x",
+        "optimist": "0.4.x",
+        "asyngleton": "0.1.x",
+        "walkr": "0.0.x",
+        "watch_r": "0.0.x",
+        "underscore": "1.4.x",
+        "type-component": "0.0.x",
+        "nofactor": "0.0.x",
+        "loaf": "0.2.x",
+        "ent": "~0.1.0",
+        "runlater": "0.0.x",
+        "protoclass": "0.0.x",
+        "platform": "1.0.x",
+        "browserify": "~3.30.1",
+        "sift": "0.0.12"
+    }
 }
