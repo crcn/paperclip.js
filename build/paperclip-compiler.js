@@ -541,7 +541,7 @@ BaseScriptExpression.extend(StringExpression, {
    */
 
   toJavaScript: function () {
-    return "\"" + this.value + "\"";
+    return "\"" + this.value.replace(/"/g, "\\\"") + "\"";
   }
 });
 
@@ -1257,7 +1257,7 @@ BaseXMLExpression.extend(StringExpression, {
    */
 
   toJavaScript: function () {
-    return "\"" + this.value.replace("\"", "\\\"") + "\"";
+    return "\"" + this.value.replace(/"/g, "\\\"") + "\"";
   }
 });
 
@@ -1296,6 +1296,7 @@ ent                   = require("ent");
 function TextNodeExpression (value) {
   BaseXMLExpression.apply(this, arguments);
   this.value = ent.decode(value);
+  this.decoded = this.value !== value;
 }
 
 BaseXMLExpression.extend(TextNodeExpression, {
@@ -1359,7 +1360,7 @@ BaseParser.extend(XMLParser, {
     var root = new RootExpression(this._trimTextNodes(expressions));
 
     if (false) {
-      root = rune.combineTextBlocks(root); // rendering is a bit slower
+      root = prune.combineTextBlocks(root); // rendering is a bit slower
     }
 
     return root;
@@ -1462,7 +1463,23 @@ BaseParser.extend(XMLParser, {
     var attrName = this._t.current[1];
 
     this._t.nextSkipWhite(); // eat name
-    this._t.nextSkipWhite(); // eat = 
+
+    var values = [];
+
+    if (this._t.current[0] === TokenCodes.EQ) {
+      this._t.nextSkipWhite(); // eat = 
+      values = this._parseAttributeValues();
+    }
+
+
+    return new AttributeExpression(attrName, values);
+  },
+
+  /**
+   */
+
+  _parseAttributeValues: function () {
+
 
 
     var quoteCode = this._t.currentCode,
@@ -1491,7 +1508,7 @@ BaseParser.extend(XMLParser, {
 
     this._t.next(); // eat quote
 
-    return new AttributeExpression(attrName, values);
+    return values;
   },
 
   /**
@@ -1568,12 +1585,11 @@ BaseParser.extend(XMLParser, {
 
   _trimTextNodes: function (expressions) {
 
-
     function _trim (exprs) {
       var expr, i;
       for (i = exprs.length; i--;) {
         expr = exprs[i];
-        if (expr.type == "textNode" && !/\S/.test(expr.value)) {
+        if (expr.type == "textNode" && !/\S/.test(expr.value) && !expr.decoded) {
           exprs.splice(i, 1);
         } else {
           break;
@@ -1834,11 +1850,6 @@ BaseTokenizer.extend(XMLTokenizer, {
 
 
       return this._t(code, script.length ? script : undefined);
-
-    // mustache end }}
-    } else if (this._s.peek(2) === "}}") {
-      this._s.skip(1);
-      return this._t(codes.EM, "}}");
 
     // other codes
     } else if (code = codeMap[cchar]) {
