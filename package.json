@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "0.3.101",
+  "version": "0.3.102",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "browserify": "./lib/browser.js",
@@ -25,8 +25,7 @@
     "istanbul": "~0.1.46",
     "coveralls": "~2.5.0",
     "mocha": "~1.15.1",
-    "benchmark": "~1.0.0",
-    "nofactor": "0.0.36"
+    "benchmark": "~1.0.0"
   },
   "bin": {
     "paperclip": "./bin/paperclip"
@@ -44,7 +43,7 @@
     "watch_r": "0.0.x",
     "underscore": "1.4.x",
     "type-component": "0.0.x",
-    "nofactor": "0.0.41",
+    "nofactor": "0.0.x",
     "loaf": "0.2.x",
     "ent": "~0.1.0",
     "runlater": "0.0.x",
