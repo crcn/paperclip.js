@@ -61,6 +61,7 @@ This means a few things:
 - [onEnter event](http://jsfiddle.net/JTxdM/77/)
 - [data-binding css](http://jsfiddle.net/JTxdM/81/)
 - [data-binding styles](http://jsfiddle.net/JTxdM/78/)
+- [unbound helpers](http://jsfiddle.net/JTxdM/90/)
 - [manually updating templates](http://jsfiddle.net/JTxdM/79/)
 - [list benchmark](http://jsfiddle.net/JTxdM/65/) - 10k items
 - [dots benchmark](http://jsfiddle.net/JTxdM/62/)
@@ -159,7 +160,7 @@ Unbound helpers tell paperclip not to watch specific references. The basic synta
 {{ `name` }}
 ```
 
-Where the backticks tell paperclip specifically which refs not to watch. Note that if `name` changes, your template won't get updated. 
+Where the backticks tell paperclip specifically which refs not to watch. Note that if `name` changes, your template won't get updated. [Here's an example](http://jsfiddle.net/JTxdM/90/).
 
 
 ### Block Helpers
