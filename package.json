@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "0.3.102",
+  "version": "0.3.104",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "browserify": "./lib/browser.js",
@@ -18,7 +18,6 @@
   "devDependencies": {
     "jsdom": "*",
     "expect.js": "0.2.x",
-    "karma": "~0.9.5",
     "structr": "~0.2.3",
     "jquery": "~1.8.3",
     "express": "~3.3.4",

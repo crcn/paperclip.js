@@ -53,6 +53,7 @@ describe("html sections", function() {
   });
 
   it("can be loaded with a default value", function() {
+
     var v = pc.
     template("hello '{{ html: content || 'world' }}'!").
     bind();

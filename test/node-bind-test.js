@@ -24,9 +24,9 @@ describe("node", function() {
           value: "blah"
         });
 
-        expect(String(v)).to.contain("<input value=\"ablah\">");
+        expect(String(v)).to.contain("<input value=\"ablah\"/>");
         v.context.set("value", "h");
-        expect(String(v)).to.contain("<input value=\"ah\">");
+        expect(String(v)).to.contain("<input value=\"ah\"/>");
       });
 
       it("can be bound to multiple values", function() {
@@ -37,12 +37,12 @@ describe("node", function() {
         });
 
         var tests = {
-          a: firefox ? "<input value=\"b\" name=\"a\">"
-                     : "<input name=\"a\" value=\"b\">",
-          b: firefox ? "<input value=\"b\" name=\"c\">"
-                     : "<input name=\"c\" value=\"b\">",
-          c: firefox ? "<input value=\"d\" name=\"c\">"
-                     : "<input name=\"c\" value=\"d\">"
+          a: firefox ? "<input value=\"b\" name=\"a\"/>"
+                     : "<input name=\"a\" value=\"b\"/>",
+          b: firefox ? "<input value=\"b\" name=\"c\"/>"
+                     : "<input name=\"c\" value=\"b\"/>",
+          c: firefox ? "<input value=\"d\" name=\"c\"/>"
+                     : "<input name=\"c\" value=\"d\"/>"
         }
 
 
@@ -60,12 +60,12 @@ describe("node", function() {
           value: "b"
         });
 
-        expect(String(v)).to.contain("<input value=\"b\">");
+        expect(String(v)).to.contain("<input value=\"b\"/>");
         v.context.set("value", undefined);
-        expect(String(v)).to.contain("<input>");
+        expect(String(v)).to.contain("<input/>");
       });
     });
-  
+
 
     describe("data-bind", function() {
       describe("show", function() {
@@ -74,7 +74,7 @@ describe("node", function() {
 
 
           expect(utils.trimEl(v)).to.be("<div></div>")
-        }); 
+        });
 
         it("respects original display style", function() {
           var v = pc.template("<div style=\"display:inline-block;\" data-bind=\"{{show:show}}\"></div>").bind({
@@ -131,7 +131,7 @@ describe("node", function() {
           expect(utils.trimEl(v)).to.be('<div style="background-color:blue;"></div>');
           v.context.set("backgroundColor", undefined);
           expect(utils.trimEl(v)).to.be("<div></div>");
-        }); 
+        });
       });
 
       describe("disable", function() {
@@ -139,9 +139,9 @@ describe("node", function() {
           var v = pc.template("<input data-bind=\"{{ disable: disable }}\"></input>").bind({
             disable: true
           });
-          expect(String(v)).to.contain("<input disabled=\"disabled\">");
+          expect(String(v)).to.contain("<input disabled=\"disabled\"/>");
           v.context.set("disable", false);
-          expect(String(v)).to.contain("<input>");
+          expect(String(v)).to.contain("<input/>");
         })
       });
 

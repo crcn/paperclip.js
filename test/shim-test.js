@@ -3,7 +3,7 @@ structr = require("structr"),
 expect = require("expect.js"),
 utils = require("./utils");
 
-describe("shim", function() { 
+describe("shim", function() {
 
   var firefox = utils.browser.mozilla;
 
@@ -39,8 +39,8 @@ describe("shim", function() {
     var v = pc.template("<input placeholder=\"Username:\"></input>").bind();
 
     var tests = {
-      a: firefox ? '<input data-shimplaceholder="true" placeholder="Username:">'
-                 : '<input placeholder="Username:" data-shimplaceholder="true">'
+      a: firefox ? '<input data-shimplaceholder="true" placeholder="Username:"/>'
+                 : '<input placeholder="Username:" data-shimplaceholder="true"/>'
     }
 
     expect(String(v)).to.contain(tests.a);
