@@ -30,8 +30,8 @@ module.exports = function(fragment, block, element, text, textBlock, parser, mod
 This means a few things:
 
 - Super fast. [10k list items in ~ 500 MS](http://jsfiddle.net/JTxdM/65/).
-- Works very well on older browsers such as IE8. 
-- You can customize paperclip to generate your own sort of markup language. 
+- Works very well on older browsers such as IE8.
+- You can customize paperclip to generate your own sort of markup language.
 - No metamorph tags, or other things that pollute the DOM, and cause strange bugs.
 
 
@@ -45,7 +45,7 @@ This means a few things:
 - node.js support
 - [block modifiers](#modifiers), similar to angular filters
 - [pollyfills](#pollyfills), similar to angular directives
-- [unbound helpers](#unbound-helpers) - tells paperclip not to watch specific references
+- [full control over data-bindings](#binding-helpers)
 
 ### Examples
 
@@ -61,14 +61,14 @@ This means a few things:
 - [onEnter event](http://jsfiddle.net/JTxdM/77/)
 - [data-binding css](http://jsfiddle.net/JTxdM/81/)
 - [data-binding styles](http://jsfiddle.net/JTxdM/78/)
-- [unbound helpers](http://jsfiddle.net/JTxdM/90/)
+- [binding helpers](http://jsfiddle.net/JTxdM/93/)
 - [manually updating templates](http://jsfiddle.net/JTxdM/79/)
 - [list benchmark](http://jsfiddle.net/JTxdM/65/) - 10k items
 - [dots benchmark](http://jsfiddle.net/JTxdM/62/)
 
 ### Third-party components:
 
-- [paperclip-component](https://github.com/classdojo/paperclip-component) - used with [Mojo.js](https://github.com/classdojo/mojo.js). Allows for views to be instantiated within paperclip templates. This is similar to Ember.js's component, and Angular.js's directive implementation. 
+- [paperclip-component](https://github.com/classdojo/paperclip-component) - used with [Mojo.js](https://github.com/classdojo/mojo.js). Allows for views to be instantiated within paperclip templates. This is similar to Ember.js's component, and Angular.js's directive implementation.
 - [paperclip-placeholder-pollyfill](https://github.com/classdojo/paperclip-placeholder-pollyfill) - placeholder pollyfull for IE users.
 
 ### Installation
@@ -152,16 +152,31 @@ template usage:
 A human that is {{age}} years old is like a {{ age | divide(5.6) }} year old dog!
 ```
 
-### Unbound Helpers
+### Binding Helpers
 
-Unbound helpers tell paperclip not to watch specific references. The basic syntax for this is:
+Paperclip comes with various binding helpers that give you full control over how references are handled. You can easily
+specify whether to bind one way, two ways, or not at all. Here's the basic syntax:
+
+```html
+<input data-bind="{{ model: <=>fullName }}" /> <!-- two-way data-binding against input -->
+<input data-bind="{{ model: =>fullName }}" /> <!-- bind value once, and bind input value to fullName -->
+<input data-bind="{{ model: <=fullName }}" /> <!-- bind to input once -->
+{{ =fullName }} <!-- unbound helper - get fullName value, but don't watch for changes -->
+```
+
+Note that that `=fullName` tells paperclip not to watch the reference, so any changes to `fullName` don't get reflected in the view. [Here's an example](http://jsfiddle.net/JTxdM/93/).
+
+Binding helpers are especially useful for [paperclip components](https://github.com/classdojo/paperclip-components). Say for instance you have a date picker:
 
 ```
-{{ `name` }}
+{{
+    datePicker: {
+      currentDate: <=>currentDate
+    }
+}}
 ```
 
-Where the backticks tell paperclip specifically which refs not to watch. Note that if `name` changes, your template won't get updated. [Here's an example](http://jsfiddle.net/JTxdM/90/).
-
+The above example will apply a two-way data-binding to the `datePicker.currentDate` property and the `currentDate` property of the view controller.
 
 ### Block Helpers
 
@@ -188,13 +203,13 @@ Conditional block helper. [For example](http://jsfiddle.net/JTxdM/75/):
 
 #### Custom Block Helpers
 
-Paperclip also allows you to register your own block helpers. This is similar to custom angular.js directives. 
+Paperclip also allows you to register your own block helpers. This is similar to custom angular.js directives.
 
 TODO example
 
 ### data-bind attributes
 
-data-bind attributes are borrowed from [knockout.js](http://knockoutjs.com/). This is useful if you want to attach behavior to any DOM element. 
+data-bind attributes are borrowed from [knockout.js](http://knockoutjs.com/). This is useful if you want to attach behavior to any DOM element.
 
 #### {{ event: expression }}
 
@@ -230,25 +245,25 @@ Toggles the display mode of a given element. This is similar to the `{{#if: expr
 Sets the css of a given element. [For example](http://jsfiddle.net/JTxdM/81/):
 
 ```html
-<strong data-bind="{{ 
+<strong data-bind="{{
   css: {
       cool    : temp > 0,
       warm    : temp > 60,
       hot     : temp > 90
-  } 
+  }
 }}"> It's pretty warm! </strong>
 ```
 
 #### {{ style: styles }}
 
-Sets the style of a given element. [For example](http://jsfiddle.net/JTxdM/78/): 
+Sets the style of a given element. [For example](http://jsfiddle.net/JTxdM/78/):
 
 ```
-<span data-bind="{{ 
+<span data-bind="{{
   style: {
     color       : color,
     'font-size' : size
-  } 
+  }
 }}"> Hello World </span>
 ```
 
@@ -281,7 +296,7 @@ translates the source, or script into a paperclip template. [For example](http:/
 
 #### elements template.bind(context)
 
-Creates the DOM elements, and binds the elements to the given context. 
+Creates the DOM elements, and binds the elements to the given context.
 
 #### elements.toFragment()
 
@@ -308,6 +323,3 @@ console.log(renderer.toString());
 ```
 
 Here's an example: http://runnable.com/UwVueJLcL9ZTAABN/hello-paperclip-for-node-js
-
-
-
