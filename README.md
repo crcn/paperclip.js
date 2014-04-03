@@ -166,7 +166,7 @@ specify whether to bind one way, two ways, or not at all. Here's the basic synta
 
 Note that that `=fullName` tells paperclip not to watch the reference, so any changes to `fullName` don't get reflected in the view. [Here's an example](http://jsfiddle.net/JTxdM/93/).
 
-Binding helpers are especially useful for [paperclip components](https://github.com/classdojo/paperclip-components). Say for instance you have a date picker:
+Binding helpers are especially useful for [paperclip components](https://github.com/classdojo/paperclip-component). Say for instance you have a date picker:
 
 ```
 {{
