@@ -4,7 +4,7 @@ module.exports = require("./paper");
 if (typeof window !== "undefined") {
   window.paperclip = module.exports;
 }
-},{"./paper":35}],2:[function(require,module,exports){
+},{"./paper":36}],2:[function(require,module,exports){
 var bindable = require("bindable"),
 Clip         = require("./index"),
 _            = require("underscore"),
@@ -127,12 +127,13 @@ bindable.Object.extend(ClippedBuffer, {
 });
 
 module.exports = ClippedBuffer;
-},{"./index":3,"bindable":47,"protoclass":80,"underscore":82}],3:[function(require,module,exports){
+},{"./index":3,"bindable":48,"protoclass":79,"underscore":82}],3:[function(require,module,exports){
 (function (process){
 var protoclass = require("protoclass"),
 dref           = require("dref"),
 bindable       = require("bindable"),
 BindableObject = bindable.Object,
+BindableReference = require("./ref"),
 type           = require("type-component"),
 _              = require("underscore");
 
@@ -194,6 +195,15 @@ protoclass(ClipScript, {
     }
 
     this.clip.set(this.name, this.value = newValue);
+  },
+
+  /**
+   */
+
+  bindTo: function (path, bindFrom) {
+    // bindFrom = TRUE ~ <=>
+    // bindFrom = FALSE ~ =>
+    return new BindableReference(this, path, bindFrom);
   },
 
   /**
@@ -466,8 +476,33 @@ protoclass(BindableObject, Clip, {
 });
 
 module.exports = Clip;
+
 }).call(this,require("/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":56,"bindable":47,"dref":57,"protoclass":80,"type-component":81,"underscore":82}],4:[function(require,module,exports){
+},{"./ref":4,"/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":55,"bindable":48,"dref":56,"protoclass":79,"type-component":81,"underscore":82}],4:[function(require,module,exports){
+var protoclass = require("protoclass"),
+_              = require("underscore");
+
+
+function BindableReference (clip, path) {
+  this.clip     = clip;
+  this.path     = path;
+}
+
+protoclass(BindableReference, {
+  __isBindableReference: true,
+  value: function (value) {
+    if (!arguments.length) return this.clip.get(this.path);
+    this.clip.set(this.path, value);
+  },
+  toString: function () {
+    return this.clip.get(this.path);
+  }
+});
+
+
+module.exports = BindableReference;
+
+},{"protoclass":79,"underscore":82}],5:[function(require,module,exports){
 (function (process){
 var protoclass = require("protoclass"),
 nofactor       = require("nofactor");
@@ -508,7 +543,7 @@ protoclass(PaperclipApplication, {
 
 module.exports = PaperclipApplication;
 }).call(this,require("/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":56,"nofactor":62,"protoclass":80}],5:[function(require,module,exports){
+},{"/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":55,"nofactor":61,"protoclass":79}],6:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 function PaperBinding (template, node, bindings, section, nodeFactory) {
@@ -593,7 +628,8 @@ protoclass(PaperBinding, {
 });
 
 module.exports = PaperBinding;
-},{"protoclass":80}],6:[function(require,module,exports){
+
+},{"protoclass":79}],7:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 function BaseBinder (options) {
@@ -639,7 +675,7 @@ protoclass(BaseBinder, {
    */
 
   _findPathToMarker: function () {
-    var path = [],
+    var path = [], 
     marker = this.marker,
     cn = marker;
 
@@ -661,7 +697,7 @@ protoclass(BaseBinder, {
 });
 
 module.exports = BaseBinder;
-},{"protoclass":80}],7:[function(require,module,exports){
+},{"protoclass":79}],8:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 function BaseBinding (node) {
@@ -669,7 +705,7 @@ function BaseBinding (node) {
 }
 
 protoclass(BaseBinding, {
-  bind: function (context) {
+  bind: function (context) { 
     this.context = context;
   },
   unbind: function () {
@@ -678,7 +714,7 @@ protoclass(BaseBinding, {
 });
 
 module.exports = BaseBinding;
-},{"protoclass":80}],8:[function(require,module,exports){
+},{"protoclass":79}],9:[function(require,module,exports){
 var protoclass = require("protoclass"),
 BaseBinding    = require("./binding");
 
@@ -746,7 +782,7 @@ protoclass(BaseBinding, ScriptBinding, {
 
 module.exports = ScriptBinding;
 
-},{"./binding":7,"protoclass":80}],9:[function(require,module,exports){
+},{"./binding":8,"protoclass":79}],10:[function(require,module,exports){
 var BaseBinding   = require("./base/binding"),
 BindingCollection = require("./collection");
 
@@ -781,7 +817,7 @@ BaseBinding.extend(BinderCollection, {
 
 module.exports = BinderCollection;
 
-},{"./base/binding":7,"./collection":15}],10:[function(require,module,exports){
+},{"./base/binding":8,"./collection":16}],11:[function(require,module,exports){
 var BaseScriptBinding = require("../base/script");
 
 function BaseBlockBinding (options) {
@@ -828,7 +864,7 @@ BaseScriptBinding.extend(BaseBlockBinding, {
 
 module.exports = BaseBlockBinding;
 
-},{"../base/script":8}],11:[function(require,module,exports){
+},{"../base/script":9}],12:[function(require,module,exports){
 /*
 
 {{#when:condition}}
@@ -889,7 +925,7 @@ BaseBlockBinding.extend(ConditionalBlockBinding, {
 
 module.exports = ConditionalBlockBinding;
 
-},{"./base":10}],12:[function(require,module,exports){
+},{"./base":11}],13:[function(require,module,exports){
 var BindingCollection = require("../collection"),
 loaf                  = require("loaf"),
 Clip                  = require("../../../clip"),
@@ -1002,7 +1038,7 @@ protoclass(Factory, {
 
 module.exports = new Factory();
 
-},{"../../../clip":3,"../collection":15,"./conditional":11,"./html":13,"./value":14,"loaf":58,"protoclass":80}],13:[function(require,module,exports){
+},{"../../../clip":3,"../collection":16,"./conditional":12,"./html":14,"./value":15,"loaf":57,"protoclass":79}],14:[function(require,module,exports){
 var type         = require("type-component"),
 BaseBlockBinding = require("./base");
 
@@ -1029,7 +1065,7 @@ BaseBlockBinding.extend(HtmlBlockBinding, {
     } else if (value.nodeType != null) {
       node = value;
     } else {
-      if (this.nodeFactory.name === "string") {
+      if (this.nodeFactory.name !== "dom") {
         node = this.nodeFactory.createTextNode(String(value));
       } else {
         var div = this.nodeFactory.createElement("div");
@@ -1044,7 +1080,7 @@ BaseBlockBinding.extend(HtmlBlockBinding, {
 
 module.exports = HtmlBlockBinding;
 
-},{"./base":10,"type-component":81}],14:[function(require,module,exports){
+},{"./base":11,"type-component":81}],15:[function(require,module,exports){
 var protoclass = require("protoclass"),
 BaseDecor      = require("./base");
 
@@ -1077,12 +1113,12 @@ protoclass(BaseDecor, ValueDecor, {
   }
 });
 
-ValueDecor.getNode = function (options) {
+ValueDecor.getNode = function (options) { 
   return options.node = options.application.nodeFactory.createTextNode("", true)
 }
 
 module.exports = ValueDecor;
-},{"./base":10,"protoclass":80}],15:[function(require,module,exports){
+},{"./base":11,"protoclass":79}],16:[function(require,module,exports){
 var BaseBinding = require("./base/binding");
 
 function BindingCollection (node, source) {
@@ -1107,7 +1143,7 @@ BaseBinding.extend(BindingCollection, {
 
 module.exports = BindingCollection;
 
-},{"./base/binding":7}],16:[function(require,module,exports){
+},{"./base/binding":8}],17:[function(require,module,exports){
 module.exports = {
   BaseBlockBinding    : require("./block/base"),
   blockBindingFactory : require("./block/factory"),
@@ -1116,7 +1152,7 @@ module.exports = {
   BaseAttrDataBinding : require("./node/attrs/dataBind/handlers/base")
 };
 
-},{"./block/base":10,"./block/factory":12,"./node/attrs/dataBind/handlers/base":17,"./node/base":31,"./node/factory":32}],17:[function(require,module,exports){
+},{"./block/base":11,"./block/factory":13,"./node/attrs/dataBind/handlers/base":18,"./node/base":32,"./node/factory":33}],18:[function(require,module,exports){
 var BaseScriptBinding = require("../../../../base/script");
 
 function BaseDataBindHandler (application, node, clip, name) {
@@ -1129,7 +1165,7 @@ BaseScriptBinding.extend(BaseDataBindHandler, {
 
 module.exports = BaseDataBindHandler;
 
-},{"../../../../base/script":8}],18:[function(require,module,exports){
+},{"../../../../base/script":9}],19:[function(require,module,exports){
 var EventDataBinding = require("./event"),
 _                    = require("underscore");
 
@@ -1153,7 +1189,7 @@ EventDataBinding.extend(ChangeAttrBinding, {
 
 module.exports = ChangeAttrBinding;
 
-},{"./event":24,"underscore":82}],19:[function(require,module,exports){
+},{"./event":25,"underscore":82}],20:[function(require,module,exports){
 var BaseDataBinding = require("./base");
 
 function CssAttrBinding () {
@@ -1189,7 +1225,7 @@ BaseDataBinding.extend(CssAttrBinding, {
 
 module.exports = CssAttrBinding;
 
-},{"./base":17}],20:[function(require,module,exports){
+},{"./base":18}],21:[function(require,module,exports){
 var EventDataBinding = require("./event");
 
 function DeleteAttrBinding () {
@@ -1210,7 +1246,7 @@ EventDataBinding.extend(DeleteAttrBinding, {
 
 module.exports = DeleteAttrBinding;
 
-},{"./event":24}],21:[function(require,module,exports){
+},{"./event":25}],22:[function(require,module,exports){
 var BaseDataBinding = require("./base");
 
 function DisableAttrBinding () {
@@ -1230,7 +1266,7 @@ BaseDataBinding.extend(DisableAttrBinding, {
 
 module.exports = DisableAttrBinding;
 
-},{"./base":17}],22:[function(require,module,exports){
+},{"./base":18}],23:[function(require,module,exports){
 var BaseDataBinding = require("./base");
 
 function EnableAttrBinding () {
@@ -1250,7 +1286,7 @@ BaseDataBinding.extend(EnableAttrBinding, {
 
 module.exports = EnableAttrBinding;
 
-},{"./base":17}],23:[function(require,module,exports){
+},{"./base":18}],24:[function(require,module,exports){
 var EventDataBinding = require("./event");
 
 function EnterAttrBinding () {
@@ -1271,7 +1307,7 @@ EventDataBinding.extend(EnterAttrBinding, {
 
 module.exports = EnterAttrBinding;
 
-},{"./event":24}],24:[function(require,module,exports){
+},{"./event":25}],25:[function(require,module,exports){
 var BaseDataBinding = require("./base"),
 _                   = require("underscore");
 
@@ -1350,7 +1386,7 @@ BaseDataBinding.extend(EventDataBinding, {
 });
 
 module.exports = EventDataBinding;
-},{"./base":17,"underscore":82}],25:[function(require,module,exports){
+},{"./base":18,"underscore":82}],26:[function(require,module,exports){
 (function (process){
 var protoclass = require("protoclass"),
 BaseBinding = require("./base");
@@ -1372,7 +1408,7 @@ protoclass(BaseBinding, FocusAttrBinding, {
 
 module.exports = FocusAttrBinding;
 }).call(this,require("/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"./base":17,"/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":56,"protoclass":80}],26:[function(require,module,exports){
+},{"./base":18,"/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":55,"protoclass":79}],27:[function(require,module,exports){
 (function (process){
 var _             = require("underscore"),
 ChangeAttrBinding = require("./change"),
@@ -1426,14 +1462,17 @@ BaseBinding.extend(ModelAttrBinding, {
       if (self.clip.get("bothWays") !== false) {
         ref = name || (refs.length ? refs[0] : undefined);
 
-        if (!name) {
+        if (!name && !model.__isBindableReference) {
           model = self.context;
         }
 
         self.currentValue = value;
 
         if (model) {
-          if (model.set) {
+
+          if (model.__isBindableReference) {
+            model.value(value);
+          } else if (model.set) {
             model.set(ref, value);
           } else {
             dref.set(model, ref, value);
@@ -1465,6 +1504,8 @@ BaseBinding.extend(ModelAttrBinding, {
 
     if (name) {
       this._modelBinding = model ? model.bind(name, _.bind(this._onValueChange, this)).now() : undefined;
+    } else if (model && model.__isBindableReference) {
+      this._onValueChange(model.value());
     } else if (type(model) !== "object") {
       this._onValueChange(model);
     }
@@ -1552,7 +1593,7 @@ BaseBinding.extend(ModelAttrBinding, {
 module.exports = ModelAttrBinding;
 
 }).call(this,require("/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"./base":17,"./change":18,"/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":56,"dref":57,"type-component":81,"underscore":82}],27:[function(require,module,exports){
+},{"./base":18,"./change":19,"/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":55,"dref":56,"type-component":81,"underscore":82}],28:[function(require,module,exports){
 var BaseDataBinding = require("./base");
 
 function ShowAttrBinding () {
@@ -1572,7 +1613,7 @@ BaseDataBinding.extend(ShowAttrBinding, {
 
 module.exports = ShowAttrBinding;
 
-},{"./base":17}],28:[function(require,module,exports){
+},{"./base":18}],29:[function(require,module,exports){
 (function (process){
 var BaseDataBinding = require("./base");
 
@@ -1589,7 +1630,7 @@ BaseDataBinding.extend(StyleAttrBinding, {
   _onChange: function (styles) {
 
     var newStyles = {};
-
+    
     for (var name in styles) {
       var style = styles[name];
       if (style !== this._currentStyles[name]) {
@@ -1610,7 +1651,7 @@ BaseDataBinding.extend(StyleAttrBinding, {
 module.exports = StyleAttrBinding;
 
 }).call(this,require("/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"./base":17,"/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":56}],29:[function(require,module,exports){
+},{"./base":18,"/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":55}],30:[function(require,module,exports){
 var Clip          = require("../../../../../clip"),
 BindingCollection = require("../../../collection"),
 BaseBinding       = require("../../base");
@@ -1680,7 +1721,7 @@ module.exports.register = function (name, dataBindClass) {
   dataBindingClasses[name] = dataBindClass;
 }
 
-},{"../../../../../clip":3,"../../../collection":15,"../../base":31,"./handlers/change":18,"./handlers/css":19,"./handlers/delete":20,"./handlers/disable":21,"./handlers/enable":22,"./handlers/enter":23,"./handlers/event":24,"./handlers/focus":25,"./handlers/model":26,"./handlers/show":27,"./handlers/style":28}],30:[function(require,module,exports){
+},{"../../../../../clip":3,"../../../collection":16,"../../base":32,"./handlers/change":19,"./handlers/css":20,"./handlers/delete":21,"./handlers/disable":22,"./handlers/enable":23,"./handlers/enter":24,"./handlers/event":25,"./handlers/focus":26,"./handlers/model":27,"./handlers/show":28,"./handlers/style":29}],31:[function(require,module,exports){
 var type      = require("type-component"),
 ClippedBuffer = require("../../../../../clip/buffer"),
 BaseBinding   = require("../../base"),
@@ -1722,7 +1763,7 @@ BaseBinding.extend(AttrTextBinding, {
 
 module.exports = AttrTextBinding;
 
-},{"../../../../../clip/buffer":2,"../../base":31,"type-component":81,"underscore":82}],31:[function(require,module,exports){
+},{"../../../../../clip/buffer":2,"../../base":32,"type-component":81,"underscore":82}],32:[function(require,module,exports){
 var BaseBinding = require("../../base/binding");
 
 function BaseNodeBinding (options) {
@@ -1743,7 +1784,7 @@ BaseBinding.extend(BaseNodeBinding, {
 
 module.exports = BaseNodeBinding;
 
-},{"../../base/binding":7}],32:[function(require,module,exports){
+},{"../../base/binding":8}],33:[function(require,module,exports){
 var _      = require("underscore"),
 protoclass = require("protoclass");
 
@@ -1898,7 +1939,7 @@ for (var type in defaultBindingClasses) {
   }
 }
 
-},{"./attrs/dataBind":29,"./attrs/text":30,"protoclass":80,"underscore":82}],33:[function(require,module,exports){
+},{"./attrs/dataBind":30,"./attrs/text":31,"protoclass":79,"underscore":82}],34:[function(require,module,exports){
 var protoclass = require("protoclass"),
 BaseBinder     = require("../base/binder"),
 TextBinding    = require("./binding");
@@ -1920,7 +1961,7 @@ BaseBinder.extend(TextBlockBinder, {
 });
 
 module.exports = TextBlockBinder;
-},{"../base/binder":6,"./binding":34,"protoclass":80}],34:[function(require,module,exports){
+},{"../base/binder":7,"./binding":35,"protoclass":79}],35:[function(require,module,exports){
 var protoclass = require("protoclass"),
 BaseBinding    = require("../base/binding"),
 ClippedBuffer  = require("../../../clip/buffer"),
@@ -1966,7 +2007,7 @@ BaseBinding.extend(TextBlockBinding, {
 module.exports = TextBlockBinding;
 
 
-},{"../../../clip/buffer":2,"../base/binding":7,"protoclass":80,"underscore":82}],35:[function(require,module,exports){
+},{"../../../clip/buffer":2,"../base/binding":8,"protoclass":79,"underscore":82}],36:[function(require,module,exports){
 var Clip  = require("../clip"),
 template  = require("./template"),
 nofactor  = require("nofactor"),
@@ -1992,7 +2033,7 @@ module.exports = {
   template: template,
 
   /*
-   registers a binding modifier
+   registers a binding modifier 
    {{ message | titlecase() }}
    */
 
@@ -2045,7 +2086,7 @@ module.exports = {
   }
 };
 
-},{"../clip":3,"./bindings":16,"./modifiers":36,"./template":37,"bindable":47,"nofactor":62}],36:[function(require,module,exports){
+},{"../clip":3,"./bindings":17,"./modifiers":37,"./template":38,"bindable":48,"nofactor":61}],37:[function(require,module,exports){
 module.exports = {
   uppercase: function (value) {
     return String(value).toUpperCase();
@@ -2063,7 +2104,7 @@ module.exports = {
     return JSON.stringify.apply(JSON, arguments);
   }
 };
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 (function (process){
 var protoclass    = require("protoclass"),
 modifiers         = require("./modifiers"),
@@ -2204,7 +2245,7 @@ var tpl = Template.prototype.creator = module.exports = function (paperOrSrc, ap
   return paper.template = new Template(paper, application, ops);
 }
 }).call(this,require("/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"./application":4,"./binding":5,"./bindings/binders":9,"./bindings/collection":15,"./modifiers":36,"./writers/block":39,"./writers/element":40,"./writers/fragment":41,"./writers/parse":42,"./writers/text":43,"./writers/textBlock":44,"/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":56,"bindable":47,"loaf":58,"nofactor":62,"protoclass":80}],38:[function(require,module,exports){
+},{"./application":5,"./binding":6,"./bindings/binders":10,"./bindings/collection":16,"./modifiers":37,"./writers/block":40,"./writers/element":41,"./writers/fragment":42,"./writers/parse":43,"./writers/text":44,"./writers/textBlock":45,"/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":55,"bindable":48,"loaf":57,"nofactor":61,"protoclass":79}],39:[function(require,module,exports){
 var protoclass = require("protoclass"),
 _ = require("underscore");
 
@@ -2223,7 +2264,7 @@ protoclass(BaseWriter, {
 
 module.exports = BaseWriter;
 
-},{"protoclass":80,"underscore":82}],39:[function(require,module,exports){
+},{"protoclass":79,"underscore":82}],40:[function(require,module,exports){
 var loaf            = require("loaf"),
 blockBindingFactory = require("../bindings/block/factory"),
 Clip                = require("../../clip"),
@@ -2269,7 +2310,7 @@ BaseWriter.extend(BlockWriter, {
 
 module.exports = BlockWriter;
 
-},{"../../clip":3,"../bindings/block/factory":12,"./base":38,"loaf":58}],40:[function(require,module,exports){
+},{"../../clip":3,"../bindings/block/factory":13,"./base":39,"loaf":57}],41:[function(require,module,exports){
 var nodeBindingFactory = require("../bindings/node/factory"),
 type                   = require("type-component"),
 BaseWriter             = require("./base");
@@ -2309,7 +2350,7 @@ BaseWriter.extend(ElementWriter, {
 
 module.exports = ElementWriter;
 
-},{"../bindings/node/factory":32,"./base":38,"type-component":81}],41:[function(require,module,exports){
+},{"../bindings/node/factory":33,"./base":39,"type-component":81}],42:[function(require,module,exports){
 var BaseWriter = require("./base");
 
 function FragmentWriter () {
@@ -2325,7 +2366,7 @@ BaseWriter.extend(FragmentWriter, {
 
 module.exports = FragmentWriter;
 
-},{"./base":38}],42:[function(require,module,exports){
+},{"./base":39}],43:[function(require,module,exports){
 (function (process){
 var BaseWriter = require("./base");
 
@@ -2336,7 +2377,7 @@ function ParseWriter () {
 BaseWriter.extend(ParseWriter, {
   write: function (source) {
     var element;
-
+    
     if (process.browser) {
       element = this.nodeFactory.createElement("div");
       element.innerHTML = source;
@@ -2351,7 +2392,7 @@ BaseWriter.extend(ParseWriter, {
 module.exports = ParseWriter;
 
 }).call(this,require("/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"./base":38,"/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":56}],43:[function(require,module,exports){
+},{"./base":39,"/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":55}],44:[function(require,module,exports){
 var BaseWriter = require("./base");
 
 function TextWriter () {
@@ -2366,7 +2407,7 @@ BaseWriter.extend(TextWriter, {
 
 module.exports = TextWriter;
 
-},{"./base":38}],44:[function(require,module,exports){
+},{"./base":39}],45:[function(require,module,exports){
 var BaseWriter  = require("./base"),
 TextBlockBinder = require("../bindings/textBlock/binder");
 
@@ -2382,7 +2423,7 @@ BaseWriter.extend(TextBlockWriter, {
   write: function (blocks) {
 
     var node = this.nodeFactory.createTextNode("");
-
+    
     this.binders.push(new TextBlockBinder({
       marker      : node,
       blocks      : blocks,
@@ -2394,15 +2435,44 @@ BaseWriter.extend(TextBlockWriter, {
 });
 
 module.exports = TextBlockWriter;
-},{"../bindings/textBlock/binder":33,"./base":38}],45:[function(require,module,exports){
+},{"../bindings/textBlock/binder":34,"./base":39}],46:[function(require,module,exports){
 var BindableObject = require("../object"),
 computed           = require("../utils/computed"),
 sift               = require("sift");
 
-/**
+/** 
+ * @module mojo
+ * @submodule mojo-core
  */
 
-function BindableCollection(source) {
+/**
+ * @class BindableCollection
+ * @extends BindableObject
+ */
+
+/**
+ * Emitted when an item is inserted
+ * @event insert
+ * @param {Object} item inserted
+ */
+
+
+/**
+ * Emitted when an item is removed
+ * @event remove
+ * @param {Object} item removed
+ */
+
+/**
+ * Emitted when items are replaced
+ * @event replace
+ * @param {Array} newItems
+ * @param {Array} oldItems
+ */
+
+
+
+function BindableCollection (source) {
   BindableObject.call(this, this);
   this._source = source || [];
   this._updateInfo();
@@ -2417,8 +2487,9 @@ BindableObject.extend(BindableCollection, {
    */
 
   __isBindableCollection: true,
-
+  
   /**
+   * Resets the collection. Same as `source(value)`.
    */
 
   reset: function (source) {
@@ -2426,6 +2497,10 @@ BindableObject.extend(BindableCollection, {
   },
 
   /**
+   * Sets / Gets source array
+   * @method source
+   * @param {Array} source source of the collection
+   * @returns [Array] source
    */
 
   source: function (source) {
@@ -2439,6 +2514,10 @@ BindableObject.extend(BindableCollection, {
   },
 
   /**
+   * Returns the index of a value
+   * @method indexOf
+   * @param {Object} object to get index of
+   * @returns {Number} index or -1 (not found)
    */
 
   indexOf: function (item) {
@@ -2446,6 +2525,9 @@ BindableObject.extend(BindableCollection, {
   },
 
   /**
+   * filters the collection
+   * @method filter
+   * @returns {Array} array of filtered items
    */
 
   filter: function (fn) {
@@ -2467,6 +2549,9 @@ BindableObject.extend(BindableCollection, {
   },
 
   /**
+   * Returns an object at the given index
+   * @method at
+   * @returns {Object} Object at specific index
    */
 
   at: function (index) {
@@ -2474,6 +2559,9 @@ BindableObject.extend(BindableCollection, {
   },
 
   /**
+   * forEach item
+   * @method each
+   * @param {Function} fn function to call for each item
    */
 
   each: computed(["length"], function (fn) {
@@ -2495,6 +2583,9 @@ BindableObject.extend(BindableCollection, {
   },
 
   /**
+   * Pushes an item onto the collection
+   * @method push
+   * @param {Object} item
    */
 
   push: function (item) {
@@ -2504,6 +2595,9 @@ BindableObject.extend(BindableCollection, {
   },
 
   /**
+   * Unshifts an item onto the collection
+   * @method unshift
+   * @param {Object} item
    */
 
   unshift: function (item) {
@@ -2513,6 +2607,10 @@ BindableObject.extend(BindableCollection, {
   },
 
   /**
+   * Removes N Number of items
+   * @method splice
+   * @param {Number} index start index
+   * @param {Number} count number of items to remove
    */
 
   splice: function (index, count) {
@@ -2524,6 +2622,9 @@ BindableObject.extend(BindableCollection, {
   },
 
   /**
+   * Removes an item from the collection
+   * @method remove
+   * @param {Object} item item to remove
    */
 
   remove: function (item) {
@@ -2536,6 +2637,9 @@ BindableObject.extend(BindableCollection, {
   },
 
   /**
+   * Removes an item from the end
+   * @method pop
+   * @returns {Object} removed item
    */
 
   pop: function () {
@@ -2544,6 +2648,9 @@ BindableObject.extend(BindableCollection, {
   },
 
   /**
+   * Removes an item from the beginning
+   * @method shift
+   * @returns {Object} removed item
    */
 
   shift: function () {
@@ -2551,22 +2658,69 @@ BindableObject.extend(BindableCollection, {
     return this.remove(this._source[0]);
   },
 
-  /**
+  /*
+   */
+
+  toJSON: function () {
+    return this._source.map(function (item) {
+      return item && item.toJSON ? item.toJSON() : item;
+    })
+  },
+
+  /*
    */
 
   _updateInfo: function () {
+
+    /**
+     * First item in the collection
+     * @property first
+     * @type Object
+     */
+
     this.set("first", this._source.length ? this._source[0] : undefined);
+
+
+    /**
+     * length of the collection
+     * @property length
+     * @type Number
+     */
+
     this.set("length", this._source.length);
+
+
+    /**
+     * True of the collection is empty
+     * @property empty
+     * @type Boolean
+     */
+
     this.set("empty", !this._source.length);
+
+    /**
+     * Last item in the collection
+     * @property last
+     * @type Object
+     */
+
     this.set("last", this._source.length ? this._source[this._source.length - 1] : undefined);
   }
 });
 
 module.exports = BindableCollection;
 
-},{"../object":48,"../utils/computed":51,"sift":54}],46:[function(require,module,exports){
-var protoclass = require("protoclass"),
-disposable     = require("disposable");
+},{"../object":49,"../utils/computed":52,"sift":80}],47:[function(require,module,exports){
+var protoclass = require("protoclass");
+
+/** 
+ * @module mojo
+ * @submodule mojo-core
+ */
+
+/**
+ * @class EventEmitter
+ */
 
 function EventEmitter () {
   this._events = {};
@@ -2575,6 +2729,16 @@ function EventEmitter () {
 EventEmitter.prototype.setMaxListeners = function () {
 
 }
+
+/**
+ * adds a listener on the event emitter
+ *
+ * @method on
+ * @param {String} event event to listen on
+ * @param {Function} listener to callback when `event` is emitted.
+ * @returns {Disposable}
+ */
+
 
 EventEmitter.prototype.on = function (event, listener) {
 
@@ -2600,6 +2764,13 @@ EventEmitter.prototype.on = function (event, listener) {
   }
 }
 
+/**
+ * removes an event emitter
+ * @method off
+ * @param {String} event to remove
+ * @param {Function} listener to remove
+ */
+
 EventEmitter.prototype.off = function (event, listener) {
 
   var listeners;
@@ -2617,8 +2788,16 @@ EventEmitter.prototype.off = function (event, listener) {
       this._events[event] = undefined;
     }
   }
-
 }
+
+/**
+ * adds a listener on the event emitter
+ * @method once
+ * @param {String} event event to listen on
+ * @param {Function} listener to callback when `event` is emitted.
+ * @returns {Disposable}
+ */
+
 
 EventEmitter.prototype.once = function (event, listener) {
 
@@ -2627,10 +2806,18 @@ EventEmitter.prototype.once = function (event, listener) {
     listener.apply(this, arguments);
   }
 
-  var disp = this.on(event, listener2);
+  var disp = this.on(event, listener2);  
   disp.target = this;
   return disp;
 }
+
+/**
+ * emits an event
+ * @method emit
+ * @param {String} event
+ * @param {String}, `data...` data to emit
+ */
+
 
 EventEmitter.prototype.emit = function (event) {
 
@@ -2670,6 +2857,12 @@ EventEmitter.prototype.emit = function (event) {
   }
 }
 
+/**
+ * removes all listeners
+ * @method removeAllListeners
+ * @param {String} event (optional) removes all listeners of `event`. Omitting will remove everything.
+ */
+
 
 EventEmitter.prototype.removeAllListeners = function (event) {
   if (arguments.length === 1) {
@@ -2682,7 +2875,7 @@ EventEmitter.prototype.removeAllListeners = function (event) {
 
 
 module.exports = EventEmitter;
-},{"disposable":53,"protoclass":80}],47:[function(require,module,exports){
+},{"protoclass":79}],48:[function(require,module,exports){
 module.exports = {
   Object       : require("./object"),
   Collection   : require("./collection"),
@@ -2694,10 +2887,108 @@ module.exports = {
 if (typeof window !== "undefined") {
   window.bindable = module.exports;
 }
-},{"./collection":45,"./core/eventEmitter":46,"./object":48,"./utils/computed":51,"./utils/options":52}],48:[function(require,module,exports){
+},{"./collection":46,"./core/eventEmitter":47,"./object":49,"./utils/computed":52,"./utils/options":53}],49:[function(require,module,exports){
 var EventEmitter    = require("../core/eventEmitter"),
 protoclass          = require("protoclass"),
 watchProperty       = require("./watchProperty");
+
+/**
+ * @module mojo
+ * @submodule mojo-core
+ */
+
+/**
+
+BindableObjects make it easy to link properties of two separate objects - when one changes,
+the other will automatically update with that change. It enables much easier interactions between data models and UIs,
+among other uses outside of MVC.
+
+<br>
+<br>
+
+BindableObjects provide a way to maintain the state between server <-> client for a realtime front-end
+application (similar to Firebase), or perhaps a way to communicate between server <-> server for a realtime distributed Node.js
+application.
+
+
+### Example
+
+```javascript
+var bindable = require("bindable");
+
+var person = new bindable.Object({
+  name: "craig",
+  last: "condon",
+  location: {
+    city: "San Francisco"
+  }
+});
+
+person.bind("location.zip", function(value) {
+  // 94102
+}).now();
+
+//triggers the binding
+person.set("location.zip", "94102");
+
+//bind location.zip to another property in the model, and do it only once
+person.bind("location.zip", { to: "zip", max: 1 }).now();
+
+//bind location.zip to another object, and make it bi-directional.
+person.bind("location.zip", { target: anotherModel, to: "location.zip", bothWays: true }).now();
+
+//chain to multiple items, and limit it!
+person.bind("location.zip", { to: ["property", "anotherProperty"], max: 1 }).now();
+
+
+//you can also transform data as it's being bound
+person.bind("name", {
+  to: "name2",
+  map: function (name) {
+    return name.toUpperCase();
+  }
+}).now();
+```
+
+@class BindableObject
+@extends EventEmitter
+*/
+
+/**
+ * Emitted when the bindable object is disposed. This happens
+ * when the object is no-longer needed.
+ * @event dispose
+ */
+
+
+/**
+ * Emitted everytime a property changes
+ * @event change
+ * @param {String} property
+ * @param {Object} value
+ * @param {Object} oldValue
+ */
+
+/**
+ * Emitted when a specific property changes
+ * @event change:*
+ * @param {Object} value
+ * @param {Object} oldValue
+ */
+
+
+
+/**
+ * @constructor
+ * @param {Object} context context of the bindable object
+ */
+
+
+/**
+ * emitted when a property is being watched
+ * @event watching
+ */
+
 
 function Bindable (context) {
 
@@ -2720,6 +3011,10 @@ protoclass(EventEmitter, Bindable, {
   __isBindable: true,
 
   /**
+   * The context of the bindable object. Note that the context can be `this`.
+   * @method context
+   * @param {Object} data (optional) sets the context
+   * @returns {Object} context
    */
 
   context: function (data) {
@@ -2734,6 +3029,9 @@ protoclass(EventEmitter, Bindable, {
   },
 
   /**
+   * Returns the keys in the context
+   * @method keys
+   * @returns {Array}
    */
 
   keys: function () {
@@ -2741,14 +3039,20 @@ protoclass(EventEmitter, Bindable, {
   },
 
   /**
+   * Returns TRUE if a property exists in the context
+   * @method has
+   * @param {String} path
+   * @returns {Boolean}
    */
 
   has: function (key) {
     return this.get(key) != null;
   },
 
-
   /**
+   * Returns a property stored in the bindable object context
+   * @method get
+   * @param {String} path path to the value. Can be something like `person.city.name`.
    */
 
   get: function (property) {
@@ -2783,6 +3087,67 @@ protoclass(EventEmitter, Bindable, {
   },
 
   /**
+   * Calls a function on the bindable object
+   * @method call
+   * @param {String} path path to the method to call
+   * @param {Array} arguments (optional) to pass to the function
+   * @param {Function} callback (optional) callback for returned value
+   */
+
+  call: function (path, args, onResult) {
+
+    if (typeof args === "function") {
+      onResult = args;
+      args = [];
+    }
+
+    if (!args) args = [];
+
+    if (!onResult) onResult = function (err) {
+      if (err) throw err;
+    };
+
+    if (Object.prototype.toString.call(args) !== "[object Array]") {
+      return onResult(new Error("args must be an array"));
+    }
+
+
+    var self = this, pathParts = path.split("."), methodName;
+
+
+    function onFnOrContext (fnOrContext) {
+      var fn = methodName ? fnOrContext.get(methodName) || fnOrContext[methodName] : fnOrContext;
+
+      try {
+        onResult(null, fn.apply(self, args));
+      } catch (e) {
+        onResult(e);
+      }
+    }
+
+    // might already exist, so try getting it. Might
+    // also be a property of the bindable object, so try that too
+    var fn = this.get(path) || this[path];
+
+    // fn? run it
+    if (fn) {
+      return onFnOrContext(fn);
+    }
+
+    // sub-property? try binding the context
+    if (pathParts.length > 1) {
+      methodName = pathParts.pop();
+    }
+
+
+    this.bind(pathParts, { max: 1, to: onFnOrContext }).now();
+  },
+
+  /**
+   * Properties to set on the bindable object
+   * @method setProperties
+   * @param {Object} properties properties to set
+   * @returns {BindableObject} this
    */
 
   setProperties: function (properties) {
@@ -2793,6 +3158,9 @@ protoclass(EventEmitter, Bindable, {
   },
 
   /**
+   * Sets a property on the bindable object's context
+   * @method set
+   * @param {String} path path to the value. Can be something like `person.city.name`.
    */
 
   set: function (property, value) {
@@ -2859,6 +3227,12 @@ protoclass(EventEmitter, Bindable, {
   },
 
   /**
+   * Binds a property to a function
+   * @method bind
+   * @param {String} property path to bind to.
+   * @param {Object} listener `function` or `transformer` to bind to
+   * @param {Boolean} now (optional) call binding now. Otherwise wait till property changes.
+   * @returns {Binding}
    */
 
   bind: function (property, fn, now) {
@@ -2866,6 +3240,8 @@ protoclass(EventEmitter, Bindable, {
   },
 
   /**
+   * Disposes the bindable object. Emits `dispose`.
+   * @method dispose
    */
 
   dispose: function () {
@@ -2873,6 +3249,8 @@ protoclass(EventEmitter, Bindable, {
   },
 
   /**
+   * Converts the context to a JSON object
+   * @method toJSON
    */
 
   toJSON: function () {
@@ -2893,28 +3271,38 @@ protoclass(EventEmitter, Bindable, {
 
 module.exports = Bindable;
 
-},{"../core/eventEmitter":46,"./watchProperty":50,"protoclass":80}],49:[function(require,module,exports){
+},{"../core/eventEmitter":47,"./watchProperty":51,"protoclass":79}],50:[function(require,module,exports){
 var toarray = require("toarray"),
 _           = require("underscore");
 
-/*
-bindable.bind("property", {
-  when: tester,
-  defaultValue: defaultValue,
-  map: function(){},
-  to: ["property"],
-  to: {
-    property: {
-      map: function (){}
-    }
-  }
-}).now();
-*/
+/** 
+ * @module mojo
+ * @submodule mojo-core
+ */
+
+/**
+ * created when the second parameter on `bind(property, listener)` is an object.
+ *
+ * @class BindingTransformer
+ * @protected
+ */
+
 
 function getToPropertyFn (target, property) {
   return function (value) {
     target.set(property, value);
   };
+}
+
+
+function hasChanged (oldValues, newValues) {
+
+  if (oldValues.length !== newValues.length) return true;
+
+  for (var i = newValues.length; i--;) {
+    if (newValues[i] !== oldValues[i]) return true;
+  }
+  return false;
 }
 
 function wrapFn (fn, previousValues, max) {
@@ -2926,9 +3314,9 @@ function wrapFn (fn, previousValues, max) {
     var values = Array.prototype.slice.call(arguments, 0),
     newValues  = (values.length % 2) === 0 ? values.slice(0, values.length / 2) : values;
 
-    if (_.intersection(newValues, previousValues).length === newValues.length) {
-      return;
-    }
+
+    if (!hasChanged(newValues, previousValues)) return;
+
 
     if (~max && ++numCalls >= max) {
       this.dispose();
@@ -2952,7 +3340,7 @@ function transform (bindable, fromProperty, options) {
   toProperties    = [],
   bothWays        = options.bothWays;
 
-
+  
   if (!when.test && typeof when === "function") {
     when = { test: when };
   }
@@ -2976,7 +3364,7 @@ function transform (bindable, fromProperty, options) {
 
     if (tot === "object") {
 
-      // "to" might have multiple properties we're binding to, so
+      // "to" might have multiple properties we're binding to, so 
       // add them to the END of the array of "to" items
       for (var property in to) {
 
@@ -3021,12 +3409,21 @@ function transform (bindable, fromProperty, options) {
 };
 
 module.exports = transform;
-},{"toarray":55,"underscore":82}],50:[function(require,module,exports){
+},{"toarray":54,"underscore":82}],51:[function(require,module,exports){
 var _     = require("underscore"),
 transform = require("./transform"),
 options   = require("../utils/options");
 
+/** 
+ * @module mojo
+ * @submodule mojo-core
+ */
+
 /**
+ * @class Binding
+ */
+
+/*
  * bindable.bind("a", fn);
  */
 
@@ -3039,18 +3436,37 @@ function watchSimple (bindable, property, fn) {
   }), self;
 
   return self = {
+
+    /** 
+     * the target bindable object
+     * @property target
+     * @type {BindableObject}
+     */
+
     target: bindable,
+
+    /**
+     * triggers the binding listener
+     * @method now
+     */
+
     now: function () {
       fn.call(self, bindable.get(property));
       return self;
     },
+
+    /**
+     * disposes the binding
+     * @method dispose
+     */
+
     dispose: function () {
       listener.dispose();
     }
   }
 }
 
-/**
+/*
  * bindable.bind("a.b.c.d.e", fn);
  */
 
@@ -3078,7 +3494,7 @@ function watchChain (bindable, hasComputed, chain, fn) {
 
     // need to run through all variations of the property chain incase it changes
     // in the bindable.object. For instance:
-    // target.bind("a.b.c", fn);
+    // target.bind("a.b.c", fn); 
     // triggers on
     // target.set("a", obj);
     // target.set("a.b", obj);
@@ -3101,15 +3517,15 @@ function watchChain (bindable, hasComputed, chain, fn) {
           // remove @ - can't be used to fetch the propertyy
           currentChain[i] = currentProperty = currentChain[i].substr(1);
         }
-
+        
         pv = cv;
         if (cv) cv = cv[currentProperty];
 
-        // check if
+        // check if 
         if (computed && cv) {
 
 
-          // used in cases where the collection might change that would affect
+          // used in cases where the collection might change that would affect 
           // this binding. length for instance on the collection...
           if (cv.compute) {
             for (var j = cv.compute.length; j--;) {
@@ -3140,7 +3556,7 @@ function watchChain (bindable, hasComputed, chain, fn) {
 
         listeners.push(target.on("change:" +  currentChain.join("."), onChange));
 
-      }
+      } 
 
       if (!hadComputed && pushValues !== false) {
         values.push(cv);
@@ -3156,7 +3572,7 @@ function watchChain (bindable, hasComputed, chain, fn) {
 
         if (cv) cv = cv[currentProperty];
 
-        // pass the watch onto the bindable object, but also listen
+        // pass the watch onto the bindable object, but also listen 
         // on the current target for any
         if (cv && cv.__isBindable && i !== n - 1) {
           bind(cv, chain.slice(i + 1), false);
@@ -3164,7 +3580,7 @@ function watchChain (bindable, hasComputed, chain, fn) {
         }
 
         listeners.push(target.on("change:" + currentChain.join("."), onChange));
-
+        
       }
 
       if (pushValues !== false) values = cv;
@@ -3196,7 +3612,7 @@ function watchChain (bindable, hasComputed, chain, fn) {
 /**
  */
 
-function watchMultiple (bindable, chains, fn) {
+function watchMultiple (bindable, chains, fn) { 
 
   var values = new Array(chains.length),
   oldValues  = new Array(chains.length),
@@ -3266,7 +3682,7 @@ function watchProperty (bindable, property, fn) {
 }
 
 module.exports = watchProperty;
-},{"../utils/options":52,"./transform":49,"underscore":82}],51:[function(require,module,exports){
+},{"../utils/options":53,"./transform":50,"underscore":82}],52:[function(require,module,exports){
 var toarray = require("toarray");
 
 module.exports = function (properties, fn) {
@@ -3274,674 +3690,17 @@ module.exports = function (properties, fn) {
   fn.compute = properties;
   return fn;
 };
-},{"toarray":55}],52:[function(require,module,exports){
+},{"toarray":54}],53:[function(require,module,exports){
 module.exports = {
   computedDelay : 0
 };
 
-},{}],53:[function(require,module,exports){
-
-
-(function() {
-
-	var _disposable = {};
-
-
-
-	_disposable.create = function() {
-
-		var self = {},
-		disposables = [];
-
-
-		self.add = function(disposable) {
-
-			if(arguments.length > 1) {
-				var collection = _disposable.create();
-				for(var i = arguments.length; i--;) {
-					collection.add(arguments[i]);
-				}
-				return self.add(collection);
-			}
-
-			if(typeof disposable == 'function') {
-
-				var disposableFunc = disposable, args = Array.prototype.slice.call(arguments, 0);
-
-				//remove the func
-				args.shift();
-
-
-				disposable = {
-					dispose: function() {
-						disposableFunc.apply(null, args);
-					}
-				};
-			} else
-			if(!disposable || !disposable.dispose) {
-				return false;
-			}
-
-
-			disposables.push(disposable);
-
-			return {
-				dispose: function() {
-					var i = disposables.indexOf(disposable);
-					if(i > -1) disposables.splice(i, 1);
-				}
-			};
-		};
-
-		self.addTimeout = function(timerId) {
-			return self.add(function() {
-				clearTimeout(timerId);
-			});
-		};
-
-		self.addInterval = function(timerId) {
-			return self.add(function() {
-				clearInterval(timerId);
-			});
-		};
-
-		self.addBinding = function(target) {
-			self.add(function() {
-				target.unbind();
-			});
-		};
-
-
-
-		self.dispose = function() {
-
-			for(var i = disposables.length; i--;) {
-				disposables[i].dispose();
-			}
-
-			disposables = [];
-		};
-
-		return self;
-	}
-
-
-
-	if(typeof module != 'undefined') {
-		module.exports = _disposable;
-	}
-	else
-	if(typeof window != 'undefined') {
-		window.disposable = _disposable;
-	}
-
-
-})();
-
-
 },{}],54:[function(require,module,exports){
-/*
- * Sift
- *
- * Copryright 2011, Craig Condon
- * Licensed under MIT
- *
- * Inspired by mongodb's query language
- */
-
-
-(function() {
-
-
-	/**
-	 */
-
-	var _convertDotToSubObject = function(keyParts, value) {
-
-		var subObject = {},
-		currentValue = subObject;
-
-		for(var i = 0, n = keyParts.length - 1; i < n; i++) {
-			currentValue = currentValue[keyParts[i]] = {};
-		}
-
-		currentValue[keyParts[i]] = value;
-
-		return subObject;
-	}
-
-	/**
-	 */
-
-	var _queryParser = new (function() {
-
-		/**
-		 * tests against data
-		 */
-
-		var priority = this.priority = function(statement, data) {
-
-			var exprs = statement.exprs,
-			priority = 0;
-
-			//generally, expressions are ordered from least efficient, to most efficient.
-			for(var i = 0, n = exprs.length; i < n; i++) {
-
-				var expr = exprs[i],
-				p;
-
-				if(!~(p = expr.e(expr.v, _comparable(data), data))) return -1;
-
-				priority += p;
-
-			}
-
-
-			return priority;
-		}
-
-
-		/**
-		 * parses a statement into something evaluable
-		 */
-
-		var parse = this.parse = function(statement, key) {
-
-			//fixes sift(null, []) issue
-			if(!statement) statement = { $eq: statement };
-
-			var testers = [];
-
-			//if the statement is an object, then we're looking at something like: { key: match }
-			if(statement.constructor == Object) {
-
-				for(var k in statement) {
-
-					//find the apropriate operator. If one doesn't exist, then it's a property, which means
-					//we create a new statement (traversing)
-					var operator = !!_testers[k] ?  k : '$trav',
-
-					//value of given statement (the match)
-					value = statement[k],
-
-					//default = match
-					exprValue = value;
-
-					//if we're working with a traversable operator, then set the expr value
-					if(TRAV_OP[operator]) {
-
-
-						//using dot notation? convert into a sub-object
-						if(~k.indexOf(".")) {
-							var keyParts = k.split(".");
-							k = keyParts.shift(); //we're using the first key, so remove it
-
-							exprValue = value = _convertDotToSubObject(keyParts, value);
-						}
-
-						//*if* the value is an array, then we're dealing with something like: $or, $and
-						if(value instanceof Array) {
-
-							exprValue = [];
-
-							for(var i = value.length; i--;) {
-								exprValue.push(parse(value[i]));
-							}
-
-						//otherwise we're dealing with $trav
-						} else {
-							exprValue = parse(value, k);
-						}
-					}
-
-					testers.push(_getExpr(operator, k, exprValue));
-
-				}
-
-
-			//otherwise we're comparing a particular value, so set to eq
-			} else {
-				testers.push(_getExpr('$eq', k, statement));
-			}
-
-			var stmt =  {
-				exprs: testers,
-				k: key,
-				test: function(value) {
-					return !!~stmt.priority(value);
-				},
-				priority: function(value) {
-					return priority(stmt, value);
-				}
-			};
-
-			return stmt;
-
-		}
-
-
-		//traversable statements
-		var TRAV_OP = this.traversable = {
-			$and: true,
-			$or: true,
-			$nor: true,
-			$trav: true,
-			$not: true
-		};
-
-
-		function _comparable(value) {
-			if(value instanceof Date) {
-				return value.getTime();
-			} else {
-				return value;
-			}
-		}
-
-		function btop(value) {
-			return value ? 0 : -1;
-		}
-
-		var _testers = this.testers =  {
-
-			/**
-			 */
-
-			$eq: function(a, b) {
-				return btop(a.test(b));
-			},
-
-			/**
-			 */
-
-			$ne: function(a, b) {
-				return btop(!a.test(b));
-			},
-
-			/**
-			 */
-
-			$lt: function(a, b) {
-				return btop(a > b);
-			},
-
-			/**
-			 */
-
-			$gt: function(a, b) {
-				return btop(a < b);
-			},
-
-			/**
-			 */
-
-			$lte: function(a, b) {
-				return btop(a >= b);
-			},
-
-			/**
-			 */
-
-			$gte: function(a, b) {
-				return btop(a <= b);
-			},
-
-
-			/**
-			 */
-
-			$exists: function(a, b) {
-				return btop(a === (b != null))
-			},
-
-			/**
-			 */
-
-			$in: function(a, b) {
-
-				//intersecting an array
-				if(b instanceof Array) {
-
-					for(var i = b.length; i--;) {
-						if(~a.indexOf(b[i])) return i;
-					}
-
-				} else {
-					return btop(~a.indexOf(b));
-				}
-
-
-				return -1;
-			},
-
-			/**
-			 */
-
-			$not: function(a, b) {
-				if(!a.test) throw new Error("$not test should include an expression, not a value. Use $ne instead.");
-				return btop(!a.test(b));
-			},
-
-			/**
-			 */
-
-			$type: function(a, b, org) {
-
-				//instanceof doesn't work for strings / boolean. instanceof works with inheritance
-				return org ? btop(org instanceof a || org.constructor == a) : -1;
-			},
-
-			/**
-			 */
-
-
-			$nin: function(a, b) {
-				return ~_testers.$in(a, b) ? -1 : 0;
-			},
-
-			/**
-			 */
-
-			$mod: function(a, b) {
-				return b % a[0] == a[1] ? 0 : -1;
-			},
-
-			/**
-			 */
-
-			$all: function(a, b) {
-
-				for(var i = a.length; i--;) {
-					if(b.indexOf(a[i]) == -1) return -1;
-				}
-
-				return 0;
-			},
-
-			/**
-			 */
-
-			$size: function(a, b) {
-				return b ? btop(a == b.length) : -1;
-			},
-
-			/**
-			 */
-
-			$or: function(a, b) {
-
-				var i = a.length, p, n = i;
-
-				for(; i--;) {
-					if(~priority(a[i], b)) {
-						return i;
-					}
-				}
-
-				return btop(n == 0);
-			},
-
-			/**
-			 */
-
-			$nor: function(a, b) {
-
-				var i = a.length, n = i;
-
-				for(; i--;) {
-					if(~priority(a[i], b)) {
-						return -1;
-					}
-				}
-
-				return 0;
-			},
-
-			/**
-			 */
-
-			$and: function(a, b) {
-
-				for(var i = a.length; i--;) {
-					if(!~priority(a[i], b)) {
-						return -1;
-					}
-				}
-
-				return 0;
-			},
-
-			/**
-			 */
-
-			$trav: function(a, b) {
-
-
-
-				if(b instanceof Array) {
-
-					for(var i = b.length; i--;) {
-						var subb = b[i];
-						if(subb[a.k] && ~priority(a, subb[a.k])) return i;
-					}
-
-					return -1;
-				}
-
-				//continue to traverse even if there isn't a value - this is needed for
-				//something like name:{$exists:false}
-				return priority(a, b ? b[a.k] : undefined);
-			}
-		}
-
-		var _prepare = {
-
-			/**
-			 */
-
-			$eq: function(a) {
-
-				var fn;
-
-				if(a instanceof RegExp) {
-					return a;
-				} else if (a instanceof Function) {
-					fn = a;
-				} else {
-
-					fn = function(b) {
-						if(b instanceof Array) {
-							return ~b.indexOf(a);
-						} else {
-							return a == b;
-						}
-					}
-				}
-
-				return {
-					test: fn
-				}
-
-			},
-
-			/**
-			 */
-
-			 $ne: function(a) {
-				return _prepare.$eq(a);
-			 }
-		};
-
-
-
-		var _getExpr = function(type, key, value) {
-
-			var v = _comparable(value);
-
-			return {
-
-				//k key
-				k: key,
-
-				//v value
-				v: _prepare[type] ? _prepare[type](v) : v,
-
-				//e eval
-				e: _testers[type]
-			};
-
-		}
-
-	})();
-
-
-	var getSelector = function(selector) {
-
-		if(!selector) {
-
-			return function(value) {
-				return value;
-			};
-
-		} else
-		if(typeof selector == 'function') {
-			return selector;
-		}
-
-		throw new Error("Unknown sift selector " + selector);
-	}
-
-	var sifter = function(query, selector) {
-
-		//build the filter for the sifter
-		var filter = _queryParser.parse( query );
-
-		//the function used to sift through the given array
-		var self = function(target) {
-
-			var sifted = [], results = [], value, priority;
-
-			//I'll typically start from the end, but in this case we need to keep the order
-			//of the array the same.
-			for(var i = 0, n = target.length; i < n; i++) {
-
-				value = selector(target[i]);
-
-				//priority = -1? it's not something we can use.
-				if(!~(priority = filter.priority( value ))) continue;
-
-				//push all the sifted values to be sorted later. This is important particularly for statements
-				//such as $or
-				sifted.push({
-					value: value,
-					priority: priority
-				});
-			}
-
-			//sort the values
-			sifted.sort(function(a, b) {
-				return a.priority > b.priority ? -1 : 1;
-			});
-
-			var values = Array(sifted.length);
-
-			//finally, fetch the values & return them.
-			for(var i = sifted.length; i--;) {
-				values[i] = sifted[i].value;
-			}
-
-			return values;
-		}
-
-		//set the test function incase the sifter isn't needed
-		self.test   = filter.test;
-		self.score = filter.priority;
-		self.query  = query;
-
-		return self;
-	}
-
-
-	/**
-	 * sifts the given function
-	 * @param query the mongodb query
-	 * @param target the target array
-	 * @param rawSelector the selector for plucking data from the given target
-	 */
-
-	var sift = function(query, target, rawSelector) {
-
-		//must be an array
-		if(typeof target != "object") {
-			rawSelector = target;
-			target = undefined;
-		}
-
-
-		var sft  = sifter(query, getSelector(rawSelector));
-
-		//target given? sift through it and return the filtered result
-		if(target) return sft(target);
-
-		//otherwise return the sifter func
-		return sft;
-
-	}
-
-
-	sift.use = function(options) {
-		if(options.operators) sift.useOperators(options.operators);
-	}
-
-	sift.useOperators = function(operators) {
-		for(var key in operators) {
-			sift.useOperator(key, operators[key]);
-		}
-	}
-
-	sift.useOperator = function(operator, optionsOrFn) {
-
-		var options = {};
-
-		if(typeof optionsOrFn == "object") {
-			options = optionsOrFn;
-		} else {
-			options = { test: optionsOrFn };
-		}
-
-
-		var key = "$" + operator;
-		_queryParser.testers[key] = options.test;
-
-		if(options.traversable || options.traverse) {
-			_queryParser.traversable[key] = true;
-		}
-	}
-
-
-	//node.js?
-	if((typeof module != 'undefined') && (typeof module.exports != 'undefined')) {
-
-		module.exports = sift;
-
-	} else
-
-	//browser?
-	if(typeof window != 'undefined') {
-
-		window.sift = sift;
-
-	}
-
-})();
-
-
-},{}],55:[function(require,module,exports){
 module.exports = function(item) {
   if(item === undefined)  return [];
   return Object.prototype.toString.call(item) === "[object Array]" ? item : [item];
 }
-},{}],56:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -3996,7 +3755,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],57:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 (function (global){
 var _gss = global._gss = global._gss || [],
 type = require("type-component");
@@ -4134,12 +3893,12 @@ exports.use = function(gs) {
 
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"type-component":81}],58:[function(require,module,exports){
+},{"type-component":81}],57:[function(require,module,exports){
 var protoclass = require("protoclass"),
 nofactor       = require("nofactor");
 
 // TODO - figure out a way to create a document fragment in the constructor
-// instead of calling toFragment() each time. perhaps
+// instead of calling toFragment() each time. perhaps 
 var Section = function (nodeFactory, start, end) {
 
   this.nodeFactory = nodeFactory = nodeFactory || nofactor["default"];
@@ -4180,7 +3939,7 @@ Section = protoclass(Section, {
     return this.nodeFactory.createFragment(this.getChildNodes());
   },
 
-  /**
+  /** 
    * shows the section
    */
 
@@ -4332,7 +4091,7 @@ Section = protoclass(Section, {
 module.exports = function (nodeFactory, start, end)  {
   return new Section(nodeFactory, start, end);
 }
-},{"nofactor":62,"protoclass":80}],59:[function(require,module,exports){
+},{"nofactor":61,"protoclass":79}],58:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 function BaseFactory () {
@@ -4371,7 +4130,7 @@ protoclass(BaseFactory, {
 
 module.exports = BaseFactory;
 
-},{"protoclass":80}],60:[function(require,module,exports){
+},{"protoclass":79}],59:[function(require,module,exports){
 var BaseFactory = require("./base"),
 factories       = require("factories");
 
@@ -4382,7 +4141,7 @@ function CustomFactory (mainFactory, elements) {
 	if (!mainFactory) {
 		throw new Error("main factory must be provided. User string, or dom");
 	}
-
+	
 	this._factories = {
 		element: {}
 	}
@@ -4455,7 +4214,7 @@ BaseFactory.extend(CustomFactory, {
 module.exports = function (mainFactory, elements) {
 	return new CustomFactory(mainFactory, elements);
 };
-},{"./base":59,"factories":79}],61:[function(require,module,exports){
+},{"./base":58,"factories":78}],60:[function(require,module,exports){
 var Base = require("./base");
 
 function DomFactory () {
@@ -4515,7 +4274,7 @@ Base.extend(DomFactory, {
 });
 
 module.exports = new DomFactory();
-},{"./base":59}],62:[function(require,module,exports){
+},{"./base":58}],61:[function(require,module,exports){
 module.exports = {
   string  : require("./string"),
   dom     : require("./dom"),
@@ -4527,7 +4286,7 @@ module.exports["default"] = typeof window !== "undefined" ? module.exports.dom :
 if (typeof window !== "undefined") {
   window.nofactor = module.exports;
 }
-},{"./custom":60,"./dom":61,"./string":68}],63:[function(require,module,exports){
+},{"./custom":59,"./dom":60,"./string":67}],62:[function(require,module,exports){
 var Text = require("./text");
 
 function Comment () {
@@ -4557,7 +4316,7 @@ Text.extend(Comment, {
 });
 
 module.exports = Comment;
-},{"./text":71}],64:[function(require,module,exports){
+},{"./text":70}],63:[function(require,module,exports){
 var Node = require("./node");
 
 function Container () {
@@ -4637,7 +4396,7 @@ Node.extend(Container, {
     if (!~index) return;
 
     if (node) this._unlink(node);
-
+    
     this.childNodes.splice.apply(this.childNodes, arguments);
 
     if (node) this._link(node);
@@ -4674,7 +4433,7 @@ Node.extend(Container, {
 });
 
 module.exports = Container;
-},{"./node":69}],65:[function(require,module,exports){
+},{"./node":68}],64:[function(require,module,exports){
 var Container = require("./container"),
 Style         = require("./style");
 
@@ -4703,7 +4462,7 @@ Container.extend(Element, {
 
     name = name.toLowerCase();
 
-    // if the name is a
+    // if the name is a 
     if (name === "style") {
       return this.style.reset(value);
     }
@@ -4800,7 +4559,7 @@ Container.extend(Element, {
 });
 
 module.exports = Element;
-},{"./container":64,"./style":70}],66:[function(require,module,exports){
+},{"./container":63,"./style":69}],65:[function(require,module,exports){
 // from node-ent
 
 var entities = {
@@ -4830,7 +4589,7 @@ module.exports = function (str) {
 
   }).join("");
 }
-},{}],67:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 var Container = require("./container");
 
 function Fragment () {
@@ -4866,7 +4625,7 @@ Container.extend(Fragment, {
 });
 
 module.exports = Fragment;
-},{"./container":64}],68:[function(require,module,exports){
+},{"./container":63}],67:[function(require,module,exports){
 var Base     = require("../base"),
 Element      = require("./element"),
 Fragment     = require("./fragment"),
@@ -4942,7 +4701,7 @@ module.exports.Fragment     = Fragment;
 module.exports.Text         = Text;
 module.exports.Container    = Container;
 module.exports.voidElements = voidElements;
-},{"../base":59,"./comment":63,"./container":64,"./element":65,"./fragment":67,"./text":71,"./voidElements":72}],69:[function(require,module,exports){
+},{"../base":58,"./comment":62,"./container":63,"./element":64,"./fragment":66,"./text":70,"./voidElements":71}],68:[function(require,module,exports){
 var protoclass  = require("protoclass");
 
 
@@ -4955,7 +4714,7 @@ protoclass(Node, {
 });
 
 module.exports = Node;
-},{"protoclass":80}],70:[function(require,module,exports){
+},{"protoclass":79}],69:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 function Style () {
@@ -4987,7 +4746,7 @@ protoclass(Style, {
    */
 
   reset: function (styles) {
-
+    
     var styleParts = styles.split(/;\s*/);
 
     for (var i = 0, n = styleParts.length; i < n; i++) {
@@ -5069,7 +4828,7 @@ protoclass(Style, {
 });
 
 module.exports = Style;
-},{"protoclass":80}],71:[function(require,module,exports){
+},{"protoclass":79}],70:[function(require,module,exports){
 var Node = require("./node"),
 ent      = require("./ent");
 
@@ -5101,7 +4860,7 @@ Node.extend(Text, {
   },
 
   /**
-   */
+   */ 
 
   replaceText: function (value, encode) {
     this.nodeValue = encode ? ent(value) : value;
@@ -5109,7 +4868,7 @@ Node.extend(Text, {
 });
 
 module.exports = Text;
-},{"./ent":66,"./node":69}],72:[function(require,module,exports){
+},{"./ent":65,"./node":68}],71:[function(require,module,exports){
 var Element = require("./element");
 
 function VoidElement () {
@@ -5142,7 +4901,7 @@ keygen, link, meta, param, source, track, wbr
 ["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track"].forEach(function (name) {
 	exports[name] = VoidElement;
 });
-},{"./element":65}],73:[function(require,module,exports){
+},{"./element":64}],72:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var AnyFactory, factoryFactory,
@@ -5217,7 +4976,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./base":74,"./factory":76}],74:[function(require,module,exports){
+},{"./base":73,"./factory":75}],73:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var BaseFactory;
@@ -5237,7 +4996,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{}],75:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var ClassFactory,
@@ -5281,7 +5040,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./base":74}],76:[function(require,module,exports){
+},{"./base":73}],75:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var ClassFactory, FactoryFactory, FnFactory, factory, type,
@@ -5332,7 +5091,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./base":74,"./class":75,"./fn":77,"type-component":81}],77:[function(require,module,exports){
+},{"./base":73,"./class":74,"./fn":76,"type-component":81}],76:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var FnFactory;
@@ -5370,7 +5129,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{}],78:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var GroupFactory, factoryFactory,
@@ -5457,7 +5216,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./base":74,"./factory":76}],79:[function(require,module,exports){
+},{"./base":73,"./factory":75}],78:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   module.exports = {
@@ -5470,7 +5229,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./any":73,"./class":75,"./factory":76,"./fn":77,"./group":78}],80:[function(require,module,exports){
+},{"./any":72,"./class":74,"./factory":75,"./fn":76,"./group":77}],79:[function(require,module,exports){
 function _copy (to, from) {
 
   for (var i = 0, n = from.length; i < n; i++) {
@@ -5495,7 +5254,7 @@ function protoclass (parent, child) {
     parent  = function() { };
   }
 
-  _copy(child, parent);
+  _copy(child, parent); 
 
   function ctor () {
     this.constructor = child;
@@ -5539,6 +5298,563 @@ protoclass.setup = function (child) {
 
 
 module.exports = protoclass;
+},{}],80:[function(require,module,exports){
+/*
+ * Sift
+ * 
+ * Copryright 2011, Craig Condon
+ * Licensed under MIT
+ *
+ * Inspired by mongodb's query language 
+ */
+
+
+(function() {
+
+
+	/**
+	 */
+
+	var _convertDotToSubObject = function(keyParts, value) {
+
+		var subObject = {},
+		currentValue = subObject;
+
+		for(var i = 0, n = keyParts.length - 1; i < n; i++) {
+			currentValue = currentValue[keyParts[i]] = {};
+		}
+
+		currentValue[keyParts[i]] = value;
+		
+		return subObject;
+	}
+
+	/**
+	 */
+
+	var _queryParser = new (function() {
+
+		/**
+		 * tests against data
+		 */
+
+		var priority = this.priority = function(statement, data) {
+
+			var exprs = statement.exprs,
+			priority = 0;
+
+			//generally, expressions are ordered from least efficient, to most efficient.
+			for(var i = 0, n = exprs.length; i < n; i++) {
+
+				var expr = exprs[i],
+				p;
+
+				if(!~(p = expr.e(expr.v, _comparable(data), data))) return -1;
+
+				priority += p;
+
+			}
+
+
+			return priority;
+		}
+
+
+		/**
+		 * parses a statement into something evaluable
+		 */
+
+		var parse = this.parse = function(statement, key) {
+
+			//fixes sift(null, []) issue
+			if(!statement) statement = { $eq: statement };
+
+			var testers = [];
+				
+			//if the statement is an object, then we're looking at something like: { key: match }
+			if(statement.constructor == Object) {
+
+				for(var k in statement) {
+
+					//find the apropriate operator. If one doesn't exist, then it's a property, which means
+					//we create a new statement (traversing) 
+					var operator = !!_testers[k] ?  k : '$trav',
+
+					//value of given statement (the match)
+					value = statement[k],
+
+					//default = match
+					exprValue = value;
+
+					//if we're working with a traversable operator, then set the expr value
+					if(TRAV_OP[operator]) {
+
+
+						//using dot notation? convert into a sub-object
+						if(~k.indexOf(".")) {
+							var keyParts = k.split(".");
+							k = keyParts.shift(); //we're using the first key, so remove it
+
+							exprValue = value = _convertDotToSubObject(keyParts, value);
+						}
+						
+						//*if* the value is an array, then we're dealing with something like: $or, $and
+						if(value instanceof Array) {
+							
+							exprValue = [];
+
+							for(var i = value.length; i--;) {
+								exprValue.push(parse(value[i]));		
+							}
+
+						//otherwise we're dealing with $trav
+						} else {	
+							exprValue = parse(value, k);
+						}
+					} 
+
+					testers.push(_getExpr(operator, k, exprValue));
+
+				}
+								
+
+			//otherwise we're comparing a particular value, so set to eq
+			} else {
+				testers.push(_getExpr('$eq', k, statement));
+			}
+
+			var stmt =  { 
+				exprs: testers,
+				k: key,
+				test: function(value) {
+					return !!~stmt.priority(value);
+				},
+				priority: function(value) {
+					return priority(stmt, value);
+				}
+			};
+			
+			return stmt;
+		
+		}
+
+
+		//traversable statements
+		var TRAV_OP = this.traversable = {
+			$and: true,
+			$or: true,
+			$nor: true,
+			$trav: true,
+			$not: true
+		};
+
+
+		function _comparable(value) {
+			if(value instanceof Date) {
+				return value.getTime();
+			} else {
+				return value;
+			}
+		}
+
+		function btop(value) {
+			return value ? 0 : -1;
+		}
+
+		var _testers = this.testers =  {
+
+			/**
+			 */
+
+			$eq: function(a, b) {
+				return btop(a.test(b));
+			},
+
+			/**
+			 */
+
+			$ne: function(a, b) {
+				return btop(!a.test(b));
+			},
+
+			/**
+			 */
+
+			$lt: function(a, b) {
+				return btop(a > b);
+			},
+
+			/**
+			 */
+
+			$gt: function(a, b) {
+				return btop(a < b);
+			},
+
+			/**
+			 */
+
+			$lte: function(a, b) {
+				return btop(a >= b);
+			},
+
+			/**
+			 */
+
+			$gte: function(a, b) {
+				return btop(a <= b);
+			},
+
+
+			/**
+			 */
+
+			$exists: function(a, b) {
+				return btop(a === (b != null))
+			},
+
+			/**
+			 */
+
+			$in: function(a, b) {
+
+				//intersecting an array
+				if(b instanceof Array) {
+
+					for(var i = b.length; i--;) {
+						if(~a.indexOf(b[i])) return i;
+					}	
+
+				} else {
+					return btop(~a.indexOf(b));
+				}
+
+
+				return -1;
+			},
+
+			/**
+			 */
+
+			$not: function(a, b) {
+				if(!a.test) throw new Error("$not test should include an expression, not a value. Use $ne instead.");
+				return btop(!a.test(b));
+			},
+
+			/**
+			 */
+
+			$type: function(a, b, org) {
+
+				//instanceof doesn't work for strings / boolean. instanceof works with inheritance
+				return org ? btop(org instanceof a || org.constructor == a) : -1;
+			},
+
+			/**
+			 */
+
+
+			$nin: function(a, b) {
+				return ~_testers.$in(a, b) ? -1 : 0;
+			},
+
+			/**
+			 */
+
+			$mod: function(a, b) {
+				return b % a[0] == a[1] ? 0 : -1;
+			},
+
+			/**
+			 */
+
+			$all: function(a, b) {
+
+				for(var i = a.length; i--;) {
+					if(b.indexOf(a[i]) == -1) return -1;
+				}
+
+				return 0;
+			},
+
+			/**
+			 */
+
+			$size: function(a, b) {
+				return b ? btop(a == b.length) : -1;
+			},
+
+			/**
+			 */
+
+			$or: function(a, b) {
+
+				var i = a.length, p, n = i;
+
+				for(; i--;) {
+					if(~priority(a[i], b)) {
+						return i;
+					}
+				}
+
+				return btop(n == 0);
+			},
+
+			/**
+			 */
+
+			$nor: function(a, b) {
+
+				var i = a.length, n = i;
+
+				for(; i--;) {
+					if(~priority(a[i], b)) {
+						return -1;
+					}
+				}
+
+				return 0;
+			},
+
+			/**
+			 */
+
+			$and: function(a, b) {
+
+				for(var i = a.length; i--;) {
+					if(!~priority(a[i], b)) {
+						return -1;
+					}
+				}
+
+				return 0;
+			},
+
+			/**
+			 */
+
+			$trav: function(a, b) {
+
+
+
+				if(b instanceof Array) {
+					
+					for(var i = b.length; i--;) {
+						var subb = b[i];
+						if(subb[a.k] && ~priority(a, subb[a.k])) return i;
+					}
+
+					return -1;
+				}
+
+				//continue to traverse even if there isn't a value - this is needed for 
+				//something like name:{$exists:false}
+				return priority(a, b ? b[a.k] : undefined);
+			}
+		}
+
+		var _prepare = {
+			
+			/**
+			 */
+
+			$eq: function(a) {
+				
+				var fn;
+
+				if(a instanceof RegExp) {
+					return a;
+				} else if (a instanceof Function) {
+					fn = a;
+				} else {
+					
+					fn = function(b) {	
+						if(b instanceof Array) {		
+							return ~b.indexOf(a);
+						} else {
+							return a == b;
+						}
+					}
+				}
+
+				return {
+					test: fn
+				}
+
+			},
+			
+			/**
+			 */
+				
+			 $ne: function(a) {
+				return _prepare.$eq(a);
+			 }
+		};
+
+
+
+		var _getExpr = function(type, key, value) {
+
+			var v = _comparable(value);
+
+			return { 
+
+				//k key
+				k: key, 
+
+				//v value
+				v: _prepare[type] ? _prepare[type](v) : v, 
+
+				//e eval
+				e: _testers[type] 
+			};
+
+		}
+
+	})();
+
+
+	var getSelector = function(selector) {
+
+		if(!selector) {
+
+			return function(value) {
+				return value;
+			};
+
+		} else 
+		if(typeof selector == 'function') {
+			return selector;
+		}
+
+		throw new Error("Unknown sift selector " + selector);
+	}
+
+	var sifter = function(query, selector) {
+
+		//build the filter for the sifter
+		var filter = _queryParser.parse( query );
+			
+		//the function used to sift through the given array
+		var self = function(target) {
+				
+			var sifted = [], results = [], value, priority;
+
+			//I'll typically start from the end, but in this case we need to keep the order
+			//of the array the same.
+			for(var i = 0, n = target.length; i < n; i++) {
+
+				value = selector(target[i]);
+
+				//priority = -1? it's not something we can use.
+				if(!~(priority = filter.priority( value ))) continue;
+
+				//push all the sifted values to be sorted later. This is important particularly for statements
+				//such as $or
+				sifted.push({
+					value: value,
+					priority: priority
+				});
+			}
+
+			//sort the values
+			sifted.sort(function(a, b) {
+				return a.priority > b.priority ? -1 : 1;
+			});
+
+			var values = Array(sifted.length);
+
+			//finally, fetch the values & return them.
+			for(var i = sifted.length; i--;) {
+				values[i] = sifted[i].value;
+			}
+
+			return values;
+		}
+
+		//set the test function incase the sifter isn't needed
+		self.test   = filter.test;
+		self.score = filter.priority;
+		self.query  = query;
+
+		return self;
+	}
+
+
+	/**
+	 * sifts the given function
+	 * @param query the mongodb query
+	 * @param target the target array
+	 * @param rawSelector the selector for plucking data from the given target
+	 */
+
+	var sift = function(query, target, rawSelector) {
+
+		//must be an array
+		if(typeof target != "object") {
+			rawSelector = target;
+			target = undefined;
+		}
+
+
+		var sft  = sifter(query, getSelector(rawSelector));
+
+		//target given? sift through it and return the filtered result
+		if(target) return sft(target);
+
+		//otherwise return the sifter func
+		return sft;
+
+	}
+
+
+	sift.use = function(options) {
+		if(options.operators) sift.useOperators(options.operators);
+	}
+
+	sift.useOperators = function(operators) {
+		for(var key in operators) {
+			sift.useOperator(key, operators[key]);
+		}
+	}
+
+	sift.useOperator = function(operator, optionsOrFn) {
+
+		var options = {};
+
+		if(typeof optionsOrFn == "object") {
+			options = optionsOrFn;
+		} else {
+			options = { test: optionsOrFn };
+		}
+
+
+		var key = "$" + operator;
+		_queryParser.testers[key] = options.test;
+
+		if(options.traversable || options.traverse) {
+			_queryParser.traversable[key] = true;
+		}
+	}
+
+
+	//node.js?
+	if((typeof module != 'undefined') && (typeof module.exports != 'undefined')) {
+		
+		module.exports = sift;
+
+	} else 
+
+	//browser?
+	if(typeof window != 'undefined') {
+		
+		window.sift = sift;
+
+	}
+
+})();
+
+
 },{}],81:[function(require,module,exports){
 
 /**

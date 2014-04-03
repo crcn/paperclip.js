@@ -281,7 +281,8 @@ BaseScriptExpression.extend(CallExpression, {
 
 module.exports = CallExpression;
 },{"./base":5}],7:[function(require,module,exports){
-var BaseScriptExpression = require("./base");
+var BaseScriptExpression = require("./base"),
+TokenCodes = require("../tokenizer").codes;
 
 function GetExpression (reference) {
   BaseScriptExpression.apply(this, arguments);
@@ -289,17 +290,23 @@ function GetExpression (reference) {
 }
 
 BaseScriptExpression.extend(GetExpression, {
-  
+
   /**
    */
 
   toJavaScript: function () {
+
+    if (~[TokenCodes.BT, TokenCodes.BFT].indexOf(this.reference.bindType)) {
+      return "this.bindTo(" + this.reference.toJavaScript() + ")";
+    }
+
     return "this.get(" + this.reference.toJavaScript() + ")";
   }
 });
 
 module.exports = GetExpression;
-},{"./base":5}],8:[function(require,module,exports){
+
+},{"../tokenizer":19,"./base":5}],8:[function(require,module,exports){
 var BaseScriptExpression = require("./base");
 
 function GroupExpression (expressions) {
@@ -417,12 +424,14 @@ BaseScriptExpression.extend(ParamExpression, {
 
 module.exports = ParamExpression;
 },{"./base":5}],13:[function(require,module,exports){
-var BaseScriptExpression = require("./base");
+var BaseScriptExpression = require("./base"),
+TokenCodes               = require("../tokenizer").codes;
 
-function ReferenceExpression (path, unbound) {
+function ReferenceExpression (path, bindType) {
   BaseScriptExpression.apply(this, arguments);
-  this.path    = path;
-  this.unbound = unbound;
+  this.path     = path;
+  this.unbound  = [TokenCodes.ASSIGN, TokenCodes.TICK, TokenCodes.BT].indexOf(bindType) !== -1;
+  this.bindType = bindType;
 }
 
 BaseScriptExpression.extend(ReferenceExpression, {
@@ -443,7 +452,8 @@ BaseScriptExpression.extend(ReferenceExpression, {
 });
 
 module.exports = ReferenceExpression;
-},{"./base":5}],14:[function(require,module,exports){
+
+},{"../tokenizer":19,"./base":5}],14:[function(require,module,exports){
 var BaseScriptExpression = require("./base");
 
 function RootExpression (expressions) {
@@ -604,7 +614,7 @@ BaseParser.extend(ScriptParser, {
   _parseScriptExpression: function () {
     var ccode, expressions = [];
 
-    while (!((ccode = this._t.currentCode) & TokenCodes.COMA) && ccode) {
+    while ((ccode = this._t.currentCode) !== TokenCodes.COMA && ccode) {
       expressions.push(this._parsePipableExpression());
     }
 
@@ -641,7 +651,7 @@ BaseParser.extend(ScriptParser, {
     } else if (ccode === TokenCodes.LB) {
       return this._parseObjectExpression();
 
-    } else if (ccode & (TokenCodes.VAR | TokenCodes.TICK)) {
+    } else if (~[TokenCodes.VAR, TokenCodes.TICK, TokenCodes.ASSIGN, TokenCodes.BT, TokenCodes.BF, TokenCodes.BFT].indexOf(ccode)) {
       return this._parseReferenceExpression();
 
     } else if (ccode === TokenCodes.NUMBER) {
@@ -699,8 +709,14 @@ BaseParser.extend(ScriptParser, {
 
   _parseReferenceExpression: function () {
 
-    var unbound = this._t.currentCode === TokenCodes.TICK,
+    var isTick = this._t.currentCode === TokenCodes.TICK;
+
+    var unbound = !!~[TokenCodes.TICK, TokenCodes.ASSIGN, TokenCodes.BT, TokenCodes.BF, TokenCodes.BFT].indexOf(this._t.currentCode),
     ccode;
+
+    var bindType = this._t.currentCode;
+    // console.log(bindType, unbound, TokenCodes.TICK, TokenCodes.ASSIGN, TokenCodes.BT, TokenCodes.BF, TokenCodes.BFT);
+
 
     if (unbound) {
       this._t.next(); // eat `
@@ -720,12 +736,12 @@ BaseParser.extend(ScriptParser, {
       }
     }
 
-    if (unbound) {
+    if (unbound && isTick) {
       this._t.next(); // eat `
       ccode = this._t.currentCode;
     }
 
-    var ref = new ReferenceExpression(path, unbound);
+    var ref = new ReferenceExpression(path, bindType);
 
 
     // fn call
@@ -797,21 +813,21 @@ BaseParser.extend(ScriptParser, {
 
     var buffer = "";
 
-    var noMatch = TokenCodes.VAR|
-    TokenCodes.COMA|
-    TokenCodes.SEMI_COLON|
-    TokenCodes.PIPE|
-    TokenCodes.LP|
-    TokenCodes.RP|
-    TokenCodes.LB|
-    TokenCodes.RB|
-    TokenCodes.TICK|
-    TokenCodes.QUOTE|
-    TokenCodes.STRING|
-    TokenCodes.NOT|
-    TokenCodes.SQUOTE;
+    var noMatch = [TokenCodes.VAR,
+    TokenCodes.COMA,
+    TokenCodes.SEMI_COLON,
+    TokenCodes.PIPE,
+    TokenCodes.LP,
+    TokenCodes.RP,
+    TokenCodes.LB,
+    TokenCodes.RB,
+    TokenCodes.TICK,
+    TokenCodes.QUOTE,
+    TokenCodes.STRING,
+    TokenCodes.NOT,
+    TokenCodes.SQUOTE];
 
-    while(!(this._t.currentCode & noMatch) && this._t.currentCode) {
+    while(!~noMatch.indexOf(this._t.currentCode) && this._t.currentCode) {
       buffer += this._t.current[1];
       this._t.next();
     }
@@ -843,7 +859,7 @@ BaseParser.extend(ScriptParser, {
   _parseParamExpression: function () {
     var param = [];
 
-    while (!(this._t.currentCode & (TokenCodes.COMA|TokenCodes.RP|TokenCodes.RB))) {
+    while (!~[TokenCodes.COMA, TokenCodes.RP, TokenCodes.RB].indexOf(this._t.currentCode)) {
       param.push(this._parsePipableExpression());
     }
 
@@ -856,6 +872,7 @@ BaseParser.extend(ScriptParser, {
 });
 
 module.exports = ScriptParser;
+
 },{"../base/parser":2,"./ast/call":6,"./ast/get":7,"./ast/group":8,"./ast/modifier":9,"./ast/object":10,"./ast/other":11,"./ast/param":12,"./ast/reference":13,"./ast/root":14,"./ast/script":15,"./ast/set":16,"./ast/string":17,"./tokenizer":19}],19:[function(require,module,exports){
 var BaseTokenizer = require("../base/tokenizer"),
 utils = require("../utils");
@@ -870,7 +887,7 @@ var codes = utils.makeTokenCodes([
   "bool"        , // true/false
   "undef"       , // undefined
   "as"          , // as
-  "or"          , // ||  
+  "or"          , // ||
   "assign"      , // =
   "eq"          , // ==
   "aeq"         , // ===
@@ -890,8 +907,12 @@ var codes = utils.makeTokenCodes([
   "pipe"        , // |
   "rb"          , // }
   "us"          , // _
-  "tick"         // `
+  "tick"        , // `
+  "bt"          , // =>  bind to
+  "bf"          , // <=  bind from
+  "bft"           // <=> bind from to
 ]);
+
 
 var codeMap = {
   "="  : codes.ASSIGN,
@@ -929,7 +950,7 @@ BaseTokenizer.extend(ScriptTokenizer, {
 
 
     // var, or reserved word?
-    if (this._s.isAZ() || (tcode = (codeMap[cchar] || codes.OTHER)) & (codes.DOLLAR | codes.AT | codes.US)) {
+    if (this._s.isAZ() || ~[codes.DOLLAR, codes.AT, codes.US].indexOf(tcode = (codeMap[cchar] || codes.OTHER))) {
 
       var word = this._s.next(/[_$@a-zA-Z0-9]+/);
 
@@ -986,6 +1007,12 @@ BaseTokenizer.extend(ScriptTokenizer, {
 
     // =, ==, ===
     } else if (ccode === 61) {
+
+      if (this._s.peek(2) === "=>") {
+        this._s.skip(1);
+        return this._t(codes.BT, "=>");
+      }
+
       if (this._s.peek(2) === "==") {
         this._s.skip(1);
 
@@ -998,12 +1025,21 @@ BaseTokenizer.extend(ScriptTokenizer, {
       } else {
         return this._t(codes.ASSIGN, "=");
       }
-
+    } else if (ccode === 60) {
+      if (this._s.peek(3) === "<=>") {
+        this._s.skip(2);
+        return this._t(codes.BFT, "<=>")
+      }
+      if (this._s.peek(2) === "<=") {
+        this._s.skip(1);
+        return this._t(codes.BF, "<=");
+      }
     // ||
     } else if (ccode === 124 && this._s.peek(2) === "||") {
       this._s.skip(1);
       return this._t(codes.OR, "||");
-    } 
+    }
+
 
     // everything else
     return this._t(tcode, cchar);
@@ -1013,19 +1049,21 @@ BaseTokenizer.extend(ScriptTokenizer, {
 
 
 module.exports = ScriptTokenizer;
+
 },{"../base/tokenizer":3,"../utils":20}],20:[function(require,module,exports){
 module.exports = {
   makeTokenCodes: function (tokens) {
     var codes = {},
-    code = 1;
+    code = 1000;
 
     for (var i = tokens.length; i--;) {
-      codes[tokens[i].toUpperCase()] = code = code << 1;
+      codes[tokens[i].toUpperCase()] = code = code + 1;
     }
 
     return codes;
   }
 }
+
 },{}],21:[function(require,module,exports){
 var BaseXMLExpression = require("./base");
 
@@ -1338,7 +1376,7 @@ function XMLParser () {
 }
 
 var groups = {
-  SCRIPT: TokenCodes.SCRIPT | TokenCodes.BSCRIPT | TokenCodes.ESCRIPT
+  SCRIPT: [TokenCodes.SCRIPT, TokenCodes.BSCRIPT, TokenCodes.ESCRIPT]
 };
 
 
@@ -1380,7 +1418,7 @@ BaseParser.extend(XMLParser, {
       return this._parseNodeExpression();
 
     // {{ script }} or {{#block}}{{/}}
-    } else if (ccode & groups.SCRIPT) {
+  } else if (~groups.SCRIPT.indexOf(ccode)) {
       return this._parseScriptBlockExpression();
 
     // something like <!HTML>
@@ -1467,7 +1505,7 @@ BaseParser.extend(XMLParser, {
     var values = [];
 
     if (this._t.current[0] === TokenCodes.EQ) {
-      this._t.nextSkipWhite(); // eat = 
+      this._t.nextSkipWhite(); // eat =
       values = this._parseAttributeValues();
     }
 
@@ -1490,7 +1528,7 @@ BaseParser.extend(XMLParser, {
     var values = [], buffer = [];
 
     while ((ccode = this._t.currentCode) !== quoteCode && ccode) {
-      if (!(ccode & groups.SCRIPT)) {
+      if (!~groups.SCRIPT.indexOf(ccode)) {
         buffer.push(this._t.current[1]);
         this._t.next();
       } else {
@@ -1498,7 +1536,7 @@ BaseParser.extend(XMLParser, {
           values.push(new StringExpression(buffer.join("")));
           buffer = [];
         }
-        values.push(this._parseAttrScriptExpression()); 
+        values.push(this._parseAttrScriptExpression());
       }
     }
 
@@ -1549,7 +1587,7 @@ BaseParser.extend(XMLParser, {
     var source = this._t.current[1];
 
     // if block, or end script, scripts must be defined. If something like {{/else}} , it needs to be else:true
-    if ((this._t.currentCode & (TokenCodes.ESCRIPT|TokenCodes.BSCRIPT)) && !~source.indexOf(":")) {
+    if (~[TokenCodes.ESCRIPT, TokenCodes.BSCRIPT].indexOf(this._t.currentCode) && !~source.indexOf(":")) {
       source += ":true";
     }
 
@@ -1561,7 +1599,7 @@ BaseParser.extend(XMLParser, {
     var expressions = [],
     childBlockExpression;
 
-    if (ccode & (TokenCodes.BSCRIPT | TokenCodes.ESCRIPT)) {
+    if (~[TokenCodes.BSCRIPT, TokenCodes.ESCRIPT].indexOf(ccode)) {
       while ((ccode = this._t.currentCode) !== TokenCodes.ESCRIPT && ccode) {
         expressions.push(this._parseExpression());
       }
@@ -1615,11 +1653,12 @@ BaseParser.extend(XMLParser, {
 
   _parseTextNodeExpression: function () {
 
-    var ecode = TokenCodes.BSCRIPT | TokenCodes.SCRIPT | TokenCodes.ESCRIPT | TokenCodes.LT | TokenCodes.LTSL;
+    var ecode = [TokenCodes.BSCRIPT, TokenCodes.SCRIPT, TokenCodes.ESCRIPT, TokenCodes.LT, TokenCodes.LTSL];
 
     var ccode, buffer = "";
 
-    while (!((ccode = this._t.currentCode) & ecode) && ccode) {
+
+    while (!~ecode.indexOf(ccode = this._t.currentCode) && ccode) {
       buffer += this._t.current[1];
       this._t.next();
     }
@@ -1629,6 +1668,7 @@ BaseParser.extend(XMLParser, {
 });
 
 module.exports = XMLParser;
+
 },{"../base/parser":2,"../script":18,"./ast/attribute":21,"./ast/attributes":22,"./ast/block":24,"./ast/childNodes":25,"./ast/node":26,"./ast/root":27,"./ast/string":28,"./ast/textNode":30,"./prune":33,"./tokenizer":34}],32:[function(require,module,exports){
 var TextBlockExpression = require("../ast/textBlock"),
 StringExpression        = require("../ast/string");
