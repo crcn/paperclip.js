@@ -45,7 +45,7 @@ This means a few things:
 - node.js support
 - [block modifiers](#modifiers), similar to angular filters
 - [pollyfills](#pollyfills), similar to angular directives
-- [full control over data-bindings](#binding-helpers)
+- [full control over data-bindings](#binding-operators)
 
 ### Examples
 
@@ -152,9 +152,9 @@ template usage:
 A human that is {{age}} years old is like a {{ age | divide(5.6) }} year old dog!
 ```
 
-### Binding Helpers
+### Binding Operators
 
-Paperclip comes with various binding helpers that give you full control over how references are handled. You can easily
+Paperclip comes with various binding operators that give you full control over how references are handled. You can easily
 specify whether to bind one way, two ways, or not at all. Here's the basic syntax:
 
 ```html
@@ -211,6 +211,25 @@ TODO example
 
 data-bind attributes are borrowed from [knockout.js](http://knockoutjs.com/). This is useful if you want to attach behavior to any DOM element.
 
+
+#### {{ model: context }}
+
+Input data-binding. [For example](http://jsfiddle.net/JTxdM/96/):
+
+```html
+<input type="text" name="message" data-bind="{{ model: this }}"></input> {{ message }}
+```
+
+You can also reference `message` directly. [For example](http://jsfiddle.net/JTxdM/94/)
+
+
+```html
+<input type="text" data-bind="{{ model: <=>message }}"></input> {{ message }}
+```
+
+Notice the `<=>` operator. This tells paperclip to bind both ways. See [binding operators](#binding-operators).
+
+
 #### {{ event: expression }}
 
 Executed when an event is fired on the DOM element. Here are all the available events:
@@ -231,7 +250,7 @@ Executed when an event is fired on the DOM element. Here are all the available e
 [Basic example](http://jsfiddle.net/JTxdM/77/):
 
 ```html
-<input type="text" data-bind="{{ model: name, onEnter: sayHello() }}"></input>
+<input type="text" data-bind="{{ model: <=>name, onEnter: sayHello() }}"></input>
 ```
 
 
@@ -270,15 +289,6 @@ Sets the style of a given element. [For example](http://jsfiddle.net/JTxdM/78/):
 #### {{ disable: bool }}
 
 Toggles the enabled state of an element.
-
-
-#### {{ model: context }}
-
-Input data-binding. [For example](http://jsfiddle.net/JTxdM/67/):
-
-```html
-<input type="text" name="message" data-bind="{{ model: this }}"></input> {{ message }}
-```
 
 #### Custom data-bind helpers
 
