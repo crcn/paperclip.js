@@ -1,0 +1,593 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'publish' ]
+2 info using npm@1.4.3
+3 info using node@v0.10.26
+4 verbose publish [ '.' ]
+5 verbose cache add [ '.', null ]
+6 verbose cache add name=undefined spec="." args=[".",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: '.',
+7 verbose parsed url   path: '.',
+7 verbose parsed url   href: '.' }
+8 silly lockFile 3a52ce78- .
+9 verbose lock . /Users/craig/.npm/3a52ce78-.lock
+10 verbose tar pack [ '/var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/tmp.tgz',
+10 verbose tar pack   '.' ]
+11 verbose tarball /var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/tmp.tgz
+12 verbose folder .
+13 info prepublish paperclip@0.3.104
+14 silly lockFile 1f1177db-tar tar://.
+15 verbose lock tar://. /Users/craig/.npm/1f1177db-tar.lock
+16 silly lockFile cf7032c5-9705-0-12973426468670368-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/tmp.tgz
+17 verbose lock tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/tmp.tgz /Users/craig/.npm/cf7032c5-9705-0-12973426468670368-tmp-tgz.lock
+18 silly lockFile 1f1177db-tar tar://.
+19 silly lockFile 1f1177db-tar tar://.
+20 silly lockFile cf7032c5-9705-0-12973426468670368-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/tmp.tgz
+21 silly lockFile cf7032c5-9705-0-12973426468670368-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/tmp.tgz
+22 verbose tar unpack /var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/tmp.tgz
+23 silly lockFile 24c95ea6-9705-0-12973426468670368-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/package
+24 verbose lock tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/package /Users/craig/.npm/24c95ea6-9705-0-12973426468670368-package.lock
+25 silly lockFile cf7032c5-9705-0-12973426468670368-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/tmp.tgz
+26 verbose lock tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/tmp.tgz /Users/craig/.npm/cf7032c5-9705-0-12973426468670368-tmp-tgz.lock
+27 silly gunzTarPerm modes [ '755', '644' ]
+28 silly gunzTarPerm extractEntry package.json
+29 silly gunzTarPerm modified mode [ 'package.json', 511, 493 ]
+30 silly gunzTarPerm extractEntry .npmignore
+31 silly gunzTarPerm modified mode [ '.npmignore', 511, 493 ]
+32 silly gunzTarPerm extractEntry README.md
+33 silly gunzTarPerm extractEntry LICENSE
+34 silly gunzTarPerm modified mode [ 'LICENSE', 511, 493 ]
+35 silly gunzTarPerm extractEntry .browsers.js
+36 silly gunzTarPerm modified mode [ '.browsers.js', 511, 493 ]
+37 silly gunzTarPerm extractEntry karma.conf.js
+38 silly gunzTarPerm modified mode [ 'karma.conf.js', 511, 493 ]
+39 silly gunzTarPerm extractEntry bin/paperclip
+40 silly gunzTarPerm extractEntry build/paperclip-compiler.js
+41 silly gunzTarPerm modified mode [ 'build/paperclip-compiler.js', 511, 493 ]
+42 silly gunzTarPerm extractEntry build/paperclip-compiler2.js
+43 silly gunzTarPerm modified mode [ 'build/paperclip-compiler2.js', 511, 493 ]
+44 silly gunzTarPerm extractEntry build/paperclip-compiler3.js
+45 silly gunzTarPerm modified mode [ 'build/paperclip-compiler3.js', 511, 493 ]
+46 silly gunzTarPerm extractEntry build/paperclip.js
+47 silly gunzTarPerm modified mode [ 'build/paperclip.js', 511, 493 ]
+48 silly gunzTarPerm extractEntry build/paperclip.min.js
+49 silly gunzTarPerm modified mode [ 'build/paperclip.min.js', 511, 493 ]
+50 silly gunzTarPerm extractEntry build/paperclip2.js
+51 silly gunzTarPerm modified mode [ 'build/paperclip2.js', 511, 493 ]
+52 silly gunzTarPerm extractEntry docs/brainstorm/template-compiling.md
+53 silly gunzTarPerm modified mode [ 'docs/brainstorm/template-compiling.md', 511, 493 ]
+54 silly gunzTarPerm extractEntry docs/brainstorm/usage.md
+55 silly gunzTarPerm modified mode [ 'docs/brainstorm/usage.md', 511, 493 ]
+56 silly gunzTarPerm extractEntry docs/terminology.md
+57 silly gunzTarPerm modified mode [ 'docs/terminology.md', 511, 493 ]
+58 silly gunzTarPerm extractEntry test-web/hello-test.js
+59 silly gunzTarPerm extractEntry test-web/old/clip-test.js
+60 silly gunzTarPerm extractEntry test-web/old/dom-test.js
+61 silly gunzTarPerm extractEntry test-web/old/template-test.js
+62 silly gunzTarPerm extractEntry test-web/templates/hello.js
+63 silly gunzTarPerm extractEntry test-web/templates/hello.pc
+64 silly gunzTarPerm extractEntry inc/jquery.js
+65 silly gunzTarPerm modified mode [ 'inc/jquery.js', 511, 493 ]
+66 silly gunzTarPerm extractEntry .travis.yml
+67 silly gunzTarPerm modified mode [ '.travis.yml', 511, 493 ]
+68 silly gunzTarPerm extractEntry lib/browser.js
+69 silly gunzTarPerm modified mode [ 'lib/browser.js', 511, 493 ]
+70 silly gunzTarPerm extractEntry lib/index.js
+71 silly gunzTarPerm modified mode [ 'lib/index.js', 511, 493 ]
+72 silly gunzTarPerm extractEntry lib/clip/buffer.js
+73 silly gunzTarPerm modified mode [ 'lib/clip/buffer.js', 511, 493 ]
+74 silly gunzTarPerm extractEntry lib/clip/index.js
+75 silly gunzTarPerm modified mode [ 'lib/clip/index.js', 511, 493 ]
+76 silly gunzTarPerm extractEntry lib/node/index.js
+77 silly gunzTarPerm modified mode [ 'lib/node/index.js', 511, 493 ]
+78 silly gunzTarPerm extractEntry lib/node/paper/bindings/block/base.js
+79 silly gunzTarPerm modified mode [ 'lib/node/paper/bindings/block/base.js', 511, 493 ]
+80 silly gunzTarPerm extractEntry lib/node/paper/bindings/block/index.js
+81 silly gunzTarPerm modified mode [ 'lib/node/paper/bindings/block/index.js', 511, 493 ]
+82 silly gunzTarPerm extractEntry lib/paper/application.js
+83 silly gunzTarPerm modified mode [ 'lib/paper/application.js', 511, 493 ]
+84 silly gunzTarPerm extractEntry lib/paper/binding.js
+85 silly gunzTarPerm modified mode [ 'lib/paper/binding.js', 511, 493 ]
+86 silly gunzTarPerm extractEntry lib/paper/index.js
+87 silly gunzTarPerm modified mode [ 'lib/paper/index.js', 511, 493 ]
+88 silly gunzTarPerm extractEntry lib/paper/modifiers.js
+89 silly gunzTarPerm modified mode [ 'lib/paper/modifiers.js', 511, 493 ]
+90 silly gunzTarPerm extractEntry lib/paper/template.js
+91 silly gunzTarPerm modified mode [ 'lib/paper/template.js', 511, 493 ]
+92 silly gunzTarPerm extractEntry lib/paper/bindings/binders.js
+93 silly gunzTarPerm modified mode [ 'lib/paper/bindings/binders.js', 511, 493 ]
+94 silly gunzTarPerm extractEntry lib/paper/bindings/collection.js
+95 silly gunzTarPerm modified mode [ 'lib/paper/bindings/collection.js', 511, 493 ]
+96 silly gunzTarPerm extractEntry lib/paper/bindings/index.js
+97 silly gunzTarPerm modified mode [ 'lib/paper/bindings/index.js', 511, 493 ]
+98 silly gunzTarPerm extractEntry lib/paper/bindings/base/binder.js
+99 silly gunzTarPerm modified mode [ 'lib/paper/bindings/base/binder.js', 511, 493 ]
+100 silly gunzTarPerm extractEntry lib/paper/bindings/base/binding.js
+101 silly gunzTarPerm modified mode [ 'lib/paper/bindings/base/binding.js', 511, 493 ]
+102 silly gunzTarPerm extractEntry lib/paper/bindings/base/script.js
+103 silly gunzTarPerm modified mode [ 'lib/paper/bindings/base/script.js', 511, 493 ]
+104 silly gunzTarPerm extractEntry lib/paper/bindings/block/base.js
+105 silly gunzTarPerm modified mode [ 'lib/paper/bindings/block/base.js', 511, 493 ]
+106 silly gunzTarPerm extractEntry lib/paper/bindings/block/conditional.js
+107 silly gunzTarPerm modified mode [ 'lib/paper/bindings/block/conditional.js', 511, 493 ]
+108 silly gunzTarPerm extractEntry lib/paper/bindings/block/factory.js
+109 silly gunzTarPerm modified mode [ 'lib/paper/bindings/block/factory.js', 511, 493 ]
+110 silly gunzTarPerm extractEntry lib/paper/bindings/block/html.js
+111 silly gunzTarPerm modified mode [ 'lib/paper/bindings/block/html.js', 511, 493 ]
+112 silly gunzTarPerm extractEntry lib/paper/bindings/block/value.js
+113 silly gunzTarPerm modified mode [ 'lib/paper/bindings/block/value.js', 511, 493 ]
+114 silly gunzTarPerm extractEntry lib/paper/bindings/node/factory.js
+115 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/factory.js', 511, 493 ]
+116 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/index.js
+117 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/attrs/dataBind/index.js', 511, 493 ]
+118 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/base.js
+119 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/attrs/dataBind/handlers/base.js',
+119 silly gunzTarPerm   511,
+119 silly gunzTarPerm   493 ]
+120 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/css.js
+121 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/attrs/dataBind/handlers/css.js',
+121 silly gunzTarPerm   511,
+121 silly gunzTarPerm   493 ]
+122 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/delete.js
+123 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/attrs/dataBind/handlers/delete.js',
+123 silly gunzTarPerm   511,
+123 silly gunzTarPerm   493 ]
+124 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/disable.js
+125 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/attrs/dataBind/handlers/disable.js',
+125 silly gunzTarPerm   511,
+125 silly gunzTarPerm   493 ]
+126 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/enable.js
+127 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/attrs/dataBind/handlers/enable.js',
+127 silly gunzTarPerm   511,
+127 silly gunzTarPerm   493 ]
+128 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/change.js
+129 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/attrs/dataBind/handlers/change.js',
+129 silly gunzTarPerm   511,
+129 silly gunzTarPerm   493 ]
+130 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/event.js
+131 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/attrs/dataBind/handlers/event.js',
+131 silly gunzTarPerm   511,
+131 silly gunzTarPerm   493 ]
+132 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/focus.js
+133 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/attrs/dataBind/handlers/focus.js',
+133 silly gunzTarPerm   511,
+133 silly gunzTarPerm   493 ]
+134 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/model.js
+135 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/attrs/dataBind/handlers/model.js',
+135 silly gunzTarPerm   511,
+135 silly gunzTarPerm   493 ]
+136 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/show.js
+137 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/attrs/dataBind/handlers/show.js',
+137 silly gunzTarPerm   511,
+137 silly gunzTarPerm   493 ]
+138 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/style.js
+139 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/attrs/dataBind/handlers/style.js',
+139 silly gunzTarPerm   511,
+139 silly gunzTarPerm   493 ]
+140 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/enter.js
+141 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/attrs/dataBind/handlers/enter.js',
+141 silly gunzTarPerm   511,
+141 silly gunzTarPerm   493 ]
+142 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/text/index.js
+143 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/attrs/text/index.js', 511, 493 ]
+144 silly gunzTarPerm extractEntry lib/paper/bindings/node/base/index.js
+145 silly gunzTarPerm modified mode [ 'lib/paper/bindings/node/base/index.js', 511, 493 ]
+146 silly gunzTarPerm extractEntry lib/paper/bindings/textBlock/binder.js
+147 silly gunzTarPerm modified mode [ 'lib/paper/bindings/textBlock/binder.js', 511, 493 ]
+148 silly gunzTarPerm extractEntry lib/paper/bindings/textBlock/binding.js
+149 silly gunzTarPerm modified mode [ 'lib/paper/bindings/textBlock/binding.js', 511, 493 ]
+150 silly gunzTarPerm extractEntry lib/paper/utils/escapeHTML.js
+151 silly gunzTarPerm modified mode [ 'lib/paper/utils/escapeHTML.js', 511, 493 ]
+152 silly gunzTarPerm extractEntry lib/paper/writers/base.js
+153 silly gunzTarPerm modified mode [ 'lib/paper/writers/base.js', 511, 493 ]
+154 silly gunzTarPerm extractEntry lib/paper/writers/block.js
+155 silly gunzTarPerm modified mode [ 'lib/paper/writers/block.js', 511, 493 ]
+156 silly gunzTarPerm extractEntry lib/paper/writers/element.js
+157 silly gunzTarPerm modified mode [ 'lib/paper/writers/element.js', 511, 493 ]
+158 silly gunzTarPerm extractEntry lib/paper/writers/fragment.js
+159 silly gunzTarPerm modified mode [ 'lib/paper/writers/fragment.js', 511, 493 ]
+160 silly gunzTarPerm extractEntry lib/paper/writers/parse.js
+161 silly gunzTarPerm modified mode [ 'lib/paper/writers/parse.js', 511, 493 ]
+162 silly gunzTarPerm extractEntry lib/paper/writers/text.js
+163 silly gunzTarPerm modified mode [ 'lib/paper/writers/text.js', 511, 493 ]
+164 silly gunzTarPerm extractEntry lib/paper/writers/textBlock.js
+165 silly gunzTarPerm modified mode [ 'lib/paper/writers/textBlock.js', 511, 493 ]
+166 silly gunzTarPerm extractEntry lib/parser/formatter.js
+167 silly gunzTarPerm modified mode [ 'lib/parser/formatter.js', 511, 493 ]
+168 silly gunzTarPerm extractEntry lib/parser/index.js
+169 silly gunzTarPerm modified mode [ 'lib/parser/index.js', 511, 493 ]
+170 silly gunzTarPerm extractEntry lib/parser/base/expression.js
+171 silly gunzTarPerm modified mode [ 'lib/parser/base/expression.js', 511, 493 ]
+172 silly gunzTarPerm extractEntry lib/parser/base/parser.js
+173 silly gunzTarPerm modified mode [ 'lib/parser/base/parser.js', 511, 493 ]
+174 silly gunzTarPerm extractEntry lib/parser/base/tokenizer.js
+175 silly gunzTarPerm modified mode [ 'lib/parser/base/tokenizer.js', 511, 493 ]
+176 silly gunzTarPerm extractEntry lib/parser/script/index.js
+177 silly gunzTarPerm modified mode [ 'lib/parser/script/index.js', 511, 493 ]
+178 silly gunzTarPerm extractEntry lib/parser/script/tokenizer.js
+179 silly gunzTarPerm modified mode [ 'lib/parser/script/tokenizer.js', 511, 493 ]
+180 silly gunzTarPerm extractEntry lib/parser/script/ast/base.js
+181 silly gunzTarPerm modified mode [ 'lib/parser/script/ast/base.js', 511, 493 ]
+182 silly gunzTarPerm extractEntry lib/parser/script/ast/group.js
+183 silly gunzTarPerm modified mode [ 'lib/parser/script/ast/group.js', 511, 493 ]
+184 silly gunzTarPerm extractEntry lib/parser/script/ast/modifier.js
+185 silly gunzTarPerm modified mode [ 'lib/parser/script/ast/modifier.js', 511, 493 ]
+186 silly gunzTarPerm extractEntry lib/parser/script/ast/object.js
+187 silly gunzTarPerm modified mode [ 'lib/parser/script/ast/object.js', 511, 493 ]
+188 silly gunzTarPerm extractEntry lib/parser/script/ast/get.js
+189 silly gunzTarPerm modified mode [ 'lib/parser/script/ast/get.js', 511, 493 ]
+190 silly gunzTarPerm extractEntry lib/parser/script/ast/param.js
+191 silly gunzTarPerm modified mode [ 'lib/parser/script/ast/param.js', 511, 493 ]
+192 silly gunzTarPerm extractEntry lib/parser/script/ast/reference.js
+193 silly gunzTarPerm modified mode [ 'lib/parser/script/ast/reference.js', 511, 493 ]
+194 silly gunzTarPerm extractEntry lib/parser/script/ast/root.js
+195 silly gunzTarPerm modified mode [ 'lib/parser/script/ast/root.js', 511, 493 ]
+196 silly gunzTarPerm extractEntry lib/parser/script/ast/script.js
+197 silly gunzTarPerm modified mode [ 'lib/parser/script/ast/script.js', 511, 493 ]
+198 silly gunzTarPerm extractEntry lib/parser/script/ast/set.js
+199 silly gunzTarPerm modified mode [ 'lib/parser/script/ast/set.js', 511, 493 ]
+200 silly gunzTarPerm extractEntry lib/parser/script/ast/call.js
+201 silly gunzTarPerm modified mode [ 'lib/parser/script/ast/call.js', 511, 493 ]
+202 silly gunzTarPerm extractEntry lib/parser/script/ast/string.js
+203 silly gunzTarPerm modified mode [ 'lib/parser/script/ast/string.js', 511, 493 ]
+204 silly gunzTarPerm extractEntry lib/parser/script/ast/other.js
+205 silly gunzTarPerm modified mode [ 'lib/parser/script/ast/other.js', 511, 493 ]
+206 silly gunzTarPerm extractEntry lib/parser/utils/index.js
+207 silly gunzTarPerm modified mode [ 'lib/parser/utils/index.js', 511, 493 ]
+208 silly gunzTarPerm extractEntry lib/parser/xml/index.js
+209 silly gunzTarPerm modified mode [ 'lib/parser/xml/index.js', 511, 493 ]
+210 silly gunzTarPerm extractEntry lib/parser/xml/tokenizer.js
+211 silly gunzTarPerm modified mode [ 'lib/parser/xml/tokenizer.js', 511, 493 ]
+212 silly gunzTarPerm extractEntry lib/parser/xml/ast/attribute.js
+213 silly gunzTarPerm modified mode [ 'lib/parser/xml/ast/attribute.js', 511, 493 ]
+214 silly gunzTarPerm extractEntry lib/parser/xml/ast/attributes.js
+215 silly gunzTarPerm modified mode [ 'lib/parser/xml/ast/attributes.js', 511, 493 ]
+216 silly gunzTarPerm extractEntry lib/parser/xml/ast/base.js
+217 silly gunzTarPerm modified mode [ 'lib/parser/xml/ast/base.js', 511, 493 ]
+218 silly gunzTarPerm extractEntry lib/parser/xml/ast/block.js
+219 silly gunzTarPerm modified mode [ 'lib/parser/xml/ast/block.js', 511, 493 ]
+220 silly gunzTarPerm extractEntry lib/parser/xml/ast/childNodes.js
+221 silly gunzTarPerm modified mode [ 'lib/parser/xml/ast/childNodes.js', 511, 493 ]
+222 silly gunzTarPerm extractEntry lib/parser/xml/ast/node.js
+223 silly gunzTarPerm modified mode [ 'lib/parser/xml/ast/node.js', 511, 493 ]
+224 silly gunzTarPerm extractEntry lib/parser/xml/ast/root.js
+225 silly gunzTarPerm modified mode [ 'lib/parser/xml/ast/root.js', 511, 493 ]
+226 silly gunzTarPerm extractEntry lib/parser/xml/ast/string.js
+227 silly gunzTarPerm modified mode [ 'lib/parser/xml/ast/string.js', 511, 493 ]
+228 silly gunzTarPerm extractEntry lib/parser/xml/ast/textBlock.js
+229 silly gunzTarPerm modified mode [ 'lib/parser/xml/ast/textBlock.js', 511, 493 ]
+230 silly gunzTarPerm extractEntry lib/parser/xml/ast/textNode.js
+231 silly gunzTarPerm modified mode [ 'lib/parser/xml/ast/textNode.js', 511, 493 ]
+232 silly gunzTarPerm extractEntry lib/parser/xml/prune/combineTextBlocks.js
+233 silly gunzTarPerm modified mode [ 'lib/parser/xml/prune/combineTextBlocks.js', 511, 493 ]
+234 silly gunzTarPerm extractEntry lib/parser/xml/prune/index.js
+235 silly gunzTarPerm modified mode [ 'lib/parser/xml/prune/index.js', 511, 493 ]
+236 silly gunzTarPerm extractEntry libpeerconnection.log
+237 silly gunzTarPerm extractEntry makefile
+238 silly gunzTarPerm extractEntry test/binding-test.js
+239 silly gunzTarPerm modified mode [ 'test/binding-test.js', 511, 493 ]
+240 silly gunzTarPerm extractEntry test/block-html-test.js
+241 silly gunzTarPerm modified mode [ 'test/block-html-test.js', 511, 493 ]
+242 silly gunzTarPerm extractEntry test/block-value-test.js
+243 silly gunzTarPerm modified mode [ 'test/block-value-test.js', 511, 493 ]
+244 silly gunzTarPerm extractEntry test/dom-event-test.js
+245 silly gunzTarPerm modified mode [ 'test/dom-event-test.js', 511, 493 ]
+246 silly gunzTarPerm extractEntry test/hello-test.js
+247 silly gunzTarPerm modified mode [ 'test/hello-test.js', 511, 493 ]
+248 silly gunzTarPerm extractEntry test/block-conditional-test.js
+249 silly gunzTarPerm modified mode [ 'test/block-conditional-test.js', 511, 493 ]
+250 silly gunzTarPerm extractEntry test/text-test.js
+251 silly gunzTarPerm modified mode [ 'test/text-test.js', 511, 493 ]
+252 silly gunzTarPerm extractEntry test/shim-test.js
+253 silly gunzTarPerm modified mode [ 'test/shim-test.js', 511, 493 ]
+254 silly gunzTarPerm extractEntry test/node-bind-test.js
+255 silly gunzTarPerm modified mode [ 'test/node-bind-test.js', 511, 493 ]
+256 silly gunzTarPerm extractEntry test/templates/hello.js
+257 silly gunzTarPerm modified mode [ 'test/templates/hello.js', 511, 493 ]
+258 silly gunzTarPerm extractEntry test/templates/hello.pc
+259 silly gunzTarPerm modified mode [ 'test/templates/hello.pc', 511, 493 ]
+260 silly gunzTarPerm extractEntry test/old/clip-test.js
+261 silly gunzTarPerm modified mode [ 'test/old/clip-test.js', 511, 493 ]
+262 silly gunzTarPerm extractEntry test/old/dom-test.js
+263 silly gunzTarPerm modified mode [ 'test/old/dom-test.js', 511, 493 ]
+264 silly gunzTarPerm extractEntry test/old/template-test.js
+265 silly gunzTarPerm modified mode [ 'test/old/template-test.js', 511, 493 ]
+266 silly gunzTarPerm extractEntry test/utils/browser.js
+267 silly gunzTarPerm modified mode [ 'test/utils/browser.js', 511, 493 ]
+268 silly gunzTarPerm extractEntry test/utils/index.js
+269 silly gunzTarPerm modified mode [ 'test/utils/index.js', 511, 493 ]
+270 silly gunzTarPerm extractEntry benchmark/index.js
+271 silly gunzTarPerm modified mode [ 'benchmark/index.js', 511, 493 ]
+272 silly gunzTarPerm extractEntry examples/browser/jquery.js
+273 silly gunzTarPerm modified mode [ 'examples/browser/jquery.js', 511, 493 ]
+274 silly gunzTarPerm extractEntry examples/browser/paperclip.js
+275 silly gunzTarPerm modified mode [ 'examples/browser/paperclip.js', 511, 493 ]
+276 silly gunzTarPerm extractEntry examples/browser/hello-world/paper.js
+277 silly gunzTarPerm modified mode [ 'examples/browser/hello-world/paper.js', 511, 493 ]
+278 silly gunzTarPerm extractEntry examples/browser/hello-world/template.js
+279 silly gunzTarPerm modified mode [ 'examples/browser/hello-world/template.js', 511, 493 ]
+280 silly gunzTarPerm extractEntry examples/browser/hello-world/template.pc.js
+281 silly gunzTarPerm modified mode [ 'examples/browser/hello-world/template.pc.js', 511, 493 ]
+282 silly gunzTarPerm extractEntry examples/browser/hello-world/index.html
+283 silly gunzTarPerm modified mode [ 'examples/browser/hello-world/index.html', 511, 493 ]
+284 silly gunzTarPerm extractEntry examples/browser/hello-world/template.pc
+285 silly gunzTarPerm modified mode [ 'examples/browser/hello-world/template.pc', 511, 493 ]
+286 silly gunzTarPerm extractEntry examples/browser/makefile
+287 silly gunzTarPerm modified mode [ 'examples/browser/makefile', 511, 493 ]
+288 silly gunzTarPerm extractEntry examples/browser/tpl/template.js
+289 silly gunzTarPerm modified mode [ 'examples/browser/tpl/template.js', 511, 493 ]
+290 silly gunzTarPerm extractEntry examples/express/hello-world/index.js
+291 silly gunzTarPerm modified mode [ 'examples/express/hello-world/index.js', 511, 493 ]
+292 silly gunzTarPerm extractEntry examples/express/hello-world/public/index.html
+293 silly gunzTarPerm modified mode [ 'examples/express/hello-world/public/index.html', 511, 493 ]
+294 silly gunzTarPerm extractEntry examples/express/hello-world/views/complete.pc
+295 silly gunzTarPerm modified mode [ 'examples/express/hello-world/views/complete.pc', 511, 493 ]
+296 silly gunzTarPerm extractEntry examples/express/hello-world/views/index.pc
+297 silly gunzTarPerm modified mode [ 'examples/express/hello-world/views/index.pc', 511, 493 ]
+298 silly gunzTarPerm extractEntry examples/express/hello-world/views/layout2.pc
+299 silly gunzTarPerm modified mode [ 'examples/express/hello-world/views/layout2.pc', 511, 493 ]
+300 silly gunzTarPerm extractEntry examples/express/hello-world/views/main_layout.pc
+301 silly gunzTarPerm modified mode [ 'examples/express/hello-world/views/main_layout.pc', 511, 493 ]
+302 silly lockFile 24c95ea6-9705-0-12973426468670368-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/package
+303 silly lockFile 24c95ea6-9705-0-12973426468670368-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/package
+304 silly lockFile cf7032c5-9705-0-12973426468670368-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/tmp.tgz
+305 silly lockFile cf7032c5-9705-0-12973426468670368-tmp-tgz tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/tmp.tgz
+306 verbose tar pack [ '/Users/craig/.npm/paperclip/0.3.104/package.tgz',
+306 verbose tar pack   '/var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/package' ]
+307 verbose tarball /Users/craig/.npm/paperclip/0.3.104/package.tgz
+308 verbose folder /var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/package
+309 silly lockFile 24c95ea6-9705-0-12973426468670368-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/package
+310 verbose lock tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/package /Users/craig/.npm/24c95ea6-9705-0-12973426468670368-package.lock
+311 silly lockFile 3443df71-pm-paperclip-0-3-104-package-tgz tar:///Users/craig/.npm/paperclip/0.3.104/package.tgz
+312 verbose lock tar:///Users/craig/.npm/paperclip/0.3.104/package.tgz /Users/craig/.npm/3443df71-pm-paperclip-0-3-104-package-tgz.lock
+313 silly lockFile 24c95ea6-9705-0-12973426468670368-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/package
+314 silly lockFile 24c95ea6-9705-0-12973426468670368-package tar:///var/folders/n1/r96x64mx6jzcbzkbz1ddrw6r0000gn/T/npm-83156-p4cS36TW/1396378999705-0.12973426468670368/package
+315 silly lockFile 3443df71-pm-paperclip-0-3-104-package-tgz tar:///Users/craig/.npm/paperclip/0.3.104/package.tgz
+316 silly lockFile 3443df71-pm-paperclip-0-3-104-package-tgz tar:///Users/craig/.npm/paperclip/0.3.104/package.tgz
+317 silly lockFile ac6a175a-ig-npm-paperclip-0-3-104-package /Users/craig/.npm/paperclip/0.3.104/package
+318 verbose lock /Users/craig/.npm/paperclip/0.3.104/package /Users/craig/.npm/ac6a175a-ig-npm-paperclip-0-3-104-package.lock
+319 silly lockFile ac6a175a-ig-npm-paperclip-0-3-104-package /Users/craig/.npm/paperclip/0.3.104/package
+320 silly lockFile ac6a175a-ig-npm-paperclip-0-3-104-package /Users/craig/.npm/paperclip/0.3.104/package
+321 verbose tar unpack /Users/craig/.npm/paperclip/0.3.104/package.tgz
+322 silly lockFile 0cef01cb-ig-npm-paperclip-0-3-104-package tar:///Users/craig/.npm/paperclip/0.3.104/package
+323 verbose lock tar:///Users/craig/.npm/paperclip/0.3.104/package /Users/craig/.npm/0cef01cb-ig-npm-paperclip-0-3-104-package.lock
+324 silly lockFile 3443df71-pm-paperclip-0-3-104-package-tgz tar:///Users/craig/.npm/paperclip/0.3.104/package.tgz
+325 verbose lock tar:///Users/craig/.npm/paperclip/0.3.104/package.tgz /Users/craig/.npm/3443df71-pm-paperclip-0-3-104-package-tgz.lock
+326 silly gunzTarPerm modes [ '755', '644' ]
+327 silly gunzTarPerm extractEntry package.json
+328 silly gunzTarPerm extractEntry .npmignore
+329 silly gunzTarPerm extractEntry README.md
+330 silly gunzTarPerm extractEntry LICENSE
+331 silly gunzTarPerm extractEntry .browsers.js
+332 silly gunzTarPerm extractEntry karma.conf.js
+333 silly gunzTarPerm extractEntry bin/paperclip
+334 silly gunzTarPerm extractEntry build/paperclip-compiler.js
+335 silly gunzTarPerm extractEntry build/paperclip-compiler2.js
+336 silly gunzTarPerm extractEntry build/paperclip-compiler3.js
+337 silly gunzTarPerm extractEntry build/paperclip.js
+338 silly gunzTarPerm extractEntry build/paperclip.min.js
+339 silly gunzTarPerm extractEntry build/paperclip2.js
+340 silly gunzTarPerm extractEntry docs/brainstorm/template-compiling.md
+341 silly gunzTarPerm extractEntry docs/brainstorm/usage.md
+342 silly gunzTarPerm extractEntry docs/terminology.md
+343 silly gunzTarPerm extractEntry test-web/hello-test.js
+344 silly gunzTarPerm extractEntry test-web/old/clip-test.js
+345 silly gunzTarPerm extractEntry test-web/old/dom-test.js
+346 silly gunzTarPerm extractEntry test-web/old/template-test.js
+347 silly gunzTarPerm extractEntry test-web/templates/hello.js
+348 silly gunzTarPerm extractEntry test-web/templates/hello.pc
+349 silly gunzTarPerm extractEntry inc/jquery.js
+350 silly gunzTarPerm extractEntry .travis.yml
+351 silly gunzTarPerm extractEntry lib/browser.js
+352 silly gunzTarPerm extractEntry lib/index.js
+353 silly gunzTarPerm extractEntry lib/clip/buffer.js
+354 silly gunzTarPerm extractEntry lib/clip/index.js
+355 silly gunzTarPerm extractEntry lib/node/index.js
+356 silly gunzTarPerm extractEntry lib/node/paper/bindings/block/base.js
+357 silly gunzTarPerm extractEntry lib/node/paper/bindings/block/index.js
+358 silly gunzTarPerm extractEntry lib/paper/application.js
+359 silly gunzTarPerm extractEntry lib/paper/binding.js
+360 silly gunzTarPerm extractEntry lib/paper/index.js
+361 silly gunzTarPerm extractEntry lib/paper/modifiers.js
+362 silly gunzTarPerm extractEntry lib/paper/template.js
+363 silly gunzTarPerm extractEntry lib/paper/bindings/binders.js
+364 silly gunzTarPerm extractEntry lib/paper/bindings/collection.js
+365 silly gunzTarPerm extractEntry lib/paper/bindings/index.js
+366 silly gunzTarPerm extractEntry lib/paper/bindings/base/binder.js
+367 silly gunzTarPerm extractEntry lib/paper/bindings/base/binding.js
+368 silly gunzTarPerm extractEntry lib/paper/bindings/base/script.js
+369 silly gunzTarPerm extractEntry lib/paper/bindings/block/base.js
+370 silly gunzTarPerm extractEntry lib/paper/bindings/block/conditional.js
+371 silly gunzTarPerm extractEntry lib/paper/bindings/block/factory.js
+372 silly gunzTarPerm extractEntry lib/paper/bindings/block/html.js
+373 silly gunzTarPerm extractEntry lib/paper/bindings/block/value.js
+374 silly gunzTarPerm extractEntry lib/paper/bindings/node/factory.js
+375 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/index.js
+376 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/base.js
+377 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/css.js
+378 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/delete.js
+379 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/disable.js
+380 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/enable.js
+381 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/change.js
+382 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/event.js
+383 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/focus.js
+384 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/model.js
+385 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/show.js
+386 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/style.js
+387 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/dataBind/handlers/enter.js
+388 silly gunzTarPerm extractEntry lib/paper/bindings/node/attrs/text/index.js
+389 silly gunzTarPerm extractEntry lib/paper/bindings/node/base/index.js
+390 silly gunzTarPerm extractEntry lib/paper/bindings/textBlock/binder.js
+391 silly gunzTarPerm extractEntry lib/paper/bindings/textBlock/binding.js
+392 silly gunzTarPerm extractEntry lib/paper/utils/escapeHTML.js
+393 silly gunzTarPerm extractEntry lib/paper/writers/base.js
+394 silly gunzTarPerm extractEntry lib/paper/writers/block.js
+395 silly gunzTarPerm extractEntry lib/paper/writers/element.js
+396 silly gunzTarPerm extractEntry lib/paper/writers/fragment.js
+397 silly gunzTarPerm extractEntry lib/paper/writers/parse.js
+398 silly gunzTarPerm extractEntry lib/paper/writers/text.js
+399 silly gunzTarPerm extractEntry lib/paper/writers/textBlock.js
+400 silly gunzTarPerm extractEntry lib/parser/formatter.js
+401 silly gunzTarPerm extractEntry lib/parser/index.js
+402 silly gunzTarPerm extractEntry lib/parser/base/expression.js
+403 silly gunzTarPerm extractEntry lib/parser/base/parser.js
+404 silly gunzTarPerm extractEntry lib/parser/base/tokenizer.js
+405 silly gunzTarPerm extractEntry lib/parser/script/index.js
+406 silly gunzTarPerm extractEntry lib/parser/script/tokenizer.js
+407 silly gunzTarPerm extractEntry lib/parser/script/ast/base.js
+408 silly gunzTarPerm extractEntry lib/parser/script/ast/group.js
+409 silly gunzTarPerm extractEntry lib/parser/script/ast/modifier.js
+410 silly gunzTarPerm extractEntry lib/parser/script/ast/object.js
+411 silly gunzTarPerm extractEntry lib/parser/script/ast/get.js
+412 silly gunzTarPerm extractEntry lib/parser/script/ast/param.js
+413 silly gunzTarPerm extractEntry lib/parser/script/ast/reference.js
+414 silly gunzTarPerm extractEntry lib/parser/script/ast/root.js
+415 silly gunzTarPerm extractEntry lib/parser/script/ast/script.js
+416 silly gunzTarPerm extractEntry lib/parser/script/ast/set.js
+417 silly gunzTarPerm extractEntry lib/parser/script/ast/call.js
+418 silly gunzTarPerm extractEntry lib/parser/script/ast/string.js
+419 silly gunzTarPerm extractEntry lib/parser/script/ast/other.js
+420 silly gunzTarPerm extractEntry lib/parser/utils/index.js
+421 silly gunzTarPerm extractEntry lib/parser/xml/index.js
+422 silly gunzTarPerm extractEntry lib/parser/xml/tokenizer.js
+423 silly gunzTarPerm extractEntry lib/parser/xml/ast/attribute.js
+424 silly gunzTarPerm extractEntry lib/parser/xml/ast/attributes.js
+425 silly gunzTarPerm extractEntry lib/parser/xml/ast/base.js
+426 silly gunzTarPerm extractEntry lib/parser/xml/ast/block.js
+427 silly gunzTarPerm extractEntry lib/parser/xml/ast/childNodes.js
+428 silly gunzTarPerm extractEntry lib/parser/xml/ast/node.js
+429 silly gunzTarPerm extractEntry lib/parser/xml/ast/root.js
+430 silly gunzTarPerm extractEntry lib/parser/xml/ast/string.js
+431 silly gunzTarPerm extractEntry lib/parser/xml/ast/textBlock.js
+432 silly gunzTarPerm extractEntry lib/parser/xml/ast/textNode.js
+433 silly gunzTarPerm extractEntry lib/parser/xml/prune/combineTextBlocks.js
+434 silly gunzTarPerm extractEntry lib/parser/xml/prune/index.js
+435 silly gunzTarPerm extractEntry libpeerconnection.log
+436 silly gunzTarPerm extractEntry makefile
+437 silly gunzTarPerm extractEntry benchmark/index.js
+438 silly gunzTarPerm extractEntry test/binding-test.js
+439 silly gunzTarPerm extractEntry test/block-html-test.js
+440 silly gunzTarPerm extractEntry test/block-value-test.js
+441 silly gunzTarPerm extractEntry test/dom-event-test.js
+442 silly gunzTarPerm extractEntry test/hello-test.js
+443 silly gunzTarPerm extractEntry test/block-conditional-test.js
+444 silly gunzTarPerm extractEntry test/text-test.js
+445 silly gunzTarPerm extractEntry test/shim-test.js
+446 silly gunzTarPerm extractEntry test/node-bind-test.js
+447 silly gunzTarPerm extractEntry test/templates/hello.js
+448 silly gunzTarPerm extractEntry test/templates/hello.pc
+449 silly gunzTarPerm extractEntry test/old/clip-test.js
+450 silly gunzTarPerm extractEntry test/old/dom-test.js
+451 silly gunzTarPerm extractEntry test/old/template-test.js
+452 silly gunzTarPerm extractEntry test/utils/browser.js
+453 silly gunzTarPerm extractEntry test/utils/index.js
+454 silly gunzTarPerm extractEntry examples/browser/jquery.js
+455 silly gunzTarPerm extractEntry examples/browser/paperclip.js
+456 silly gunzTarPerm extractEntry examples/browser/hello-world/paper.js
+457 silly gunzTarPerm extractEntry examples/browser/hello-world/template.js
+458 silly gunzTarPerm extractEntry examples/browser/hello-world/template.pc.js
+459 silly gunzTarPerm extractEntry examples/browser/hello-world/index.html
+460 silly gunzTarPerm extractEntry examples/browser/hello-world/template.pc
+461 silly gunzTarPerm extractEntry examples/browser/makefile
+462 silly gunzTarPerm extractEntry examples/browser/tpl/template.js
+463 silly gunzTarPerm extractEntry examples/express/hello-world/index.js
+464 silly gunzTarPerm extractEntry examples/express/hello-world/public/index.html
+465 silly gunzTarPerm extractEntry examples/express/hello-world/views/complete.pc
+466 silly gunzTarPerm extractEntry examples/express/hello-world/views/index.pc
+467 silly gunzTarPerm extractEntry examples/express/hello-world/views/layout2.pc
+468 silly gunzTarPerm extractEntry examples/express/hello-world/views/main_layout.pc
+469 silly lockFile 0cef01cb-ig-npm-paperclip-0-3-104-package tar:///Users/craig/.npm/paperclip/0.3.104/package
+470 silly lockFile 0cef01cb-ig-npm-paperclip-0-3-104-package tar:///Users/craig/.npm/paperclip/0.3.104/package
+471 silly lockFile 3443df71-pm-paperclip-0-3-104-package-tgz tar:///Users/craig/.npm/paperclip/0.3.104/package.tgz
+472 silly lockFile 3443df71-pm-paperclip-0-3-104-package-tgz tar:///Users/craig/.npm/paperclip/0.3.104/package.tgz
+473 verbose chmod /Users/craig/.npm/paperclip/0.3.104/package.tgz 644
+474 verbose chown /Users/craig/.npm/paperclip/0.3.104/package.tgz [ 501, 20 ]
+475 silly lockFile 3a52ce78- .
+476 silly lockFile 3a52ce78- .
+477 silly publish { name: 'paperclip',
+477 silly publish   version: '0.3.104',
+477 silly publish   description: 'controller logic:',
+477 silly publish   main: './lib/index.js',
+477 silly publish   browserify: './lib/browser.js',
+477 silly publish   scripts: { test: 'make test-node' },
+477 silly publish   repository:
+477 silly publish    { type: 'git',
+477 silly publish      url: 'git://github.com/classdojo/paperclip.js.git' },
+477 silly publish   author: '',
+477 silly publish   license: 'MIT',
+477 silly publish   gitHead: '1336ca5b7f1f0c344a291ace63ddf211d5a94acd',
+477 silly publish   readmeFilename: 'README.md',
+477 silly publish   devDependencies:
+477 silly publish    { jsdom: '*',
+477 silly publish      'expect.js': '0.2.x',
+477 silly publish      structr: '~0.2.3',
+477 silly publish      jquery: '~1.8.3',
+477 silly publish      express: '~3.3.4',
+477 silly publish      istanbul: '~0.1.46',
+477 silly publish      coveralls: '~2.5.0',
+477 silly publish      mocha: '~1.15.1',
+477 silly publish      benchmark: '~1.0.0' },
+477 silly publish   bin: { paperclip: './bin/paperclip' },
+477 silly publish   dependencies:
+477 silly publish    { strscanner: '0.0.x',
+477 silly publish      bindable: '0.5.x',
+477 silly publish      dref: '0.0.x',
+477 silly publish      hoist: '0.0.x',
+477 silly publish      async: '0.2.x',
+477 silly publish      'uglify-js': '1.3.x',
+477 silly publish      optimist: '0.4.x',
+477 silly publish      asyngleton: '0.1.x',
+477 silly publish      walkr: '0.0.x',
+477 silly publish      watch_r: '0.0.x',
+477 silly publish      underscore: '1.4.x',
+477 silly publish      'type-component': '0.0.x',
+477 silly publish      nofactor: '0.0.x',
+477 silly publish      loaf: '0.2.x',
+477 silly publish      ent: '~0.1.0',
+477 silly publish      runlater: '0.0.x',
+477 silly publish      protoclass: '0.0.x',
+477 silly publish      platform: '1.0.x',
+477 silly publish      browserify: '~3.30.1',
+477 silly publish      sift: '0.0.12' },
+477 silly publish   readme: '# Paperclip.js [![Alt ci](https://travis-ci.org/classdojo/paperclip.js.png)](https://travis-ci.org/classdojo/paperclip.js)\n\nPaperclip is a fast, data-bindable templating system inspired by [Mustache](https://github.com/janl/mustache.js/), [Angular](http://angularjs.org/), [Derby](http://derbyjs.com/), and [Knockout](http://knockoutjs.com/). It\'s supported on all major browsers: IE8+, Firefox, Chrome, Safari, Opera, as well as Node.js.\n\nPaperclip works by listening to [bindable](https://github.com/classdojo/bindable.js) objects, and updating the template if anything changes. Unlike angular.js, paperclip takes a more explicit approach to updating templates. If you want to change a value in a template manually, you can easily do so by calling `bindable.set(property, value)`. [Here\'s an example](http://jsfiddle.net/JTxdM/79/).\n\n\nPaperclip translates HTML directly to JavaScript. For example, the following `hello.pc` file:\n\n```html\nhello {{name}}!\n```\n\nis translated to:\n\n```javascript\nmodule.exports = function(fragment, block, element, text, textBlock, parser, modifiers) {\n    return fragment([ text("hello "), block({\n        value: {\n            fn: function() {\n                return this.get([ "name" ]);\n            },\n            refs: [ [ "name" ] ]\n        }\n    }, void 0), text("! ") ]);\n};\n```\n\n\nThis means a few things:\n\n- Super fast. [10k list items in ~ 500 MS](http://jsfiddle.net/JTxdM/65/).\n- Works very well on older browsers such as IE8. \n- You can customize paperclip to generate your own sort of markup language. \n- No metamorph tags, or other things that pollute the DOM, and cause strange bugs.\n\n\n### Features\n\n- template update automatically if the data changes\n- write javascript expressions directly inline. Just like Angular.js.\n- [block helpers](#block-helpers)\n- [data-bind attributes](#data-bind-attributes) (similar to knockout.js)\n- [declarative data-binding](#blocks), similar to angular.js\n- node.js support\n- [block modifiers](#modifiers), similar to angular filters\n- [pollyfills](#pollyfills), similar to angular directives\n- [unbound helpers](#unbound-helpers) - tells paperclip not to watch specific references\n\n### Examples\n\n- [hello input](http://jsfiddle.net/JTxdM/67/)\n- [hello world](http://jsfiddle.net/JTxdM/68/)\n- [modifiers](http://jsfiddle.net/JTxdM/69/)\n- [data-binding attributes](http://jsfiddle.net/JTxdM/71/)\n- [inline javascript](http://jsfiddle.net/JTxdM/72/)\n- [animal age calculator](http://jsfiddle.net/JTxdM/73/)\n- [titlecase / lowercase modifiers](http://jsfiddle.net/JTxdM/74/)\n- [if / elseif / else block](http://jsfiddle.net/JTxdM/75/)\n- [html block helper](http://jsfiddle.net/JTxdM/76/)\n- [onEnter event](http://jsfiddle.net/JTxdM/77/)\n- [data-binding css](http://jsfiddle.net/JTxdM/81/)\n- [data-binding styles](http://jsfiddle.net/JTxdM/78/)\n- [unbound helpers](http://jsfiddle.net/JTxdM/90/)\n- [manually updating templates](http://jsfiddle.net/JTxdM/79/)\n- [list benchmark](http://jsfiddle.net/JTxdM/65/) - 10k items\n- [dots benchmark](http://jsfiddle.net/JTxdM/62/)\n\n### Third-party components:\n\n- [paperclip-component](https://github.com/classdojo/paperclip-component) - used with [Mojo.js](https://github.com/classdojo/mojo.js). Allows for views to be instantiated within paperclip templates. This is similar to Ember.js\'s component, and Angular.js\'s directive implementation. \n- [paperclip-placeholder-pollyfill](https://github.com/classdojo/paperclip-placeholder-pollyfill) - placeholder pollyfull for IE users.\n\n### Installation\n\n```bash\nnpm install paperclip -g\n```\n\n### Compiling a script\n\n```bash\npaperclip -i template.pc -o template.pc.js\n```\n\n## Syntax\n\nPaperclip takes on a mustache / handlebars approach with variables, blocks, and pollyfills. Paperclip also allows basic inline javascript, similar to angular.js.\n\n### Blocks\n\nPaperclip support variable blocks, just like Angular.js. [For example](http://jsfiddle.net/JTxdM/80/):\n\n```html\nhello {{ name.first }} {{ name.last }}!\n```\n\nYou can also specify blocks within attributes. [For example](http://jsfiddle.net/JTxdM/71/):\n\n```html\nmy favorite color is <span style="color: {{color}}">{{color}}</span>\n```\n\n\nIf you want to add some sugar, go ahead and [drop-in some javascript](http://jsfiddle.net/JTxdM/72/):\n\n```html\nhello {{ message || "world!" }}!\n```\n\n### Modifiers\n\nModifiers format data in a variable block. A good example of this might be presenting data to the user depending on their locale. For example:\n\ntranslation modifier:\n\n```javascript\npaperclip.modifier("t", function(value) {\n  return i18n.t(value);\n})\n```\n\ntemplate usage:\n\n```html\n{{ "hello.world" | t() }}\n```\n\nModifiers can be chained together. For example, you can send a strong message to your users by writing something like:\n\n```html\n{{ "hello.world" | t() | uppercase() }}!!!\n```\n\nWhich might produce:\n\n```bash\nHELLO WORLD!!!\n```\n\nModifiers also accept parameters. [For example](http://jsfiddle.net/JTxdM/73/):\n\n```javascript\npaperclip.modifier("divide", function(value, num) {\n  return Math.round((value || 0) / num);\n});\n```\n\ntemplate usage:\n\n```html\nA human that is {{age}} years old is like a {{ age | divide(5.6) }} year old dog!\n```\n\n### Unbound Helpers\n\nUnbound helpers tell paperclip not to watch specific references. The basic syntax for this is:\n\n```\n{{ `name` }}\n```\n\nWhere the backticks tell paperclip specifically which refs not to watch. Note that if `name` changes, your template won\'t get updated. [Here\'s an example](http://jsfiddle.net/JTxdM/90/).\n\n\n### Block Helpers\n\n#### {{ html: content }}\n\nSimilar to escaping content in mustache (`{{{content}}}`). [For example](http://jsfiddle.net/JTxdM/76/):\n\n```html\n{{ html: content }}\n```\n\n\n\n#### {{#if: condition }}\n\nConditional block helper. [For example](http://jsfiddle.net/JTxdM/75/):\n\n```\n{{#if: age > 18 }}\n  You\'re legally able to vote in the U.S.\n{{/}}\n```\n\n\n#### Custom Block Helpers\n\nPaperclip also allows you to register your own block helpers. This is similar to custom angular.js directives. \n\nTODO example\n\n### data-bind attributes\n\ndata-bind attributes are borrowed from [knockout.js](http://knockoutjs.com/). This is useful if you want to attach behavior to any DOM element. \n\n#### {{ event: expression }}\n\nExecuted when an event is fired on the DOM element. Here are all the available events:\n\n- `onChange` - called when an element changes\n- `onClick` - called when an element is clicked\n- `onLoad` - called when an element loads - useful for `<img />`\n- `onSubmit` - called on submit - useful for `<form />`\n- `onMouseDown` - called on mouse down\n- `onMouseUp` - called on mouse up\n- `onMouseOver` - called on mouse over\n- `onMouseOut` - called on mouse out\n- `onKeyDown` - called on key down\n- `onKeyUp` - called on key up\n- `onEnter` - called on enter key up\n- `onDepete` - called on delete key up\n\n[Basic example](http://jsfiddle.net/JTxdM/77/):\n\n```html\n<input type="text" data-bind="{{ model: name, onEnter: sayHello() }}"></input>\n```\n\n\n#### {{ show: bool }}\n\nToggles the display mode of a given element. This is similar to the `{{#if: expression }}` conditional helper.\n\n\n#### {{ css: styles }}\n\nSets the css of a given element. [For example](http://jsfiddle.net/JTxdM/81/):\n\n```html\n<strong data-bind="{{ \n  css: {\n      cool    : temp > 0,\n      warm    : temp > 60,\n      hot     : temp > 90\n  } \n}}"> It\'s pretty warm! </strong>\n```\n\n#### {{ style: styles }}\n\nSets the style of a given element. [For example](http://jsfiddle.net/JTxdM/78/): \n\n```\n<span data-bind="{{ \n  style: {\n    color       : color,\n    \'font-size\' : size\n  } \n}}"> Hello World </span>\n```\n\n#### {{ disable: bool }}\n\nToggles the enabled state of an element.\n\n\n#### {{ model: context }}\n\nInput data-binding. [For example](http://jsfiddle.net/JTxdM/67/):\n\n```html\n<input type="text" name="message" data-bind="{{ model: this }}"></input> {{ message }}\n```\n\n#### Custom data-bind helpers\n\nTODO\n\n### Pollyfills\n\nPollyfills are similar to angular directives, but they should only be used to provide support for features not implemented in older browsers. A good example of this is [paperclip-placeholder-pollyfill](https://github.com/classdojo/paperclip-placeholder-pollyfill). If you need to create a custom component, [create as a block helper](#custom-block-helpers).\n\n## API\n\n#### template paperclip.template(sourceOrScriptName)\n\ntranslates the source, or script into a paperclip template. [For example](http://jsfiddle.net/JTxdM/83/).\n\n#### elements template.bind(context)\n\nCreates the DOM elements, and binds the elements to the given context. \n\n#### elements.toFragment()\n\nCasts the elements as a document fragment.\n\n#### elements.unbind()\n\nUnbinds the elements from the given context.\n\n## Node.js Usage\n\nYou can easily run paperclip in node. All you need to do is swap out the DOM factory.\n\n```javascript\nvar paperclip = require("paperclip"),\nnofactor      = require("nofactor"),\nbindable      = require("bindable");\n\nvar template = paperclip.template("<h1>Hello {{name}}</h1>", { nodeFactory: nofactor.string });\n\nvar element = template.bind(new bindable.Object({ name: "Jon" })).render();\n\nconsole.log(renderer.toString());\n```\n\nHere\'s an example: http://runnable.com/UwVueJLcL9ZTAABN/hello-paperclip-for-node-js\n\n\n\n',
+477 silly publish   bugs: { url: 'https://github.com/classdojo/paperclip.js/issues' },
+477 silly publish   homepage: 'https://github.com/classdojo/paperclip.js',
+477 silly publish   _id: 'paperclip@0.3.104',
+477 silly publish   dist: { shasum: '86e5211a1d3b3d9a549033e0f687d569eee9d621' },
+477 silly publish   _from: '.' }
+478 verbose url raw paperclip
+479 verbose url resolving [ 'http://registry.npmjs.org/', './paperclip' ]
+480 verbose url resolved http://registry.npmjs.org/paperclip
+481 info trying registry request attempt 1 at 12:03:20
+482 http PUT http://registry.npmjs.org/paperclip
+483 http 403 http://registry.npmjs.org/paperclip
+484 error publish Failed PUT 403
+485 error Error: forbidden cannot modify pre-existing version: 0.3.104
+485 error old={"name":"paperclip","version":"0.3.104","description":"controller logic:","main":"./lib/index.js","browserify":"./lib/browser.js","scripts":{"test":"make testt"},"repository":{"type":"git","url":"git://github.com/classdojo/paperclip.js.git"},"author":"","license":"MIT","gitHead":"1336ca5b7f1f0c344a291ace63ddf211d5a94acd","devDependencies":{"jsdom":"*","expect.js":"0.2.x","structr":"~0.2.3","jquery":"~1.8.3","express":"~3.3.4","istanbul":"~0.1.46","coveralls":"~2.5.0","mocha":"~1.15.1","benchmark":"~1.0.0"},"bin":{"paperclip":"./bin/paperclip"},"dependencies":{"strscanner":"0.0.x","bindable":"0.5.x","dref":"0.0.x","hoist":"0.0.x","async":"0.2.x","uglify-js":"1.3.x","optimist":"0.4.x","asyngleton":"0.1.x","walkr":"0.0.x","watch_r":"0.0.x","underscore":"1.4.x","type-component":"0.0.x","nofactor":"0.0.x","loaf":"0.2.x","ent":"~0.1.0","runlater":"0.0.x","protoclass":"0.0.x","platform":"1.0.x","browserify":"~3.30.1","sift":"0.0.12"},"bugs":{"url":"https://github.com/classdojo/paperclip.js/issues"},"homepage":"https://github.com/classdojo/paperclip.js","_id":"paperclip@0.3.104","dist":{"shasum":"e291776726d89a4a95e5c4c30b7e8d33dde87daf","tarball":"http://registry.npmjs.org/paperclip/-/paperclip-0.3.104.tgz"},"_from":".","_npmVersion":"1.4.3","_npmUser":{"name":"architectd","email":"craig.j.condon@gmail.com"},"maintainers":[{"name":"architectd","email":"craig.j.condon@gmail.com"}]}
+485 error new={"name":"paperclip","version":"0.3.104","description":"controller logic:","main":"./lib/index.js","browserify":"./lib/browser.js","scripts":{"test":"make test-node"},"repository":{"type":"git","url":"git://github.com/classdojo/paperclip.js.git"},"author":"","license":"MIT","gitHead":"1336ca5b7f1f0c344a291ace63ddf211d5a94acd","readmeFilename":"README.md","devDependencies":{"jsdom":"*","expect.js":"0.2.x","structr":"~0.2.3","jquery":"~1.8.3","express":"~3.3.4","istanbul":"~0.1.46","coveralls":"~2.5.0","mocha":"~1.15.1","benchmark":"~1.0.0"},"bin":{"paperclip":"./bin/paperclip"},"dependencies":{"strscanner":"0.0.x","bindable":"0.5.x","dref":"0.0.x","hoist":"0.0.x","async":"0.2.x","uglify-js":"1.3.x","optimist":"0.4.x","asyngleton":"0.1.x","walkr":"0.0.x","watch_r":"0.0.x","underscore":"1.4.x","type-component":"0.0.x","nofactor":"0.0.x","loaf":"0.2.x","ent":"~0.1.0","runlater":"0.0.x","protoclass":"0.0.x","platform":"1.0.x","browserify":"~3.30.1","sift":"0.0.12"},"readme":"# Paperclip.js [![Alt ci](https://travis-ci.org/classdojo/paperclip.js.png)](https://travis-ci.org/classdojo/paperclip.js)\u000a\u000aPaperclip is a fast, data-bindable templating system inspired by [Mustache](https://github.com/janl/mustache.js/), [Angular](http://angularjs.org/), [Derby](http://derbyjs.com/), and [Knockout](http://knockoutjs.com/). It's supported on all major browsers: IE8+, Firefox, Chrome, Safari, Opera, as well as Node.js.\u000a\u000aPaperclip works by listening to [bindable](https://github.com/classdojo/bindable.js) objects, and updating the template if anything changes. Unlike angular.js, paperclip takes a more explicit approach to updating templates. If you want to change a value in a template manually, you can easily do so by calling `bindable.set(property, value)`. [Here's an example](http://jsfiddle.net/JTxdM/79/).\u000a\u000a\u000aPaperclip translates HTML directly to JavaScript. For example, the following `hello.pc` file:\u000a\u000a```html\u000ahello {{name}}!\u000a```\u000a\u000ais translated to:\u000a\u000a```javascript\u000amodule.exports = function(fragment, block, element, text, textBlock, parser, modifiers) {\u000a    return fragment([ text(\"hello \"), block({\u000a        value: {\u000a            fn: function() {\u000a                return this.get([ \"name\" ]);\u000a            },\u000a            refs: [ [ \"name\" ] ]\u000a        }\u000a    }, void 0), text(\"! \") ]);\u000a};\u000a```\u000a\u000a\u000aThis means a few things:\u000a\u000a- Super fast. [10k list items in ~ 500 MS](http://jsfiddle.net/JTxdM/65/).\u000a- Works very well on older browsers such as IE8. \u000a- You can customize paperclip to generate your own sort of markup language. \u000a- No metamorph tags, or other things that pollute the DOM, and cause strange bugs.\u000a\u000a\u000a### Features\u000a\u000a- template update automatically if the data changes\u000a- write javascript expressions directly inline. Just like Angular.js.\u000a- [block helpers](#block-helpers)\u000a- [data-bind attributes](#data-bind-attributes) (similar to knockout.js)\u000a- [declarative data-binding](#blocks), similar to angular.js\u000a- node.js support\u000a- [block modifiers](#modifiers), similar to angular filters\u000a- [pollyfills](#pollyfills), similar to angular directives\u000a- [unbound helpers](#unbound-helpers) - tells paperclip not to watch specific references\u000a\u000a### Examples\u000a\u000a- [hello input](http://jsfiddle.net/JTxdM/67/)\u000a- [hello world](http://jsfiddle.net/JTxdM/68/)\u000a- [modifiers](http://jsfiddle.net/JTxdM/69/)\u000a- [data-binding attributes](http://jsfiddle.net/JTxdM/71/)\u000a- [inline javascript](http://jsfiddle.net/JTxdM/72/)\u000a- [animal age calculator](http://jsfiddle.net/JTxdM/73/)\u000a- [titlecase / lowercase modifiers](http://jsfiddle.net/JTxdM/74/)\u000a- [if / elseif / else block](http://jsfiddle.net/JTxdM/75/)\u000a- [html block helper](http://jsfiddle.net/JTxdM/76/)\u000a- [onEnter event](http://jsfiddle.net/JTxdM/77/)\u000a- [data-binding css](http://jsfiddle.net/JTxdM/81/)\u000a- [data-binding styles](http://jsfiddle.net/JTxdM/78/)\u000a- [unbound helpers](http://jsfiddle.net/JTxdM/90/)\u000a- [manually updating templates](http://jsfiddle.net/JTxdM/79/)\u000a- [list benchmark](http://jsfiddle.net/JTxdM/65/) - 10k items\u000a- [dots benchmark](http://jsfiddle.net/JTxdM/62/)\u000a\u000a### Third-party components:\u000a\u000a- [paperclip-component](https://github.com/classdojo/paperclip-component) - used with [Mojo.js](https://github.com/classdojo/mojo.js). Allows for views to be instantiated within paperclip templates. This is similar to Ember.js's component, and Angular.js's directive implementation. \u000a- [paperclip-placeholder-pollyfill](https://github.com/classdojo/paperclip-placeholder-pollyfill) - placeholder pollyfull for IE users.\u000a\u000a### Installation\u000a\u000a```bash\u000anpm install paperclip -g\u000a```\u000a\u000a### Compiling a script\u000a\u000a```bash\u000apaperclip -i template.pc -o template.pc.js\u000a```\u000a\u000a## Syntax\u000a\u000aPaperclip takes on a mustache / handlebars approach with variables, blocks, and pollyfills. Paperclip also allows basic inline javascript, similar to angular.js.\u000a\u000a### Blocks\u000a\u000aPaperclip support variable blocks, just like Angular.js. [For example](http://jsfiddle.net/JTxdM/80/):\u000a\u000a```html\u000ahello {{ name.first }} {{ name.last }}!\u000a```\u000a\u000aYou can also specify blocks within attributes. [For example](http://jsfiddle.net/JTxdM/71/):\u000a\u000a```html\u000amy favorite color is <span style=\"color: {{color}}\">{{color}}</span>\u000a```\u000a\u000a\u000aIf you want to add some sugar, go ahead and [drop-in some javascript](http://jsfiddle.net/JTxdM/72/):\u000a\u000a```html\u000ahello {{ message || \"world!\" }}!\u000a```\u000a\u000a### Modifiers\u000a\u000aModifiers format data in a variable block. A good example of this might be presenting data to the user depending on their locale. For example:\u000a\u000atranslation modifier:\u000a\u000a```javascript\u000apaperclip.modifier(\"t\", function(value) {\u000a  return i18n.t(value);\u000a})\u000a```\u000a\u000atemplate usage:\u000a\u000a```html\u000a{{ \"hello.world\" | t() }}\u000a```\u000a\u000aModifiers can be chained together. For example, you can send a strong message to your users by writing something like:\u000a\u000a```html\u000a{{ \"hello.world\" | t() | uppercase() }}!!!\u000a```\u000a\u000aWhich might produce:\u000a\u000a```bash\u000aHELLO WORLD!!!\u000a```\u000a\u000aModifiers also accept parameters. [For example](http://jsfiddle.net/JTxdM/73/):\u000a\u000a```javascript\u000apaperclip.modifier(\"divide\", function(value, num) {\u000a  return Math.round((value || 0) / num);\u000a});\u000a```\u000a\u000atemplate usage:\u000a\u000a```html\u000aA human that is {{age}} years old is like a {{ age | divide(5.6) }} year old dog!\u000a```\u000a\u000a### Unbound Helpers\u000a\u000aUnbound helpers tell paperclip not to watch specific references. The basic syntax for this is:\u000a\u000a```\u000a{{ `name` }}\u000a```\u000a\u000aWhere the backticks tell paperclip specifically which refs not to watch. Note that if `name` changes, your template won't get updated. [Here's an example](http://jsfiddle.net/JTxdM/90/).\u000a\u000a\u000a### Block Helpers\u000a\u000a#### {{ html: content }}\u000a\u000aSimilar to escaping content in mustache (`{{{content}}}`). [For example](http://jsfiddle.net/JTxdM/76/):\u000a\u000a```html\u000a{{ html: content }}\u000a```\u000a\u000a\u000a\u000a#### {{#if: condition }}\u000a\u000aConditional block helper. [For example](http://jsfiddle.net/JTxdM/75/):\u000a\u000a```\u000a{{#if: age > 18 }}\u000a  You're legally able to vote in the U.S.\u000a{{/}}\u000a```\u000a\u000a\u000a#### Custom Block Helpers\u000a\u000aPaperclip also allows you to register your own block helpers. This is similar to custom angular.js directives. \u000a\u000aTODO example\u000a\u000a### data-bind attributes\u000a\u000adata-bind attributes are borrowed from [knockout.js](http://knockoutjs.com/). This is useful if you want to attach behavior to any DOM element. \u000a\u000a#### {{ event: expression }}\u000a\u000aExecuted when an event is fired on the DOM element. Here are all the available events:\u000a\u000a- `onChange` - called when an element changes\u000a- `onClick` - called when an element is clicked\u000a- `onLoad` - called when an element loads - useful for `<img />`\u000a- `onSubmit` - called on submit - useful for `<form />`\u000a- `onMouseDown` - called on mouse down\u000a- `onMouseUp` - called on mouse up\u000a- `onMouseOver` - called on mouse over\u000a- `onMouseOut` - called on mouse out\u000a- `onKeyDown` - called on key down\u000a- `onKeyUp` - called on key up\u000a- `onEnter` - called on enter key up\u000a- `onDepete` - called on delete key up\u000a\u000a[Basic example](http://jsfiddle.net/JTxdM/77/):\u000a\u000a```html\u000a<input type=\"text\" data-bind=\"{{ model: name, onEnter: sayHello() }}\"></input>\u000a```\u000a\u000a\u000a#### {{ show: bool }}\u000a\u000aToggles the display mode of a given element. This is similar to the `{{#if: expression }}` conditional helper.\u000a\u000a\u000a#### {{ css: styles }}\u000a\u000aSets the css of a given element. [For example](http://jsfiddle.net/JTxdM/81/):\u000a\u000a```html\u000a<strong data-bind=\"{{ \u000a  css: {\u000a      cool    : temp > 0,\u000a      warm    : temp > 60,\u000a      hot     : temp > 90\u000a  } \u000a}}\"> It's pretty warm! </strong>\u000a```\u000a\u000a#### {{ style: styles }}\u000a\u000aSets the style of a given element. [For example](http://jsfiddle.net/JTxdM/78/): \u000a\u000a```\u000a<span data-bind=\"{{ \u000a  style: {\u000a    color       : color,\u000a    'font-size' : size\u000a  } \u000a}}\"> Hello World </span>\u000a```\u000a\u000a#### {{ disable: bool }}\u000a\u000aToggles the enabled state of an element.\u000a\u000a\u000a#### {{ model: context }}\u000a\u000aInput data-binding. [For example](http://jsfiddle.net/JTxdM/67/):\u000a\u000a```html\u000a<input type=\"text\" name=\"message\" data-bind=\"{{ model: this }}\"></input> {{ message }}\u000a```\u000a\u000a#### Custom data-bind helpers\u000a\u000aTODO\u000a\u000a### Pollyfills\u000a\u000aPollyfills are similar to angular directives, but they should only be used to provide support for features not implemented in older browsers. A good example of this is [paperclip-placeholder-pollyfill](https://github.com/classdojo/paperclip-placeholder-pollyfill). If you need to create a custom component, [create as a block helper](#custom-block-helpers).\u000a\u000a## API\u000a\u000a#### template paperclip.template(sourceOrScriptName)\u000a\u000atranslates the source, or script into a paperclip template. [For example](http://jsfiddle.net/JTxdM/83/).\u000a\u000a#### elements template.bind(context)\u000a\u000aCreates the DOM elements, and binds the elements to the given context. \u000a\u000a#### elements.toFragment()\u000a\u000aCasts the elements as a document fragment.\u000a\u000a#### elements.unbind()\u000a\u000aUnbinds the elements from the given context.\u000a\u000a## Node.js Usage\u000a\u000aYou can easily run paperclip in node. All you need to do is swap out the DOM factory.\u000a\u000a```javascript\u000avar paperclip = require(\"paperclip\"),\u000anofactor      = require(\"nofactor\"),\u000abindable      = require(\"bindable\");\u000a\u000avar template = paperclip.template(\"<h1>Hello {{name}}</h1>\", { nodeFactory: nofactor.string });\u000a\u000avar element = template.bind(new bindable.Object({ name: \"Jon\" })).render();\u000a\u000aconsole.log(renderer.toString());\u000a```\u000a\u000aHere's an example: http://runnable.com/UwVueJLcL9ZTAABN/hello-paperclip-for-node-js\u000a\u000a\u000a\u000a","bugs":{"url":"https://github.com/classdojo/paperclip.js/issues"},"homepage":"https://github.com/classdojo/paperclip.js","_id":"paperclip@0.3.104","dist":{"shasum":"86e5211a1d3b3d9a549033e0f687d569eee9d621","tarball":"http://registry.npmjs.org/paperclip/-/paperclip-0.3.104.tgz"},"_from":".","_npmVersion":"1.4.3","_npmUser":{"name":"architectd","email":"craig.j.condon@gmail.com"},"maintainers":[{"name":"architectd","email":"craig.j.condon@gmail.com"}]}: paperclip
+485 error     at RegClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:237:14)
+485 error     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:123:22)
+485 error     at Request.EventEmitter.emit (events.js:98:17)
+485 error     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:893:14)
+485 error     at Request.EventEmitter.emit (events.js:117:20)
+485 error     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:844:12)
+485 error     at IncomingMessage.EventEmitter.emit (events.js:117:20)
+485 error     at _stream_readable.js:920:16
+485 error     at process._tickCallback (node.js:415:13)
+486 error If you need help, you may report this *entire* log,
+486 error including the npm and node versions, at:
+486 error     <http://github.com/npm/npm/issues>
+487 error System Darwin 13.1.0
+488 error command "node" "/usr/local/bin/npm" "publish"
+489 error cwd /Users/craig/Developer/Public/paperclip.js
+490 error node -v v0.10.26
+491 error npm -v 1.4.3
+492 verbose exit [ 1, true ]
