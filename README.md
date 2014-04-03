@@ -52,6 +52,7 @@ This means a few things:
 - [hello input](http://jsfiddle.net/JTxdM/67/)
 - [hello world](http://jsfiddle.net/JTxdM/68/)
 - [modifiers](http://jsfiddle.net/JTxdM/69/)
+- [simple calculator](http://jsfiddle.net/JTxdM/98/)
 - [data-binding attributes](http://jsfiddle.net/JTxdM/71/)
 - [inline javascript](http://jsfiddle.net/JTxdM/72/)
 - [animal age calculator](http://jsfiddle.net/JTxdM/73/)
