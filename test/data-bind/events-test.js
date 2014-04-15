@@ -8,7 +8,6 @@ describe("data-bind events#", function () {
 
   var app = new pc.Application({ nodeFactory: nofactor.dom });
 
-
   [
     "click", 
     "load", 
@@ -61,6 +60,9 @@ describe("data-bind events#", function () {
     var e = $.Event("keydown");
     e.keyCode = 13;
     $(t.node).trigger(e);
+    
+    // shouldn't trigger
+    $(t.node).trigger($.Event("keydown"));
 
     t.dispose();
   });
@@ -80,6 +82,11 @@ describe("data-bind events#", function () {
     var e = $.Event("keydown");
     e.keyCode = 8;
     $(t.node).trigger(e);
+
+    // shouldn't trigger
+    $(t.node).trigger($.Event("keydown"));
   });
+
+
 
 });

@@ -19,6 +19,7 @@ describe("attr#", function () {
     expect(t.toString()).to.be("<div></div>");
     c.set("a", "b");
     expect(t.toString()).to.be("<div class=\"b\"></div>");
+    t.dispose();
   });
 
   
