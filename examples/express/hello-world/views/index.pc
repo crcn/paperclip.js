@@ -1,6 +1,0 @@
-{{#layout: "main_layout.pc" }}
-  hello {{name}}!
-  {{#if:!last}}
-  no last name given
-  {{/}}
-{{/}}

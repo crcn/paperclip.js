@@ -119,7 +119,7 @@ protoclass(BaseTokenizer, {
 
   peekNext: function () {
     var c = this.current, cc = this.currentCode;
-    next = this.next();
+    var next = this.next();
     this.putBack();
     this.current = c;
     this.currentCode = cc;

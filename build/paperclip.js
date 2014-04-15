@@ -144,7 +144,7 @@ function ClipScript (script, name, clip) {
   this.clip      = clip;
   this.application = clip.application;
   this._bindings = [];
-  this.refs      = this.script.refs || [];
+  this.refs      = this.script.refs;
 }
 
 
@@ -161,15 +161,13 @@ protoclass(ClipScript, {
     }
 
     this._bindings = [];
-    this.__context = undefined;
+    // this.__context = undefined;
   },
 
   /**
    */
 
   update: function () {
-
-    if (this._locked) return;
 
     // remove all the bindings, and re-initialize. Note that
     // we're optimizing for initialization, not change, since the
@@ -227,6 +225,8 @@ protoclass(ClipScript, {
 
     var fn;
 
+    if (!ctx) return;
+
     if (ctx.__isBindable) {
       fn = ctx.get(key);
       ctx = ctx.context();
@@ -242,15 +242,6 @@ protoclass(ClipScript, {
 
   watch: function () {
     this.__watch = true;
-    return this;
-  },
-
-  /**
-   */
-
-  unwatch: function () {
-    this.__watch = false;
-    this.dispose();
     return this;
   },
 
@@ -288,6 +279,8 @@ protoclass(ClipScript, {
         self._bindings.push(bindableBinding = self._watchBindable(value, oldValue));
       }
 
+      // check if _locked is set - might happen when assigning
+      // a value.
       if (!locked && !self._locked) {
         self.dispose();
         self.application.animate(self);
@@ -304,7 +297,6 @@ protoclass(ClipScript, {
     var onChange, self = this;
 
     value.on("change", onChange = function () {
-      if (!self.__watch) return;
       self._debounceUpdate();
     });
 
@@ -319,9 +311,12 @@ protoclass(ClipScript, {
    */
 
   _debounceUpdate: function () {
+
+    // running in node? update immediately
     if (!process.browser) {
       return this.update();
     }
+
     if(this._debounceTimeout) clearTimeout(this._debounceTimeout);
     var self = this;
     this._debounceTimeout = setTimeout(function () {
@@ -348,15 +343,6 @@ protoclass(ClipScripts, {
   watch: function () {
     for(var key in this._scripts) {
       this._scripts[key].watch();
-    }
-  },
-
-  /**
-   */
-
-  unwatch: function () {
-    for(var key in this._scripts) {
-      this._scripts[key].unwatch();
     }
   },
 
@@ -412,12 +398,8 @@ protoclass(ClipScripts, {
 function Clip (options) {
   BindableObject.call(this);
 
-  if (options.data) {
-    this.reset(options.data, false);
-  }
-
   this.application = options.application;
-  this.scripts = new ClipScripts(this, options.scripts || options.script);
+  this.scripts     = new ClipScripts(this, options.scripts || options.script);
 
   if (options.watch !== false) {
     this.watch();
@@ -441,14 +423,6 @@ protoclass(BindableObject, Clip, {
 
   watch: function () {
     this.scripts.watch();
-    return this;
-  },
-
-  /**
-   */
-
-  unwatch: function () {
-    this.scripts.unwatch();
     return this;
   },
 
@@ -507,8 +481,9 @@ module.exports = BindableReference;
 var protoclass = require("protoclass"),
 nofactor       = require("nofactor");
 
-function PaperclipApplication () {
-  this.nodeFactory = nofactor["default"];
+function PaperclipApplication (options) {
+  if (!options) options = {};
+  this.nodeFactory = options.nodeFactory || nofactor["default"];
   this._animationQueue = [];
 }
 
@@ -851,7 +826,7 @@ BaseScriptBinding.extend(BaseBlockBinding, {
 
   unbind: function () {
     BaseScriptBinding.prototype.unbind.call(this);
-    return this.clip.unwatch();
+    return this.clip.dispose();
   },
 
   /**
@@ -1188,7 +1163,6 @@ EventDataBinding.extend(ChangeAttrBinding, {
 });
 
 module.exports = ChangeAttrBinding;
-
 },{"./event":25,"underscore":82}],20:[function(require,module,exports){
 var BaseDataBinding = require("./base");
 
@@ -1334,8 +1308,10 @@ BaseDataBinding.extend(EventDataBinding, {
       event = event.substr(2);
     }
 
+
     this._updateScript(this.clip.script("propagateEvent"));
     this._updateScript(this.clip.script("preventDefault"));
+
 
     if (~["click", "mouseup", "mousedown", "submit"].indexOf(name)) {
       this.preventDefault = true;
@@ -1347,7 +1323,7 @@ BaseDataBinding.extend(EventDataBinding, {
 
     this._setDefaultProperties(this._pge);
     this._setDefaultProperties(this._pde);
-
+    
     (this.$node = $(this.node)).bind(this._event = event, this._onEvent);
   },
   unbind: function () {
@@ -1366,6 +1342,7 @@ BaseDataBinding.extend(EventDataBinding, {
     }
   },
   _onEvent: function (event) {
+
 
     if (this.clip.get("propagateEvent") !== true && this.clip.get(this._pge) !== true) {
       event.stopPropagation();
@@ -1387,7 +1364,6 @@ BaseDataBinding.extend(EventDataBinding, {
 
 module.exports = EventDataBinding;
 },{"./base":18,"underscore":82}],26:[function(require,module,exports){
-(function (process){
 var protoclass = require("protoclass"),
 BaseBinding = require("./base");
 
@@ -1401,21 +1377,20 @@ protoclass(BaseBinding, FocusAttrBinding, {
    */
 
   _onChange: function (value) {
-    if (!value || !process.browser) return;
+    if (typeof $ === "undefined" || !value) return;
     $(this.node).focus();
+    $(this.node).trigger("focusin");
   }
 });
 
 module.exports = FocusAttrBinding;
-}).call(this,require("/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js"))
-},{"./base":18,"/Users/craig/Developer/Public/paperclip.js/node_modules/browserify/node_modules/insert-module-globals/node_modules/process/browser.js":55,"protoclass":79}],27:[function(require,module,exports){
+},{"./base":18,"protoclass":79}],27:[function(require,module,exports){
 (function (process){
 var _             = require("underscore"),
 ChangeAttrBinding = require("./change"),
 BaseBinding       = require("./base"),
 type              = require("type-component"),
 dref              = require("dref");
-
 
 function ModelAttrBinding () {
   this._elementValue = _.bind(this._elementValue, this);
@@ -1425,13 +1400,12 @@ function ModelAttrBinding () {
   ModelAttrBinding.__super__.constructor.apply(this, arguments);
 }
 
-
 BaseBinding.extend(ModelAttrBinding, {
   bind: function () {
     var self = this;
 
 
-    if (/^(text|password)$/.test(this.node.getAttribute("type"))) {
+    if (/^(text|password|email)$/.test(this.node.getAttribute("type"))) {
       this._autocompleteCheckInterval = setInterval(function () {
         self._onElementChange();
       }, 500);
@@ -1458,6 +1432,9 @@ BaseBinding.extend(ModelAttrBinding, {
       refs      = self.script.refs,
       model     = self.clip.get("model");
 
+      if (value) {
+        clearInterval(self._autocompleteCheckInterval);
+      }
 
       if (self.clip.get("bothWays") !== false) {
         ref = name || (refs.length ? refs[0] : undefined);
@@ -1674,6 +1651,8 @@ var dataBindingClasses = {
   onMouseUp    : require("./handlers/event"),
   onMouseOver  : require("./handlers/event"),
   onMouseOut   : require("./handlers/event"),
+  onFocusIn    : require("./handlers/event"),
+  onFocusOut   : require("./handlers/event"),
   onKeyDown    : require("./handlers/event"),
   onKeyUp      : require("./handlers/event"),
   onEnter      : require("./handlers/enter"),
@@ -2008,12 +1987,13 @@ module.exports = TextBlockBinding;
 
 
 },{"../../../clip/buffer":2,"../base/binding":8,"protoclass":79,"underscore":82}],36:[function(require,module,exports){
-var Clip  = require("../clip"),
-template  = require("./template"),
-nofactor  = require("nofactor"),
-modifiers = require("./modifiers"),
-bindings  = require("./bindings"),
-bindable  = require("bindable");
+var Clip    = require("../clip"),
+template    = require("./template"),
+nofactor    = require("nofactor"),
+modifiers   = require("./modifiers"),
+bindings    = require("./bindings"),
+bindable    = require("bindable"),
+Application = require("./application");
 
 module.exports = {
 
@@ -2079,6 +2059,11 @@ module.exports = {
 
   attrDataBinding: bindings.nodeBindingFactory.dataBind.register,
 
+  /**
+   */
+
+  Application: Application,
+
   /*
    */
   use: function(fn) {
@@ -2086,7 +2071,7 @@ module.exports = {
   }
 };
 
-},{"../clip":3,"./bindings":17,"./modifiers":37,"./template":38,"bindable":48,"nofactor":61}],37:[function(require,module,exports){
+},{"../clip":3,"./application":5,"./bindings":17,"./modifiers":37,"./template":38,"bindable":48,"nofactor":61}],37:[function(require,module,exports){
 module.exports = {
   uppercase: function (value) {
     return String(value).toUpperCase();
@@ -2124,10 +2109,10 @@ PaperBinding      = require("./binding");
 
 
 function Template (paper, application, ops) {
-  this.paper         = paper;
-  this.application   = application;
-  this.nodeFactory   = application.nodeFactory;
-  this.binders       = new BinderCollection();
+  this.paper           = paper;
+  this.application     = application;
+  this.nodeFactory     = application.nodeFactory;
+  this.binders         = new BinderCollection();
   this.useTemplateNode = ops.useTemplateNode;
 }
 
