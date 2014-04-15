@@ -61,6 +61,8 @@ describe("data-bind events#", function () {
     var e = $.Event("keydown");
     e.keyCode = 13;
     $(t.node).trigger(e);
+
+    t.dispose();
   });
 
   it("can capture an onDelete event", function (next) {
