@@ -298,6 +298,27 @@ describe("script#", function () {
       expect(t.toString()).to.be("b c");
     });
 
+    it("properly unwatches a bindable object if se to undefined", function () {
+
+      var b = new bindable.Object({
+        a: "a"
+      });
+
+      var context = new bindable.Object({
+        b: b
+      });
+
+      var t = pc.template("{{b|json()}}").bind(context);
+      expect(t.bindings.script._bindings.length).to.be(2);
+      expect(t.toString()).to.be("{&quote;a&quote;:&quote;a&quote;}");
+      context.set("b", undefined);
+      expect(t.bindings.script._bindings.length).to.be(1);
+      expect(t.toString()).to.be("");
+      context.set("b", b);
+      expect(t.bindings.script._bindings.length).to.be(2);
+      expect(t.toString()).to.be("{&quote;a&quote;:&quote;a&quote;}");
+    });
+
     it("can be nested", function () {
       pc.modifier("concat", function (name, value) {
         return name + value;
@@ -357,6 +378,7 @@ describe("script#", function () {
       expect(t.render().toString()).to.be("a");
       expect(t.bindings.script.refs.length).to.be(1);
       expect(t.bindings.script.value.__isBindableReference).to.be(true);
+      expect(t.bindings.script.value.value()).to.be("a");
       t.bindings.script.value.value("b");
       expect(t.render().toString()).to.be("b");
     });
