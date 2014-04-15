@@ -4,11 +4,11 @@ browser:
 	./node_modules/.bin/browserify ./lib/parser/index.js -o ./build/paperclip-compiler.js
 
 test-node:
-	mocha 
+	mocha --recursive --ignore-leaks --timeout 1000
 
 test-cov:
 	./node_modules/.bin/istanbul cover \
-	./node_modules/.bin/_mocha ./test/**-test.js --timeout 100
+	./node_modules/.bin/_mocha ./test/*/**-test.js --ignore-leaks --timeout 100
 
 test-coveralls:
 	./node_modules/.bin/istanbul cover \

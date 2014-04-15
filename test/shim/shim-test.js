@@ -1,11 +1,9 @@
-var pc = require(".."),
+var pc = require("../.."),
 structr = require("structr"),
-expect = require("expect.js"),
-utils = require("./utils");
+expect = require("expect.js");
 
-describe("shim", function() {
+describe("shim#", function() {
 
-  var firefox = utils.browser.mozilla;
 
   var PlaceholderShim = structr(pc.BaseNodeBinding, {
     type: "attr",
@@ -37,13 +35,7 @@ describe("shim", function() {
   it("can be added as an attribute", function() {
     pc.nodeBinding("placeholder", PlaceholderShim);
     var v = pc.template("<input placeholder=\"Username:\"></input>").bind();
-
-    var tests = {
-      a: firefox ? '<input data-shimplaceholder="true" placeholder="Username:"/>'
-                 : '<input placeholder="Username:" data-shimplaceholder="true"/>'
-    }
-
-    expect(String(v)).to.contain(tests.a);
+    expect(String(v)).to.contain("<input placeholder=\"Username:\" data-shimplaceholder=\"true\"/>");
   });
 
   it("can ignore certain types of nodes", function() {
