@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "0.3.109",
+  "version": "0.3.108",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "browserify": "./lib/browser.js",
@@ -16,7 +16,7 @@
   "gitHead": "1336ca5b7f1f0c344a291ace63ddf211d5a94acd",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "jsdom": "^0.10.5",
+    "jsdom": "0.10.5",
     "expect.js": "0.2.x",
     "structr": "~0.2.3",
     "jquery": "~1.8.3",
