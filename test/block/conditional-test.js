@@ -109,4 +109,28 @@ describe("conditional#", function () {
     c.set("b", true);
     expect(t.toString()).to.be("hello bb");
   });
+
+
+  it("can be re-used after being disposed", function () {
+
+    var c = new bindable.Object({
+      running: true,
+      show: true
+    });
+
+    var t = pc.template(
+      "{{#if:running}}" +
+        "yes" +
+      "{{/else}}" +
+        "no" +
+      "{{/}}"
+    ).bind(c);
+
+    expect(t.toString()).to.be("yes");
+
+    t.dispose();
+    
+    expect(t.bind(c).toString()).to.be("yes");
+  })
 });
+
