@@ -198,6 +198,10 @@ Conditional block helper. [For example](http://jsfiddle.net/JTxdM/75/):
 ```
 {{#if: age > 18 }}
   You're legally able to vote in the U.S.
+{{/elseif: anotherCondition }}
+  another condition
+{{/else}}
+  final condition
 {{/}}
 ```
 
