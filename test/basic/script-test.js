@@ -331,16 +331,17 @@ describe("script#", function () {
 
   describe("binding operators", function () {
 
-    it("can ignore a reference with ticks", function () {
+    it("can ignore a reference with ~", function () {
       var c = new bindable.Object({
         a: "a"
-      }), t = pc.template("{{=a}}").bind(c);
+      }), t = pc.template("{{~a}}").bind(c);
       expect(t.render().toString()).to.be("a");
       c.set("a", "b");
       expect(t.render().toString()).to.be("a");
     });
 
-    it("can ignore a reference with =", function () {
+    it("can ignore a reference with ticks", function () {
+
       var c = new bindable.Object({
         a: "a"
       }), t = pc.template("{{`a`}}").bind(c);
@@ -349,10 +350,10 @@ describe("script#", function () {
       expect(t.render().toString()).to.be("a");
     });
 
-    it("<= can bind a reference, but not cast it as a bindable ref", function () {
+    it("<~ can bind a reference, but not cast it as a bindable ref", function () {
       var c = new bindable.Object({
         a: "a"
-      }), t = pc.template("{{<=a}}").bind(c);
+      }), t = pc.template("{{<~a}}").bind(c);
       expect(t.render().toString()).to.be("a");
       c.set("a", "b");
       expect(t.render().toString()).to.be("b");
@@ -360,10 +361,10 @@ describe("script#", function () {
       expect(t.bindings.script.value).to.be("b");
     });
 
-    it("drops => refs from being watched, but casts them s a bindable ref", function () {
+    it("drops ~> refs from being watched, but casts them s a bindable ref", function () {
       var c = new bindable.Object({
         a: "a"
-      }), t = pc.template("{{=>a}}").bind(c);
+      }), t = pc.template("{{~>a}}").bind(c);
       expect(t.render().toString()).to.be("a");
       expect(t.bindings.script.refs.length).to.be(0);
       expect(t.bindings.script.value.__isBindableReference).to.be(true);
@@ -371,10 +372,10 @@ describe("script#", function () {
       expect(t.render().toString()).to.be("a");
     });
 
-    it("allows for references with <=> to be bound both ways", function () {
+    it("allows for references with <~> to be bound both ways", function () {
       var c = new bindable.Object({
         a: "a"
-      }), t = pc.template("{{<=>a}}").bind(c);
+      }), t = pc.template("{{<~>a}}").bind(c);
       expect(t.render().toString()).to.be("a");
       expect(t.bindings.script.refs.length).to.be(1);
       expect(t.bindings.script.value.__isBindableReference).to.be(true);

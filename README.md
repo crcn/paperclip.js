@@ -159,10 +159,10 @@ Paperclip comes with various binding operators that give you full control over h
 specify whether to bind one way, two ways, or not at all. Here's the basic syntax:
 
 ```html
-<input data-bind="{{ model: <=>fullName }}" /> <!-- two-way data-binding against input -->
-<input data-bind="{{ model: =>fullName }}" /> <!-- bind value once, and bind input value to fullName -->
-<input data-bind="{{ model: <=fullName }}" /> <!-- bind to input once -->
-{{ =fullName }} <!-- unbound helper - get fullName value, but don't watch for changes -->
+<input data-bind="{{ model: <~>fullName }}" /> <!-- two-way data-binding against input -->
+<input data-bind="{{ model: ~>fullName }}" /> <!-- bind value once, and bind input value to fullName -->
+<input data-bind="{{ model: <~fullName }}" /> <!-- bind to input once -->
+{{ ~fullName }} <!-- unbound helper - get fullName value, but don't watch for changes -->
 ```
 
 Note that that `=fullName` tells paperclip not to watch the reference, so any changes to `fullName` don't get reflected in the view. [Here's an example](http://jsfiddle.net/JTxdM/93/).
@@ -172,7 +172,7 @@ Binding helpers are especially useful for [paperclip components](https://github.
 ```
 {{
     datePicker: {
-      currentDate: <=>currentDate
+      currentDate: <~>currentDate
     }
 }}
 ```
