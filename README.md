@@ -4,9 +4,6 @@ Paperclip is a fast, data-bindable templating system inspired by [Mustache](http
 
 Paperclip works by listening to [bindable](https://github.com/classdojo/bindable.js) objects, and updating the template if anything changes. Unlike angular.js, paperclip takes a more explicit approach to updating templates. If you want to change a value in a template manually, you can easily do so by calling `bindable.set(property, value)`. [Here's an example](http://jsfiddle.net/JTxdM/79/).
 
-No diffs, no virtual DOM, no re-rendering the template. Paperclip uses very few operations to manipulate the Document Object Model. 
-
-
 Paperclip translates HTML directly to JavaScript. For example, the following `hello.pc` file:
 
 ```html
