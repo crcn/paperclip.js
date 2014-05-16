@@ -181,7 +181,7 @@ protoclass(BaseTokenizer, {
 module.exports = BaseTokenizer;
 },{"protoclass":39,"strscanner":40}],4:[function(require,module,exports){
 var XMLParser = require("./xml"),
-parser = new XMLParser();
+parser        = new XMLParser();
 
 var scripts = {}, parse;
 
@@ -430,7 +430,7 @@ TokenCodes               = require("../tokenizer").codes;
 function ReferenceExpression (path, bindType) {
   BaseScriptExpression.apply(this, arguments);
   this.path     = path;
-  this.unbound  = [TokenCodes.ASSIGN, TokenCodes.TICK, TokenCodes.BT].indexOf(bindType) !== -1;
+  this.unbound  = [TokenCodes.SQUIGGLE, TokenCodes.TICK, TokenCodes.BT].indexOf(bindType) !== -1;
   this.bindType = bindType;
 }
 
@@ -508,7 +508,7 @@ BaseScriptExpression.extend(RootExpression, {
 
     var buffer = "{";
 
-    buffer += "fn: function () { return " + this.expression.toJavaScript() + "; }";
+    buffer += "run: function () { return " + this.expression.toJavaScript() + "; }";
 
     buffer += ", refs: " + JSON.stringify(refs)
 
@@ -517,6 +517,7 @@ BaseScriptExpression.extend(RootExpression, {
 });
 
 module.exports = RootExpression;
+
 },{"./base":5,"underscore":41}],16:[function(require,module,exports){
 var BaseScriptExpression = require("./base");
 
@@ -646,12 +647,13 @@ BaseParser.extend(ScriptParser, {
 
     if (ccode === TokenCodes.LP) {
 
+
       return this._parseGroupExpression();
 
     } else if (ccode === TokenCodes.LB) {
       return this._parseObjectExpression();
 
-    } else if (~[TokenCodes.VAR, TokenCodes.TICK, TokenCodes.ASSIGN, TokenCodes.BT, TokenCodes.BF, TokenCodes.BFT].indexOf(ccode)) {
+    } else if (~[TokenCodes.VAR, TokenCodes.TICK, TokenCodes.SQUIGGLE, TokenCodes.BT, TokenCodes.BF, TokenCodes.BFT].indexOf(ccode)) {
       return this._parseReferenceExpression();
 
     } else if (ccode === TokenCodes.NUMBER) {
@@ -711,11 +713,12 @@ BaseParser.extend(ScriptParser, {
 
     var isTick = this._t.currentCode === TokenCodes.TICK;
 
-    var unbound = !!~[TokenCodes.TICK, TokenCodes.ASSIGN, TokenCodes.BT, TokenCodes.BF, TokenCodes.BFT].indexOf(this._t.currentCode),
+    // console.log(this._t.currentCode, TokenCodes.SQUIGGLE)
+
+    var unbound = !!~[TokenCodes.TICK, TokenCodes.SQUIGGLE, TokenCodes.BT, TokenCodes.BF, TokenCodes.BFT].indexOf(this._t.currentCode),
     ccode;
 
     var bindType = this._t.currentCode;
-    // console.log(bindType, unbound, TokenCodes.TICK, TokenCodes.ASSIGN, TokenCodes.BT, TokenCodes.BF, TokenCodes.BFT);
 
 
     if (unbound) {
@@ -899,6 +902,7 @@ var codes = utils.makeTokenCodes([
   "rp"          , // )
   "coma"        , // ,
   "dot"         , // .
+  "squiggle"    , // ~
   "bs"          , // /
   "colon"       , // :
   "semi_colon"  , // ;
@@ -917,6 +921,7 @@ var codes = utils.makeTokenCodes([
 var codeMap = {
   "="  : codes.ASSIGN,
   "$"  : codes.DOLLAR,
+  "~"  : codes.SQUIGGLE,
   "("  : codes.LP,
   ")"  : codes.RP,
   ","  : codes.COMA,
@@ -1008,11 +1013,6 @@ BaseTokenizer.extend(ScriptTokenizer, {
     // =, ==, ===
     } else if (ccode === 61) {
 
-      if (this._s.peek(2) === "=>") {
-        this._s.skip(1);
-        return this._t(codes.BT, "=>");
-      }
-
       if (this._s.peek(2) === "==") {
         this._s.skip(1);
 
@@ -1025,14 +1025,24 @@ BaseTokenizer.extend(ScriptTokenizer, {
       } else {
         return this._t(codes.ASSIGN, "=");
       }
-    } else if (ccode === 60) {
-      if (this._s.peek(3) === "<=>") {
-        this._s.skip(2);
-        return this._t(codes.BFT, "<=>")
-      }
-      if (this._s.peek(2) === "<=") {
+
+    } else if (ccode === 126) {
+      if (this._s.peek(2) === "~>") {
         this._s.skip(1);
-        return this._t(codes.BF, "<=");
+        return this._t(codes.BT, "=>");
+      } else {
+        return this._t(codes.SQUIGGLE, "~");
+      }
+    } else if (ccode === 60) {
+
+
+      if (this._s.peek(3) === "<~>") {
+        this._s.skip(2);
+        return this._t(codes.BFT, "<~>")
+      }
+      if (this._s.peek(2) === "<~") {
+        this._s.skip(1);
+        return this._t(codes.BF, "<~");
       }
     // ||
     } else if (ccode === 124 && this._s.peek(2) === "||") {
@@ -1231,6 +1241,16 @@ BaseXMLExpression.extend(NodeExpression, {
    */
 
   toJavaScript: function () {
+    return this._toJsElement();
+    switch(this.nodeName) {
+      case "script": return this._toJsScript();
+      default: return this._toJsElement();
+    }
+  },
+  _toJsScript: function () {
+    return "script(\"" + this.nodeName + "\", " + this.attributes.toJavaScript() + ", " + this.childNodes.expressions[0] + ")";
+  },
+  _toJsElement: function () {
     return "element(\"" + this.nodeName + "\", " + this.attributes.toJavaScript() + ", " + this.childNodes.toJavaScript() + ")";
   }
 });

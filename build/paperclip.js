@@ -65,7 +65,7 @@ function ClippedBuffer (buffer, application) {
 
     var ret;
 
-    if (part.fn) {
+    if (part.run) {
       ret = new ClippedBufferPart(self, part);
       self.bindings.push(ret);
       return ret;
@@ -127,6 +127,7 @@ bindable.Object.extend(ClippedBuffer, {
 });
 
 module.exports = ClippedBuffer;
+
 },{"./index":3,"bindable":48,"protoclass":79,"underscore":82}],3:[function(require,module,exports){
 (function (process){
 var protoclass = require("protoclass"),
@@ -145,6 +146,7 @@ function ClipScript (script, name, clip) {
   this.application = clip.application;
   this._bindings = [];
   this.refs      = this.script.refs;
+  this.run       = this.script.run;
 }
 
 
@@ -184,7 +186,7 @@ protoclass(ClipScript, {
 
     this._locked = true;
     // call the translated script
-    var newValue = this.script.fn.call(this);
+    var newValue = this.run.call(this);
     this._locked = false;
 
 
@@ -375,7 +377,7 @@ protoclass(ClipScripts, {
    */
 
   _bindScripts: function (scripts) {
-    if (scripts.fn) {
+    if (scripts.run) {
       this._bindScript("value", scripts);
     } else {
       for (var scriptName in scripts) {
@@ -709,6 +711,8 @@ protoclass(BaseBinding, ScriptBinding, {
 
   bind: function (context) {
 
+    this.context = context;
+
     if (this.watch !== false) {
       this.script.watch().update();
     }
@@ -779,7 +783,12 @@ BaseBinding.extend(BinderCollection, {
 
     var bindings = new BindingCollection();
     for (var i = 0; i < this._source.length; i++) {
-      bindings.push(this._source[i].getBinding(node));
+      var b = this._source[i].getBinding(node);
+      if (!b) {
+        console.log(this._source.length)
+        continue;
+      }
+      bindings.push(b);
     }
     return bindings;
   },
@@ -854,7 +863,6 @@ function ConditionalBlockBinding () {
 }
 
 BaseBlockBinding.extend(ConditionalBlockBinding, {
-
   _onChange: function (value, oldValue) {
 
     // cast as a boolean value - might be something like
@@ -869,8 +877,6 @@ BaseBlockBinding.extend(ConditionalBlockBinding, {
     this._oldValue = value;
 
     var child = this.child;
-
-
 
     if (child) {
       child.unbind();
@@ -893,6 +899,7 @@ BaseBlockBinding.extend(ConditionalBlockBinding, {
     }
   },
   unbind: function () {
+    this._oldValue = undefined;
     BaseBlockBinding.prototype.unbind.call(this);
     return this.child ? this.child.dispose() : undefined;
   }
@@ -933,15 +940,14 @@ protoclass(Binder, {
   getBinding: function (templateNode) {
     var cn = templateNode;
 
-
     while (cn.parentNode) {
       cn = cn.parentNode;
     }
 
-
     for (var i = 0, n = this._path.length; i < n; i++) {
       cn = cn.childNodes[this._path[i]];
     }
+
 
     var clazz = this.options.clazz;
 
@@ -968,8 +974,8 @@ protoclass(Binder, {
 
     return new clazz(ops);
   },
-  path: function() {
-    if (this._path) return this._path;
+  path: function(trace) {
+    if (!trace && this._path) return this._path;
 
     var paths = [], children = [];
 
@@ -1732,7 +1738,7 @@ BaseBinding.extend(AttrTextBinding, {
       return false;
     }
     for (var i = 0, n = binding.value.length; i < n; i++) {
-      if (binding.value[i].fn) return true;
+      if (binding.value[i].run) return true;
     }
 
     return false;
@@ -2112,7 +2118,6 @@ function Template (paper, application, ops) {
   this.paper           = paper;
   this.application     = application;
   this.nodeFactory     = application.nodeFactory;
-  this.binders         = new BinderCollection();
   this.useTemplateNode = ops.useTemplateNode;
 }
 
@@ -2164,6 +2169,8 @@ protoclass(Template, {
    */
 
   _createTemplateNode: function () {
+
+    this.binders         = new BinderCollection();
 
     var writers = {
       fragment  : new FragmentWriter(this),
@@ -2219,8 +2226,9 @@ var tpl = Template.prototype.creator = module.exports = function (paperOrSrc, ap
     isIE = ~navigator.userAgent.toLowerCase().indexOf("msie") || ~navigator.userAgent.toLowerCase().indexOf("trident")
   }
 
+
   var ops = {
-    useTemplateNode: !application.fake && !isIE
+    useTemplateNode: !application.fake && !isIE && false
   };
 
   if (ops.useTemplateNode && paper.template) {
@@ -2326,7 +2334,12 @@ BaseWriter.extend(ElementWriter, {
       }));
 
       for (var i = 0, n = children.length; i < n; i++) {
-        element.appendChild(children[i]);
+        try {
+          element.appendChild(children[i]);
+        } catch (e) {
+          console.error("parent: ", element.nodeName);
+          console.log("child: ", children[i].nodeName);
+        }
       }
 
       return element;
@@ -2698,7 +2711,7 @@ module.exports = BindableCollection;
 },{"../object":49,"../utils/computed":52,"sift":80}],47:[function(require,module,exports){
 var protoclass = require("protoclass");
 
-/** 
+/**
  * @module mojo
  * @submodule mojo-core
  */
@@ -2791,7 +2804,7 @@ EventEmitter.prototype.once = function (event, listener) {
     listener.apply(this, arguments);
   }
 
-  var disp = this.on(event, listener2);  
+  var disp = this.on(event, listener2);
   disp.target = this;
   return disp;
 }
@@ -2860,6 +2873,7 @@ EventEmitter.prototype.removeAllListeners = function (event) {
 
 
 module.exports = EventEmitter;
+
 },{"protoclass":79}],48:[function(require,module,exports){
 module.exports = {
   Object       : require("./object"),
@@ -3579,7 +3593,7 @@ function watchChain (bindable, hasComputed, chain, fn) {
     for (var i = listeners.length; i--;) {
       listeners[i].dispose();
     }
-    listeners = undefined;
+    listeners = [];
   }
 
   bind(bindable, chain);
