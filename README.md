@@ -1,6 +1,6 @@
 # Paperclip.js [![Alt ci](https://travis-ci.org/classdojo/paperclip.js.png)](https://travis-ci.org/classdojo/paperclip.js)
 
-Paperclip is a fast, data-bindable templating system inspired by [Mustache](https://github.com/janl/mustache.js/), [Angular](http://angularjs.org/), [Derby](http://derbyjs.com/), and [Knockout](http://knockoutjs.com/). It's supported on all major browsers: IE8+, Firefox, Chrome, Safari, Opera, as well as Node.js.
+Paperclip is a fast, data-bindable templating system inspired by [Mustache](https://github.com/janl/mustache.js/), [Angular](http://angularjs.org/), [Derby](http://derbyjs.com/), and [Knockout](http://knockoutjs.com/). It's supported on all major platforms: `IE8+`, `Firefox`, `Chrome`, `Safari`, `Opera`, as well as `Node.js`.
 
 Paperclip works by listening to [bindable](https://github.com/classdojo/bindable.js) objects, and updating the template if anything changes. Unlike angular.js, paperclip takes a more explicit approach to updating templates. If you want to change a value in a template manually, you can easily do so by calling `bindable.set(property, value)`. [Here's an example](http://jsfiddle.net/JTxdM/79/).
 
