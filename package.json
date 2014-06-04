@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "0.3.120",
+  "version": "0.3.121",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "browserify": "./lib/browser.js",
@@ -48,6 +48,8 @@
     "protoclass": "0.0.x",
     "platform": "1.0.x",
     "browserify": "~3.30.1",
-    "sift": "0.0.12"
+    "sift": "0.0.12",
+    "mojo-animator": "0.0.x",
+    "mojo-application": "0.0.x"
   }
 }
