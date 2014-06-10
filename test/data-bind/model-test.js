@@ -138,7 +138,28 @@ describe("data-bind model#", function () {
         }, 10);
       }, 10);
     });
-    
+
+    // test autocomplete
+    "text password email".split(" ").forEach(function (type) {
+      it("data-binds the input field to the context with no event trigger for " + type + " types", function (next) {
+        var t = pc.template("<input type='"+type+"' data-bind='{{ model: <~>name }}' />", app),
+        c = new bindable.Object();
+        c.set("this", c);
+
+        var b = t.bind(c);
+        var r = b.render();
+
+        var $input = $(r.childNodes[1]);
+        $input.val("baab")
+
+        setTimeout(function () {
+          expect(c.get("name")).to.be("baab");
+          b.dispose();
+          next();
+        }, 600);
+      });
+    });
+
   });
 
   describe("input checkbox", function () {
