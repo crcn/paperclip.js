@@ -1,11 +1,11 @@
 {
   "name": "paperclip",
-  "version": "0.3.126",
+  "version": "0.3.127",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "browserify": "./lib/browser.js",
   "scripts": {
-    "test": "mocha ./test/*/*-test.js --ignore-leaks"
+    "test": "mocha ./test/*/*-test.js --ignore-leaks --bail"
   },
   "repository": {
     "type": "git",
@@ -35,6 +35,7 @@
     "dref": "0.0.x",
     "async": "0.7.x",
     "uglify-js": "1.3.x",
+    "noselector":"0.0.x",
     "optimist": "0.4.x",
     "asyngleton": "0.1.x",
     "walkr": "0.0.x",
