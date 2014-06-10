@@ -350,7 +350,7 @@ describe("script#", function () {
       expect(t.render().toString()).to.be("a");
     });
 
-    it("<~ can bind a reference, but not cast it as a bindable ref", function () {
+    it("<~ can bind a reference, but not be settable", function () {
       var c = new bindable.Object({
         a: "a"
       }), t = pc.template("{{<~a}}").bind(c);
@@ -358,7 +358,9 @@ describe("script#", function () {
       c.set("a", "b");
       expect(t.render().toString()).to.be("b");
       expect(t.bindings.script.refs.length).to.be(1);
-      expect(t.bindings.script.value).to.be("b");
+      expect(t.bindings.script.value.__isBindableReference).to.be(true);
+      t.bindings.script.value.value("baab");
+      expect(t.bindings.script.value.value()).to.be("b");
     });
 
     it("drops ~> refs from being watched, but casts them s a bindable ref", function () {

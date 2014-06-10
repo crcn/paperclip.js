@@ -6,6 +6,10 @@ browser:
 test-node:
 	mocha --recursive --ignore-leaks --timeout 1000
 
+
+test-watch:
+	mocha --recursive --ignore-leaks --timeout 1000 --watch ./test ./lib
+
 test-cov:
 	./node_modules/.bin/istanbul cover \
 	./node_modules/.bin/_mocha ./test/*/**-test.js --ignore-leaks --timeout 100
