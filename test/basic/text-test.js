@@ -9,9 +9,14 @@ bindable = require("bindable");
 
 describe("text#", function() {
 
-  it("converts html entities to real characters", function() {
+  it("converts HTML entities to real characters", function() {
     var tpl = pc.template("hello &gt;");
     expect(tpl.bind(new bindable.Object()).toString()).to.be("hello >")
   });
-  
+
+  it("doesn't do overzealous HTML entity decoding", function() {
+    var tpl = pc.template("foo &amp;amp; bar");
+    expect(tpl.bind(new bindable.Object()).toString()).to.be("foo &amp; bar")
+  });
+
 });
