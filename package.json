@@ -44,7 +44,7 @@
     "type-component": "0.0.x",
     "nofactor": "0.0.x",
     "loaf": "0.2.x",
-    "ent": "~0.1.0",
+    "he": "~0.4.1",
     "runlater": "0.0.x",
     "protoclass": "0.0.x",
     "platform": "1.0.x",
