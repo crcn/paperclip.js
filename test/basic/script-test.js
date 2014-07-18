@@ -37,7 +37,7 @@ describe("script#", function () {
     });
 
     it("dcan return an alternative value if a ref doesn't exist", function () {
-      expect(pc.template("{{name.first || 'doesn\\'t exist!' }}").bind().render().toString()).to.be("doesn't exist!");
+      expect(pc.template("{{name.first || 'doesn\\'t exist!' }}").bind().render().toString()).to.be("doesn&#x27;t exist!");
     });
 
     it("can call a function", function () {
@@ -244,7 +244,7 @@ describe("script#", function () {
     });
 
     it("can call json()", function () {
-      expect(pc.template("{{a|json()}}").bind({a:{b:1,c:2}}).render().toString()).to.be("{&quote;b&quote;:1,&quote;c&quote;:2}");
+      expect(pc.template("{{a|json()}}").bind({a:{b:1,c:2}}).render().toString()).to.be("{&#x22;b&#x22;:1,&#x22;c&#x22;:2}");
     });
 
     it("can call multiple modifiers on one expression", function () {
@@ -310,13 +310,13 @@ describe("script#", function () {
 
       var t = pc.template("{{b|json()}}").bind(context);
       expect(t.bindings.script._bindings.length).to.be(2);
-      expect(t.toString()).to.be("{&quote;a&quote;:&quote;a&quote;}");
+      expect(t.toString()).to.be("{&#x22;a&#x22;:&#x22;a&#x22;}");
       context.set("b", undefined);
       expect(t.bindings.script._bindings.length).to.be(1);
       expect(t.toString()).to.be("");
       context.set("b", b);
       expect(t.bindings.script._bindings.length).to.be(2);
-      expect(t.toString()).to.be("{&quote;a&quote;:&quote;a&quote;}");
+      expect(t.toString()).to.be("{&#x22;a&#x22;:&#x22;a&#x22;}");
     });
 
     it("can be nested", function () {

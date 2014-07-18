@@ -10,7 +10,7 @@ bindable = require("bindable");
 describe("value#", function() {
 
   it("properly encodes HTML entities", function () {
-    expect(pc.template("hello {{name}}").bind({ name: "ab >"}).toString()).to.be("hello ab &gt;");
+    expect(pc.template("hello {{name}}").bind({ name: "ab >"}).toString()).to.be("hello ab &#x3E;");
   });
 
   it("can unbind a context", function () {
