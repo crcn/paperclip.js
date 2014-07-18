@@ -1,5 +1,5 @@
 var expect = require("expect.js"),
-pc = require("../.."),
+pc = require("../..")(),
 bindable = require("bindable");
 
 /**

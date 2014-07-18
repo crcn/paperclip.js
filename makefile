@@ -8,7 +8,7 @@ test-node:
 
 
 test-watch:
-	mocha --recursive --ignore-leaks --timeout 1000 --watch ./test ./lib
+	mocha --recursive --ignore-leaks --timeout 1000 --watch ./test ./lib -b
 
 test-cov:
 	./node_modules/.bin/istanbul cover \

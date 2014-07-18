@@ -1,4 +1,5 @@
-var pc   = require("../.."),
+var pcc   = require("../.."),
+pc       = pcc(),
 expect   = require("expect.js"),
 bindable = require("bindable");
 

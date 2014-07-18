@@ -1,14 +1,15 @@
-var pc = require("../.."),
+var pcc   = require("../.."),
+pc       = pcc(),
 structr = require("structr"),
 expect = require("expect.js");
 
 describe("shim#", function() {
 
 
-  var PlaceholderShim = structr(pc.BaseNodeBinding, {
+  var PlaceholderShim = pcc.BaseNodeBinding.extend({
     type: "attr",
-    "override bind": function(context) {
-      this._super(context);
+    "bind": function(context) {
+      pcc.BaseNodeBinding.prototype.bind.call(this, context);
       this.node.setAttribute("data-shimPlaceholder", "true");
     },
     "test": function(bindable) {
@@ -16,17 +17,17 @@ describe("shim#", function() {
     }
   });
 
-  var SelectShim = structr(pc.BaseNodeBinding, {
+  var SelectShim = pcc.BaseNodeBinding.extend({
     type: "node",
-    "override bind": function(context) {
-      this._super(context);
+    "bind": function(context) {
+      pcc.BaseNodeBinding.prototype.bind.call(this, context);
       this.node.setAttribute("data-shimSelect", "true");
     }
   });
 
-  var DataBindShim = structr(pc.BaseAttrDataBinding, {
-    "override bind": function(context) {
-      this._super(context);
+  var DataBindShim = pcc.BaseAttrDataBinding.extend({
+    "bind": function(context) {
+      pcc.BaseAttrDataBinding.prototype.bind.call(this, context);
       this.node.setAttribute("data-dataBind", "true");
     }
   });

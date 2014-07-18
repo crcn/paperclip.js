@@ -1,11 +1,12 @@
-var pc   = require("../.."),
+var pcc   = require("../.."),
+pc       = pcc(),
 expect   = require("expect.js"),
 bindable = require("bindable"),
 nofactor = require("nofactor");
 
 describe("data-bind focus#", function () {
 
-  var app = new pc.Application({ nodeFactory: nofactor.dom });
+  var app = new pcc.Application({ nodeFactory: nofactor.dom });
 
   it("can focus on an input", function (next) {
 

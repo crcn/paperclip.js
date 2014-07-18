@@ -1,5 +1,4 @@
-var pc   = require("../.."),
-expect   = require("expect.js");
+var expect   = require("expect.js");
 
 describe("require#", function () {
 
