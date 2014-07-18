@@ -374,6 +374,14 @@ describe("script#", function () {
       expect(t.render().toString()).to.be("a");
     });
 
+    it("can use a data-binding with an or statement", function () {
+      var c = new bindable.Object();
+      pc.template("{{a||<~>a}}").bind(c);
+      pc.template("{{a||~a}}").bind(c);
+      pc.template("{{a||<~a}}").bind(c);
+      pc.template("{{a||~>a}}").bind(c);
+    });
+
     it("allows for references with <~> to be bound both ways", function () {
       var c = new bindable.Object({
         a: "a"
