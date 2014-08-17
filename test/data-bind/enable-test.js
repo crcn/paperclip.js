@@ -18,8 +18,8 @@ describe("data-bind enable#", function () {
     ).bind(c);
 
 
-    expect(t.toString()).to.be("<input></input>");
+    expect(t.toString()).to.be("<input>");
     c.set('enable', false);
-    expect(t.toString()).to.be("<input disabled=\"disabled\"></input>");
+    expect(t.toString()).to.be("<input disabled=\"disabled\">");
   });
 });

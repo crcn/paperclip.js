@@ -34,8 +34,8 @@ describe("shim#", function() {
 
   it("can be added as an attribute", function() {
     pc.nodeBinding("placeholder", PlaceholderShim);
-    var v = pc.template("<input placeholder=\"Username:\"></input>").bind();
-    expect(String(v)).to.contain("<input placeholder=\"Username:\" data-shimplaceholder=\"true\"></input>");
+    var v = pc.template("<input placeholder=\"Username:\">").bind();
+    expect(String(v)).to.contain("<input placeholder=\"Username:\" data-shimplaceholder=\"true\">");
   });
 
   it("can ignore certain types of nodes", function() {
