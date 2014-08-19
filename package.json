@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "0.3.157",
+  "version": "0.3.159",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "browserify": "./lib/browser.js",
@@ -16,15 +16,16 @@
   "gitHead": "1336ca5b7f1f0c344a291ace63ddf211d5a94acd",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "jsdom": "0.10.5",
+    "benchmark": "~1.0.0",
+    "coveralls": "~2.5.0",
     "expect.js": "0.2.x",
-    "structr": "~0.2.3",
-    "jquery": "~1.8.3",
     "express": "~3.3.4",
     "istanbul": "~0.1.46",
-    "coveralls": "~2.5.0",
+    "jquery": "~1.8.3",
+    "jsdom": "0.10.5",
+    "jshint": "^2.5.4",
     "mocha": "~1.15.1",
-    "benchmark": "~1.0.0"
+    "structr": "~0.2.3"
   },
   "bin": {
     "paperclip": "./bin/paperclip"

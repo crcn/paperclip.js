@@ -7,6 +7,9 @@ test-node:
 	mocha --recursive --ignore-leaks --timeout 1000
 
 
+lint:
+	./node_modules/.bin/jshint ./lib --config jshint.json
+	
 test-watch:
 	mocha --recursive --ignore-leaks --timeout 1000 --watch ./test ./lib
 
