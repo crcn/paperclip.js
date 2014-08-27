@@ -1,3 +1,5 @@
+REPORTER=dot
+ONLY="."
 
 browser:
 	./node_modules/.bin/browserify ./lib/index.js -o ./build/paperclip.js
@@ -6,12 +8,15 @@ browser:
 test-node:
 	mocha --recursive --ignore-leaks --timeout 1000
 
+parser:
+	mkdir -p ./lib/parser2
+	./node_modules/.bin/pegjs ./src/parser/grammar.peg ./lib/parser2/parser.js
 
 lint:
 	./node_modules/.bin/jshint ./lib --config jshint.json
 	
 test-watch:
-	mocha --recursive --ignore-leaks --timeout 1000 --watch ./test ./lib
+	mocha --recursive --ignore-leaks --reporter $(REPORTER) -g $(ONLY) --timeout 1000 --watch ./test ./lib
 
 test-cov:
 	./node_modules/.bin/istanbul cover \
