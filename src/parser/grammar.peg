@@ -3,11 +3,10 @@ Start
   = ChildNodes
 
 ChildNodes
-  = Element
-  / Text
+  = (Text/Element)*
 
 Element
-  = startTag:StartTag children:ChildNodes* endTag:EndTag {
+  = startTag:StartTag children:ChildNodes endTag:EndTag {
 
     if (startTag.name != endTag.name) {
       expected("</" + startTag.name + ">");
@@ -20,6 +19,8 @@ Element
     };
   }
   / StartTag
+  / StartEndTag
+
 
 
 Text
@@ -32,7 +33,13 @@ Text
 
 
 StartTag
-  = "<" name:TagName attributes:Attribute* ">" {
+  = "<" info:TagInfo ">" { return info; }
+
+StartEndTag
+  = "<" info:TagInfo "/>" { return info; }
+
+TagInfo
+  = name:TagName Zs* attributes:Attribute* {
       return {
         name: name,
         attributes: attributes
