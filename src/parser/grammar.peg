@@ -89,7 +89,48 @@ Binding
 
 
 Expression
-  = Variable
+  = Group
+  / Object
+  / VarName
+
+Group
+  = "(" Expression ")"
+
+VarName
+  = name:[a-z]+ { 
+    return {
+      type: "varName",
+      value: name[0]
+    }
+  }
+
+Object
+  = "{" values:ObjectValues? "}" {
+      return {
+        type: "object",
+        values: values
+      }
+    }
+
+ObjectValues 
+  = firstValue:ObjectValue additionalValues:("," ObjectValues)* {
+    console.log(firstValue, additionalValues);
+
+    return [
+      firstValue
+    ].concat(additionalValues.map(function (v) {
+      return v[1][0];
+    }));
+  }
+
+ObjectValue
+  = name:(StringLiteral/VarName) ":" value:Expression {
+    return {
+      key: name.value,
+      value: value.value
+    }
+  }
+
 
 Variable
   = [a-z]+

@@ -1,7 +1,7 @@
 var parser = require("../../lib/parser2/parser.js"),
 expect     = require("expect.js");
 
-describe("parser#", function () {
+describe("parser/node#", function () {
 
   it("can parse a node without children", function () {
     parser.parse("<a>");
@@ -62,9 +62,9 @@ describe("parser#", function () {
     expect(ast[1].name).to.be("a");
   });
 
-  it("can parse a text binding", function () {
-    var ast = parser.parse("text{{ab}}");
-    console.log(ast[1]);
+  xit("can parse a text binding", function () {
+    var ast = parser.parse("text{{{a:b,c:d}}}");
+    // console.log(JSON.stringify(ast[1], null, 2));
     expect(ast[1].type).to.be("binding");
   });
 });
