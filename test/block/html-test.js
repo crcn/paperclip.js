@@ -1,6 +1,7 @@
 var pc   = require("../.."),
 expect   = require("expect.js"),
-bindable = require("bindable");
+bindable = require("bindable"),
+loaf     = require("loaf");
 
 describe("html#", function () {
 

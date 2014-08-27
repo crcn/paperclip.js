@@ -1,3 +1,4 @@
+ONLY="."
 
 browser:
 	./node_modules/.bin/browserify ./lib/index.js -o ./build/paperclip.js
@@ -11,7 +12,7 @@ lint:
 	./node_modules/.bin/jshint ./lib --config jshint.json
 	
 test-watch:
-	mocha --recursive --ignore-leaks --timeout 1000 --watch ./test ./lib
+	mocha --recursive --reporter DOT -g $(ONLY) --ignore-leaks --timeout 1000 --watch ./test ./lib
 
 test-cov:
 	./node_modules/.bin/istanbul cover \
