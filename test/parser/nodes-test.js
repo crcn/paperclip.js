@@ -55,10 +55,17 @@ describe("parser#", function () {
 
   it("can parse text with a node", function () {
     var ast = parser.parse("text<a></a>");
+    console.log(ast);
     expect(ast[0].type).to.be("text");
     expect(ast[0].value).to.be("text");
     expect(ast[1].type).to.be("element");
     expect(ast[1].name).to.be("a");
+  });
+
+  it("can parse a text binding", function () {
+    var ast = parser.parse("text{{ab}}");
+    console.log(ast[1]);
+    expect(ast[1].type).to.be("binding");
   });
 });
 

@@ -3,7 +3,7 @@ Start
   = ChildNodes
 
 ChildNodes
-  = (Text/Element)*
+  = (Text/Binding/Element)*
 
 Element
   = startTag:StartTag children:ChildNodes endTag:EndTag {
@@ -24,12 +24,18 @@ Element
 
 
 Text
-  = chars:[^<]+ { 
-      return {
-        type: "text",
-        value: chars.join("")
-      };
+  = value:TextCharacter+ {
+    return {
+      type: "text",
+      value: value.join("")
     }
+  }
+
+TextCharacter
+  = !("<"/"{{") SourceCharacter {
+      return text()
+    }
+  
 
 
 StartTag
@@ -70,7 +76,23 @@ Attribute
 AttributeName
   = Zs* name:Word { return name; }
 
-Zs = [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
+Zs 
+  = [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
+
+Binding
+  = "{{" script:Expression* "}}" {
+    return {
+      type: "binding",
+      script: script
+    };
+  }
+
+
+Expression
+  = Variable
+
+Variable
+  = [a-z]+
 
 StringLiteral "string"
   = '"' chars:DoubleStringCharacter* '"' {
