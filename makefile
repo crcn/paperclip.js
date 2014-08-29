@@ -15,6 +15,9 @@ parser:
 lint:
 	./node_modules/.bin/jshint ./lib --config jshint.json
 
+parser-watch: parser
+	fswatch ./src/parser/grammar.peg | xargs -n1 make parser
+
 test-watch:
 	mocha --recursive --ignore-leaks --reporter $(REPORTER) -g $(ONLY) --timeout 1000 --watch ./test ./lib
 

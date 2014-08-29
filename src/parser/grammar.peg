@@ -92,6 +92,7 @@ Expression
   = Group
   / Object
   / VarName
+  / [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
 
 Group
   = "(" Expression ")"
@@ -114,8 +115,6 @@ Object
 
 ObjectValues 
   = firstValue:ObjectValue additionalValues:("," ObjectValues)* {
-    console.log(firstValue, additionalValues);
-
     return [
       firstValue
     ].concat(additionalValues.map(function (v) {

@@ -345,7 +345,7 @@ BaseScriptExpression.extend(ModifierExpression, {
 
   toJavaScript: function () {
 
-    var buffer = "modifiers." + this.name + "(" + this.reference.toJavaScript();
+    var buffer = "modifiers." + this.name + ".call(this, " + this.reference.toJavaScript();
 
     if (this.params.length) {
       buffer += "," + this.params.map(function (expr) {
@@ -593,6 +593,7 @@ BaseParser.extend(ScriptParser, {
 
     while (this._t.current) {
 
+
       var name = this._t.current[1];
 
       var pn = this._t.peekNext();
@@ -646,10 +647,7 @@ BaseParser.extend(ScriptParser, {
     if (!(ccode = this._t.currentCode)) return;
 
     if (ccode === TokenCodes.LP) {
-
-
       return this._parseGroupExpression();
-
     } else if (ccode === TokenCodes.LB) {
       return this._parseObjectExpression();
 
@@ -823,6 +821,9 @@ BaseParser.extend(ScriptParser, {
     TokenCodes.LP,
     TokenCodes.RP,
     TokenCodes.LB,
+    TokenCodes.BT,
+    TokenCodes.BF,
+    TokenCodes.BFT,
     TokenCodes.RB,
     TokenCodes.TICK,
     TokenCodes.QUOTE,
@@ -830,10 +831,25 @@ BaseParser.extend(ScriptParser, {
     TokenCodes.NOT,
     TokenCodes.SQUOTE];
 
+
+    var op = this._t._s.pos();
+
+
     while(!~noMatch.indexOf(this._t.currentCode) && this._t.currentCode) {
       buffer += this._t.current[1];
       this._t.next();
+
     }
+
+    // syntax error
+
+    if (false)
+    if (this._t._s.pos() === op) {
+      if (this._t.current) buffer += this._t.current[1];
+      console.log(buffer);
+      this._t.next();
+    }
+
 
     return new OtherExpression(buffer);
   },
@@ -1410,8 +1426,12 @@ BaseParser.extend(XMLParser, {
 
     this._t.next();
 
+    var ot;
+
     while (this._t.current) {
+      ot = this._t.current;
       expressions.push(this._parseExpression());
+      if (ot === this._t.current) break;
     }
 
     var root = new RootExpression(this._trimTextNodes(expressions));
@@ -1430,7 +1450,9 @@ BaseParser.extend(XMLParser, {
 
     var ccode;
 
-    if (!(ccode = this._t.currentCode)) return;
+    if (!(ccode = this._t.currentCode)) {
+      return;
+    }
 
     // <
     if (ccode === TokenCodes.LT) {
@@ -1448,6 +1470,7 @@ BaseParser.extend(XMLParser, {
     } else {
       return this._parseTextNodeExpression();
     }
+
   },
 
   /**
@@ -1457,6 +1480,7 @@ BaseParser.extend(XMLParser, {
 
 
     var nodeName = this._t.next()[1];
+
 
     this._t.next(); // eat name
 
@@ -1617,6 +1641,7 @@ BaseParser.extend(XMLParser, {
 
     var expressions = [],
     childBlockExpression;
+
 
     if (~[TokenCodes.BSCRIPT, TokenCodes.ESCRIPT].indexOf(ccode)) {
       while ((ccode = this._t.currentCode) !== TokenCodes.ESCRIPT && ccode) {
@@ -1886,7 +1911,7 @@ BaseTokenizer.extend(XMLTokenizer, {
 
       var script = "";
 
-      while(1) {
+      while(!this._s.eof()) {
 
         if (this._s.peek(2) == "}}") {
           this._s.skip(1);
@@ -1898,7 +1923,7 @@ BaseTokenizer.extend(XMLTokenizer, {
         if (cchar == "{") {
           this._s.nextChar();
           cchar = this._s.cchar();
-          while (cchar !== "}") {
+          while (cchar !== "}" && !this._s.eof()) {
             script += cchar;
             cchar = this._s.nextChar();
           }
