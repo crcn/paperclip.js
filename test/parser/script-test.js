@@ -117,11 +117,15 @@ describe("parser/script#", function () {
     });
   
     describe("comparisons", function () {
-      it("can parse &&", function () {
-        var ast = parser.parse("{{ true&&false }}")[0].scripts.value;
-        expect(ast.left.value).to.be(true);
-        expect(ast.right.value).to.be(false);
+
+      ["&&", "||", "==", "===", ">", ">=", ">==", "<", "<=", "<=="].forEach(function (op) {
+         it("can parse " + op, function () {
+          var ast = parser.parse("{{ true "+op+" false }}")[0].scripts.value;
+          expect(ast.left.value).to.be(true);
+          expect(ast.right.value).to.be(false);
+        }); 
       });
+      
     })
   });
 });
