@@ -16,9 +16,9 @@ describe("parser/script#", function () {
 
     it("properly parses scripts", function () {
         var ast = parser.parse("{{ a:b, c:d, e:f}}")[0];
-        expect(ast.scripts.a.value).to.be("b");
-        expect(ast.scripts.c.value).to.be("d");
-        expect(ast.scripts.e.value).to.be("f");
+        expect(ast.scripts.a.value.value).to.be("b");
+        expect(ast.scripts.c.value.value).to.be("d");
+        expect(ast.scripts.e.value.value).to.be("f");
     });
   });
 
@@ -125,7 +125,19 @@ describe("parser/script#", function () {
           expect(ast.right.value).to.be(false);
         }); 
       });
-      
-    })
+
+      it("can parse multiple comparisons", function () {
+        var ast = parser.parse("{{true && false >= true || undefined < null}}");
+      });
+
+      it("puts equations at a higher priority than comparisons", function () {
+        var ast = parser.parse("{{scriptA:1>2+3}}")[0].scripts.scriptA;
+        expect(ast.key).to.be("scriptA");
+        expect(ast.value.type).to.be(">");
+        expect(ast.value.left.value).to.be(1);
+        expect(ast.value.right.left.value).to.be(2);
+        expect(ast.value.right.right.value).to.be(3);
+      });
+    });
   });
 });

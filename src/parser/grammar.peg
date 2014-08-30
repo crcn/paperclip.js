@@ -194,7 +194,7 @@ Null
   = ("null"/"NULL") { return { type: "null", value: null }; }
 
 Reference
-  = name:[a-z]+ { 
+  = name:[a-zA-Z]+ { 
     return {
       type: "reference",
       value: text()
@@ -220,7 +220,7 @@ ObjectValue
   = key:ObjectKey ":" value:Expression {
     return {
       key: key.value,
-      value: value.value
+      value: value
     }
   }
 
@@ -250,7 +250,7 @@ SourceCharacter
   = .
 
 Word
-  = chars:[a-z]+ { return chars.join(""); }
+  = chars:[a-zA-Z]+ { return chars.join(""); }
 
 Zs 
   = [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
