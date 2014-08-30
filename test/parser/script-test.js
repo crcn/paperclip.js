@@ -139,5 +139,18 @@ describe("parser/script#", function () {
         expect(ast.value.right.right.value).to.be(3);
       });
     });
+
+
+    describe("assigning", function () {
+
+    });
+
+    describe("bindings", function () {
+
+    });
+    
+    describe("modifiers", function () {
+
+    });
   });
 });
