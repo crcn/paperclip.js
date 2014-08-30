@@ -49,38 +49,61 @@ describe("parser/script#", function () {
   });
 
 
-  describe("equations", function () {
-    it("can add / subtract two numbers together", function () {
+  
 
-      var ast = parser.parse("{{ 5+6 }}")[0].scripts.value;
-      expect(ast.left.value).to.be(5);
-      expect(ast.right.value).to.be(6);
+  describe("operations", function () {
 
-      ast = parser.parse("{{ 5-6 }}")[0].scripts.value;
-      expect(ast.left.value).to.be(5);
-      expect(ast.right.value).to.be(6);
+    describe("ternery", function () {
+      it("parses properly", function () {
+        var ast = parser.parse("{{a?b:c}}")[0].scripts.value;
+
+      });
+      it("can nest ternery operations", function () {
+        var ast = parser.parse("{{a?b?c?d:e:f:g}}")[0].scripts.value;
+
+
+        expect(ast.condition.value).to.be("a"); 
+        expect(ast.right.value).to.be("g");
+        expect(ast.left.condition.value).to.be("b");
+        expect(ast.left.right.value).to.be("f");
+        expect(ast.left.left.condition.value).to.be("c");
+        expect(ast.left.left.right.value).to.be("e");
+      });
     });
 
-    it("gets the order of operations correct", function () {
-      var ast = parser.parse("{{ 3+4*5/(6+7) }}")[0].scripts.value;
-      expect(ast.left.value).to.be(3);
-      expect(ast.right.left.value).to.be(4);
-      expect(ast.right.right.left.value).to.be(5);
-      expect(ast.right.right.right.left.value).to.be(6);
-      expect(ast.right.right.right.right.value).to.be(7);
-    });
+    describe("equations", function () {
+      it("can add / subtract two numbers together", function () {
 
-    it("works with modulus", function () {
-      var ast = parser.parse("{{ 3*4%5 }}")[0].scripts.value;
-      expect(ast.left.left.value).to.be(3);
-      expect(ast.left.right.value).to.be(4);
-      expect(ast.right.value).to.be(5);
+        var ast = parser.parse("{{ 5+6 }}")[0].scripts.value;
+        expect(ast.left.value).to.be(5);
+        expect(ast.right.value).to.be(6);
+
+        ast = parser.parse("{{ 5-6 }}")[0].scripts.value;
+        expect(ast.left.value).to.be(5);
+        expect(ast.right.value).to.be(6);
+      });
+
+      it("gets the order of operations correct", function () {
+        var ast = parser.parse("{{ 3+4*5/(6+7) }}")[0].scripts.value;
+        expect(ast.left.value).to.be(3);
+        expect(ast.right.left.value).to.be(4);
+        expect(ast.right.right.left.value).to.be(5);
+        expect(ast.right.right.right.left.value).to.be(6);
+        expect(ast.right.right.right.right.value).to.be(7);
+      });
+
+      it("works with modulus", function () {
+        var ast = parser.parse("{{ 3*4%5 }}")[0].scripts.value;
+        expect(ast.left.left.value).to.be(3);
+        expect(ast.left.right.value).to.be(4);
+        expect(ast.right.value).to.be(5);
 
 
-      var ast = parser.parse("{{ 3+4%5 }}")[0].scripts.value;
-      expect(ast.left.value).to.be(3);
-      expect(ast.right.left.value).to.be(4);
-      expect(ast.right.right.value).to.be(5);
+        var ast = parser.parse("{{ 3+4%5 }}")[0].scripts.value;
+        expect(ast.left.value).to.be(3);
+        expect(ast.right.left.value).to.be(4);
+        expect(ast.right.right.value).to.be(5);
+      });
     });
   });
 });

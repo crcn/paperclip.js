@@ -37,7 +37,6 @@ TextCharacter
     }
   
 
-
 StartTag
   = "<" info:TagInfo ">" { return info; }
 
@@ -99,21 +98,32 @@ Scripts
   }
 
 Script
-  = _ expression:Expression _ {
+  = _ expression:TerneryConditional _ {
     return expression;
   }
 
 Expression
-  = _ expression:(Group / Object / Equation / Operatable / StringLiteral) _ {
+  = _ expression:(Group / Object / Operation / Operatable) _ {
     return expression;
   }
 
 Operation
-  = Operatable
-  / Equation
+  = Equation
 
 Equation
   = Additive
+
+TerneryConditional
+  = condition:Expression "?" left:TerneryConditional ":" right:Expression {
+    return {
+      type: "condition",
+      condition: condition,
+      left: left,
+      right: right
+    }
+  }
+  / Expression
+
 
 Additive
   = left:Modulative operation:("+"/"-") right:Additive {
@@ -146,7 +156,7 @@ Multiplicative
   / Operatable
 
 Operatable 
-  = _ value:(Reference/Number/Group) _ { return value; }
+  = _ value:(Group/Object/Reference/Number/StringLiteral) _ { return value; }
 
 Number
   = value:("-"? ([0-9]+DecimalNumber? / DecimalNumber)) { return { type: "number", value: parseFloat(text()) }; }
