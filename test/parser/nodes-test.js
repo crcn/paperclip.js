@@ -62,8 +62,7 @@ describe("parser/node#", function () {
   });
 
   it("can parse a text binding", function () {
-    var ast = parser.parse("text{{{ a:b,c:d}}}");
-    console.log(JSON.stringify(ast, null, 2));
+    var ast = parser.parse("text{{ ab }}");
     expect(ast[1].type).to.be("binding");
   });
 });

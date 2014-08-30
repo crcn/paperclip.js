@@ -59,57 +59,96 @@ EndTag
       };
     }
 
+
+TagName
+  = Zs* word:Word { return word; }
+
 Attribute
-  = name:AttributeName "=" string:StringLiteral {
+  = name:TagName "=" string:StringLiteral {
       return {
         name: name,
         value: string.value
       };
     }
-  / name:AttributeName {
+  / name:TagName {
       return {
         name: name
       }
     }
 
-
-AttributeName
-  = Zs* name:Word { return name; }
-
 Zs 
   = [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
 
 Binding
-  = "{{" script:Expression* "}}" {
+  = "{" script:Scripts "}" {
     return {
       type: "binding",
-      script: script
+      scripts: script
     };
   }
 
+Scripts
+  = scripts:Object {
+    var s = {};
+    for (i = 0, n = scripts.value.length; i < n; i++) {
+      s[scripts.value[i].key] = scripts.value[i];
+    }
+    return s;
+  }
+  / "{" script:Script "}" {
+    return {
+      value: script
+    };
+  }
+
+Script
+  = Zs* expression:Expression Zs* {
+    return expression;
+  }
 
 Expression
-  = Group
-  / Object
-  / VarName
-  / [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
+  = Zs* expression:(Group / Object / Operation / StringLiteral) Zs* {
+    return expression;
+  }
+
+Operation
+  = Operatable
+
+Equation
+  = first:Multiplicative
+
+Multiplicative
+  =
+
+Additive
+  = 
+
+Operatable
+  = Reference
+  / Number
+
+Number
+  = value:("-"? ([0-9]+DecimalNumber? / DecimalNumber)) { return { type: "number", value: parseFloat(text()) }; }
+  
+DecimalNumber
+  = "." [0-9]+
 
 Group
   = "(" Expression ")"
 
-VarName
+Reference
   = name:[a-z]+ { 
     return {
-      type: "varName",
+      type: "reference",
       value: name[0]
     }
   }
 
 Object
-  = "{" values:ObjectValues? "}" {
+  = "{" Zs* values:ObjectValues? Zs* "}" {
       return {
         type: "object",
-        values: values
+        value: values
       }
     }
 
@@ -117,29 +156,27 @@ ObjectValues
   = firstValue:ObjectValue additionalValues:("," ObjectValues)* {
     return [
       firstValue
-    ].concat(additionalValues.map(function (v) {
-      return v[1][0];
-    }));
+    ].concat(additionalValues.length ? additionalValues[0][1] : []);
   }
 
 ObjectValue
-  = name:(StringLiteral/VarName) ":" value:Expression {
+  = key:ObjectKey ":" value:Expression {
     return {
-      key: name.value,
+      key: key.value,
       value: value.value
     }
   }
 
+ObjectKey
+  = Zs* key:(StringLiteral/Reference) { return key; }
 
-Variable
-  = [a-z]+
 
 StringLiteral "string"
   = '"' chars:DoubleStringCharacter* '"' {
-      return { type: "StringLiteral", value: chars.join("") };
+      return { type: "string", value: chars.join("") };
     }
   / "'" chars:SingleStringCharacter* "'" {
-      return { type: "StringLiteral", value: chars.join("") };
+      return { type: "string", value: chars.join("") };
     }
 
 
@@ -154,9 +191,6 @@ SingleStringCharacter
 
 SourceCharacter
   = .
-
-TagName
-  = Word
 
 Word
   = chars:[a-z]+ { return chars.join(""); }
