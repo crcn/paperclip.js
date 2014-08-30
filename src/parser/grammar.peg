@@ -45,7 +45,7 @@ StartEndTag
   = "<" info:TagInfo "/>" { return info; }
 
 TagInfo
-  = name:TagName Zs* attributes:Attribute* {
+  = name:TagName _ attributes:Attribute* {
       return {
         name: name,
         attributes: attributes
@@ -61,7 +61,7 @@ EndTag
 
 
 TagName
-  = Zs* word:Word { return word; }
+  = _ word:Word { return word; }
 
 Attribute
   = name:TagName "=" string:StringLiteral {
@@ -75,9 +75,6 @@ Attribute
         name: name
       }
     }
-
-Zs 
-  = [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
 
 Binding
   = "{" script:Scripts "}" {
@@ -102,30 +99,44 @@ Scripts
   }
 
 Script
-  = Zs* expression:Expression Zs* {
+  = _ expression:Expression _ {
     return expression;
   }
 
 Expression
-  = Zs* expression:(Group / Object / Operation / StringLiteral) Zs* {
+  = _ expression:(Group / Object / Equation / Operatable / StringLiteral) _ {
     return expression;
   }
 
 Operation
   = Operatable
+  / Equation
 
 Equation
-  = first:Multiplicative
-
-Multiplicative
-  =
+  = Additive
 
 Additive
-  = 
+  = left:Multiplicative operation:("+"/"-") right:Additive {
+    return {
+      type: operation,
+      left: left,
+      right: right
+    }
+  }
+  / Multiplicative
 
-Operatable
-  = Reference
-  / Number
+Multiplicative
+  = left:Operatable operation:("*"/"/") right:Multiplicative {
+    return {
+      type: operation,
+      left: left,
+      right: right
+    }
+  }
+  / Operatable
+
+Operatable 
+  = _ value:(Reference/Number/Group) _ { return value; }
 
 Number
   = value:("-"? ([0-9]+DecimalNumber? / DecimalNumber)) { return { type: "number", value: parseFloat(text()) }; }
@@ -134,7 +145,7 @@ DecimalNumber
   = "." [0-9]+
 
 Group
-  = "(" Expression ")"
+  = "(" group:Expression ")" { return group; }
 
 Reference
   = name:[a-z]+ { 
@@ -145,7 +156,7 @@ Reference
   }
 
 Object
-  = "{" Zs* values:ObjectValues? Zs* "}" {
+  = "{" _ values:ObjectValues? _ "}" {
       return {
         type: "object",
         value: values
@@ -168,7 +179,7 @@ ObjectValue
   }
 
 ObjectKey
-  = Zs* key:(StringLiteral/Reference) { return key; }
+  = _ key:(StringLiteral/Reference) { return key; }
 
 
 StringLiteral "string"
@@ -195,4 +206,9 @@ SourceCharacter
 Word
   = chars:[a-z]+ { return chars.join(""); }
 
+Zs 
+  = [\u0020\u00A0\u1680\u2000-\u200A\u202F\u205F\u3000]
+
+_ 
+  = Zs*
 

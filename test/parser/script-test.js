@@ -49,7 +49,25 @@ describe("parser/script#", function () {
   });
 
 
-  describe("operators", function () {
-    it("can add ")
+  describe("equations", function () {
+    it("can add / subtract two numbers together", function () {
+
+      var ast = parser.parse("{{ 5+6 }}")[0].scripts.value;
+      expect(ast.left.value).to.be(5);
+      expect(ast.right.value).to.be(6);
+
+      ast = parser.parse("{{ 5-6 }}")[0].scripts.value;
+      expect(ast.left.value).to.be(5);
+      expect(ast.right.value).to.be(6);
+    });
+
+    it("gets the order of operations correct", function () {
+      var ast = parser.parse("{{ 3+4*5/(6+7) }}")[0].scripts.value;
+      expect(ast.left.value).to.be(3);
+      expect(ast.right.left.value).to.be(4);
+      expect(ast.right.right.left.value).to.be(5);
+      expect(ast.right.right.right.left.value).to.be(6);
+      expect(ast.right.right.right.right.value).to.be(7);
+    })
   });
 });
