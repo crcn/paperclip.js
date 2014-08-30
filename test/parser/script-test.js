@@ -68,6 +68,19 @@ describe("parser/script#", function () {
       expect(ast.right.right.left.value).to.be(5);
       expect(ast.right.right.right.left.value).to.be(6);
       expect(ast.right.right.right.right.value).to.be(7);
-    })
+    });
+
+    it("works with modulus", function () {
+      var ast = parser.parse("{{ 3*4%5 }}")[0].scripts.value;
+      expect(ast.left.left.value).to.be(3);
+      expect(ast.left.right.value).to.be(4);
+      expect(ast.right.value).to.be(5);
+
+
+      var ast = parser.parse("{{ 3+4%5 }}")[0].scripts.value;
+      expect(ast.left.value).to.be(3);
+      expect(ast.right.left.value).to.be(4);
+      expect(ast.right.right.value).to.be(5);
+    });
   });
 });

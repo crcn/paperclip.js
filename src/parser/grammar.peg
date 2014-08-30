@@ -116,7 +116,17 @@ Equation
   = Additive
 
 Additive
-  = left:Multiplicative operation:("+"/"-") right:Additive {
+  = left:Modulative operation:("+"/"-") right:Additive {
+    return {
+      type: operation,
+      left: left,
+      right: right
+    }
+  }
+  / Modulative
+
+Modulative
+  = left:Multiplicative operation:"%" right:Modulative {
     return {
       type: operation,
       left: left,
