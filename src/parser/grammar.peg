@@ -113,16 +113,24 @@ TerneryConditional
   }
   / Expression
 
+
 Expression
   = _ expression:(Group / Object / Operation / Operatable) _ {
     return expression;
   }
 
 Operation
-  = Equation
+  = Comparison
 
-Equation
-  = Additive
+Comparison
+  = left:Additive operator:("&&"/"||"/"=="/"==="/">"/">="/">=="/"<"/"<="/"<==") right:Comparison {
+    return {
+      type: operator,
+      left: left,
+      right: right
+    }
+  }
+  / Additive
 
 Additive
   = left:Modulative operation:("+"/"-") right:Additive {
@@ -155,7 +163,7 @@ Multiplicative
   / Operatable
 
 Operatable 
-  = _ value:(Group/Object/Reference/Number/StringLiteral) _ { return value; }
+  = _ value:(Group/Object/Reserved/Reference/Number/StringLiteral) _ { return value; }
 
 Number
   = value:("-"? ([0-9]+DecimalNumber? / DecimalNumber)) { return { type: "number", value: parseFloat(text()) }; }
@@ -166,11 +174,30 @@ DecimalNumber
 Group
   = "(" group:Expression ")" { return group; }
 
+Reserved
+  = Boolean
+  / Undefined
+  / Null
+
+Boolean 
+  = value:("true"/"false") {
+    return {
+      type: "boolean",
+      value: value === "true"
+    }
+  }
+
+Undefined 
+  = "undefined" { return { type: "undefined", value: void 0 }; }
+
+Null
+  = ("null"/"NULL") { return { type: "null", value: null }; }
+
 Reference
   = name:[a-z]+ { 
     return {
       type: "reference",
-      value: name[0]
+      value: text()
     }
   }
 

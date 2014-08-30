@@ -48,8 +48,20 @@ describe("parser/script#", function () {
 
   });
 
+  describe("reserved words", function () {
+    it("can parse boolean values", function () {
+      expect(parser.parse("{{ true }}")[0].scripts.value.value).to.be(true);
+      expect(parser.parse("{{ false }}")[0].scripts.value.value).to.be(false);
+    });
+    it("can parse undefined values", function () {
+      expect(parser.parse("{{ undefined }}")[0].scripts.value.value).to.be(void 0);
+    });
+    it("can parse null values", function () {
+      expect(parser.parse("{{ null }}")[0].scripts.value.value).to.be(null);
+    });
+  });
 
-  
+
 
   describe("operations", function () {
 
@@ -59,7 +71,7 @@ describe("parser/script#", function () {
 
       });
       it("can nest ternery operations", function () {
-        var ast = parser.parse("{{a?b?c?d:e:f:g}}")[0].scripts.value;
+        var ast = parser.parse("{{a ? b ? c ? d : e : f : g }}")[0].scripts.value;
 
 
         expect(ast.condition.value).to.be("a"); 
@@ -73,11 +85,9 @@ describe("parser/script#", function () {
 
     describe("equations", function () {
       it("can add / subtract two numbers together", function () {
-
         var ast = parser.parse("{{ 5+6 }}")[0].scripts.value;
         expect(ast.left.value).to.be(5);
         expect(ast.right.value).to.be(6);
-
         ast = parser.parse("{{ 5-6 }}")[0].scripts.value;
         expect(ast.left.value).to.be(5);
         expect(ast.right.value).to.be(6);
@@ -105,5 +115,13 @@ describe("parser/script#", function () {
         expect(ast.right.right.value).to.be(5);
       });
     });
+  
+    describe("comparisons", function () {
+      it("can parse &&", function () {
+        var ast = parser.parse("{{ true&&false }}")[0].scripts.value;
+        expect(ast.left.value).to.be(true);
+        expect(ast.right.value).to.be(false);
+      });
+    })
   });
 });
