@@ -79,7 +79,7 @@ describe("parser/script#", function () {
       });
 
       it("can nest ternery operations", function () {
-        var ast = parser.parse("{{a ? b ? c ? d : e : f : g }}")[0].scripts.value;
+        var ast = parser.parse("{{a ? b ? c ? \nd : e : f : g }}")[0].scripts.value;
         expect(ast.condition.value).to.be("a"); 
         expect(ast.right.value).to.be("g");
         expect(ast.left.condition.value).to.be("b");
