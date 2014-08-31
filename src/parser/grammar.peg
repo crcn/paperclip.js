@@ -67,10 +67,10 @@ TagName
   = _ word:[a-zA-Z0-9:_-]+ { return text(); }
 
 Attribute
-  = name:TagName "=" value:StringLiteral {
+  = name:TagName "=" values:AttributeValues {
       return {
         name: name,
-        value: value.value
+        value: values
       };
     }
   / name:TagName {
@@ -78,6 +78,12 @@ Attribute
         name: name
       }
     }
+
+
+AttributeValues
+  = '"' values:(Binding/(!"{{" [^"])+ { return text(); })* '"' { return values; }
+  / "'" values:(Binding/(!"{{" [^'])+ { return text(); })* "'" { return values; }
+
 
 
 BindingBlock

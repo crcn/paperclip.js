@@ -41,13 +41,6 @@ describe("parser/node#", function () {
     parser.parse("<a b=\"c\" d='e'>")[0];
   });
 
-  it("can parse attributes with escaped strings", function () {
-    var ast = parser.parse("<a b='\\'c'>")[0];
-    expect(ast.name).to.be("a");
-    expect(ast.attributes[0].name).to.be("b");
-    expect(ast.attributes[0].value).to.be("\\'c");
-  });
-
   it("can parse a node with children", function () {
     var ast = parser.parse("<a><b></b></a>")[0];
     expect(ast.type).to.be("element");
@@ -88,6 +81,19 @@ describe("parser/node#", function () {
       expect(ast.child.fragment[0].value).to.be("456");
       expect(ast.child.child.type).to.be("bindingBlock");
       expect(ast.child.child.fragment[0].value).to.be("789");
+    });
+
+    it("can parse bindings within attribute values", function () {
+      var ast = parser.parse("<input data-bind='{{model:<~>name}}'></input>")[0];
+      expect(ast.attributes[0].value[0].type).to.be("binding");
+    });
+
+    it("can parse bindings and text within attrbutes", function () {
+      var ast = parser.parse("<input value='hello {{firstName}} {{lastName}}'></input>")[0];
+      expect(ast.attributes[0].value[0]).to.be("hello ");
+      expect(ast.attributes[0].value[1].type).to.be("binding");
+      expect(ast.attributes[0].value[2]).to.be(" ");
+      expect(ast.attributes[0].value[3].type).to.be("binding");
     });
   });
 });
