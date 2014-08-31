@@ -120,7 +120,17 @@ Expression
   }
 
 Operation
-  = Comparison
+  = Assignment
+
+Assignment
+  = left:Reference "=" right:Assignment {
+    return {
+      type: "=",
+      reference: left.value,
+      value: right
+    };
+  }
+  / Comparison
 
 Comparison
   = left:Additive operator:("&&" / "||" / "===" / "==" / ">==" / ">=" / ">" / "<==" / "<=" / "<") right:Comparison {

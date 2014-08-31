@@ -142,7 +142,25 @@ describe("parser/script#", function () {
 
 
     describe("assigning", function () {
-
+      it("can be parsed", function () {
+        var ast = parser.parse("{{a=b}}")[0].scripts.value;
+        expect(ast.reference).to.be("a");
+        expect(ast.value.value).to.be("b");
+      });
+      it("can assign multiple values", function () {
+        var ast = parser.parse("{{a=b=c=d=e}}")[0].scripts.value;
+        expect(ast.reference).to.be("a");
+        expect(ast.value.reference).to.be("b");
+        expect(ast.value.value.reference).to.be("c");
+        expect(ast.value.value.value.reference).to.be("d");
+        expect(ast.value.value.value.value.value).to.be("e");
+      });
+      it("properly orders other operations", function () {
+        var ast = parser.parse("{{a=5+c}}")[0].scripts.value;
+        expect(ast.reference).to.be("a");
+        expect(ast.value.left.value).to.be(5);
+        expect(ast.value.right.value).to.be("c");
+      });
     });
 
     describe("bindings", function () {
