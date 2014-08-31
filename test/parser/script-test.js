@@ -153,6 +153,15 @@ describe("parser/script#", function () {
       });
     });
 
+    describe("strings", function () {
+      it("can be concatenated", function () {
+        var ast = parser.parse("{{'a' + 'b'}}")[0].scripts.value;
+        expect(ast.type).to.be("+");
+        expect(ast.left.value).to.be('a');
+        expect(ast.right.value).to.be('b');
+      })
+    })
+
 
     describe("assigning", function () {
 
