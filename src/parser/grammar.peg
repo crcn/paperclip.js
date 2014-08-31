@@ -144,14 +144,12 @@ Parameters
     }
   / "()" { return []; }
 
-
 InnerParameters
   = param1:Expression rest:("," Expression)* {
       return [param1].concat(rest.map(function (v) {
         return v[1];
       }));
     }
-
 
 Expression
   = Assignment
