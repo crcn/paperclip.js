@@ -232,5 +232,11 @@ describe("parser/script#", function () {
         expect(ast.modifiers[2].reference.value).to.be("e");
       });
     });
+
+    [
+      "{{ html:~sections.pages }}"
+    ].forEach(function (expr) {
+      parser.parse(expr);
+    })
   });
 });

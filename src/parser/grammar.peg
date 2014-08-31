@@ -1,3 +1,6 @@
+{
+  var StringExpression = require("./ast/string");
+}
 
 Start
   = ChildNodes
