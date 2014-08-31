@@ -117,14 +117,16 @@ TerneryConditional
 
 Parameters
   = "(" param1:Expression rest:("," Expression)* ")" {
-      return 
+      return [param1].concat(rest.map(function (v) {
+        return v[1];
+      }));
     }
-  / "()"
+  / "()" { return []; }
 
 
 
 Expression
-  = _ expression:(Group / Object / Operation / Operatable) _ {
+  = _ expression:(Group / Object / Operation) _ {
       return expression;
     }
 
@@ -182,18 +184,16 @@ Multiplicative
   / Operatable
 
 Operatable 
-  = _ value:(Group/Object/Reserved/Reference/Number/StringLiteral) modifiers:("|" Modifier)*_ { 
+  = _ value:(Group/Object/Reserved/FunctionCall/Number/StringLiteral) modifiers:("|" Modifier)*_ { 
+      value.modifiers = modifiers.map(function (modifier) {
+        return modifier[1];
+      });
       return value; 
     }
 
 
 Modifier
-  = Operatable Parameters? {
-    return {
-      type: "modifier",
-      parameters: "parameters"
-    }
-  }
+  = FunctionCall
 
 Number
   = value:("-"? ([0-9]+DecimalNumber? / DecimalNumber)) { return { type: "number", value: parseFloat(text()) }; }
@@ -222,6 +222,16 @@ Undefined
 
 Null
   = ("null"/"NULL") { return { type: "null", value: null }; }
+
+FunctionCall
+  = reference:Reference parameters:Parameters {
+      return {
+        type: "call",
+        reference: reference,
+        parameters: parameters
+      };
+    }
+  / Reference
 
 Reference
   = bindingType:("~>"/"<~>"/"~"/"<~")? reference:ReferencePath {

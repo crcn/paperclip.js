@@ -188,14 +188,21 @@ describe("parser/script#", function () {
       
     });
 
+    describe("function calls", function () {
+      it("can be parsed", function () {
+        var ast = parser.parse("{{a.b.c(1,2,3+4|a())}}")[0].scripts.value;
+        expect(ast.type).to.be("call");
+        expect(ast.parameters[0].value).to.be(1);
+        expect(ast.parameters[1].value).to.be(2);
+        expect(ast.parameters[2].left.value).to.be(3);
+        console.log(JSON.stringify(ast, null, 2));
+      }); 
+    });
+
     
     describe("modifiers", function () {
       it("can be parsed", function () {
         var ast = parser.parse("{{a|b|c(5,6,7)|d}}");
-
-        var ast = parser.parse("<h3>{{ad}}</h3>");
-
-        console.log(JSON.stringify(ast, null, 2));
       });
     });
   });
