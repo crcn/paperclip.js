@@ -61,19 +61,17 @@ describe("parser/script#", function () {
     });
   });
 
-
-
   describe("operations", function () {
 
     describe("ternery", function () {
+
       it("parses properly", function () {
         var ast = parser.parse("{{a?b:c}}")[0].scripts.value;
 
       });
+
       it("can nest ternery operations", function () {
         var ast = parser.parse("{{a ? b ? c ? d : e : f : g }}")[0].scripts.value;
-
-
         expect(ast.condition.path[0]).to.be("a"); 
         expect(ast.right.path[0]).to.be("g");
         expect(ast.left.condition.path[0]).to.be("b");
@@ -84,6 +82,7 @@ describe("parser/script#", function () {
     });
 
     describe("equations", function () {
+
       it("can add / subtract two numbers together", function () {
         var ast = parser.parse("{{ 5+6 }}")[0].scripts.value;
         expect(ast.left.value).to.be(5);
@@ -148,11 +147,13 @@ describe("parser/script#", function () {
 
 
     describe("assigning", function () {
+
       it("can be parsed", function () {
         var ast = parser.parse("{{a=b}}")[0].scripts.value;
         expect(ast.reference.path[0]).to.be("a");
         expect(ast.value.path[0]).to.be("b");
       });
+
       it("can assign multiple values", function () {
         var ast = parser.parse("{{a=b=c=d=e}}")[0].scripts.value;
         expect(ast.reference.path[0]).to.be("a");
@@ -161,6 +162,7 @@ describe("parser/script#", function () {
         expect(ast.value.value.value.reference.path[0]).to.be("d");
         expect(ast.value.value.value.value.path[0]).to.be("e");
       });
+
       it("properly orders other operations", function () {
         var ast = parser.parse("{{a=5+c}}")[0].scripts.value;
         expect(ast.reference.path[0]).to.be("a");
@@ -178,14 +180,12 @@ describe("parser/script#", function () {
     });
 
     describe("bindings", function () {
-
       ["~", "<~", "<~>", "~>"].forEach(function (bindingType) {
         it("can parse the "+bindingType+" binding", function () {
           var ast = parser.parse("{{"+bindingType+"a}}")[0].scripts.value;
           expect(ast.bindingType).to.be(bindingType);
         });
       });
-      
     });
 
     describe("function calls", function () {
@@ -195,14 +195,19 @@ describe("parser/script#", function () {
         expect(ast.parameters[0].value).to.be(1);
         expect(ast.parameters[1].value).to.be(2);
         expect(ast.parameters[2].left.value).to.be(3);
-        console.log(JSON.stringify(ast, null, 2));
       }); 
     });
 
-    
     describe("modifiers", function () {
       it("can be parsed", function () {
-        var ast = parser.parse("{{a|b|c(5,6,7)|d}}");
+        var ast = parser.parse("{{a|b|c(5,6|d,7)|e}}")[0].scripts.value;
+
+        expect(ast.modifiers[0].path[0]).to.be("b");
+        expect(ast.modifiers[1].path[0]).to.be("c");
+        expect(ast.modifiers[1].parameters[0].value).to.be(5);
+        expect(ast.modifiers[1].parameters[1].value).to.be(6);
+        expect(ast.modifiers[1].parameters[1].modifiers[0].path[0]).to.be("d");
+        expect(ast.modifiers[2].path[0]).to.be("e");
       });
     });
   });

@@ -227,7 +227,7 @@ FunctionCall
   = reference:Reference parameters:Parameters {
       return {
         type: "call",
-        reference: reference,
+        path: reference.path,
         parameters: parameters
       };
     }
