@@ -197,7 +197,7 @@ Modifier
   
 
 ObjectReference
-  = context:Object path:("." ReferenceName)* {
+  = _ context:Object path:("." ReferenceName)* _ {
       context.path = path.map(function (p) { return p[1] })
       return context;
     }
@@ -252,7 +252,7 @@ FunctionCall
     }
 
 Reference
-  = bindingType:("~>"/"<~>"/"~"/"<~")? reference:ReferenceName {
+  = bindingType:("~>"/"<~>"/"~"/"<~")? _ reference:ReferenceName {
       return {
         type: "reference",
         bindingType: bindingType,
