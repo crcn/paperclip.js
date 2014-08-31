@@ -257,7 +257,9 @@ describe("parser/script#", function () {
         "{{#if: loading || !classrooms }}aff{{/else}}blarg{{/}}",
         "{{ loadingGif: { show: true } }}",
         "{{ model.demo ? 'demo-class' : '' }}",
-        "{{model.nstudents.numConnected == 0  && !model.demo}}"
+        "{{model.nstudents.numConnected == 0  && !model.demo}}",
+        "{{model: teacher, focus: true}}",
+        "{{ clipboard: ({ text: link, onCopied: onCopiedLink }) | varg() }}"
       ].forEach(function (expr) {
         parser.parse(expr);
       });
