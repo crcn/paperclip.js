@@ -25,11 +25,11 @@ Element
 
 Text
   = value:TextCharacter+ {
-    return {
-      type: "text",
-      value: value.join("")
+      return {
+        type: "text",
+        value: value.join("")
+      }
     }
-  }
 
 TextCharacter
   = !("<"/"{{") SourceCharacter {
@@ -77,25 +77,25 @@ Attribute
 
 Binding
   = "{" script:Scripts "}" {
-    return {
-      type: "binding",
-      scripts: script
-    };
-  }
+      return {
+        type: "binding",
+        scripts: script
+      };
+    }
 
 Scripts
   = scripts:Object {
-    var s = {};
-    for (i = 0, n = scripts.value.length; i < n; i++) {
-      s[scripts.value[i].key] = scripts.value[i];
+      var s = {};
+      for (i = 0, n = scripts.value.length; i < n; i++) {
+        s[scripts.value[i].key] = scripts.value[i];
+      }
+      return s;
     }
-    return s;
-  }
   / "{" script:Script "}" {
-    return {
-      value: script
-    };
-  }
+      return {
+        value: script
+      };
+    }
 
 Script
   = _ expression:TerneryConditional _ {
@@ -104,76 +104,95 @@ Script
 
 TerneryConditional
   = condition:Expression "?" left:TerneryConditional ":" right:Expression {
-    return {
-      type: "condition",
-      condition: condition,
-      left: left,
-      right: right
+      return {
+        type: "condition",
+        condition: condition,
+        left: left,
+        right: right
+      }
     }
-  }
   / Expression
+
+
+Parameters
+  = "(" param1:Expression rest:("," Expression)* ")" {
+      return 
+    }
+  / "()"
+
 
 
 Expression
   = _ expression:(Group / Object / Operation / Operatable) _ {
-    return expression;
-  }
+      return expression;
+    }
 
 Operation
   = Assignment
 
 Assignment
   = left:Reference "=" right:Assignment {
-    return {
-      type: "=",
-      reference: left.value,
-      value: right
-    };
-  }
+      return {
+        type: "=",
+        reference: left,
+        value: right
+      };
+    }
   / Comparison
 
 Comparison
   = left:Additive operator:("&&" / "||" / "===" / "==" / ">==" / ">=" / ">" / "<==" / "<=" / "<") right:Comparison {
-    return {
-      type: operator,
-      left: left,
-      right: right
+      return {
+        type: operator,
+        left: left,
+        right: right
+      }
     }
-  }
   / Additive
 
 Additive
   = left:Modulative operation:("+"/"-") right:Additive {
-    return {
-      type: operation,
-      left: left,
-      right: right
+      return {
+        type: operation,
+        left: left,
+        right: right
+      };
     }
-  }
   / Modulative
 
 Modulative
   = left:Multiplicative operation:"%" right:Modulative {
-    return {
-      type: operation,
-      left: left,
-      right: right
+      return {
+        type: operation,
+        left: left,
+        right: right
+      }
     }
-  }
   / Multiplicative
 
 Multiplicative
   = left:Operatable operation:("*"/"/") right:Multiplicative {
-    return {
-      type: operation,
-      left: left,
-      right: right
+      return {
+        type: operation,
+        left: left,
+        right: right
+      }
     }
-  }
   / Operatable
 
 Operatable 
-  = _ value:(Group/Object/Reserved/Reference/Number/StringLiteral) _ { return value; }
+  = _ value:(Group/Object/Reserved/Reference/Number/StringLiteral) modifiers:("|" Modifier)*_ { 
+      return value; 
+    }
+
+
+Modifier
+  = Operatable Parameters? {
+    return {
+      type: "modifier",
+      parameters: "parameters"
+    }
+  }
 
 Number
   = value:("-"? ([0-9]+DecimalNumber? / DecimalNumber)) { return { type: "number", value: parseFloat(text()) }; }
@@ -191,11 +210,11 @@ Reserved
 
 Boolean 
   = value:("true"/"false") {
-    return {
-      type: "boolean",
-      value: value === "true"
+      return {
+        type: "boolean",
+        value: value === "true"
+      }
     }
-  }
 
 Undefined 
   = "undefined" { return { type: "undefined", value: void 0 }; }
@@ -204,13 +223,21 @@ Null
   = ("null"/"NULL") { return { type: "null", value: null }; }
 
 Reference
-  = bindingType:("~>"/"<~>"/"~"/"<~")? reference:ReferenceName {
-    return {
-      type: "reference",
-      bindingType: bindingType,
-      value: reference
+  = bindingType:("~>"/"<~>"/"~"/"<~")? reference:ReferencePath {
+      return {
+        type: "reference",
+        bindingType: bindingType,
+        path: reference
+      }
     }
-  }
+
+ReferencePath
+  = left:ReferenceName "." right:ReferencePath {
+      return [left].concat(right);
+    }
+  / name:ReferenceName {
+      return [name];
+    }
 
 ReferenceName
   = name:[a-zA-Z]+ { return text(); }
@@ -225,21 +252,23 @@ Object
 
 ObjectValues 
   = firstValue:ObjectValue additionalValues:("," ObjectValues)* {
-    return [
-      firstValue
-    ].concat(additionalValues.length ? additionalValues[0][1] : []);
-  }
+      return [
+        firstValue
+      ].concat(additionalValues.length ? additionalValues[0][1] : []);
+    }
 
 ObjectValue
   = key:ObjectKey ":" value:Expression {
-    return {
-      key: key.value,
-      value: value
+      return {
+        key: key,
+        value: value
+      }
     }
-  }
 
 ObjectKey
-  = _ key:(StringLiteral/Reference) { return key; }
+  = _ key:StringLiteral { return key.value; }
+  / _ key:ReferenceName { return key; } 
+
 
 
 StringLiteral "string"

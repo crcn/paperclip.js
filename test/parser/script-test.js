@@ -11,14 +11,14 @@ describe("parser/script#", function () {
   describe("scripts", function () {
     it("automatically assigns value script", function () {
         var ast = parser.parse("{{ a }}")[0];
-        expect(ast.scripts.value.value).to.be("a");
+        expect(ast.scripts.value.path[0]).to.be("a");
     });
 
     it("properly parses scripts", function () {
         var ast = parser.parse("{{ a:b, c:d, e:f}}")[0];
-        expect(ast.scripts.a.value.value).to.be("b");
-        expect(ast.scripts.c.value.value).to.be("d");
-        expect(ast.scripts.e.value.value).to.be("f");
+        expect(ast.scripts.a.value.path[0]).to.be("b");
+        expect(ast.scripts.c.value.path[0]).to.be("d");
+        expect(ast.scripts.e.value.path[0]).to.be("f");
     });
   });
 
@@ -74,12 +74,12 @@ describe("parser/script#", function () {
         var ast = parser.parse("{{a ? b ? c ? d : e : f : g }}")[0].scripts.value;
 
 
-        expect(ast.condition.value).to.be("a"); 
-        expect(ast.right.value).to.be("g");
-        expect(ast.left.condition.value).to.be("b");
-        expect(ast.left.right.value).to.be("f");
-        expect(ast.left.left.condition.value).to.be("c");
-        expect(ast.left.left.right.value).to.be("e");
+        expect(ast.condition.path[0]).to.be("a"); 
+        expect(ast.right.path[0]).to.be("g");
+        expect(ast.left.condition.path[0]).to.be("b");
+        expect(ast.left.right.path[0]).to.be("f");
+        expect(ast.left.left.condition.path[0]).to.be("c");
+        expect(ast.left.left.right.path[0]).to.be("e");
       });
     });
 
@@ -140,26 +140,40 @@ describe("parser/script#", function () {
       });
     });
 
+    describe("references", function () {
+      it("can parse a path", function () {
+        var ast = parser.parse("{{a.b.c.d}}")[0].scripts.value;
+      });
+    });
+
 
     describe("assigning", function () {
       it("can be parsed", function () {
         var ast = parser.parse("{{a=b}}")[0].scripts.value;
-        expect(ast.reference).to.be("a");
-        expect(ast.value.value).to.be("b");
+        expect(ast.reference.path[0]).to.be("a");
+        expect(ast.value.path[0]).to.be("b");
       });
       it("can assign multiple values", function () {
         var ast = parser.parse("{{a=b=c=d=e}}")[0].scripts.value;
-        expect(ast.reference).to.be("a");
-        expect(ast.value.reference).to.be("b");
-        expect(ast.value.value.reference).to.be("c");
-        expect(ast.value.value.value.reference).to.be("d");
-        expect(ast.value.value.value.value.value).to.be("e");
+        expect(ast.reference.path[0]).to.be("a");
+        expect(ast.value.reference.path[0]).to.be("b");
+        expect(ast.value.value.reference.path[0]).to.be("c");
+        expect(ast.value.value.value.reference.path[0]).to.be("d");
+        expect(ast.value.value.value.value.path[0]).to.be("e");
       });
       it("properly orders other operations", function () {
         var ast = parser.parse("{{a=5+c}}")[0].scripts.value;
-        expect(ast.reference).to.be("a");
+        expect(ast.reference.path[0]).to.be("a");
         expect(ast.value.left.value).to.be(5);
-        expect(ast.value.right.value).to.be("c");
+        expect(ast.value.right.path[0]).to.be("c");
+      });
+
+      it("can assign with dot syntax", function () {
+        var ast = parser.parse("{{a.b.c=d=e.f.g}}")[0].scripts.value;
+        expect(ast.reference.path[0]).to.be("a");
+        expect(ast.reference.path[1]).to.be("b");
+        expect(ast.reference.path[2]).to.be("c");
+        expect(ast.value.reference.path[0]).to.be("d");
       });
     });
 
@@ -168,19 +182,17 @@ describe("parser/script#", function () {
       ["~", "<~", "<~>", "~>"].forEach(function (bindingType) {
         it("can parse the "+bindingType+" binding", function () {
           var ast = parser.parse("{{"+bindingType+"a}}")[0].scripts.value;
-          console.log(ast);
           expect(ast.bindingType).to.be(bindingType);
         });
-      })
+      });
       
     });
 
-    describe("references", function () {
-
-    });
     
     describe("modifiers", function () {
-
+      it("can be parsed", function () {
+        var ast = parser.parse("{{a|b|c(5,6,7)|d}}")
+      });
     });
   });
 });
