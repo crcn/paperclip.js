@@ -182,7 +182,7 @@ Multiplicative
 
 
 Operatable 
-  = _ value:(Group/Hash/Reserved/FunctionCall/ObjectReference) modifiers:("|" Modifier)*_ { 
+  = _ value:Not modifiers:("|" Modifier)*_ { 
       value.modifiers = modifiers.map(function (modifier) {
         return modifier[1];
       });
@@ -204,6 +204,17 @@ ObjectReference
       context.path = path.map(function (p) { return p[1] })
       return context;
     }
+
+Not
+  = "!" value:Not {
+      return { 
+        type: "!",
+        value: value
+      }
+    }
+  / Reserved / FunctionCall / ObjectReference
+
+
 
 Object
   = Group/Hash/Hash/Number/StringLiteral/Reference

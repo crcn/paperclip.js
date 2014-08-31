@@ -69,8 +69,7 @@ describe("parser/script#", function () {
     });
   });
 
-  describe("operations", function () {
-
+  describe("conditions", function () {
     describe("ternery", function () {
 
       it("parses properly", function () {
@@ -86,6 +85,18 @@ describe("parser/script#", function () {
         expect(ast.left.right.value).to.be("f");
         expect(ast.left.left.condition.value).to.be("c");
         expect(ast.left.left.right.value).to.be("e");
+      });
+    });
+  });
+
+  describe("operations", function () {
+
+    describe("not", function () {
+      it("can be parsed", function () {
+        var ast = parser.parse("{{!!abcd}}")[0].scripts.value;
+        expect(ast.type).to.be("!");
+        expect(ast.value.type).to.be("!");
+        expect(ast.value.value.value).to.be("abcd");
       });
     });
 
@@ -233,10 +244,17 @@ describe("parser/script#", function () {
       });
     });
 
-    [
-      "{{ html:~sections.pages }}"
-    ].forEach(function (expr) {
-      parser.parse(expr);
-    })
+    it("can parse various expression", function () {
+      [
+        "{{ html:~sections.pages }}",
+        "{{ mobileBlocker: {} }}",
+        "{{error.code == 604}}",
+        "{{ onSubmit: signup() }}",
+        "{{!showOtherInput}}"
+      ].forEach(function (expr) {
+        parser.parse(expr);
+      });
+    });
+    
   });
 });
