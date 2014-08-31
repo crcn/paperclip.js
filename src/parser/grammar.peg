@@ -204,12 +204,16 @@ Null
   = ("null"/"NULL") { return { type: "null", value: null }; }
 
 Reference
-  = name:[a-zA-Z]+ { 
+  = bindingType:("~>"/"<~>"/"~"/"<~")? reference:ReferenceName {
     return {
       type: "reference",
-      value: text()
+      bindingType: bindingType,
+      value: reference
     }
   }
+
+ReferenceName
+  = name:[a-zA-Z]+ { return text(); }
 
 Object
   = "{" _ values:ObjectValues? _ "}" {

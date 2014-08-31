@@ -165,6 +165,18 @@ describe("parser/script#", function () {
 
     describe("bindings", function () {
 
+      ["~", "<~", "<~>", "~>"].forEach(function (bindingType) {
+        it("can parse the "+bindingType+" binding", function () {
+          var ast = parser.parse("{{"+bindingType+"a}}")[0].scripts.value;
+          console.log(ast);
+          expect(ast.bindingType).to.be(bindingType);
+        });
+      })
+      
+    });
+
+    describe("references", function () {
+
     });
     
     describe("modifiers", function () {
