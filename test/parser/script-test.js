@@ -16,13 +16,17 @@ describe("parser/script#", function () {
 
     it("properly parses scripts", function () {
         var ast = parser.parse("{{ a:b, c: d, e:f}}")[0];
-        expect(ast.scripts.a.value.value).to.be("b");
-        expect(ast.scripts.c.value.value).to.be("d");
-        expect(ast.scripts.e.value.value).to.be("f");
+        expect(ast.scripts.a.value).to.be("b");
+        expect(ast.scripts.c.value).to.be("d");
+        expect(ast.scripts.e.value).to.be("f");
+    });
+    it("can have no values", function () {
+        var ast = parser.parse("{{a:}}")[0];
+        expect(ast.scripts.a).to.be(void 0);
     });
   });
 
-  describe("objects", function () {
+  describe("hashes", function () {
     it("can have different types of keys", function () {
         var ast = parser.parse("{{{ a:b, 'c':d, \"e\":'f'} }}")[0];
         expect(ast.scripts.value.value[0].key).to.be("a");
@@ -150,11 +154,10 @@ describe("parser/script#", function () {
 
       it("puts equations at a higher priority than comparisons", function () {
         var ast = parser.parse("{{scriptA:1>2+3}}")[0].scripts.scriptA;
-        expect(ast.key).to.be("scriptA");
-        expect(ast.value.type).to.be(">");
-        expect(ast.value.left.value).to.be(1);
-        expect(ast.value.right.left.value).to.be(2);
-        expect(ast.value.right.right.value).to.be(3);
+        expect(ast.type).to.be(">");
+        expect(ast.left.value).to.be(1);
+        expect(ast.right.left.value).to.be(2);
+        expect(ast.right.right.value).to.be(3);
       });
     });
 
@@ -251,7 +254,10 @@ describe("parser/script#", function () {
         "{{error.code == 604}}",
         "{{ onSubmit: signup() }}",
         "{{!showOtherInput}}",
-        "{{#if: loading || !classrooms }}aff{{/else}}blarg{{/}}"
+        "{{#if: loading || !classrooms }}aff{{/else}}blarg{{/}}",
+        "{{ loadingGif: { show: true } }}",
+        "{{ model.demo ? 'demo-class' : '' }}",
+        "{{model.nstudents.numConnected == 0  && !model.demo}}"
       ].forEach(function (expr) {
         parser.parse(expr);
       });

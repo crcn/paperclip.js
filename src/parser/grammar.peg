@@ -111,7 +111,7 @@ Scripts
   = scripts:HashValues {
         var s = {};
       for (i = 0, n = scripts.length; i < n; i++) {
-        s[scripts[i].key] = scripts[i];
+        s[scripts[i].key] = scripts[i].value;
       }
       return s;
     }
@@ -320,10 +320,10 @@ HashValues
     }
 
 HashValue
-  = key:HashKey ":" value:Expression {
+  = key:HashKey ":" value:Expression? {
       return {
         key: key,
-        value: value
+        value: value || void 0
       }
     }
 
