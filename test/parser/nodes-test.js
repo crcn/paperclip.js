@@ -16,6 +16,7 @@ describe("parser/node#", function () {
 
   it("can parse a node an end statement", function () {
     parser.parse("<a />");
+    parser.parse("<a b='c' />");
   });
 
   it("fails if there is a closing tag without an open tag", function () {
@@ -99,6 +100,15 @@ describe("parser/node#", function () {
       expect(ast.attributes[0].value[1].type).to.be("binding");
       expect(ast.attributes[0].value[2]).to.be(" ");
       expect(ast.attributes[0].value[3].type).to.be("binding");
+
+      var fs = require("fs");
+
+      try {
+        var ast = parser.parse(fs.readFileSync(__dirname + "/test.pc", "utf8"));
+        console.log(JSON.stringify(ast, null, 2));
+      } catch (e) {
+        console.log(e.stack);
+      }
     });
   });
 });

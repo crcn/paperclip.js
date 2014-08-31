@@ -140,7 +140,7 @@ describe("parser/script#", function () {
   
     describe("comparisons", function () {
 
-      ["&&", "||", "==", "===", ">", ">=", ">==", "<", "<=", "<=="].forEach(function (op) {
+      ["&&", "||", "==", "!=", "!==", "===", ">", ">=", ">==", "<", "<=", "<=="].forEach(function (op) {
          it("can parse " + op, function () {
           var ast = parser.parse("{{ true "+op+" false }}")[0].scripts.value;
           expect(ast.left.value).to.be(true);
