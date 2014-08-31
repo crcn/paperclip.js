@@ -191,7 +191,11 @@ describe("parser/script#", function () {
     
     describe("modifiers", function () {
       it("can be parsed", function () {
-        var ast = parser.parse("{{a|b|c(5,6,7)|d}}")
+        var ast = parser.parse("{{a|b|c(5,6,7)|d}}");
+
+        var ast = parser.parse("<h3>{{ad}}</h3>");
+
+        console.log(JSON.stringify(ast, null, 2));
       });
     });
   });

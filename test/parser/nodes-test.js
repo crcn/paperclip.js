@@ -7,6 +7,13 @@ describe("parser/node#", function () {
     parser.parse("<a>");
   });
 
+  it("accepts many types of characters in the tag name", function () {
+    parser.parse("<a>");
+    parser.parse("<h3>");
+    parser.parse("<a_v>");
+    parser.parse("<a:n>");
+  });
+
   it("can parse a node an end statement", function () {
     parser.parse("<a />");
   });

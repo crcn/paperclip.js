@@ -15,6 +15,7 @@ Element
     return {
       type: "element",
       name: startTag.name,
+      attributes: startTag.attributes,
       children: children
     };
   }
@@ -60,13 +61,13 @@ EndTag
 
 
 TagName
-  = _ word:Word { return word; }
+  = _ word:[a-zA-Z0-9:_-]+ { return text(); }
 
 Attribute
-  = name:TagName "=" string:StringLiteral {
+  = name:TagName "=" value:StringLiteral {
       return {
         name: name,
-        value: string.value
+        value: value.value
       };
     }
   / name:TagName {
