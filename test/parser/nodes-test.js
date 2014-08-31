@@ -70,8 +70,26 @@ describe("parser/node#", function () {
 
   describe("bindings", function () {
     it("can parse text blocks", function () {
-
+      var ast= parser.parse("aa {{abc}} bb");
+      expect(ast[1].type).to.be("binding");
     });
+
+    it("can parse binding blocks", function () {
+      var ast = parser.parse("{{#a}} 123 {{/}}")[0];
+      expect(ast.type).to.be("bindingBlock");
+      expect(ast.fragment[0].type).to.be("text");
+    });
+
+    it("can parse binding blocks with children", function () {
+      var ast = parser.parse("{{#a}}123{{/b}}456{{/c}}789{{/}}")[0];
+
+      expect(ast.type).to.be("bindingBlock");
+      expect(ast.fragment[0].value).to.be("123");
+      expect(ast.child.type).to.be("bindingBlock");
+      expect(ast.child.fragment[0].value).to.be("456");
+      expect(ast.child.child.type).to.be("bindingBlock");
+      expect(ast.child.child.fragment[0].value).to.be("789");
+    })
   });
 
   it("can parse a text binding", function () {
