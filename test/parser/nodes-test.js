@@ -68,6 +68,12 @@ describe("parser/node#", function () {
     expect(ast[1].name).to.be("a");
   });
 
+  describe("bindings", function () {
+    it("can parse text blocks", function () {
+
+    });
+  });
+
   it("can parse a text binding", function () {
     var ast = parser.parse("text{{ ab }}");
     expect(ast[1].type).to.be("binding");

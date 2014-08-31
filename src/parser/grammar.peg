@@ -6,7 +6,7 @@ Start
   = ChildNodes
 
 ChildNodes
-  = (Text/Binding/Element)*
+  = (Text/BindingBlock/Element)*
 
 Element
   = startTag:StartTag children:ChildNodes endTag:EndTag {
@@ -79,8 +79,28 @@ Attribute
       }
     }
 
+
+BindingBlock
+  = "{{#" bindingBlock:StartBindingBlock { return bindingBlock; }
+  / Binding
+
+
+StartBindingBlock
+  = scripts:Scripts "}}" fragment:ChildNodes child:ChildBindingBlock {
+    return {
+      type: "bindingBlock",
+      scripts: scripts,
+      fragment: fragment,
+      child: child
+    }
+  }
+
+ChildBindingBlock
+  = "{{/" bindingBlock:StartBindingBlock { return bindingBlock; }
+  / "{{/}}" { return void 0; }
+
 Binding
-  = "{" script:Scripts "}" {
+  = "{{" script:Scripts "}}" {
       return {
         type: "binding",
         scripts: script
@@ -88,14 +108,14 @@ Binding
     }
 
 Scripts
-  = scripts:Hash {
-      var s = {};
-      for (i = 0, n = scripts.value.length; i < n; i++) {
-        s[scripts.value[i].key] = scripts.value[i];
+  = scripts:HashValues {
+        var s = {};
+      for (i = 0, n = scripts.length; i < n; i++) {
+        s[scripts[i].key] = scripts[i];
       }
       return s;
     }
-  / "{" script:Script "}" {
+  / script:Script {
       return {
         value: script
       };
@@ -119,12 +139,18 @@ TerneryConditional
 
 
 Parameters
-  = "(" param1:Expression rest:("," Expression)* ")" {
+  = "(" params:InnerParameters ")" {
+      return params;
+    }
+  / "()" { return []; }
+
+
+InnerParameters
+  = param1:Expression rest:("," Expression)* {
       return [param1].concat(rest.map(function (v) {
         return v[1];
       }));
     }
-  / "()" { return []; }
 
 
 Expression

@@ -250,7 +250,8 @@ describe("parser/script#", function () {
         "{{ mobileBlocker: {} }}",
         "{{error.code == 604}}",
         "{{ onSubmit: signup() }}",
-        "{{!showOtherInput}}"
+        "{{!showOtherInput}}",
+        "{{#if: loading || !classrooms }}aff{{/else}}blarg{{/}}"
       ].forEach(function (expr) {
         parser.parse(expr);
       });
