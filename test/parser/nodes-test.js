@@ -82,7 +82,6 @@ describe("parser/node#", function () {
 
     it("can parse binding blocks with children", function () {
       var ast = parser.parse("{{#a}}123{{/b}}456{{/c}}789{{/}}")[0];
-
       expect(ast.type).to.be("bindingBlock");
       expect(ast.fragment[0].value).to.be("123");
       expect(ast.child.type).to.be("bindingBlock");
