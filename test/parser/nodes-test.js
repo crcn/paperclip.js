@@ -43,22 +43,27 @@ describe("parser/node#", function () {
 
   it("can parse a node with children", function () {
     var ast = parser.parse("<a><b></b></a>")[0];
-    expect(ast.type).to.be("element");
+    expect(ast.type).to.be("elementNode");
     expect(ast.children[0].name).to.be("b");
   });
 
   it("can parse text", function () {
     var ast = parser.parse("abcde")[0];
-    expect(ast.type).to.be("text");
+    expect(ast.type).to.be("textNode");
     expect(ast.value).to.be("abcde");
   });
 
   it("can parse text with a node", function () {
-    var ast = parser.parse("text<a></a>");
-    expect(ast[0].type).to.be("text");
-    expect(ast[0].value).to.be("text");
-    expect(ast[1].type).to.be("element");
+    var ast = parser.parse("abcde<a></a>");
+    expect(ast[0].type).to.be("textNode");
+    expect(ast[0].value).to.be("abcde");
+    expect(ast[1].type).to.be("elementNode");
     expect(ast[1].name).to.be("a");
+  });
+
+  it("can parse comments", function () {
+    var ast = parser.parse("<!-- hello -->");
+    expect(ast[0].value).to.be(" hello ");
   });
 
   describe("bindings", function () {
@@ -70,7 +75,7 @@ describe("parser/node#", function () {
     it("can parse binding blocks", function () {
       var ast = parser.parse("{{#a}} 123 {{/}}")[0];
       expect(ast.type).to.be("bindingBlock");
-      expect(ast.fragment[0].type).to.be("text");
+      expect(ast.fragment[0].type).to.be("textNode");
     });
 
     it("can parse binding blocks with children", function () {

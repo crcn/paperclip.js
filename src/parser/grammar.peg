@@ -6,7 +6,15 @@ Start
   = ChildNodes
 
 ChildNodes
-  = (Text/BindingBlock/Element)*
+  = (Text/BindingBlock/Comment/Element)*
+
+Comment
+  = "<!--" value:(!"-->" v:SourceCharacter { return v; })+ "-->" {
+    return {
+      type: "commentNode",
+      value: value.join("")
+    }
+  }
 
 Element
   = startTag:StartTag children:ChildNodes endTag:EndTag {
@@ -16,7 +24,7 @@ Element
     }
 
     return {
-      type: "element",
+      type: "elementNode",
       name: startTag.name,
       attributes: startTag.attributes,
       children: children
@@ -30,7 +38,7 @@ Element
 Text
   = value:TextCharacter+ {
       return {
-        type: "text",
+        type: "textNode",
         value: value.join("")
       }
     }
