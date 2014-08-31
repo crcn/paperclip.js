@@ -89,11 +89,6 @@ describe("parser/node#", function () {
       expect(ast.child.fragment[0].value).to.be("456");
       expect(ast.child.child.type).to.be("bindingBlock");
       expect(ast.child.child.fragment[0].value).to.be("789");
-    })
-  });
-
-  it("can parse a text binding", function () {
-    var ast = parser.parse("text{{ ab }}");
-    expect(ast[1].type).to.be("binding");
+    });
   });
 });
