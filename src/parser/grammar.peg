@@ -85,7 +85,7 @@ Binding
     }
 
 Scripts
-  = scripts:Object {
+  = scripts:Hash {
       var s = {};
       for (i = 0, n = scripts.value.length; i < n; i++) {
         s[scripts.value[i].key] = scripts.value[i];
@@ -124,17 +124,11 @@ Parameters
   / "()" { return []; }
 
 
-
 Expression
-  = _ expression:(Group / Object / Operation) _ {
-      return expression;
-    }
-
-Operation
   = Assignment
 
 Assignment
-  = left:Reference "=" right:Assignment {
+  = left:ObjectReference "=" right:Assignment {
       return {
         type: "=",
         reference: left,
@@ -183,17 +177,34 @@ Multiplicative
     }
   / Operatable
 
+
 Operatable 
-  = _ value:(Group/Object/Reserved/FunctionCall/Number/StringLiteral) modifiers:("|" Modifier)*_ { 
+  = _ value:(Group/Hash/Reserved/FunctionCall/ObjectReference) modifiers:("|" Modifier)*_ { 
       value.modifiers = modifiers.map(function (modifier) {
         return modifier[1];
       });
       return value; 
     }
 
-
 Modifier
-  = FunctionCall
+  = call:(FunctionCall/Object) {
+    return {
+      type: "call",
+      reference: call.reference || call,
+      parameters: call.parameters || []
+    };
+  }
+  
+
+ObjectReference
+  = context:Object path:("." ReferenceName)* {
+      context.path = path.map(function (p) { return p[1] })
+      return context;
+    }
+
+Object
+  = Group/Hash/Hash/Number/StringLiteral/Reference
+
 
 Number
   = value:("-"? ([0-9]+DecimalNumber? / DecimalNumber)) { return { type: "number", value: parseFloat(text()) }; }
@@ -208,6 +219,8 @@ Reserved
   = Boolean
   / Undefined
   / Null
+  / NaN
+  / Infinity
 
 Boolean 
   = value:("true"/"false") {
@@ -220,63 +233,61 @@ Boolean
 Undefined 
   = "undefined" { return { type: "undefined", value: void 0 }; }
 
+NaN 
+  = "NaN" { return { type: "nan", value: NaN }; }
+
+Infinity 
+  = "Infinity" { return { type: "infinity", value: Infinity }; }
+
 Null
   = ("null"/"NULL") { return { type: "null", value: null }; }
 
 FunctionCall
-  = reference:Reference parameters:Parameters {
+  = reference:ObjectReference parameters:Parameters {
       return {
         type: "call",
-        path: reference.path,
+        reference: reference,
         parameters: parameters
       };
     }
-  / Reference
 
 Reference
-  = bindingType:("~>"/"<~>"/"~"/"<~")? reference:ReferencePath {
+  = bindingType:("~>"/"<~>"/"~"/"<~")? reference:ReferenceName {
       return {
         type: "reference",
         bindingType: bindingType,
-        path: reference
+        value: reference
       }
     }
 
-ReferencePath
-  = left:ReferenceName "." right:ReferencePath {
-      return [left].concat(right);
-    }
-  / name:ReferenceName {
-      return [name];
-    }
 
 ReferenceName
   = name:[a-zA-Z]+ { return text(); }
 
-Object
-  = "{" _ values:ObjectValues? _ "}" {
+Hash
+  = "{" _ values:HashValues? _ "}" {
       return {
         type: "object",
         value: values
       }
     }
 
-ObjectValues 
-  = firstValue:ObjectValue additionalValues:("," ObjectValues)* {
+HashValues 
+  = firstValue:HashValue additionalValues:("," HashValues)* {
       return [
         firstValue
       ].concat(additionalValues.length ? additionalValues[0][1] : []);
     }
 
-ObjectValue
-  = key:ObjectKey ":" value:Expression {
+HashValue
+  = key:HashKey ":" value:Expression {
       return {
         key: key,
         value: value
       }
     }
 
-ObjectKey
+HashKey
   = _ key:StringLiteral { return key.value; }
   / _ key:ReferenceName { return key; } 
 

@@ -11,14 +11,14 @@ describe("parser/script#", function () {
   describe("scripts", function () {
     it("automatically assigns value script", function () {
         var ast = parser.parse("{{ a }}")[0];
-        expect(ast.scripts.value.path[0]).to.be("a");
+        expect(ast.scripts.value.value).to.be("a");
     });
 
     it("properly parses scripts", function () {
         var ast = parser.parse("{{ a:b, c:d, e:f}}")[0];
-        expect(ast.scripts.a.value.path[0]).to.be("b");
-        expect(ast.scripts.c.value.path[0]).to.be("d");
-        expect(ast.scripts.e.value.path[0]).to.be("f");
+        expect(ast.scripts.a.value.value).to.be("b");
+        expect(ast.scripts.c.value.value).to.be("d");
+        expect(ast.scripts.e.value.value).to.be("f");
     });
   });
 
@@ -56,6 +56,14 @@ describe("parser/script#", function () {
     it("can parse undefined values", function () {
       expect(parser.parse("{{ undefined }}")[0].scripts.value.value).to.be(void 0);
     });
+    it("can parse NaN values", function () {
+      var v = parser.parse("{{ NaN }}")[0].scripts.value;
+      expect(v.type).to.be("nan");
+    });
+    it("can parse Infinity values", function () {
+      var v = parser.parse("{{ Infinity }}")[0].scripts.value;
+      expect(v.type).to.be("infinity");
+    });
     it("can parse null values", function () {
       expect(parser.parse("{{ null }}")[0].scripts.value.value).to.be(null);
     });
@@ -72,12 +80,12 @@ describe("parser/script#", function () {
 
       it("can nest ternery operations", function () {
         var ast = parser.parse("{{a ? b ? c ? d : e : f : g }}")[0].scripts.value;
-        expect(ast.condition.path[0]).to.be("a"); 
-        expect(ast.right.path[0]).to.be("g");
-        expect(ast.left.condition.path[0]).to.be("b");
-        expect(ast.left.right.path[0]).to.be("f");
-        expect(ast.left.left.condition.path[0]).to.be("c");
-        expect(ast.left.left.right.path[0]).to.be("e");
+        expect(ast.condition.value).to.be("a"); 
+        expect(ast.right.value).to.be("g");
+        expect(ast.left.condition.value).to.be("b");
+        expect(ast.left.right.value).to.be("f");
+        expect(ast.left.left.condition.value).to.be("c");
+        expect(ast.left.left.right.value).to.be("e");
       });
     });
 
@@ -143,6 +151,10 @@ describe("parser/script#", function () {
       it("can parse a path", function () {
         var ast = parser.parse("{{a.b.c.d}}")[0].scripts.value;
       });
+
+      describe("paths", function () {
+        
+      });
     });
 
 
@@ -150,32 +162,32 @@ describe("parser/script#", function () {
 
       it("can be parsed", function () {
         var ast = parser.parse("{{a=b}}")[0].scripts.value;
-        expect(ast.reference.path[0]).to.be("a");
-        expect(ast.value.path[0]).to.be("b");
+        expect(ast.reference.value).to.be("a");
+        expect(ast.value.value).to.be("b");
       });
 
       it("can assign multiple values", function () {
         var ast = parser.parse("{{a=b=c=d=e}}")[0].scripts.value;
-        expect(ast.reference.path[0]).to.be("a");
-        expect(ast.value.reference.path[0]).to.be("b");
-        expect(ast.value.value.reference.path[0]).to.be("c");
-        expect(ast.value.value.value.reference.path[0]).to.be("d");
-        expect(ast.value.value.value.value.path[0]).to.be("e");
+        expect(ast.reference.value).to.be("a");
+        expect(ast.value.reference.value).to.be("b");
+        expect(ast.value.value.reference.value).to.be("c");
+        expect(ast.value.value.value.reference.value).to.be("d");
+        expect(ast.value.value.value.value.value).to.be("e");
       });
 
       it("properly orders other operations", function () {
         var ast = parser.parse("{{a=5+c}}")[0].scripts.value;
-        expect(ast.reference.path[0]).to.be("a");
+        expect(ast.reference.value).to.be("a");
         expect(ast.value.left.value).to.be(5);
-        expect(ast.value.right.path[0]).to.be("c");
+        expect(ast.value.right.value).to.be("c");
       });
 
       it("can assign with dot syntax", function () {
         var ast = parser.parse("{{a.b.c=d=e.f.g}}")[0].scripts.value;
-        expect(ast.reference.path[0]).to.be("a");
-        expect(ast.reference.path[1]).to.be("b");
-        expect(ast.reference.path[2]).to.be("c");
-        expect(ast.value.reference.path[0]).to.be("d");
+        expect(ast.reference.value).to.be("a");
+        expect(ast.reference.path[0]).to.be("b");
+        expect(ast.reference.path[1]).to.be("c");
+        expect(ast.value.reference.value).to.be("d");
       });
     });
 
@@ -190,24 +202,29 @@ describe("parser/script#", function () {
 
     describe("function calls", function () {
       it("can be parsed", function () {
-        var ast = parser.parse("{{a.b.c(1,2,3+4|a())}}")[0].scripts.value;
+        var ast = parser.parse("{{a.b.c(1,2,3+4)}}")[0].scripts.value;
         expect(ast.type).to.be("call");
         expect(ast.parameters[0].value).to.be(1);
         expect(ast.parameters[1].value).to.be(2);
         expect(ast.parameters[2].left.value).to.be(3);
       }); 
+      it("can be called from strings", function () {
+        var ast = parser.parse("{{'a'.length}}")[0].scripts.value;
+        expect(ast.type).to.be("string");
+        expect(ast.path[0]).to.be("length");
+
+      });
     });
 
     describe("modifiers", function () {
       it("can be parsed", function () {
         var ast = parser.parse("{{a|b|c(5,6|d,7)|e}}")[0].scripts.value;
-
-        expect(ast.modifiers[0].path[0]).to.be("b");
-        expect(ast.modifiers[1].path[0]).to.be("c");
+        expect(ast.modifiers[0].reference.value).to.be("b");
+        expect(ast.modifiers[1].reference.value).to.be("c");
         expect(ast.modifiers[1].parameters[0].value).to.be(5);
         expect(ast.modifiers[1].parameters[1].value).to.be(6);
-        expect(ast.modifiers[1].parameters[1].modifiers[0].path[0]).to.be("d");
-        expect(ast.modifiers[2].path[0]).to.be("e");
+        expect(ast.modifiers[1].parameters[1].modifiers[0].reference.value).to.be("d");
+        expect(ast.modifiers[2].reference.value).to.be("e");
       });
     });
   });
