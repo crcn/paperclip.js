@@ -151,10 +151,6 @@ describe("parser/script#", function () {
       it("can parse a path", function () {
         var ast = parser.parse("{{a.b.c.d}}")[0].scripts.value;
       });
-
-      describe("paths", function () {
-        
-      });
     });
 
 
