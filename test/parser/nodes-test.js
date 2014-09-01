@@ -4,20 +4,20 @@ expect     = require("expect.js");
 describe("parser/node#", function () {
 
   it("can parse a node without children", function () {
-    parser.parse("<a>");
+    parser.parse("<a />");
   });
 
   it("can parse the doctype", function () {
-    var c = parser.parse("<!DOCTYPE html><a>").childNodes;
+    var c = parser.parse("<!DOCTYPE html><a />").childNodes;
     expect(c.length).to.be(2);
     expect(c[0].value).to.be("html")
   });
 
   it("accepts many types of characters in the tag name", function () {
-    parser.parse("<a>");
-    parser.parse("<h3>");
-    parser.parse("<a_v>");
-    parser.parse("<a:n>");
+    parser.parse("<a />");
+    parser.parse("<h3 />");
+    parser.parse("<a_v />");
+    parser.parse("<a:n />");
   });
 
   it("can parse a node an end statement", function () {
@@ -38,18 +38,18 @@ describe("parser/node#", function () {
   });
 
   it("can parse node attributes without values", function () {
-    var ast = parser.parse("<a a b>").childNodes[0];
+    var ast = parser.parse("<a a b />").childNodes[0];
     expect(ast.name).to.be("a");
     expect(ast.attributes[0].name).to.be("a");
     expect(ast.attributes[0].value).to.be(void 0);
   });
 
   it("can parse node attributes with values", function () {
-    parser.parse("<a b=\"c\" d='e'>").childNodes[0];
+    parser.parse("<a b=\"c\" d='e' />").childNodes[0];
   });
 
   it("can parse node attributes with ws", function () {
-    parser.parse("<a b = \"c\" d\t\n='e'>").childNodes[0];
+    parser.parse("<a b = \"c\" d\t\n='e' />").childNodes[0];
   });
 
   it("can parse a node with children", function () {
@@ -105,7 +105,7 @@ describe("parser/node#", function () {
     });
 
     it("can parse attribute values as bindings", function () {
-      var ast = parser.parse("<input data-bind={{model:<~>name}}>").childNodes[0];
+      var ast = parser.parse("<input data-bind={{model:<~>name}} />").childNodes[0];
       expect(ast.attributes[0].value.type).to.be("binding");
     });
 

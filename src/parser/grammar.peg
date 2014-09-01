@@ -35,7 +35,6 @@ ElementNode
 
     return new ElementNodeExpression(startTag.name, startTag.attributes, children);
   }
-  / StartTag
   / StartEndTag
 
 TextNode
@@ -52,7 +51,7 @@ StartTag
   = _ "<" info:TagInfo ">" _ { return info; }
 
 StartEndTag
-  = _ "<" info:TagInfo "/>" _ { return info; }
+  = _ "<" info:TagInfo "/>" _ { return new ElementNodeExpression(info.name, info.attributes); }
 
 TagInfo
   = name:TagName _ attributes:Attribute* _ {
