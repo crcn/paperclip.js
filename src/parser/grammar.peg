@@ -18,7 +18,8 @@
   CallExpression               = require("./ast/call"),
   ModifierExpression           = require("./ast/modifier"),
   ArrayExpression              = require("./ast/array"),
-  ParametersExpression         = require("./ast/parameters");
+  ParametersExpression         = require("./ast/parameters"),
+  GroupExpression              = require("./ast/group");
 
   function trimWhitespace (ws) {
     return ws.replace(/[\s\r\n\t]+/g, " ").replace(/(^\s+)|(\s+$)/, "");
@@ -245,7 +246,7 @@ DecimalNumber
   = "." [0-9]+
 
 Group
-  = "(" group:Expression ")" { return group; }
+  = "(" group:Expression ")" { return new GroupExpression(group); }
 
 Reserved
   = expression:(Boolean / Undefined / Null / NaN / Infinity) {
