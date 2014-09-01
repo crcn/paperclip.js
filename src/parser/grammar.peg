@@ -1,11 +1,23 @@
 {
-  var DoctypeExpression  = require("./ast/doctype"),
-  RootNodeExpression     = require("./ast/rootNode"),
-  TextNodeExpression     = require("./ast/textNode"),
-  CommentNodeExpression  = require("./ast/commentNode"),
-  ElementNodeExpression  = require("./ast/elementNode"),
-  BlockBindingExpression = require("./ast/blockBinding"),
-  TextBindingExpression  = require("./ast/textBinding")
+  var DoctypeExpression        = require("./ast/doctype"),
+  RootNodeExpression           = require("./ast/rootNode"),
+  TextNodeExpression           = require("./ast/textNode"),
+  CommentNodeExpression        = require("./ast/commentNode"),
+  ElementNodeExpression        = require("./ast/elementNode"),
+  BlockBindingExpression       = require("./ast/blockBinding"),
+  TextBindingExpression        = require("./ast/textBinding"),
+  TernaryConditionExpression   = require("./ast/ternaryCondition"),
+  AssignmentExpression         = require("./ast/assignment"),
+  OperatorExpression           = require("./ast/operator"),
+  NotExpression                = require("./ast/not"),
+  LiteralExpression            = require("./ast/literal"),
+  StringExpression             = require("./ast/string"),
+  ReferenceExpression          = require("./ast/reference"),
+  HashExpression               = require("./ast/hash"),
+  ScriptExpression             = require("./ast/script"),
+  CallExpression               = require("./ast/call"),
+  ModifierExpression           = require("./ast/modifier"),
+  PropertyExpression           = require("./ast/property");
 }
 
 Start
@@ -123,27 +135,20 @@ Scripts
       return s;
     }
   / script:Script {
-      return {
-        value: script
-      };
+      return new ScriptExpression(script);
     }
 
 Script
-  = _ expression:TerneryConditional _ {
+  = _ expression:TernaryConditional _ {
     return expression;
   }
 
 Expression 
-  = TerneryConditional
+  = TernaryConditional
 
-TerneryConditional
-  = condition:Assignment "?" left:TerneryConditional ":" right:TerneryConditional {
-      return {
-        type: "condition",
-        condition: condition,
-        left: left,
-        right: right
-      }
+TernaryConditional
+  = condition:Assignment "?" left:TernaryConditional ":" right:TernaryConditional {
+      return new TernaryConditionExpression(condition, left, right);
     }
   / Assignment
 
@@ -164,66 +169,59 @@ InnerParameters
 
 Assignment
   = left:ObjectReference "=" right:Assignment {
-      return {
-        type: "=",
-        reference: left,
-        value: right
-      };
+      return new AssignmentExpression(left, right);
     }
   / Operation
 
 Operation 
   = left:Operatable operator: ("&&" / "||" / "===" / "==" / "!==" / "!=" / ">==" / ">=" / ">" / "<==" / "<=" / "<" / "+" / "-" / "%" / "*" / "/") right:Operation {
-      return {
-        type: operator,
-        left: left,
-        right: right
-      }
+      return new OperatorExpression(operator, left, right);
     }
   / Operatable
 
 
-Operatable 
-  = _ value:Not modifiers:("|" Modifier)*_ { 
-      value.modifiers = modifiers.map(function (modifier) {
-        return modifier[1];
-      });
-      return value; 
-    }
+Operatable
+  = _ value:Modifiers _ { return value; }
 
-Modifier
-  = call:(FunctionCall/Object) _ {
+Modifiers
+  = expression:Not modifiers:Modifier* {
+
+      for (var i = 0, n = modifiers.length; i < n; i++) {
+        expression = new ModifierExpression(expression, modifiers[i].reference, modifiers[i].parameters);
+      }
+
+      return expression;
+    }
+  / (FunctionCall/ObjectReference)
+
+Modifier 
+  = "|" _ call:(FunctionCall/ObjectReference) _ {
     return {
-      type: "call",
       reference: call.reference || call,
       parameters: call.parameters || []
-    };
+    }
   }
-  
+
 
 ObjectReference
   = _ context:Object path:("." ReferenceName)* _ {
-      context.path = path.map(function (p) { return p[1] })
-      return context;
+      if (!path.length) return context;
+      return new PropertyExpression(context, path.map(function (p) { return p[1] }));
     }
 
 Not
   = not:"!" value:Not {
-      return { 
-        type: "!",
-        value: value
-      }
+      return new NotExpression(value);
     }
-  / Reserved / FunctionCall / ObjectReference
-
-
+  / Reserved/FunctionCall/ObjectReference
 
 Object
   = Group/Hash/Number/StringLiteral/Reference
 
-
 Number
-  = value:("-"? ([0-9]+DecimalNumber? / DecimalNumber)) { return { type: "number", value: parseFloat(text()) }; }
+  = value:("-"? ([0-9]+DecimalNumber? / DecimalNumber)) { 
+      return new LiteralExpression(parseFloat(text()));
+    }
   
 DecimalNumber
   = "." [0-9]+
@@ -232,11 +230,9 @@ Group
   = "(" group:Expression ")" { return group; }
 
 Reserved
-  = Boolean
-  / Undefined
-  / Null
-  / NaN
-  / Infinity
+  = expression:(Boolean / Undefined / Null / NaN / Infinity) {
+      return new LiteralExpression(expression.value);
+    }
 
 Boolean 
   = value:("true"/"false") {
@@ -260,32 +256,20 @@ Null
 
 FunctionCall
   = reference:ObjectReference parameters:Parameters {
-      return {
-        type: "call",
-        reference: reference,
-        parameters: parameters
-      };
+      return new CallExpression(reference, parameters);
     }
 
 Reference
   = bindingType:("~>"/"<~>"/"~"/"<~")? _ reference:ReferenceName {
-      return {
-        type: "reference",
-        bindingType: bindingType,
-        value: reference
-      }
+      return new ReferenceExpression(reference, bindingType);
     }
-
 
 ReferenceName
   = name:[a-zA-Z_$0-9]+ { return text(); }
 
 Hash
   = "{" _ values:HashValues? _ "}" {
-      return {
-        type: "object",
-        value: values
-      }
+      return new HashExpression(values);
     }
 
 HashValues 
@@ -311,10 +295,10 @@ HashKey
 
 StringLiteral "string"
   = '"' chars:DoubleStringCharacter* '"' {
-      return { type: "string", value: chars.join("") };
+      return new StringExpression(chars.join(""));
     }
   / "'" chars:SingleStringCharacter* "'" {
-      return { type: "string", value: chars.join("") };
+      return new StringExpression(chars.join(""));
     }
 
 

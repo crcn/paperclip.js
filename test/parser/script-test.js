@@ -71,11 +71,12 @@ describe("parser/script#", function () {
     });
     it("can parse NaN values", function () {
       var v = parser.parse("{{ NaN }}").childNodes[0].scripts.value;
-      expect(v.type).to.be("nan");
+      expect(v.type).to.be("literal");
     });
     it("can parse Infinity values", function () {
       var v = parser.parse("{{ Infinity }}").childNodes[0].scripts.value;
-      expect(v.type).to.be("infinity");
+      expect(v.value).to.be(Infinity);
+      expect(v.type).to.be("literal");
     });
     it("can parse null values", function () {
       expect(parser.parse("{{ null }}").childNodes[0].scripts.value.value).to.be(null);
@@ -93,21 +94,21 @@ describe("parser/script#", function () {
       it("can nest ternery operations in the true arg", function () {
         var ast = parser.parse("{{a ? b ? c ? \nd : e : f : g }}").childNodes[0].scripts.value;
         expect(ast.condition.value).to.be("a"); 
-        expect(ast.right.value).to.be("g");
-        expect(ast.left.condition.value).to.be("b");
-        expect(ast.left.right.value).to.be("f");
-        expect(ast.left.left.condition.value).to.be("c");
-        expect(ast.left.left.right.value).to.be("e");
+        expect(ast.fExpression.value).to.be("g");
+        expect(ast.tExpression.condition.value).to.be("b");
+        expect(ast.tExpression.fExpression.value).to.be("f");
+        expect(ast.tExpression.tExpression.condition.value).to.be("c");
+        expect(ast.tExpression.tExpression.fExpression.value).to.be("e");
       });
 
       it("can nest ternery operations in the false arg", function () {
 
         var ast = parser.parse("{{a ? b : c ? d : e}}").childNodes[0].scripts.value;
         expect(ast.condition.value).to.be("a"); 
-        expect(ast.left.value).to.be("b");
-        expect(ast.right.condition.value).to.be("c");
-        expect(ast.right.left.value).to.be("d");
-        expect(ast.right.right.value).to.be("e");
+        expect(ast.tExpression.value).to.be("b");
+        expect(ast.fExpression.condition.value).to.be("c");
+        expect(ast.fExpression.tExpression.value).to.be("d");
+        expect(ast.fExpression.fExpression.value).to.be("e");
       })
 
       it("can be parsed within a group expression", function () {
@@ -170,7 +171,7 @@ describe("parser/script#", function () {
 
       it("puts equations at a higher priority than comparisons", function () {
         var ast = parser.parse("{{scriptA:1>2+3}}").childNodes[0].scripts.scriptA;
-        expect(ast.type).to.be(">");
+        expect(ast.operator).to.be(">");
         expect(ast.left.value).to.be(1);
         expect(ast.right.left.value).to.be(2);
         expect(ast.right.right.value).to.be(3);
@@ -190,7 +191,7 @@ describe("parser/script#", function () {
     describe("strings", function () {
       it("can be concatenated", function () {
         var ast = parser.parse("{{'a' + 'b'}}").childNodes[0].scripts.value;
-        expect(ast.type).to.be("+");
+        expect(ast.operator).to.be("+");
         expect(ast.left.value).to.be('a');
         expect(ast.right.value).to.be('b');
       })
@@ -223,7 +224,7 @@ describe("parser/script#", function () {
 
       it("can assign with dot syntax", function () {
         var ast = parser.parse("{{a.b.c =d= e.f.g}}").childNodes[0].scripts.value;
-        expect(ast.reference.value).to.be("a");
+        expect(ast.reference.context.value).to.be("a");
         expect(ast.reference.path[0]).to.be("b");
         expect(ast.reference.path[1]).to.be("c");
         expect(ast.value.reference.value).to.be("d");
@@ -258,7 +259,7 @@ describe("parser/script#", function () {
       }); 
       it("can be called from strings", function () {
         var ast = parser.parse("{{'a'.length}}").childNodes[0].scripts.value;
-        expect(ast.type).to.be("string");
+        expect(ast.type).to.be("property");
         expect(ast.path[0]).to.be("length");
 
       });
@@ -266,13 +267,13 @@ describe("parser/script#", function () {
 
     describe("modifiers", function () {
       it("can be parsed", function () {
+        parser.parse("{{a|b|c}}");
         var ast = parser.parse("{{a| b |c(5,6 | d,7)|e}}").childNodes[0].scripts.value;
-        expect(ast.modifiers[0].reference.value).to.be("b");
-        expect(ast.modifiers[1].reference.value).to.be("c");
-        expect(ast.modifiers[1].parameters[0].value).to.be(5);
-        expect(ast.modifiers[1].parameters[1].value).to.be(6);
-        expect(ast.modifiers[1].parameters[1].modifiers[0].reference.value).to.be("d");
-        expect(ast.modifiers[2].reference.value).to.be("e");
+        expect(ast.type).to.be("modifier");
+        expect(ast.reference.value).to.be("e");
+        expect(ast.value.reference.value).to.be("c");
+        expect(ast.value.value.reference.value).to.be("b");
+        expect(ast.value.value.value.value).to.be("a");
       });
     });
 
