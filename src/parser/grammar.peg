@@ -6,22 +6,10 @@ Start
   = ChildNodes
 
 ChildNodes
-  = _ children:(TextNode/BindingBlock/CommentNode/ElementNode)* _  { 
-    ws = /^[\s\n\r\t]+$/
-
-    // trim
-    while (children.length && children[0].type == "textNode" && ws.test(children[0].value)) 
-      children.splice(0, 1);
-    
-
-    while (children.length && children[children.length-1].type === "textNode" && ws.test(children[children.length-1].value))
-      children.splice(children.length-1, 1);
-    
-    return children;
-  }
+  = (TextNode/BindingBlock/CommentNode/ElementNode)*  
 
 CommentNode
-  = "<!--" value:(!"-->" v:SourceCharacter { return v; })+ "-->" {
+  = _ "<!--" value:(!"-->" v:SourceCharacter { return v; })+ "-->" _ {
     return {
       type: "commentNode",
       value: value.join("")
@@ -29,7 +17,7 @@ CommentNode
   }
 
 ElementNode
-  = startTag:StartTag children:ChildNodes endTag:EndTag {
+  = startTag:StartTag children:ChildNodes endTag:EndTag _ {
 
     if (startTag.name != endTag.name) {
       expected("</" + startTag.name + ">");
@@ -59,10 +47,10 @@ TextCharacter
     }
   
 StartTag
-  = "<" info:TagInfo ">" { return info; }
+  = _ "<" info:TagInfo ">" _ { return info; }
 
 StartEndTag
-  = "<" info:TagInfo "/>" { return info; }
+  = _ "<" info:TagInfo "/>" _ { return info; }
 
 TagInfo
   = name:TagName _ attributes:Attribute* _ {
