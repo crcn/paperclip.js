@@ -1,136 +1,56 @@
-<div class="panel panel-default panel-lg" data-track="teach-signup-form">
-
-  <div class="panel-body">
-
-  <fieldset id="signup-form">
-
-    {{#if:error}}
-      <div class="alert alert-danger" data-teach="teach-signup-error">
-        {{ html: error.message | t() }}
-
-        {{#if:error.code == 604}}
-          <a data-href="login" data-track="click:teach-signup-error-login">
-            {{ 'dojo.teacher_web:password_reset.login' | t() }}
-          </a>.
-        {{/}}
-      </div>
-    {{/}}
-
-    <form data-bind="{{ onSubmit: signup() }}">
-
-      <legend>{{ 'dojo.teacher_web:external.register.welcome_to_classdojo' | t() }}</legend>
-
-      <div class="form-group row">
-        <div class="col-xs-4 name-title">
-          {{#if: !showOtherInput }}
-            {{
-              select: {
-                source : models.default.titles,
-                model  : teacher,
-                name   : "title",
-                onChange: onTitleChange,
-                class: "form-control"
-              }
-            }}
-          {{/else}}
-            <input
-              type="text"
-              name="otherTitle"
-              data-bind="{{ model: this }}"
-              placeholder="{{ 'dojo.teacher_web:pages.profile_settings.other' | t() }}"
-              class="form-control" />
-          {{/}}
-        </div>
-        <div class="col-xs-4 name-first">
-          <input
-            type="text"
-            name="firstName"
-            class="form-control"
-            placeholder="{{ 'dojo.teacher_web:external.register.first_name' | t() }}"
-            type="text"
-            data-bind="{{ focus: true, model: teacher }}" />
-        </div>
-        <div class="col-xs-4 name-last">
-          <input
-            type="text"
-            name="lastName"
-            class="form-control"
-            placeholder="{{ 'dojo.teacher_web:external.register.last_name' | t() }}"
-            data-bind="{{ model: teacher }}" />
-        </div>
-      </div>
-      <div class="form-group">
-        <input
-          type="email"
-          name="email"
-          data-bind="{{ model: teacher }}"
-          placeholder="{{ 'dojo.teacher_web:external.register.email' | t() }}"
-          autocomplete="off"
-          class="form-control" />
-        {{
-          inputOk: {
-            type: 'email',
-            value: teacher.email
-          }
-        }}
-      </div>
-      <div class="form-group">
-        <input
-          type="password"
-          name="password"
-          data-bind="{{ model: teacher }}"
-          placeholder="{{ 'dojo.teacher_web:external.register.password' | t() }}"
-          autocomplete="off"
-          class="form-control" />
-        {{
-          inputOk: {
-            value: teacher.password,
-            ok: teacher.password.length >= minPwLength
-          }
-        }}
-      </div>
-      <div class="form-group">
-        <input
-          type="password"
-          name="confirmPassword"
-          data-bind="{{ model: teacher }}"
-          placeholder="{{ 'dojo.teacher_web:external.register.confirm_password' | t() }}"
-          class="form-control" />
-        {{
-          inputOk: {
-            show: teacher.confirmPassword,
-            ok: teacher.confirmPassword == teacher.password
-          }
-        }}
-      </div>
-      <div class="form-group">
-        <strong>{{ 'dojo.teacher_web:external.register.plan_to_use' | t() }}</strong>
-        {{
-          select: {
-            source : models.default.accountTypes,
-            label  : 'dojo.teacher_web:external.register.choose_one' | t(),
-            model  : this,
-            name   : "accountType",
-            class  : "form-control"
-          }
-        }}
-      </div>
-      <div class="form-group">
-        <input
-          type="submit"
-          value="{{ 'dojo.teacher_web:external.register.get_started' | t() }}"
-          class="btn btn-blue btn-block" />
-      </div>
-    </form>
-  </fieldset>
-
+<div id="edit-student-name-modal">
+  <div class="modal-header">
+    <button type="button" data-dismiss="modal" data-bind="{{onClick:remove()}}" class="close">×</button>
+    <h3 class="modal-title">{{ "dojo.teacher_web:add_edit_class_view.edit_student" | t({name: ~model.fullName}) | ellipsis(25)}}</h3>
   </div>
 
-  <div class="panel-footer">
-    <span class="text-muted">{{ html:"dojo.teacher_web:external.register.disclaimer" | t() }}</span>
+  <div class="modal-body">
+
+    <div>
+      {{ "dojo.teacher_web:add_edit_class_view.edit_student_line0" | t() }}
+      <br/>
+      {{#if: hasConnections}}
+          {{ "dojo.teacher_web:add_edit_class_view.edit_student_line1" | t() }}
+          <br/>
+          <br/>
+          <ul>
+            {{ html: ~sections.otherClasses }}
+            {{#if: hasParents }}
+              <li>{{ "dojo.teacher_web:add_edit_class_view.num_connected_parents" | t({name: ~model.fullName}) }}</li>
+            {{/}}
+            {{#if: hasPstudent }}
+              <li>{{ "dojo.teacher_web:add_edit_class_view.student_account" | t({name: ~model.fullName}) }}</li>
+            {{/}}
+          </ul>
+          <br/>
+      {{/}}
+    {{ "dojo.teacher_web:add_edit_class_view.edit_student_line2" | t() }}
+    <br/>
+    <br/>
+    </div>
+
+    <input type="text" class="form-control" data-bind="{{ model: <~>model.fullName, onEnter: saveAndClose() }}"></input>
   </div>
 
+
+  <div class="modal-footer">
+
+    <a href="#" class="remove-student-button pull-left" data-bind="{{ 
+      onClick: null,
+      popover: {
+        trigger: 'click',
+        html: 'true',
+        placement: 'bottom',
+        content: sections.removeStudent
+      }
+    }}">{{ "dojo.teacher_web:add_edit_class_view.remove_from_class" | t() }}</a>
+
+    <button
+        data-bind="{{ onClick: saveAndClose() }}"
+        class="btn btn-blue save-student-name-button"
+        name="save_class_b">
+      {{ "dojo.teacher_web:add_students_modal.save" | t() }}
+    </button>
+
+  </div>
 </div>
-
-
-{{ loadingGif: { show: loading }}}

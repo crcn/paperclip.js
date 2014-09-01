@@ -206,7 +206,7 @@ Operatable
     }
 
 Modifier
-  = call:(FunctionCall/Object) {
+  = call:(FunctionCall/Object) _ {
     return {
       type: "call",
       reference: call.reference || call,
@@ -292,7 +292,7 @@ Reference
 
 
 ReferenceName
-  = name:[a-zA-Z]+ { return text(); }
+  = name:[a-zA-Z_$0-9]+ { return text(); }
 
 Hash
   = "{" _ values:HashValues? _ "}" {

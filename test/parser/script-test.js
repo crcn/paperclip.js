@@ -167,6 +167,10 @@ describe("parser/script#", function () {
       it("can parse a path", function () {
         var ast = parser.parse("{{a.b.c.d}}")[0].scripts.value;
       });
+
+      it("can parse vars with various characters", function () {
+        parser.parse("a123$_.b123")
+      })
     });
 
     describe("strings", function () {
@@ -248,7 +252,7 @@ describe("parser/script#", function () {
 
     describe("modifiers", function () {
       it("can be parsed", function () {
-        var ast = parser.parse("{{a|b|c(5,6 | d,7)|e}}")[0].scripts.value;
+        var ast = parser.parse("{{a| b |c(5,6 | d,7)|e}}")[0].scripts.value;
         expect(ast.modifiers[0].reference.value).to.be("b");
         expect(ast.modifiers[1].reference.value).to.be("c");
         expect(ast.modifiers[1].parameters[0].value).to.be(5);
@@ -270,7 +274,8 @@ describe("parser/script#", function () {
         "{{ model.demo ? 'demo-class' : '' }}",
         "{{model.nstudents.numConnected == 0  && !model.demo}}",
         "{{model: teacher, focus: true}}",
-        "{{ clipboard: { text: link, onCopied: onCopiedLink } | varg() }}"
+        "{{ clipboard: { text: link, onCopied: onCopiedLink } | varg() }}",
+        '{{ a| t | e }}'
       ].forEach(function (expr) {
         parser.parse(expr);
       });
