@@ -6,7 +6,7 @@ browser:
 	./node_modules/.bin/browserify ./lib/parser/index.js -o ./build/paperclip-compiler.js
 
 test-node:
-	mocha --recursive --ignore-leaks --timeout 1000
+	mocha --recursive --ignore-leaks --timeout 10000
 
 parser:
 	mkdir -p ./lib/parser2
@@ -19,7 +19,7 @@ parser-watch: parser
 	fswatch ./src/parser/grammar.peg | xargs -n1 make parser
 
 test-watch:
-	mocha --recursive --ignore-leaks --reporter $(REPORTER) -g $(ONLY) --timeout 1000 --watch ./test ./lib
+	mocha --recursive --ignore-leaks --reporter $(REPORTER) -g $(ONLY) --timeout 10000 --watch ./test ./lib
 
 
 test-cov:

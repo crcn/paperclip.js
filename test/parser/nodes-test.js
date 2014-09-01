@@ -116,7 +116,7 @@ describe("parser/node#", function () {
       var fs = require("fs");
 
       try {
-        // var ast = parser.parse(fs.readFileSync(__dirname + "/test.pc", "utf8"));
+        var ast = parser.parse(fs.readFileSync(__dirname + "/test.pc", "utf8"));
         console.log(JSON.stringify(ast, null, 2));
       } catch (e) {
         console.log(e);

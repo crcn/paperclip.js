@@ -162,6 +162,7 @@ TerneryConditional
   / Assignment
 
 
+
 Parameters
   = "(" params:InnerParameters ")" {
       return params;
@@ -183,42 +184,12 @@ Assignment
         value: right
       };
     }
-  / Comparison
+  / Operation
 
-Comparison
-  = left:Additive operator:("&&" / "||" / "===" / "==" / "!==" / "!=" / ">==" / ">=" / ">" / "<==" / "<=" / "<") right:Comparison {
+Operation 
+  = left:Operatable operator: ("&&" / "||" / "===" / "==" / "!==" / "!=" / ">==" / ">=" / ">" / "<==" / "<=" / "<" / "+" / "-" / "%" / "*" / "/") right:Operation {
       return {
         type: operator,
-        left: left,
-        right: right
-      }
-    }
-  / Additive
-
-Additive
-  = left:Modulative operation:("+"/"-") right:Additive {
-      return {
-        type: operation,
-        left: left,
-        right: right
-      };
-    }
-  / Modulative
-
-Modulative
-  = left:Multiplicative operation:"%" right:Modulative {
-      return {
-        type: operation,
-        left: left,
-        right: right
-      }
-    }
-  / Multiplicative
-
-Multiplicative
-  = left:Operatable operation:("*"/"/") right:Multiplicative {
-      return {
-        type: operation,
         left: left,
         right: right
       }
@@ -262,7 +233,7 @@ Not
 
 
 Object
-  = Group/Hash/Hash/Number/StringLiteral/Reference
+  = Group/Hash/Number/StringLiteral/Reference
 
 
 Number
