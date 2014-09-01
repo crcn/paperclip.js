@@ -1,9 +1,13 @@
 {
-  var StringExpression = require("./ast/string");
+  var DoctypeExpression = require("./ast/doctype"),
+  RootNodeExpression    = require("./ast/rootNode"),
+  TextNodeExpression    = require("./ast/textNode"),
+  CommentNodeExpression = require("./ast/commentNode"),
+  ElementNodeExpression = require("./ast/elementNode");
 }
 
 Start
-  = ChildNodes
+  = children:ChildNodes { return new RootNodeExpression(children); }
 
 DocType
   = "<!DOCTYPE" _ info:[^>]+ _ ">" { 
@@ -18,10 +22,7 @@ ChildNodes
 
 CommentNode
   = _ "<!--" value:(!"-->" v:SourceCharacter { return v; })+ "-->" _ {
-    return {
-      type: "commentNode",
-      value: value.join("")
-    }
+    return new CommentNodeExpression(value.join(""));
   }
   / DocType
 
@@ -32,22 +33,14 @@ ElementNode
       expected("</" + startTag.name + ">");
     }
 
-    return {
-      type: "elementNode",
-      name: startTag.name,
-      attributes: startTag.attributes,
-      children: children
-    };
+    return new ElementNodeExpression(startTag.name, startTag.attributes, children);
   }
   / StartTag
   / StartEndTag
 
 TextNode
   = value:TextCharacter+ {
-      return {
-        type: "textNode",
-        value: value.join("")
-      }
+      return new TextNodeExpression(value.join(""))
     }
 
 TextCharacter

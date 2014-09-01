@@ -8,7 +8,7 @@ describe("parser/node#", function () {
   });
 
   it("can parse the doctype", function () {
-    var c = parser.parse("<!DOCTYPE html><a>");
+    var c = parser.parse("<!DOCTYPE html><a>").childNodes;
     expect(c.length).to.be(2);
     expect(c[0].value).to.be("html")
   });
@@ -38,34 +38,34 @@ describe("parser/node#", function () {
   });
 
   it("can parse node attributes without values", function () {
-    var ast = parser.parse("<a a b>")[0];
+    var ast = parser.parse("<a a b>").childNodes[0];
     expect(ast.name).to.be("a");
     expect(ast.attributes[0].name).to.be("a");
     expect(ast.attributes[0].value).to.be(void 0);
   });
 
   it("can parse node attributes with values", function () {
-    parser.parse("<a b=\"c\" d='e'>")[0];
+    parser.parse("<a b=\"c\" d='e'>").childNodes[0];
   });
 
   it("can parse node attributes with ws", function () {
-    parser.parse("<a b = \"c\" d\t\n='e'>")[0];
+    parser.parse("<a b = \"c\" d\t\n='e'>").childNodes[0];
   });
 
   it("can parse a node with children", function () {
-    var ast = parser.parse("<a><b></b></a>")[0];
+    var ast = parser.parse("<a><b></b></a>").childNodes[0];
     expect(ast.type).to.be("elementNode");
-    expect(ast.children[0].name).to.be("b");
+    expect(ast.childNodes[0].name).to.be("b");
   });
 
   it("can parse text", function () {
-    var ast = parser.parse("abcde")[0];
+    var ast = parser.parse("abcde").childNodes[0];
     expect(ast.type).to.be("textNode");
     expect(ast.value).to.be("abcde");
   });
 
   it("can parse text with a node", function () {
-    var ast = parser.parse("abcde<a></a>");
+    var ast = parser.parse("abcde<a></a>").childNodes;
     expect(ast[0].type).to.be("textNode");
     expect(ast[0].value).to.be("abcde");
     expect(ast[1].type).to.be("elementNode");
@@ -73,24 +73,24 @@ describe("parser/node#", function () {
   });
 
   it("can parse comments", function () {
-    var ast = parser.parse("<!-- hello -->");
+    var ast = parser.parse("<!-- hello -->").childNodes;
     expect(ast[0].value).to.be(" hello ");
   });
 
   describe("bindings", function () {
     it("can parse text blocks", function () {
-      var ast= parser.parse("aa {{abc}} bb");
+      var ast= parser.parse("aa {{abc}} bb").childNodes;
       expect(ast[1].type).to.be("binding");
     });
 
     it("can parse binding blocks", function () {
-      var ast = parser.parse("{{#a}} 123 {{/}}")[0];
+      var ast = parser.parse("{{#a}} 123 {{/}}").childNodes[0];
       expect(ast.type).to.be("bindingBlock");
       expect(ast.fragment[0].type).to.be("textNode");
     });
 
     it("can parse binding blocks with children", function () {
-      var ast = parser.parse("{{#a}}123{{/b}}456{{/c}}789{{/}}")[0];
+      var ast = parser.parse("{{#a}}123{{/b}}456{{/c}}789{{/}}").childNodes[0];
       expect(ast.type).to.be("bindingBlock");
       expect(ast.fragment[0].value).to.be("123");
       expect(ast.child.type).to.be("bindingBlock");
@@ -100,17 +100,17 @@ describe("parser/node#", function () {
     });
 
     it("can parse bindings within attribute values", function () {
-      var ast = parser.parse("<input data-bind='{{model:<~>name}}'></input>")[0];
+      var ast = parser.parse("<input data-bind='{{model:<~>name}}'></input>").childNodes[0];
       expect(ast.attributes[0].value.type).to.be("binding");
     });
 
     it("can parse attribute values as bindings", function () {
-      var ast = parser.parse("<input data-bind={{model:<~>name}}>")[0];
+      var ast = parser.parse("<input data-bind={{model:<~>name}}>").childNodes[0];
       expect(ast.attributes[0].value.type).to.be("binding");
     });
 
     it("can parse bindings and text within attrbutes", function () {
-      var ast = parser.parse("<input value='hello {{firstName}} {{lastName}}'></input>")[0];
+      var ast = parser.parse("<input value='hello {{firstName}} {{lastName}}'></input>").childNodes[0];
       expect(ast.attributes[0].value[0]).to.be("hello ");
       expect(ast.attributes[0].value[1].type).to.be("binding");
       expect(ast.attributes[0].value[2]).to.be(" ");
