@@ -80,7 +80,7 @@ describe("parser/node#", function () {
   describe("bindings", function () {
     it("can parse text blocks", function () {
       var ast= parser.parse("aa {{abc}} bb").childNodes;
-      expect(ast[1].type).to.be("binding");
+      expect(ast[1].type).to.be("textBinding");
     });
 
     it("can parse binding blocks", function () {
@@ -101,20 +101,20 @@ describe("parser/node#", function () {
 
     it("can parse bindings within attribute values", function () {
       var ast = parser.parse("<input data-bind='{{model:<~>name}}'></input>").childNodes[0];
-      expect(ast.attributes[0].value.type).to.be("binding");
+      expect(ast.attributes[0].value.type).to.be("textBinding");
     });
 
     it("can parse attribute values as bindings", function () {
       var ast = parser.parse("<input data-bind={{model:<~>name}} />").childNodes[0];
-      expect(ast.attributes[0].value.type).to.be("binding");
+      expect(ast.attributes[0].value.type).to.be("textBinding");
     });
 
     it("can parse bindings and text within attrbutes", function () {
       var ast = parser.parse("<input value='hello {{firstName}} {{lastName}}'></input>").childNodes[0];
       expect(ast.attributes[0].value[0]).to.be("hello ");
-      expect(ast.attributes[0].value[1].type).to.be("binding");
+      expect(ast.attributes[0].value[1].type).to.be("textBinding");
       expect(ast.attributes[0].value[2]).to.be(" ");
-      expect(ast.attributes[0].value[3].type).to.be("binding");
+      expect(ast.attributes[0].value[3].type).to.be("textBinding");
 
       
       var fs = require("fs");

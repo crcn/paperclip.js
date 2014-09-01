@@ -110,11 +110,8 @@ ChildBlockBinding
   / "{{/}}" _ { return void 0; }
 
 TextBinding
-  = "{{" _ script:Scripts _ "}}" {
-      return {
-        type: "binding",
-        scripts: script
-      };
+  = "{{" _ scripts:Scripts _ "}}" {
+      return new TextBindingExpression(scripts);
     }
 
 Scripts
