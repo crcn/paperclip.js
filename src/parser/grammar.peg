@@ -17,7 +17,6 @@
   ScriptExpression             = require("./ast/script"),
   CallExpression               = require("./ast/call"),
   ModifierExpression           = require("./ast/modifier"),
-  PropertyExpression           = require("./ast/property"),
   ArrayExpression              = require("./ast/array"),
   ParametersExpression         = require("./ast/parameters");
 
@@ -226,10 +225,7 @@ Modifier
   }
 
 ObjectReference
-  = _ context:Object path:("." ReferenceName)* _ {
-      if (!path.length) return context;
-      return new PropertyExpression(context, path.map(function (p) { return p[1] }));
-    }
+  = _ context:Object _ { return context; }
 
 Not
   = not:"!" value:Not {
@@ -282,9 +278,11 @@ FunctionCall
     }
 
 Reference
-  = bindingType:("~>"/"<~>"/"~"/"<~")? _ reference:ReferenceName {
-      return new ReferenceExpression(reference, bindingType);
+  = bindingType:("~>"/"<~>"/"~"/"<~")? _ reference:ReferenceName path:("." ReferenceName)* _ {
+      path = [reference].concat(path.map(function (p) { return p[1] }));
+      return new ReferenceExpression(path, bindingType);
     }
+
 
 ReferenceName
   = name:[a-zA-Z_$0-9]+ { return text(); }
