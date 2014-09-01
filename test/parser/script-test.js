@@ -29,6 +29,10 @@ describe("parser/script#", function () {
         var ast = parser.parse("{{a:}}")[0];
         expect(ast.scripts.a).to.be(void 0);
     });
+    it("can be parsed with ws", function () {
+        var ast = parser.parse("{{ a: }}")[0];
+        expect(ast.scripts.a).to.be(void 0);
+    });
   });
 
   describe("hashes", function () {

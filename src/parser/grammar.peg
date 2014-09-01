@@ -121,7 +121,7 @@ ChildBindingBlock
   / "{{/}}" _ { return void 0; }
 
 Binding
-  = "{{" script:Scripts "}}" {
+  = "{{" _ script:Scripts _ "}}" {
       return {
         type: "binding",
         scripts: script
