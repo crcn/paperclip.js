@@ -289,7 +289,8 @@ describe("parser/script#", function () {
         "{{model.nstudents.numConnected == 0  && !model.demo}}",
         "{{model: teacher, focus: true}}",
         "{{ clipboard: { text: link, onCopied: onCopiedLink } | varg() }}",
-        '{{ a| t | e }}'
+        '{{ a| t | e }}',
+        '<h2>{{ "dojo.teacher_web:invite_page.someone_invited_you" | t() }}</h2>'
       ].forEach(function (expr) {
         parser.parse(expr);
       });

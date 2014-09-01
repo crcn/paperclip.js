@@ -81,7 +81,7 @@ TagName
   = _ word:[a-zA-Z0-9:_-]+ { return text(); }
 
 Attribute
-  = name:TagName "=" values:AttributeValues {
+  = name:TagName _ "=" _ values:AttributeValues {
       return {
         name: name,
         value: values

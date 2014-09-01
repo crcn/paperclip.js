@@ -48,6 +48,10 @@ describe("parser/node#", function () {
     parser.parse("<a b=\"c\" d='e'>")[0];
   });
 
+  it("can parse node attributes with ws", function () {
+    parser.parse("<a b = \"c\" d\t\n='e'>")[0];
+  });
+
   it("can parse a node with children", function () {
     var ast = parser.parse("<a><b></b></a>")[0];
     expect(ast.type).to.be("elementNode");
