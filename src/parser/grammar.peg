@@ -97,7 +97,7 @@ BindingBlock
 
 
 StartBindingBlock
-  = scripts:Scripts "}}" fragment:ChildNodes child:ChildBindingBlock {
+  = scripts:Scripts "}}" _ fragment:ChildNodes _ child:ChildBindingBlock {
     return {
       type: "bindingBlock",
       scripts: scripts,
@@ -108,7 +108,7 @@ StartBindingBlock
 
 ChildBindingBlock
   = "{{/" bindingBlock:StartBindingBlock { return bindingBlock; }
-  / "{{/}}" { return void 0; }
+  / "{{/}}" _ { return void 0; }
 
 Binding
   = "{{" script:Scripts "}}" {

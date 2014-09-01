@@ -196,6 +196,7 @@ describe("parser/script#", function () {
 
       it("properly orders other operations", function () {
         var ast = parser.parse("{{a=5+c}}")[0].scripts.value;
+        console.log(JSON.stringify(ast, null, 2));
         expect(ast.reference.value).to.be("a");
         expect(ast.value.left.value).to.be(5);
         expect(ast.value.right.value).to.be("c");
@@ -207,6 +208,15 @@ describe("parser/script#", function () {
         expect(ast.reference.path[0]).to.be("b");
         expect(ast.reference.path[1]).to.be("c");
         expect(ast.value.reference.value).to.be("d");
+      });
+
+      it("breaks for an invalid left-hand side assignment", function () {
+        var err;
+        try {
+          var ast = parser.parse("aa&&b=c");
+        } catch (e) {
+          err = e;
+        }
       });
     });
 

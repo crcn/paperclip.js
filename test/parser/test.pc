@@ -1,133 +1,60 @@
-<!-- Page content -->
-<div id="invite_template" class="container">
+<div class="edit-class-modal">
 
-  <div class="row col-sm-12">
-    <!-- Back button -->
-    <a class="btn btn-white pull-left" onclick="history.back(-1)">
-      <span class="glyphicon glyphicon-chevron-left small"></span>
-      {{ "dojo.common:actions.back" | t() }}
-    </a>
-    <img class="center-block" src="/img2/share/hero-share.png" />
-  </div>
+  <div class="modal-header">
+    <button
+        type="button"
+        class="close"
+        data-bind="{{ onClick: remove() }}">
+      &times;
+    </button>
 
-  <div class="row">
-    <h1 class="text-center">
-      {{ "dojo.teacher_web:invite_page.share_link" | t() }}
-    </h1>
-  </div>
+    <div class="dropdown">
 
-  <div class="row">
-    <div class="center-block text-center">
-
-      <form class="form-inline">
-        <div class="form-group">
-          <input
-            id="invite-code-copy"
-            data-bind="{{ clipboard: { text: link, onCopied: onCopiedLink }  }}"
-            type="text"
-            readonly="readonly"
-            value="{{link}}"
-            class="form-control" />
-          <button
-            id="copy-link-button"
-            data-bind="{{ clipboard: { text: link, onCopied: onCopiedLink }  }}"
-            title="Copy Link"
-            class="btn btn-blue">
-            {{ "dojo.teacher_web:invite_page.copy_link" | t() }}
-          </button>
-        </div>
-      </form>
-
-      <p id="copy-text">
-      {{#if:copied }}
-        {{ "dojo.teacher_web:invite_page.copied" | t() }}
-      {{/}}
-      </p>
-
-    </div>
-  </div>
-
-
-  <!-- social buttons -->
-  <div class="row">
-
-    <!-- Twitter -->
-    <div class="col-md-2 col-md-offset-2 text-center">
-
-      <!-- mojo image -->
-      <img class="social-share-image" src="/img2/share/mojo-twitter.png" />
-
-      <!-- div for social button -->
-      <div class="text-center margin-top-20">
-        <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://classdojo.com" data-text="Check out @ClassDojo - the 100% FREE realtime behavior management tool for your classroom: " data-hashtags="edtech">
-          {{ "dojo.teacher_web:invite_page.tweet" | t() }}
-        </a>
-      </div>
+      <a href="#" data-toggle="dropdown" class="dropdown-toggle class-icon-menu">
+        <img src="{{ classroom.iconBig }}" class="edit-class-icon" />
+      </a>
+      <ul class="dropdown-menu class-icon-menu row">
+        {{#each:{source:availableClassIcons}}}
+          <li class="col-sm-4">
+            <a href="#" data-bind="{{ onClick: selectIcon(model), propagateEvent: true }}">
+              <img src="{{ model.imageUrl }}" class="class-icon" />
+            </a>
+          </li>
+        {{/}}
+      </ul>
 
     </div>
 
-    <!-- Facebook -->
-    <div class="col-md-2 text-center">
+    {{#if:editTitle}}
+      <input class="form-control" data-bind="{{ model: <~> classroom.name, focus: true, onEnter: classroom.save() && (editTitle = false) }}" />
+    {{/else}}
+      <h2 class="edit-class-title" data-bind="{{ onClick: editTitle = true }}">{{classroom.name}}</h2>
+    {{/}}
 
-      <!-- mojo image -->
-      <img class="social-share-image" src="/img2/share/mojo-fb.png" />
+    <div class="col-sm-12"></div>
 
-      <!-- div for social button -->
-      <div class="text-center margin-top-20">
-        <div class="fb-like" data-href="http://www.classdojo.com" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div>
-      </div>
-
-    </div>
-
-    <!-- Google + -->
-    <div class="col-md-2 text-center">
-
-      <!-- mojo image -->
-      <img class="social-share-image" src="/img2/share/mojo-google.png" />
-
-      <!-- div for social button -->
-      <div class="text-center margin-top-20">
-        <div class="g-plusone" data-size="medium" data-href="http://classdojo.com"></div>
-      </div>
-
-    </div>
-
-    <!-- Pinterest -->
-    <div class="col-md-2 text-center ">
-
-      <!-- pinterest image -->
-      <img class="social-share-image" src="/img2/share/mojo-pinterest.png" />
-
-      <!-- div for social button -->
-      <div class="text-center margin-top-20">
-        <a href="//www.pinterest.com/pin/create/button/?url=http://www.classdojo.com&amp;media=http://www.classdojo.com/img/logo2.png&amp;description=I'm+using+ClassDojo+to+improve+classroom+behavior+&+build+my+students'+positive+learning+habits.+Check+it+out!" data-pin-do="buttonPin" data-pin-config="beside" data-pin-color="white">
-          <img src="//assets.pinterest.com/images/pidgets/pinit_fg_en_rect_white_28.png" />
-        </a>
-      </div>
-
+    <div class="navbar-underline">
+      <ul class="nav navbar-nav navbar-center special-edit-class-nav-for-ie" >
+        {{#
+          each: {
+            source: sections.pages.sections.pages.source
+          }
+        }}
+          <li data-bind="{{ css: { "active": model.selected } }}">
+            <a
+              data-bind="{{ onClick: model.select() }}"
+              href="#">
+              <span class="glyphicon glyphicon-{{ model.icon }}"></span>
+              {{ model.label | t() }}
+            </a>
+          </li>
+        {{/}}
+      </ul>
     </div>
 
   </div>
+
+  {{ html: ~sections.pages }}
+
 
 </div>
-
-
-<!-- embedded script tags breaks IE. Temporary until paperclip is fixed -->
-{{#if: models.platform.name != "IE"}}
-
-  <!-- Google+ button -->
-  <!-- Place this tag after the last +1 button tag. -->
-  <script type="text/javascript">(function() { var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true; po.src = 'https://apis.google.com/js/platform.js'; var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s); })();</script>
-
-  <!-- Pinterest button -->
-  <!-- Please call pinit.js only once per page -->
-  <script type="text/javascript" async src="//assets.pinterest.com/js/pinit.js"></script>
-
-  <!-- Twitter button -->
-  <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-
-  <!-- Facebook button -->
-  <div id="fb-root"></div>
-  <script>(function(d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (d.getElementById(id)) return; js = d.createElement(s); js.id = id; js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=154151084672210"; fjs.parentNode.insertBefore(js, fjs); }(document, 'script', 'facebook-jssdk'));</script>
-
-{{/}}
