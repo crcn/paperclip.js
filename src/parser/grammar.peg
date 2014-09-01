@@ -151,7 +151,7 @@ Expression
   = TerneryConditional
 
 TerneryConditional
-  = condition:Assignment "?" left:TerneryConditional ":" right:Assignment {
+  = condition:Assignment "?" left:TerneryConditional ":" right:TerneryConditional {
       return {
         type: "condition",
         condition: condition,

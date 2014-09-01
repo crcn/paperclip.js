@@ -90,7 +90,7 @@ describe("parser/script#", function () {
 
       });
 
-      it("can nest ternery operations", function () {
+      it("can nest ternery operations in the true arg", function () {
         var ast = parser.parse("{{a ? b ? c ? \nd : e : f : g }}")[0].scripts.value;
         expect(ast.condition.value).to.be("a"); 
         expect(ast.right.value).to.be("g");
@@ -99,6 +99,16 @@ describe("parser/script#", function () {
         expect(ast.left.left.condition.value).to.be("c");
         expect(ast.left.left.right.value).to.be("e");
       });
+
+      it("can nest ternery operations in the false arg", function () {
+
+        var ast = parser.parse("{{a ? b : c ? d : e}}")[0].scripts.value;
+        expect(ast.condition.value).to.be("a"); 
+        expect(ast.left.value).to.be("b");
+        expect(ast.right.condition.value).to.be("c");
+        expect(ast.right.left.value).to.be("d");
+        expect(ast.right.right.value).to.be("e");
+      })
 
       it("can be parsed within a group expression", function () {
         parser.parse("{{(a.b.c?d:e)}}");
