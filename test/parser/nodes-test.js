@@ -91,7 +91,12 @@ describe("parser/node#", function () {
 
     it("can parse bindings within attribute values", function () {
       var ast = parser.parse("<input data-bind='{{model:<~>name}}'></input>")[0];
-      expect(ast.attributes[0].value[0].type).to.be("binding");
+      expect(ast.attributes[0].value.type).to.be("binding");
+    });
+
+    it("can parse attribute values as bindings", function () {
+      var ast = parser.parse("<input data-bind={{model:<~>name}}>")[0];
+      expect(ast.attributes[0].value.type).to.be("binding");
     });
 
     it("can parse bindings and text within attrbutes", function () {
@@ -100,15 +105,6 @@ describe("parser/node#", function () {
       expect(ast.attributes[0].value[1].type).to.be("binding");
       expect(ast.attributes[0].value[2]).to.be(" ");
       expect(ast.attributes[0].value[3].type).to.be("binding");
-
-      var fs = require("fs");
-
-      try {
-        var ast = parser.parse(fs.readFileSync(__dirname + "/test.pc", "utf8"));
-        console.log(JSON.stringify(ast, null, 2));
-      } catch (e) {
-        console.log(e);
-      }
     });
   });
 });

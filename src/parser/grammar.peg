@@ -86,8 +86,9 @@ Attribute
 
 
 AttributeValues
-  = '"' values:(Binding/(!"{{" [^"])+ { return text(); })* '"' { return values; }
-  / "'" values:(Binding/(!"{{" [^'])+ { return text(); })* "'" { return values; }
+  = '"' values:(Binding/(!"{{" [^"])+ { return text(); })* '"' { return values.length > 1 ? values : values[0]; }
+  / "'" values:(Binding/(!"{{" [^'])+ { return text(); })* "'" { return values.length > 1 ? values : values[0]; }
+  / Binding
 
 
 

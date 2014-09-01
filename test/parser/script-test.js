@@ -196,7 +196,6 @@ describe("parser/script#", function () {
 
       it("properly orders other operations", function () {
         var ast = parser.parse("{{a=5+c}}")[0].scripts.value;
-        console.log(JSON.stringify(ast, null, 2));
         expect(ast.reference.value).to.be("a");
         expect(ast.value.left.value).to.be(5);
         expect(ast.value.right.value).to.be("c");
