@@ -1,9 +1,11 @@
 {
-  var DoctypeExpression = require("./ast/doctype"),
-  RootNodeExpression    = require("./ast/rootNode"),
-  TextNodeExpression    = require("./ast/textNode"),
-  CommentNodeExpression = require("./ast/commentNode"),
-  ElementNodeExpression = require("./ast/elementNode");
+  var DoctypeExpression  = require("./ast/doctype"),
+  RootNodeExpression     = require("./ast/rootNode"),
+  TextNodeExpression     = require("./ast/textNode"),
+  CommentNodeExpression  = require("./ast/commentNode"),
+  ElementNodeExpression  = require("./ast/elementNode"),
+  BlockBindingExpression = require("./ast/blockBinding"),
+  TextBindingExpression  = require("./ast/textBinding")
 }
 
 Start
@@ -18,7 +20,7 @@ DocType
     }
 
 ChildNodes
-  = (TextNode/BindingBlock/CommentNode/ElementNode)*  
+  = (TextNode/BlockBinding/CommentNode/ElementNode)*  
 
 CommentNode
   = _ "<!--" value:(!"-->" v:SourceCharacter { return v; })+ "-->" _ {
@@ -87,32 +89,27 @@ Attribute
 
 
 AttributeValues
-  = '"' values:(Binding/(!"{{" [^"])+ { return text(); })* '"' { return values.length > 1 ? values : values[0]; }
-  / "'" values:(Binding/(!"{{" [^'])+ { return text(); })* "'" { return values.length > 1 ? values : values[0]; }
-  / Binding
+  = '"' values:(TextBinding/(!"{{" [^"])+ { return text(); })* '"' { return values.length > 1 ? values : values[0]; }
+  / "'" values:(TextBinding/(!"{{" [^'])+ { return text(); })* "'" { return values.length > 1 ? values : values[0]; }
+  / TextBinding
 
 
 
-BindingBlock
-  = "{{#" bindingBlock:StartBindingBlock { return bindingBlock; }
-  / Binding
+BlockBinding
+  = "{{#" blockBinding:StartBlockBinding { return blockBinding; }
+  / TextBinding
 
 
-StartBindingBlock
-  = scripts:Scripts "}}" _ fragment:ChildNodes _ child:ChildBindingBlock {
-    return {
-      type: "bindingBlock",
-      scripts: scripts,
-      fragment: fragment,
-      child: child
-    }
+StartBlockBinding
+  = scripts:Scripts "}}" _ fragment:ChildNodes _ child:ChildBlockBinding {
+      return new BlockBindingExpression(scripts, fragment, child);
   }
 
-ChildBindingBlock
-  = "{{/" bindingBlock:StartBindingBlock { return bindingBlock; }
+ChildBlockBinding
+  = "{{/" blockBinding:StartBlockBinding { return blockBinding; }
   / "{{/}}" _ { return void 0; }
 
-Binding
+TextBinding
   = "{{" _ script:Scripts _ "}}" {
       return {
         type: "binding",

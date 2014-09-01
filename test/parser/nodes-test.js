@@ -85,18 +85,18 @@ describe("parser/node#", function () {
 
     it("can parse binding blocks", function () {
       var ast = parser.parse("{{#a}} 123 {{/}}").childNodes[0];
-      expect(ast.type).to.be("bindingBlock");
-      expect(ast.fragment[0].type).to.be("textNode");
+      expect(ast.type).to.be("blockBinding");
+      expect(ast.childNodes[0].type).to.be("textNode");
     });
 
     it("can parse binding blocks with children", function () {
       var ast = parser.parse("{{#a}}123{{/b}}456{{/c}}789{{/}}").childNodes[0];
-      expect(ast.type).to.be("bindingBlock");
-      expect(ast.fragment[0].value).to.be("123");
-      expect(ast.child.type).to.be("bindingBlock");
-      expect(ast.child.fragment[0].value).to.be("456");
-      expect(ast.child.child.type).to.be("bindingBlock");
-      expect(ast.child.child.fragment[0].value).to.be("789");
+      expect(ast.type).to.be("blockBinding");
+      expect(ast.childNodes[0].value).to.be("123");
+      expect(ast.childBlock.type).to.be("blockBinding");
+      expect(ast.childBlock.childNodes[0].value).to.be("456");
+      expect(ast.childBlock.childBlock.type).to.be("blockBinding");
+      expect(ast.childBlock.childBlock.childNodes[0].value).to.be("789");
     });
 
     it("can parse bindings within attribute values", function () {
