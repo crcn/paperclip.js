@@ -90,6 +90,10 @@ describe("parser/script#", function () {
         expect(ast.left.left.condition.value).to.be("c");
         expect(ast.left.left.right.value).to.be("e");
       });
+
+      it("can be parsed within a group expression", function () {
+        parser.parse("{{(a.b.c?d:e)}}");
+      })
     });
   });
 

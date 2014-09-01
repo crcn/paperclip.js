@@ -147,8 +147,11 @@ Script
     return expression;
   }
 
+Expression 
+  = TerneryConditional
+
 TerneryConditional
-  = condition:Expression "?" left:TerneryConditional ":" right:Expression {
+  = condition:Assignment "?" left:TerneryConditional ":" right:Assignment {
       return {
         type: "condition",
         condition: condition,
@@ -156,7 +159,7 @@ TerneryConditional
         right: right
       }
     }
-  / Expression
+  / Assignment
 
 
 Parameters
@@ -171,9 +174,6 @@ InnerParameters
         return v[1];
       }));
     }
-
-Expression
-  = Assignment
 
 Assignment
   = left:ObjectReference "=" right:Assignment {

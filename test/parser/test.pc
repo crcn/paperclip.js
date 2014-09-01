@@ -1,60 +1,13 @@
-<div class="edit-class-modal">
 
-  <div class="modal-header">
-    <button
-        type="button"
-        class="close"
-        data-bind="{{ onClick: remove() }}">
-      &times;
-    </button>
-
-    <div class="dropdown">
-
-      <a href="#" data-toggle="dropdown" class="dropdown-toggle class-icon-menu">
-        <img src="{{ classroom.iconBig }}" class="edit-class-icon" />
-      </a>
-      <ul class="dropdown-menu class-icon-menu row">
-        {{#each:{source:availableClassIcons}}}
-          <li class="col-sm-4">
-            <a href="#" data-bind="{{ onClick: selectIcon(model), propagateEvent: true }}">
-              <img src="{{ model.imageUrl }}" class="class-icon" />
-            </a>
-          </li>
-        {{/}}
-      </ul>
-
+<div
+    class="row"
+    data-bind="{{
+      style: {
+        'min-height': (classroom.nstudents.empty ? 0 : 230) + 'px'
+      }
+    }}">
+  <div class="col-sm-12">
+    <div class="row">
     </div>
-
-    {{#if:editTitle}}
-      <input class="form-control" data-bind="{{ model: <~> classroom.name, focus: true, onEnter: classroom.save() && (editTitle = false) }}" />
-    {{/else}}
-      <h2 class="edit-class-title" data-bind="{{ onClick: editTitle = true }}">{{classroom.name}}</h2>
-    {{/}}
-
-    <div class="col-sm-12"></div>
-
-    <div class="navbar-underline">
-      <ul class="nav navbar-nav navbar-center special-edit-class-nav-for-ie" >
-        {{#
-          each: {
-            source: sections.pages.sections.pages.source
-          }
-        }}
-          <li data-bind="{{ css: { "active": model.selected } }}">
-            <a
-              data-bind="{{ onClick: model.select() }}"
-              href="#">
-              <span class="glyphicon glyphicon-{{ model.icon }}"></span>
-              {{ model.label | t() }}
-            </a>
-          </li>
-        {{/}}
-      </ul>
-    </div>
-
   </div>
-
-  {{ html: ~sections.pages }}
-
-
 </div>
