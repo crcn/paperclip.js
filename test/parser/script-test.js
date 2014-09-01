@@ -4,21 +4,14 @@ expect     = require("expect.js");
 describe("parser/script#", function () {
 
 
-  describe("references", function () {
-
-  });
 
   describe("scripts", function () {
     it("automatically assigns value script", function () {
-        var ast = parser.parse("{{ a }}").childNodes[0];
-        expect(ast.scripts.value.value).to.be("a");
+        var ast = parser.parse("{{ a }}")
     });
 
     it("properly parses scripts", function () {
-        var ast = parser.parse("{{ a:b, c: d, e:f}}").childNodes[0];
-        expect(ast.scripts.a.value).to.be("b");
-        expect(ast.scripts.c.value).to.be("d");
-        expect(ast.scripts.e.value).to.be("f");
+        var ast = parser.parse("{{ a:b, c: d, e:f}}")
     });
 
     it("can handle whitespace between keys", function () {
@@ -26,60 +19,52 @@ describe("parser/script#", function () {
     });
 
     it("can have no values", function () {
-        var ast = parser.parse("{{a:}}").childNodes[0];
-        expect(ast.scripts.a).to.be(void 0);
+        var ast = parser.parse("{{a:}}")
     });
     it("can be parsed with ws", function () {
-        var ast = parser.parse("{{ a: }}").childNodes[0];
-        expect(ast.scripts.a).to.be(void 0);
+        var ast = parser.parse("{{ a: }}")
     });
   });
 
   describe("hashes", function () {
     it("can have different types of keys", function () {
-        var ast = parser.parse("{{{ a:b, 'c':d, \"e\":'f'} }}").childNodes[0];
-        expect(ast.scripts.value.value[0].key).to.be("a");
-        expect(ast.scripts.value.value[1].key).to.be("c");
-        expect(ast.scripts.value.value[2].key).to.be("e");
+        var ast = parser.parse("{{{ a:b, 'c':d, \"e\":'f'} }}")
     });
   });
 
   describe("numbers", function () {
     it("can parse an integer", function () {
-      expect((parser.parse("{{ 55 }}").childNodes[0].scripts.value.value)).to.be(55);
+      parser.parse("{{ 55 }}");
     });
 
     it("can parse a floating point", function () {
-      expect((parser.parse("{{ .5 }}").childNodes[0].scripts.value.value)).to.be(.5);
-      expect((parser.parse("{{ 333.509 }}").childNodes[0].scripts.value.value)).to.be(333.509);
+      parser.parse("{{ .5 }}")
     });
 
     it("can parse a negative values", function () {
-      expect((parser.parse("{{ -.5 }}").childNodes[0].scripts.value.value)).to.be(-.5);
-      expect((parser.parse("{{ -333.509 }}").childNodes[0].scripts.value.value)).to.be(-333.509);
+      parser.parse("{{ -.5 }}");
+      parser.parse("{{ -333.509 }}")
     });
 
   });
 
   describe("reserved words", function () {
     it("can parse boolean values", function () {
-      expect(parser.parse("{{ true }}").childNodes[0].scripts.value.value).to.be(true);
-      expect(parser.parse("{{ false }}").childNodes[0].scripts.value.value).to.be(false);
+      parser.parse("{{ true }}");
+      parser.parse("{{ false }}")
     });
     it("can parse undefined values", function () {
-      expect(parser.parse("{{ undefined }}").childNodes[0].scripts.value.value).to.be(void 0);
+      parser.parse("{{ undefined }}")
+
     });
     it("can parse NaN values", function () {
-      var v = parser.parse("{{ NaN }}").childNodes[0].scripts.value;
-      expect(v.type).to.be("literal");
+      var v = parser.parse("{{ NaN }}");
     });
     it("can parse Infinity values", function () {
-      var v = parser.parse("{{ Infinity }}").childNodes[0].scripts.value;
-      expect(v.value).to.be(Infinity);
-      expect(v.type).to.be("literal");
+      var v = parser.parse("{{ Infinity }}");
     });
     it("can parse null values", function () {
-      expect(parser.parse("{{ null }}").childNodes[0].scripts.value.value).to.be(null);
+      parser.parse("{{ null }}");
     });
   });
 
@@ -87,28 +72,17 @@ describe("parser/script#", function () {
     describe("ternery", function () {
 
       it("parses properly", function () {
-        var ast = parser.parse("{{a?b:c}}").childNodes[0].scripts.value;
+        var ast = parser.parse("{{a?b:c}}")
 
       });
 
       it("can nest ternery operations in the true arg", function () {
-        var ast = parser.parse("{{a ? b ? c ? \nd : e : f : g }}").childNodes[0].scripts.value;
-        expect(ast.condition.value).to.be("a"); 
-        expect(ast.fExpression.value).to.be("g");
-        expect(ast.tExpression.condition.value).to.be("b");
-        expect(ast.tExpression.fExpression.value).to.be("f");
-        expect(ast.tExpression.tExpression.condition.value).to.be("c");
-        expect(ast.tExpression.tExpression.fExpression.value).to.be("e");
+        var ast = parser.parse("{{a ? b ? c ? \nd : e : f : g }}")
       });
 
       it("can nest ternery operations in the false arg", function () {
 
-        var ast = parser.parse("{{a ? b : c ? d : e}}").childNodes[0].scripts.value;
-        expect(ast.condition.value).to.be("a"); 
-        expect(ast.tExpression.value).to.be("b");
-        expect(ast.fExpression.condition.value).to.be("c");
-        expect(ast.fExpression.tExpression.value).to.be("d");
-        expect(ast.fExpression.fExpression.value).to.be("e");
+        var ast = parser.parse("{{a ? b : c ? d : e}}")
       })
 
       it("can be parsed within a group expression", function () {
@@ -121,37 +95,23 @@ describe("parser/script#", function () {
 
     describe("not", function () {
       it("can be parsed", function () {
-        var ast = parser.parse("{{!!abcd}}").childNodes[0].scripts.value;
-        expect(ast.type).to.be("!");
-        expect(ast.value.type).to.be("!");
-        expect(ast.value.value.value).to.be("abcd");
+        var ast = parser.parse("{{!!abcd}}")
       });
     });
 
     describe("equations", function () {
 
       it("can add / subtract two numbers together", function () {
-        var ast = parser.parse("{{ 5+6 }}").childNodes[0].scripts.value;
-        expect(ast.left.value).to.be(5);
-        expect(ast.right.value).to.be(6);
-        ast = parser.parse("{{ 5-6 }}").childNodes[0].scripts.value;
-        expect(ast.left.value).to.be(5);
-        expect(ast.right.value).to.be(6);
+        var ast = parser.parse("{{ 5+6 }}");
+        ast = parser.parse("{{ 5-6 }}")
       });
 
       it("gets the order of operations correct", function () {
-        var ast = parser.parse("{{ 3+4*5/(6+7) }}").childNodes[0].scripts.value;
-        expect(ast.left.value).to.be(3);
-        expect(ast.right.left.value).to.be(4);
-        expect(ast.right.right.left.value).to.be(5);
-        expect(ast.right.right.right.left.value).to.be(6);
-        expect(ast.right.right.right.right.value).to.be(7);
+        var ast = parser.parse("{{ 3+4*5/(6+7) }}")
       });
 
       it("works with modulus", function () {
-        var ast = parser.parse("{{ 3%4 }}").childNodes[0].scripts.value;
-        expect(ast.left.value).to.be(3);
-        expect(ast.right.value).to.be(4);
+        var ast = parser.parse("{{ 3%4 }}")
       });
     });
   
@@ -159,9 +119,7 @@ describe("parser/script#", function () {
 
       ["&&", "||", "==", "!=", "!==", "===", ">", ">=", ">==", "<", "<=", "<=="].forEach(function (op) {
          it("can parse " + op, function () {
-          var ast = parser.parse("{{ true "+op+" false }}").childNodes[0].scripts.value;
-          expect(ast.left.value).to.be(true);
-          expect(ast.right.value).to.be(false);
+          var ast = parser.parse("{{ true "+op+" false }}")
         }); 
       });
 
@@ -170,17 +128,13 @@ describe("parser/script#", function () {
       });
 
       it("puts equations at a higher priority than comparisons", function () {
-        var ast = parser.parse("{{scriptA:1>2+3}}").childNodes[0].scripts.scriptA;
-        expect(ast.operator).to.be(">");
-        expect(ast.left.value).to.be(1);
-        expect(ast.right.left.value).to.be(2);
-        expect(ast.right.right.value).to.be(3);
+        var ast = parser.parse("{{scriptA:1>2+3}}")
       });
     });
 
     describe("references", function () {
       it("can parse a path", function () {
-        var ast = parser.parse("{{a.b.c.d}}").childNodes[0].scripts.value;
+        var ast = parser.parse("{{a.b.c.d}}")
       });
 
       it("can parse vars with various characters", function () {
@@ -190,10 +144,7 @@ describe("parser/script#", function () {
 
     describe("strings", function () {
       it("can be concatenated", function () {
-        var ast = parser.parse("{{'a' + 'b'}}").childNodes[0].scripts.value;
-        expect(ast.operator).to.be("+");
-        expect(ast.left.value).to.be('a');
-        expect(ast.right.value).to.be('b');
+        var ast = parser.parse("{{'a' + 'b'}}")
       })
     })
 
@@ -201,33 +152,19 @@ describe("parser/script#", function () {
     describe("assigning", function () {
 
       it("can be parsed", function () {
-        var ast = parser.parse("{{a=b}}").childNodes[0].scripts.value;
-        expect(ast.reference.value).to.be("a");
-        expect(ast.value.value).to.be("b");
+        var ast = parser.parse("{{a=b}}")
       });
 
       it("can assign multiple values", function () {
-        var ast = parser.parse("{{a=b=c = d= e}}").childNodes[0].scripts.value;
-        expect(ast.reference.value).to.be("a");
-        expect(ast.value.reference.value).to.be("b");
-        expect(ast.value.value.reference.value).to.be("c");
-        expect(ast.value.value.value.reference.value).to.be("d");
-        expect(ast.value.value.value.value.value).to.be("e");
+        var ast = parser.parse("{{a=b=c = d= e}}")
       });
 
       it("properly orders other operations", function () {
-        var ast = parser.parse("{{a=5+c}}").childNodes[0].scripts.value;
-        expect(ast.reference.value).to.be("a");
-        expect(ast.value.left.value).to.be(5);
-        expect(ast.value.right.value).to.be("c");
+        var ast = parser.parse("{{a=5+c}}")
       });
 
       it("can assign with dot syntax", function () {
-        var ast = parser.parse("{{a.b.c =d= e.f.g}}").childNodes[0].scripts.value;
-        expect(ast.reference.context.value).to.be("a");
-        expect(ast.reference.path[0]).to.be("b");
-        expect(ast.reference.path[1]).to.be("c");
-        expect(ast.value.reference.value).to.be("d");
+        var ast = parser.parse("{{a.b.c =d= e.f.g}}")
       });
 
       it("breaks for an invalid left-hand side assignment", function () {
@@ -243,37 +180,24 @@ describe("parser/script#", function () {
     describe("bindings", function () {
       ["~", "<~", "<~>", "~>"].forEach(function (bindingType) {
         it("can parse the "+bindingType+" binding", function () {
-          var ast = parser.parse("{{"+bindingType+" a}}").childNodes[0].scripts.value;
-          expect(ast.bindingType).to.be(bindingType);
+          var ast = parser.parse("{{"+bindingType+" a}}")
         });
       });
     });
 
     describe("function calls", function () {
       it("can be parsed", function () {
-        var ast = parser.parse("{{a.b.c(1,2,3 + 4)}}").childNodes[0].scripts.value;
-        expect(ast.type).to.be("call");
-        expect(ast.parameters[0].value).to.be(1);
-        expect(ast.parameters[1].value).to.be(2);
-        expect(ast.parameters[2].left.value).to.be(3);
+        var ast = parser.parse("{{a.b.c(1,2,3 + 4)}}")
       }); 
       it("can be called from strings", function () {
-        var ast = parser.parse("{{'a'.length}}").childNodes[0].scripts.value;
-        expect(ast.type).to.be("property");
-        expect(ast.path[0]).to.be("length");
+        var ast = parser.parse("{{'a'.length}}")
 
       });
     });
 
     describe("modifiers", function () {
       it("can be parsed", function () {
-        parser.parse("{{a|b|c}}");
-        var ast = parser.parse("{{a| b |c(5,6 | d,7)|e}}").childNodes[0].scripts.value;
-        expect(ast.type).to.be("modifier");
-        expect(ast.reference.value).to.be("e");
-        expect(ast.value.reference.value).to.be("c");
-        expect(ast.value.value.reference.value).to.be("b");
-        expect(ast.value.value.value.value).to.be("a");
+        var ast = parser.parse("{{a| b |c(5,6 | d,7)|e}}")
       });
     });
 

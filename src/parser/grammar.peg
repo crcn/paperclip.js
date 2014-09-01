@@ -5,7 +5,7 @@
   CommentNodeExpression        = require("./ast/commentNode"),
   ElementNodeExpression        = require("./ast/elementNode"),
   BlockBindingExpression       = require("./ast/blockBinding"),
-  TextBindingExpression        = require("./ast/textBinding"),
+  DocTypeExpression            = require("./ast/doctype"),
   TernaryConditionExpression   = require("./ast/ternaryCondition"),
   AssignmentExpression         = require("./ast/assignment"),
   OperatorExpression           = require("./ast/operator"),
@@ -17,26 +17,37 @@
   ScriptExpression             = require("./ast/script"),
   CallExpression               = require("./ast/call"),
   ModifierExpression           = require("./ast/modifier"),
-  PropertyExpression           = require("./ast/property");
+  PropertyExpression           = require("./ast/property"),
+  ArrayExpression              = require("./ast/array"),
+  ParametersExpression         = require("./ast/parameters");
+
+  function trimWhitespace (ws) {
+    return ws.replace(/[\s\r\n\t]+/g, " ").replace(/(^\s+)|(\s+$)/, "");
+  }
+
+  function trimmedText() {
+    return trimWhitespace(text());
+  }
 }
 
 Start
+  = Template
+
+
+Template
   = children:ChildNodes { return new RootNodeExpression(children); }
 
 DocType
   = "<!DOCTYPE" _ info:[^>]+ _ ">" { 
-      return {
-        type: "doctype", 
-        value: info.join("")
-      }
+      return new DocTypeExpression(info.join(""));
     }
 
 ChildNodes
-  = (TextNode/BlockBinding/CommentNode/ElementNode)*  
+  = children:(TextNode/BlockBinding/CommentNode/ElementNode)* { return new ArrayExpression(new ParametersExpression(children)) }
 
 CommentNode
   = _ "<!--" value:(!"-->" v:SourceCharacter { return v; })+ "-->" _ {
-    return new CommentNodeExpression(value.join(""));
+    return new CommentNodeExpression(trimWhitespace(value.join("")));
   }
   / DocType
 
@@ -53,7 +64,7 @@ ElementNode
 
 TextNode
   = value:TextCharacter+ {
-      return new TextNodeExpression(value.join(""))
+      return new TextNodeExpression(trimWhitespace(value.join("")))
     }
 
 TextCharacter
@@ -69,9 +80,17 @@ StartEndTag
 
 TagInfo
   = name:TagName _ attributes:Attribute* _ {
+
+      var attrs = {};
+
+      for (var i = 0, n = attributes.length; i < n; i++) {
+        var attr = attributes[i];
+        attrs[attr.name] = attr.value;
+      }
+
       return {
         name: name,
-        attributes: attributes
+        attributes: new HashExpression(attrs)
       };
     }
 
@@ -83,7 +102,7 @@ EndTag
     }
 
 TagName
-  = _ word:[a-zA-Z0-9:_-]+ { return text(); }
+  = _ word:[a-zA-Z0-9:_-]+ { return word.join(""); }
 
 Attribute
   = name:TagName _ "=" _ values:AttributeValues {
@@ -94,13 +113,14 @@ Attribute
     }
   / name:TagName {
       return {
-        name: name
+        name: name,
+        value: new LiteralExpression(true)
       }
     }
 
 AttributeValues
-  = '"' values:(TextBinding/(!"{{" [^"])+ { return text(); })* '"' { return values.length > 1 ? values : values[0]; }
-  / "'" values:(TextBinding/(!"{{" [^'])+ { return text(); })* "'" { return values.length > 1 ? values : values[0]; }
+  = '"' values:(TextBinding/(!"{{" [^"])+ { return new StringExpression(trimmedText()); })* '"' { return values.length > 1 ? new ArrayExpression(new ParametersExpression(values)) : values[0] || new StringExpression(""); }
+  / "'" values:(TextBinding/(!"{{" [^'])+ { return new StringExpression(trimmedText()); })* "'" { return values.length > 1 ? new ArrayExpression(new ParametersExpression(values)) : values[0] || new StringExpression(""); }
   / TextBinding
 
 BlockBinding
@@ -109,29 +129,38 @@ BlockBinding
 
 
 StartBlockBinding
-  = scripts:Scripts "}}" _ fragment:ChildNodes _ child:ChildBlockBinding {
+  = scripts:SingleScript _ fragment:Template _ child:ChildBlockBinding {
       return new BlockBindingExpression(scripts, fragment, child);
-  }
+    }
 
 ChildBlockBinding
   = "{{/" blockBinding:StartBlockBinding { return blockBinding; }
   / "{{/}}" _ { return void 0; }
 
 TextBinding
-  = "{{" _ scripts:Scripts _ "}}" {
-      return new TextBindingExpression(scripts);
+  = "{{" _ scripts:Scripts _ "}}" _ {
+      return new BlockBindingExpression(scripts);
+    }
+
+SingleScript
+  = _ scriptName:ReferenceName _ "}}" {
+      var hash = {};
+      hash[scriptName] = new ScriptExpression(new LiteralExpression(true));
+      return new HashExpression(hash);
+    }
+  / scripts:Scripts _ "}}" { 
+      return scripts; 
     }
 
 Scripts
   = scripts:HashValues {
-        var s = {};
-      for (i = 0, n = scripts.length; i < n; i++) {
-        s[scripts[i].key] = scripts[i].value;
+      for (var k in scripts) {
+        scripts[k] = new ScriptExpression(scripts[k]);
       }
-      return s;
+      return new HashExpression(scripts);
     }
   / script:Script {
-      return new ScriptExpression(script);
+      return new HashExpression({ value: new ScriptExpression(script) });
     }
 
 Script
@@ -152,7 +181,7 @@ Parameters
   = "(" params:InnerParameters ")" {
       return params;
     }
-  / "()" { return []; }
+  / "()" { []; }
 
 InnerParameters
   = param1:Expression rest:("," Expression)* {
@@ -181,7 +210,7 @@ Modifiers
   = expression:Not modifiers:Modifier* {
 
       for (var i = 0, n = modifiers.length; i < n; i++) {
-        expression = new ModifierExpression(expression, modifiers[i].reference, modifiers[i].parameters);
+        expression = new ModifierExpression(modifiers[i].reference, new ParametersExpression([expression].concat(modifiers[i].parameters)));
       }
 
       return expression;
@@ -189,10 +218,10 @@ Modifiers
   / (FunctionCall/ObjectReference)
 
 Modifier 
-  = "|" _ call:(FunctionCall/ObjectReference) _ {
+  = "|" _ reference:ObjectReference parameters:Parameters? _ {
     return {
-      reference: call.reference || call,
-      parameters: call.parameters || []
+      reference: reference,
+      parameters: parameters || []
     }
   }
 
@@ -249,7 +278,7 @@ Null
 
 FunctionCall
   = reference:ObjectReference parameters:Parameters {
-      return new CallExpression(reference, parameters);
+      return new CallExpression(reference, new ParametersExpression(parameters));
     }
 
 Reference
@@ -265,8 +294,18 @@ Hash
       return new HashExpression(values);
     }
 
-HashValues 
-  = firstValue:HashValue additionalValues:("," HashValues)* {
+HashValues
+  = values:HashValuesArray {
+      var s = {};
+      for (i = 0, n = values.length; i < n; i++) {
+        s[values[i].key] = values[i].value;
+      }
+      return s;
+    }
+
+
+HashValuesArray
+  = firstValue:HashValue additionalValues:("," HashValuesArray)* {
       return [
         firstValue
       ].concat(additionalValues.length ? additionalValues[0][1] : []);
