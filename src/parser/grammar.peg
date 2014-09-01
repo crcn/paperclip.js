@@ -82,7 +82,6 @@ EndTag
       };
     }
 
-
 TagName
   = _ word:[a-zA-Z0-9:_-]+ { return text(); }
 
@@ -99,13 +98,10 @@ Attribute
       }
     }
 
-
 AttributeValues
   = '"' values:(TextBinding/(!"{{" [^"])+ { return text(); })* '"' { return values.length > 1 ? values : values[0]; }
   / "'" values:(TextBinding/(!"{{" [^'])+ { return text(); })* "'" { return values.length > 1 ? values : values[0]; }
   / TextBinding
-
-
 
 BlockBinding
   = "{{#" blockBinding:StartBlockBinding { return blockBinding; }
@@ -151,8 +147,6 @@ TernaryConditional
       return new TernaryConditionExpression(condition, left, right);
     }
   / Assignment
-
-
 
 Parameters
   = "(" params:InnerParameters ")" {
@@ -201,7 +195,6 @@ Modifier
       parameters: call.parameters || []
     }
   }
-
 
 ObjectReference
   = _ context:Object path:("." ReferenceName)* _ {
@@ -292,7 +285,6 @@ HashKey
   / key:ReferenceName { return key; } 
 
 
-
 StringLiteral "string"
   = '"' chars:DoubleStringCharacter* '"' {
       return new StringExpression(chars.join(""));
@@ -301,11 +293,9 @@ StringLiteral "string"
       return new StringExpression(chars.join(""));
     }
 
-
 DoubleStringCharacter
   = !('"' / "\\") SourceCharacter { return text(); }
   / '\\"'
-
 
 SingleStringCharacter
   = !("'" / "\\") SourceCharacter { return text(); }
