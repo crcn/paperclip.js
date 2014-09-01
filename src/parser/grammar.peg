@@ -5,6 +5,14 @@
 Start
   = ChildNodes
 
+DocType
+  = "<!DOCTYPE" _ info:[^>]+ _ ">" { 
+      return {
+        type: "doctype", 
+        value: info.join("")
+      }
+    }
+
 ChildNodes
   = (TextNode/BindingBlock/CommentNode/ElementNode)*  
 
@@ -15,6 +23,7 @@ CommentNode
       value: value.join("")
     }
   }
+  / DocType
 
 ElementNode
   = startTag:StartTag children:ChildNodes endTag:EndTag _ {

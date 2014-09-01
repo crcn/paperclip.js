@@ -7,6 +7,12 @@ describe("parser/node#", function () {
     parser.parse("<a>");
   });
 
+  it("can parse the doctype", function () {
+    var c = parser.parse("<!DOCTYPE html><a>");
+    expect(c.length).to.be(2);
+    expect(c[0].value).to.be("html")
+  });
+
   it("accepts many types of characters in the tag name", function () {
     parser.parse("<a>");
     parser.parse("<h3>");
