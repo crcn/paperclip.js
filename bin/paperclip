@@ -17,12 +17,12 @@ try {
 
   var source = fs.readFileSync(argv.i, "utf8"),
   script = parser.parse(source);
+  console.log(script.toJavaScript());
 
   if (false && argv.p) {
     script = formatter.format(script);
   }
 
-  console.log("%s OK", argv.i);
 } catch (e) {
   console.log(e);
 }
