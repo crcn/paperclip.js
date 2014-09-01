@@ -20,6 +20,11 @@ describe("parser/script#", function () {
         expect(ast.scripts.c.value).to.be("d");
         expect(ast.scripts.e.value).to.be("f");
     });
+
+    it("can handle whitespace between keys", function () {
+        var ast = parser.parse("{{ a : b, c: d, e:f}}");
+    });
+
     it("can have no values", function () {
         var ast = parser.parse("{{a:}}")[0];
         expect(ast.scripts.a).to.be(void 0);

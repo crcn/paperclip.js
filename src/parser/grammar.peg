@@ -222,7 +222,7 @@ ObjectReference
     }
 
 Not
-  = "!" value:Not {
+  = not:"!" value:Not {
       return { 
         type: "!",
         value: value
@@ -310,7 +310,7 @@ HashValues
     }
 
 HashValue
-  = key:HashKey ":" value:Expression? {
+  = _ key:HashKey _":" value:Expression? {
       return {
         key: key,
         value: value || void 0
@@ -318,8 +318,8 @@ HashValue
     }
 
 HashKey
-  = _ key:StringLiteral { return key.value; }
-  / _ key:ReferenceName { return key; } 
+  = key:StringLiteral { return key.value; }
+  / key:ReferenceName { return key; } 
 
 
 

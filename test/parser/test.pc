@@ -1,3 +1,136 @@
-<p class="student-class-item">
-  {{ html: "dojo.teacher_web:pages.school.manage_roster.class_and_teacher" | t({class: model.name | ellipsis(25), teacher: teacherName}) }}
-</p>
+<div class="panel panel-default panel-lg" data-track="teach-signup-form">
+
+  <div class="panel-body">
+
+  <fieldset id="signup-form">
+
+    {{#if:error}}
+      <div class="alert alert-danger" data-teach="teach-signup-error">
+        {{ html: error.message | t() }}
+
+        {{#if:error.code == 604}}
+          <a data-href="login" data-track="click:teach-signup-error-login">
+            {{ 'dojo.teacher_web:password_reset.login' | t() }}
+          </a>.
+        {{/}}
+      </div>
+    {{/}}
+
+    <form data-bind="{{ onSubmit: signup() }}">
+
+      <legend>{{ 'dojo.teacher_web:external.register.welcome_to_classdojo' | t() }}</legend>
+
+      <div class="form-group row">
+        <div class="col-xs-4 name-title">
+          {{#if: !showOtherInput }}
+            {{
+              select: {
+                source : models.default.titles,
+                model  : teacher,
+                name   : "title",
+                onChange: onTitleChange,
+                class: "form-control"
+              }
+            }}
+          {{/else}}
+            <input
+              type="text"
+              name="otherTitle"
+              data-bind="{{ model: this }}"
+              placeholder="{{ 'dojo.teacher_web:pages.profile_settings.other' | t() }}"
+              class="form-control" />
+          {{/}}
+        </div>
+        <div class="col-xs-4 name-first">
+          <input
+            type="text"
+            name="firstName"
+            class="form-control"
+            placeholder="{{ 'dojo.teacher_web:external.register.first_name' | t() }}"
+            type="text"
+            data-bind="{{ focus: true, model: teacher }}" />
+        </div>
+        <div class="col-xs-4 name-last">
+          <input
+            type="text"
+            name="lastName"
+            class="form-control"
+            placeholder="{{ 'dojo.teacher_web:external.register.last_name' | t() }}"
+            data-bind="{{ model: teacher }}" />
+        </div>
+      </div>
+      <div class="form-group">
+        <input
+          type="email"
+          name="email"
+          data-bind="{{ model: teacher }}"
+          placeholder="{{ 'dojo.teacher_web:external.register.email' | t() }}"
+          autocomplete="off"
+          class="form-control" />
+        {{
+          inputOk: {
+            type: 'email',
+            value: teacher.email
+          }
+        }}
+      </div>
+      <div class="form-group">
+        <input
+          type="password"
+          name="password"
+          data-bind="{{ model: teacher }}"
+          placeholder="{{ 'dojo.teacher_web:external.register.password' | t() }}"
+          autocomplete="off"
+          class="form-control" />
+        {{
+          inputOk: {
+            value: teacher.password,
+            ok: teacher.password.length >= minPwLength
+          }
+        }}
+      </div>
+      <div class="form-group">
+        <input
+          type="password"
+          name="confirmPassword"
+          data-bind="{{ model: teacher }}"
+          placeholder="{{ 'dojo.teacher_web:external.register.confirm_password' | t() }}"
+          class="form-control" />
+        {{
+          inputOk: {
+            show: teacher.confirmPassword,
+            ok: teacher.confirmPassword == teacher.password
+          }
+        }}
+      </div>
+      <div class="form-group">
+        <strong>{{ 'dojo.teacher_web:external.register.plan_to_use' | t() }}</strong>
+        {{
+          select: {
+            source : models.default.accountTypes,
+            label  : 'dojo.teacher_web:external.register.choose_one' | t(),
+            model  : this,
+            name   : "accountType",
+            class  : "form-control"
+          }
+        }}
+      </div>
+      <div class="form-group">
+        <input
+          type="submit"
+          value="{{ 'dojo.teacher_web:external.register.get_started' | t() }}"
+          class="btn btn-blue btn-block" />
+      </div>
+    </form>
+  </fieldset>
+
+  </div>
+
+  <div class="panel-footer">
+    <span class="text-muted">{{ html:"dojo.teacher_web:external.register.disclaimer" | t() }}</span>
+  </div>
+
+</div>
+
+
+{{ loadingGif: { show: loading }}}
