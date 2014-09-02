@@ -40,7 +40,7 @@
   function attrValues (values) {
 
     values = values.filter(function (v) {
-      return v.value != "";
+      return!/^[ \n\t\r]+$/.test(v.value);
     });
 
     var v = values.length === 1 && values[0].type === "string" ? values[0] : new ArrayExpression(new ParametersExpression(values));
@@ -48,7 +48,7 @@
   }
 
   function trimTextExpressions (expressions) {
-  
+
     function _trim (exprs) {
       var expr, i;
       for (i = exprs.length; i--;) {
@@ -156,8 +156,8 @@ Attribute
     }
 
 AttributeValues
-  = '"' values:(AttrTextBinding/(!"{{" [^"])+ { return new StringExpression(trimmedText()); })* '"' { return attrValues(values); }
-  / "'" values:(AttrTextBinding/(!"{{" [^'])+ { return new StringExpression(trimmedText()); })* "'" { return attrValues(values); }
+  = '"' values:(AttrTextBinding/(!"{{" [^"])+ { return new StringExpression(text()); })* '"' { return attrValues(values); }
+  / "'" values:(AttrTextBinding/(!"{{" [^'])+ { return new StringExpression(text()); })* "'" { return attrValues(values); }
   / binding:AttrTextBinding { return attrValues([binding]); }
 
 BlockBinding
@@ -180,7 +180,7 @@ TextBinding
     }
 
 AttrTextBinding
-  = "{{" _ scripts:AttrTextBindingScript _ "}}" _ {
+  = "{{" _ scripts:AttrTextBindingScript _ "}}" {
       return scripts;
     }
 
