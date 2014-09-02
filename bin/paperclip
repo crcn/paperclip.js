@@ -14,12 +14,14 @@ formatter = require("../lib/parser/formatter"),
 fs = require("fs");
 
 try {
+  // console.log("//argv."i);
   var source = fs.readFileSync(argv.i, "utf8"),
   script = parser.parse(source);
 
   if (argv.p) {
     script = formatter.format(script);
   } 
+
 
 } catch (e) {
   console.log(e.stack);

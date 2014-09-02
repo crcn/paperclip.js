@@ -1,5 +1,7 @@
 var parser = require("../../lib/parser2/parser.js"),
-expect     = require("expect.js");
+expect     = require("expect.js"),
+pc         = require("../.."),
+bindable   = require("bindable");
 
 describe("parser/node#", function () {
 
@@ -103,6 +105,11 @@ describe("parser/node#", function () {
       var ast = parser.parse("<input value=' {{abba}}'></input>");
       var js = ast.toJavaScript();
       expect(js).to.be("(function (fragment, block, element, text, comment, textBlock, parser, modifiers) { return element(\"input\", {'value':[{run: function () { return this.get(['abba']); }, refs: [[\"abba\"]]}]}, []); })")
+    });
+
+    it("trims whitespace from the start & end of elements", function () {
+      var tpl = pc.template("<div> hello {{name}} </div>");
+      expect(tpl.bind(new bindable.Object({ name: "john"})).toString()).to.be("<div>hello john</div>");
     });
   });
 });

@@ -38,13 +38,31 @@
   }
 
   function attrValues (values) {
-  
+
     values = values.filter(function (v) {
       return v.value != "";
     });
 
     var v = values.length === 1 && values[0].type === "string" ? values[0] : new ArrayExpression(new ParametersExpression(values));
     return v;
+  }
+
+  function trimTextExpressions (expressions) {
+  
+    function _trim (exprs) {
+      var expr, i;
+      for (i = exprs.length; i--;) {
+        expr = exprs[i];
+        if (expr.type == "textNode" && !/\S/.test(expr.value) && !expr.decoded) {
+          exprs.splice(i, 1);
+        } else {
+          break;
+        }
+      }
+      return exprs;
+    }
+
+    return _trim(_trim(expressions.reverse()).reverse());
   }
 }
 
@@ -61,7 +79,7 @@ DocType
     }
 
 ChildNodes
-  = children:(TextNode/BlockBinding/CommentNode/ElementNode)* { return new ArrayExpression(new ParametersExpression(children)) }
+  = children:(TextNode/BlockBinding/CommentNode/ElementNode)* { return new ArrayExpression(new ParametersExpression(trimTextExpressions(children))) }
 
 
 CommentNode
@@ -157,7 +175,7 @@ ChildBlockBinding
   / "{{/}}" _ { return void 0; }
 
 TextBinding
-  = "{{" _ scripts:Scripts _ "}}" _ {
+  = "{{" _ scripts:Scripts _ "}}" {
       return new BlockBindingExpression(scripts);
     }
 
