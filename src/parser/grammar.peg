@@ -156,8 +156,8 @@ Attribute
     }
 
 AttributeValues
-  = '"' values:(AttrTextBinding/(!"{{" [^"])+ { return new StringExpression(text()); })* '"' { return attrValues(values); }
-  / "'" values:(AttrTextBinding/(!"{{" [^'])+ { return new StringExpression(text()); })* "'" { return attrValues(values); }
+  = '"' values:(AttrTextBinding/(!"{{" [^"])+ { return new StringExpression(trimNewLineChars(text())); })* '"' { return attrValues(values); }
+  / "'" values:(AttrTextBinding/(!"{{" [^'])+ { return new StringExpression(trimNewLineChars(text())); })* "'" { return attrValues(values); }
   / binding:AttrTextBinding { return attrValues([binding]); }
 
 BlockBinding
