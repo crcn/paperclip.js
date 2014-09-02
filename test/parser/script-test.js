@@ -1,5 +1,7 @@
 var parser = require("../../lib/parser2/parser.js"),
-expect     = require("expect.js");
+expect     = require("expect.js"),
+pc         = require("../.."),
+bindable   = require("bindable");
 
 describe("parser/script#", function () {
 
@@ -22,7 +24,8 @@ describe("parser/script#", function () {
         var ast = parser.parse("{{a:}}")
     });
     it("can be parsed with ws", function () {
-        var ast = parser.parse("{{ a: }}")
+        var ast = parser.parse("{{ a: }}");
+        ast.toJavaScript();
     });
   });
 

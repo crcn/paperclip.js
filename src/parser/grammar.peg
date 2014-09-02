@@ -370,7 +370,7 @@ HashValue
   = _ key:HashKey _":" value:Expression? {
       return {
         key: key,
-        value: value || void 0
+        value: value || new LiteralExpression(void 0)
       }
     }
 
