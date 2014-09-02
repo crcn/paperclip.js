@@ -10,7 +10,7 @@ argv,
 path = require("path"),
 // parser = require("../lib/parser"),
 parser = require("../lib/parser2"),
-// formatter = require("../lib/parser/formatter"),
+formatter = require("../lib/parser/formatter"),
 fs = require("fs");
 
 try {
@@ -20,6 +20,7 @@ try {
   if (argv.p) {
     script = formatter.format(script);
   } 
+
 } catch (e) {
   console.log(e.stack);
 }

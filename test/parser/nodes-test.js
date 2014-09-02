@@ -98,5 +98,11 @@ describe("parser/node#", function () {
         console.log(e);
       }
     });
+
+    it("trims whitespace from attributes", function () {
+      var ast = parser.parse("<input value=' {{abba}}'></input>");
+      var js = ast.toJavaScript();
+      expect(js).to.be("(function (fragment, block, element, text, comment, textBlock, parser, modifiers) { return element(\"input\", {'value':[{run: function () { return this.get(['abba']); }, refs: [[\"abba\"]]}]}, []); })")
+    });
   });
 });

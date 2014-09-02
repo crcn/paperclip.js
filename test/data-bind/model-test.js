@@ -21,7 +21,7 @@ describe("data-bind model#", function () {
     });
 
 
-    "keydown change keyup input mousedown mouseup click".split(" ").forEach(function (eventName) {
+    "change keyup input mousedown mouseup".split(" ").forEach(function (eventName) {
       it("is triggered by a " + eventName + " event", function (next) {
         var t = pc.template("<input type='text' name='name' data-bind='{{ model: this }}' />", app),
         c = new bindable.Object({ name: "abba" });
@@ -50,7 +50,7 @@ describe("data-bind model#", function () {
       var r = b.render();
 
       var $input = $(r.childNodes[1]);
-      $input.val("baab").trigger($.Event("keydown"));
+      $input.val("baab").trigger($.Event("change"));
 
       setTimeout(function () {
         expect(c.get("a.b.c.d.e")).to.be("baab");
@@ -68,7 +68,7 @@ describe("data-bind model#", function () {
       var r = b.render();
 
       var $input = $(r.childNodes[1]);
-      $input.val("baab").trigger($.Event("keydown"));
+      $input.val("baab").trigger($.Event("change"));
 
       setTimeout(function () {
         expect(c.get("name")).to.be("baab");
@@ -86,7 +86,7 @@ describe("data-bind model#", function () {
       var r = b.render();
 
       var $input = $(r.childNodes[1]);
-      $input.val("baab").trigger($.Event("keydown"));
+      $input.val("baab").trigger($.Event("change"));
 
       setTimeout(function () {
         expect(c.get("a.b.c.d.e")).to.be("baab");
@@ -104,7 +104,7 @@ describe("data-bind model#", function () {
       var r = b.render();
 
       var $input = $(r.childNodes[1]);
-      $input.val("baab").trigger($.Event("keydown"));
+      $input.val("baab").trigger($.Event("change"));
 
       setTimeout(function () {
         expect(c.get("name")).to.be("abba");
@@ -126,7 +126,7 @@ describe("data-bind model#", function () {
       var r = b.render();
 
       var $input = $(r.childNodes[1]);
-      $input.val("baab").trigger($.Event("keydown"));
+      $input.val("baab").trigger($.Event("change"));
 
       setTimeout(function () {
         expect(c.get("name")).to.be("baab");
