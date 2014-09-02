@@ -8,9 +8,9 @@ describe('p', 'pretty-print template output').
 describe('i', 'paperclip template source').
 argv,
 path = require("path"),
-parser = require("../lib/parser"),
+// parser = require("../lib/parser"),
 parser = require("../lib/parser2"),
-formatter = require("../lib/parser/formatter"),
+// formatter = require("../lib/parser/formatter"),
 fs = require("fs");
 
 try {
