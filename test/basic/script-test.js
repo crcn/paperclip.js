@@ -340,7 +340,7 @@ describe("script#", function () {
       expect(t.render().toString()).to.be("a");
     });
 
-    it("can ignore a reference with ticks", function () {
+    xit("can ignore a reference with ticks", function () {
 
       var c = new bindable.Object({
         a: "a"

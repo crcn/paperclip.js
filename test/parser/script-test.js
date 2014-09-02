@@ -187,12 +187,9 @@ describe("parser/script#", function () {
 
     describe("function calls", function () {
       it("can be parsed", function () {
-        var ast = parser.parse("{{a.b.c(1,2,3 + 4)}}")
+        var ast = parser.parse("{{a.b.c(1,2,3 + 4)}}").childNodes.expressions.expressions[0];
+        // expect(ast.toJavaScript()).to.be("block({'value':{run: function () { return this.call(this.get([\"a\",\"b\"]), \"c\", [1, 2, 3+4]); }, refs: []}}, void 0)")
       }); 
-      it("can be called from strings", function () {
-        var ast = parser.parse("{{'a'.length}}")
-
-      });
     });
 
     describe("modifiers", function () {

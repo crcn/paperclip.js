@@ -22,11 +22,24 @@
   GroupExpression              = require("./ast/group");
 
   function trimWhitespace (ws) {
-    return ws.replace(/[\s\r\n\t]+/g, " ").replace(/(^\s+)|(\s+$)/, "");
+    return trimNewLineChars(ws).replace(/(^\s+)|(\s+$)/, "");
   }
 
-  function trimmedText() {
+  function trimNewLineChars (ws) {
+    return ws.replace(/[ \r\n\t]+/g, " ");
+  }
+
+  function trimmedText () {
     return trimWhitespace(text());
+  }
+
+  function singleOrArrayExpression (values) {
+    return values.length === 1 ? values[0] : new ArrayExpression(new ParametersExpression(values));
+  }
+
+  function attrValues (values) {
+    var v = values.length === 1 && values[0].type === "string" ? values[0] : new ArrayExpression(new ParametersExpression(values));
+    return v;
   }
 }
 
@@ -44,6 +57,7 @@ DocType
 
 ChildNodes
   = children:(TextNode/BlockBinding/CommentNode/ElementNode)* { return new ArrayExpression(new ParametersExpression(children)) }
+
 
 CommentNode
   = _ "<!--" value:(!"-->" v:SourceCharacter { return v; })+ "-->" _ {
@@ -64,7 +78,7 @@ ElementNode
 
 TextNode
   = value:TextCharacter+ {
-      return new TextNodeExpression(trimWhitespace(value.join("")))
+      return new TextNodeExpression(trimNewLineChars(value.join("")))
     }
 
 TextCharacter
@@ -119,9 +133,9 @@ Attribute
     }
 
 AttributeValues
-  = '"' values:(TextBinding/(!"{{" [^"])+ { return new StringExpression(trimmedText()); })* '"' { return values.length > 1 ? new ArrayExpression(new ParametersExpression(values)) : values[0] || new StringExpression(""); }
-  / "'" values:(TextBinding/(!"{{" [^'])+ { return new StringExpression(trimmedText()); })* "'" { return values.length > 1 ? new ArrayExpression(new ParametersExpression(values)) : values[0] || new StringExpression(""); }
-  / TextBinding
+  = '"' values:(AttrTextBinding/(!"{{" [^"])+ { return new StringExpression(trimmedText()); })* '"' { return attrValues(values); }
+  / "'" values:(AttrTextBinding/(!"{{" [^'])+ { return new StringExpression(trimmedText()); })* "'" { return attrValues(values); }
+  / binding:AttrTextBinding { return attrValues([binding]); }
 
 BlockBinding
   = "{{#" blockBinding:StartBlockBinding { return blockBinding; }
@@ -134,7 +148,7 @@ StartBlockBinding
     }
 
 ChildBlockBinding
-  = "{{/" blockBinding:StartBlockBinding { return blockBinding; }
+  = "{{/" blockBinding:StartBlockBinding { return new RootNodeExpression(blockBinding); }
   / "{{/}}" _ { return void 0; }
 
 TextBinding
@@ -142,11 +156,28 @@ TextBinding
       return new BlockBindingExpression(scripts);
     }
 
+AttrTextBinding
+  = "{{" _ scripts:AttrTextBindingScript _ "}}" _ {
+      return scripts;
+    }
+
+AttrTextBindingScript
+  = scripts:HashValues {
+      for (var k in scripts) {
+        scripts[k] = new ScriptExpression(scripts[k]);
+      }
+      return new HashExpression(scripts);
+    }
+  / script:Script {
+      return new ScriptExpression(script);
+    }
+
+
 SingleScript
   = _ scriptName:ReferenceName _ "}}" {
       var hash = {};
       hash[scriptName] = new ScriptExpression(new LiteralExpression(true));
-      return new HashExpression(hash);
+      return new HashExpression(hash)
     }
   / scripts:Scripts _ "}}" { 
       return scripts; 
@@ -160,6 +191,7 @@ Scripts
       return new HashExpression(scripts);
     }
   / script:Script {
+      //return new ScriptExpression(script);
       return new HashExpression({ value: new ScriptExpression(script) });
     }
 
@@ -210,7 +242,7 @@ Modifiers
   = expression:Not modifiers:Modifier* {
 
       for (var i = 0, n = modifiers.length; i < n; i++) {
-        expression = new ModifierExpression(modifiers[i].reference, new ParametersExpression([expression].concat(modifiers[i].parameters)));
+        expression = new ModifierExpression(modifiers[i].name, new ParametersExpression([expression].concat(modifiers[i].parameters)));
       }
 
       return expression;
@@ -218,9 +250,9 @@ Modifiers
   / (FunctionCall/ObjectReference)
 
 Modifier 
-  = "|" _ reference:ObjectReference parameters:Parameters? _ {
+  = "|" _ name:ReferenceName parameters:Parameters? _ {
     return {
-      reference: reference,
+      name: name,
       parameters: parameters || []
     }
   }
@@ -229,10 +261,12 @@ ObjectReference
   = _ context:Object _ { return context; }
 
 Not
-  = not:"!" value:Not {
-      return new NotExpression(value);
+  = not:("!"/"-") value:Not {
+      return new NotExpression(not, value);
     }
   / Reserved/FunctionCall/ObjectReference
+
+
 
 Object
   = Group/Hash/Number/StringLiteral/Reference
@@ -283,7 +317,6 @@ Reference
       path = [reference].concat(path.map(function (p) { return p[1] }));
       return new ReferenceExpression(path, bindingType);
     }
-
 
 ReferenceName
   = name:[a-zA-Z_$0-9]+ { return text(); }
