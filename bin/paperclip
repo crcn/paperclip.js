@@ -14,7 +14,7 @@ formatter = require("../lib/parser/formatter"),
 fs = require("fs");
 
 try {
-  // console.log("//argv."i);
+  console.log("// %s", argv.i);
   var source = fs.readFileSync(argv.i, "utf8"),
   script = parser.parse(source);
 
@@ -24,7 +24,7 @@ try {
 
 
 } catch (e) {
-  console.log(e.stack);
+  console.log(e);
 }
 
 
