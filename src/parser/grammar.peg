@@ -184,17 +184,6 @@ AttrTextBinding
       return scripts;
     }
 
-AttrTextBindingScript
-  = scripts:HashValues {
-      for (var k in scripts) {
-        scripts[k] = new ScriptExpression(scripts[k]);
-      }
-      return new HashExpression(scripts);
-    }
-  / script:Script {
-      return new ScriptExpression(script);
-    }
-
 
 SingleScript
   = _ scriptName:ReferenceName _ "}}" {
