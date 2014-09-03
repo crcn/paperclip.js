@@ -102,9 +102,8 @@ describe("parser/node#", function () {
     });
 
     it("trims whitespace from attributes", function () {
-      var ast = parser.parse("<input value=' {{abba}}'></input>");
-      var js = ast.toJavaScript();
-      expect(js).to.be("(function (fragment, block, element, text, comment, textBlock, parser, modifiers) { return element(\"input\", {'value':[{run: function () { return this.get(['abba']); }, refs: [[\"abba\"]]}]}, []); })")
+      var tpl = pc.template("<input value=' {{name}}'></input>");
+      expect(tpl.bind(new bindable.Object({ name: "john"})).toString()).to.be('<input value="john">');
     });
 
     it("trims whitespace from the start & end of elements", function () {

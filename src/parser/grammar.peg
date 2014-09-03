@@ -180,7 +180,7 @@ TextBinding
     }
 
 AttrTextBinding
-  = "{{" _ scripts:AttrTextBindingScript _ "}}" {
+  = "{{" _ scripts:Scripts _ "}}" {
       return scripts;
     }
 
@@ -214,7 +214,6 @@ Scripts
       return new HashExpression(scripts);
     }
   / script:Script {
-      //return new ScriptExpression(script);
       return new HashExpression({ value: new ScriptExpression(script) });
     }
 
