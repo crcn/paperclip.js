@@ -126,5 +126,19 @@ describe("parser/node#", function () {
       expect(tpl.bindings.clip.get("_id")).to.be("aa");
     });
 
+    it("can reference bindings from data-bind", function () {
+      var tpl = pc.template("<div data-bind={{name,_id:'aa',_id2:'aaa'}}></div>").bind(new bindable.Object({name:"john"}));
+      expect(tpl.bindings.clip.get("_id")).to.be("aa");
+      expect(tpl.bindings.clip.get("_id2")).to.be("aaa");
+      expect(tpl.bindings.clip.get("value")).to.be("john");
+    });
+
+    it("can reference bindings from any attribute", function () {
+      var tpl = pc.template("<div class={{name,_id:'aa',_id2:'aaa'}}></div>").bind(new bindable.Object({name:"john"}));
+      expect(tpl.bindings.clippedBuffer.buffer[0].clip.get("_id")).to.be("aa");
+      expect(tpl.bindings.clippedBuffer.buffer[0].clip.get("_id2")).to.be("aaa");
+      expect(tpl.bindings.clippedBuffer.buffer[0].clip.get("value")).to.be("john");
+    });
+
   });
 });
