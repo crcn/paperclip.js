@@ -114,7 +114,12 @@ describe("parser/node#", function () {
     it("maintains attribute spaces with a text binding", function () {
       var tpl = pc.template("<div class='blue red {{color}} yellow'></div>");
       expect(tpl.bind(new bindable.Object({ color: "blue" })).toString()).to.be('<div class="blue red blue yellow"></div>');
-
     });
+
+    it("can data-bind unregistered atts", function () {
+      var tpl = pc.template("{{_id:'aa'}}").bind(new bindable.Object());
+      expect(tpl.bindings.clip.get("_id")).to.be("aa");
+    });
+    
   });
 });
