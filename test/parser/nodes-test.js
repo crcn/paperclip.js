@@ -120,6 +120,11 @@ describe("parser/node#", function () {
       var tpl = pc.template("{{_id:'aa'}}").bind(new bindable.Object());
       expect(tpl.bindings.clip.get("_id")).to.be("aa");
     });
-    
+
+    it("can set value: to the first arg if it's not there", function () {
+      var tpl = pc.template("{{name,_id:'aa',_id2:'aaa'}}").bind(new bindable.Object());
+      expect(tpl.bindings.clip.get("_id")).to.be("aa");
+    });
+
   });
 });

@@ -202,14 +202,20 @@ Scripts
       }
       return new HashExpression(scripts);
     }
-  / script:Script {
-      return new HashExpression({ value: new ScriptExpression(script) });
-    }
+  / _ value:Expression _ ascripts:("," HashValuesArray)*  {
 
-Script
-  = _ expression:TernaryConditional _ {
-    return expression;
-  }
+      var scripts = {
+        value: new ScriptExpression(value)
+      };
+
+      ascripts = ascripts.length ? ascripts[0][1] : [];
+      for (var i = 0, n = ascripts.length; i < n; i++) {
+        scripts[ascripts[i].key] = new ScriptExpression(ascripts[i].value);
+      }
+
+      return new HashExpression(scripts);
+    }
+  
 
 Expression 
   = TernaryConditional
@@ -276,8 +282,6 @@ Not
       return new NotExpression(not, value);
     }
   / Reserved/FunctionCall/ObjectReference
-
-
 
 Object
   = Group/Hash/Number/StringLiteral/Reference
