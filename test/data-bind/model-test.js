@@ -17,7 +17,7 @@ describe("data-bind model#", function () {
 
       setTimeout(function () {
         next();
-      }, 100);
+      }, 10);
     });
 
 
@@ -156,7 +156,7 @@ describe("data-bind model#", function () {
           expect(c.get("name")).to.be("baab");
           b.dispose();
           next();
-        }, 600);
+        }, 10);
       });
     });
 
