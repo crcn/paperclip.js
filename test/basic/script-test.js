@@ -2,6 +2,8 @@ var pc   = require("../.."),
 expect   = require("expect.js"),
 bindable = require("bindable");
 
+var apc = application.paperclip;
+
 describe("script#", function () {
 
   describe("preserved words", function () {
@@ -260,12 +262,12 @@ describe("script#", function () {
     });
 
     it("can register a custom modifer", function () {
-      pc.modifier("concat", function (name, value) {
+      apc.modifier("concat", function (name, value) {
         return name + value;
       });
 
       expect(pc.template("{{a|concat('b')}}").bind({a:"a"}).render().toString()).to.be("ab")
-      pc.modifier("concat", undefined);
+      apc.modifier("concat", undefined);
     });
 
     it("recalls the modifier if a value changes", function () {
@@ -280,7 +282,7 @@ describe("script#", function () {
     })
 
     it("can bind to a model", function () {
-      pc.modifier("fullName", function(v) {
+      apc.modifier("fullName", function(v) {
         return [v.get("firstName"), v.get("lastName")].join(" ");
       });
 
@@ -320,11 +322,11 @@ describe("script#", function () {
     });
 
     it("can be nested", function () {
-      pc.modifier("concat", function (name, value) {
+      apc.modifier("concat", function (name, value) {
         return name + value;
       });
       expect(pc.template("{{a|concat('b'|uppercase())}}").bind({a:"a"}).render().toString()).to.be("aB");
-      pc.modifier("concat", undefined);
+      apc.modifier("concat", undefined);
     });
   });
 

@@ -7,6 +7,7 @@ describe("data-bind events#", function () {
 
 
   var app = new pc.Application({ nodeFactory: nofactor.dom });
+  app.use(pc);
 
   [
     "click", 

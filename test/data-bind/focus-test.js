@@ -6,6 +6,7 @@ nofactor = require("nofactor");
 describe("data-bind focus#", function () {
 
   var app = new pc.Application({ nodeFactory: nofactor.dom });
+  app.use(pc);
 
   it("can focus on an input", function (next) {
 

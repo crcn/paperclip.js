@@ -6,6 +6,7 @@ nofactor = require("nofactor");
 describe("data-bind model#", function () {
   
   var app = new pc.Application({ nodeFactory: nofactor.dom });
+  app.use(pc);
 
   describe("input text", function () {
     it("doesn't break if model is undefined", function (next) {

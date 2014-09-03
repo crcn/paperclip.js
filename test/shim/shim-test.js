@@ -1,6 +1,7 @@
 var pc = require("../.."),
 structr = require("structr"),
-expect = require("expect.js");
+expect = require("expect.js"),
+apc = application.paperclip;
 
 describe("shim#", function() {
 
@@ -33,7 +34,7 @@ describe("shim#", function() {
 
 
   it("can be added as an attribute", function() {
-    pc.nodeBinding("placeholder", PlaceholderShim);
+    apc.nodeBinding("placeholder", PlaceholderShim);
     var v = pc.template("<input placeholder=\"Username:\" />").bind();
     expect(String(v)).to.contain("<input placeholder=\"Username:\" data-shimplaceholder=\"true\">");
   });
@@ -45,13 +46,13 @@ describe("shim#", function() {
   });
 
   it("can be added as a node", function() {
-    pc.nodeBinding("select", SelectShim);
+    apc.nodeBinding("select", SelectShim);
     var v = pc.template("<select></select>").bind();
     expect(String(v)).to.be('<select data-shimselect="true"></select>');
   });
 
   it("can be added as a data-bind", function() {
-    pc.attrDataBinding("dataBind", DataBindShim);
+    apc.attrDataBinding("dataBind", DataBindShim);
     var v = pc.template("<div data-bind=\"{{dataBind:true}}\"></div>").bind();
     expect(String(v)).to.be('<div data-databind="true"></div>');
   });

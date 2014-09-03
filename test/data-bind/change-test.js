@@ -7,7 +7,7 @@ describe("data-bind change#", function () {
 
 
   var app = new pc.Application({ nodeFactory: nofactor.dom });
-
+  app.use(pc);
 
   [
     "keydown",
