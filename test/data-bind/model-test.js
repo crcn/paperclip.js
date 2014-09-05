@@ -4,7 +4,7 @@ bindable = require("bindable"),
 nofactor = require("nofactor");
 
 describe("data-bind model#", function () {
-  
+
   var app = new pc.Application({ nodeFactory: nofactor.dom });
   app.use(pc);
 
@@ -22,7 +22,7 @@ describe("data-bind model#", function () {
     });
 
 
-    "change keyup input mousedown mouseup".split(" ").forEach(function (eventName) {
+    "change keyup".split(" ").forEach(function (eventName) {
       it("is triggered by a " + eventName + " event", function (next) {
         var t = pc.template("<input type='text' name='name' data-bind='{{ model: this }}' />", app),
         c = new bindable.Object({ name: "abba" });
