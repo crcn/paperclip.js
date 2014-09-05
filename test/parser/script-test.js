@@ -27,6 +27,7 @@ describe("parser/script#", function () {
         var ast = parser.parse("{{ a: }}");
         ast.toJavaScript();
     });
+
   });
 
   describe("hashes", function () {
@@ -117,13 +118,13 @@ describe("parser/script#", function () {
         var ast = parser.parse("{{ 3%4 }}")
       });
     });
-  
+
     describe("comparisons", function () {
 
       ["&&", "||", "==", "!=", "!==", "===", ">", ">=", ">==", "<", "<=", "<=="].forEach(function (op) {
          it("can parse " + op, function () {
           var ast = parser.parse("{{ true "+op+" false }}")
-        }); 
+        });
       });
 
       it("can parse multiple comparisons", function () {
@@ -192,7 +193,7 @@ describe("parser/script#", function () {
       it("can be parsed", function () {
         var ast = parser.parse("{{a.b.c(1,2,3 + 4)}}").childNodes.expressions.expressions[0];
         // expect(ast.toJavaScript()).to.be("block({'value':{run: function () { return this.call(this.get([\"a\",\"b\"]), \"c\", [1, 2, 3+4]); }, refs: []}}, void 0)")
-      }); 
+      });
     });
 
     describe("modifiers", function () {
@@ -220,6 +221,6 @@ describe("parser/script#", function () {
         parser.parse(expr);
       });
     });
-    
+
   });
 });

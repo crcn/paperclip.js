@@ -1,8 +1,9 @@
 var pc   = require("../.."),
 expect   = require("expect.js"),
-bindable = require("bindable");
+bindable = require("bindable"),
+Application  = require("mojo-application");
 
-var apc = application.paperclip;
+var apc = Application.main.paperclip;
 
 describe("script#", function () {
 

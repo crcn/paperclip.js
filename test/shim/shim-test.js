@@ -1,7 +1,9 @@
 var pc = require("../.."),
 structr = require("structr"),
 expect = require("expect.js"),
-apc = application.paperclip;
+Application  = require("mojo-application");
+
+var apc = Application.main.paperclip;
 
 describe("shim#", function() {
 

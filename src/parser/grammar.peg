@@ -74,7 +74,7 @@ Template
   = children:ChildNodes { return new RootNodeExpression(children); }
 
 DocType
-  = "<!DOCTYPE" _ info:[^>]+ _ ">" { 
+  = "<!DOCTYPE" _ info:[^>]+ _ ">" {
       return new DocTypeExpression(info.join(""));
     }
 
@@ -89,7 +89,7 @@ CommentNode
   / DocType
 
 ElementNode
-  = startTag:StartTag children:ChildNodes endTag:EndTag _ {
+  = startTag:StartTag children:ChildNodes endTag:EndTag {
 
     if (startTag.name != endTag.name) {
       expected("</" + startTag.name + ">");
@@ -108,7 +108,7 @@ TextCharacter
   = !("<"/"{{") SourceCharacter {
       return text()
     }
-  
+
 StartTag
   = _ "<" info:TagInfo ">" _ { return info; }
 
@@ -191,8 +191,8 @@ SingleScript
       hash[scriptName] = new ScriptExpression(new LiteralExpression(true));
       return new HashExpression(hash)
     }
-  / scripts:Scripts _ "}}" { 
-      return scripts; 
+  / scripts:Scripts _ "}}" {
+      return scripts;
     }
 
 Scripts
@@ -215,9 +215,9 @@ Scripts
 
       return new HashExpression(scripts);
     }
-  
 
-Expression 
+
+Expression
   = TernaryConditional
 
 TernaryConditional
@@ -245,7 +245,7 @@ Assignment
     }
   / Operation
 
-Operation 
+Operation
   = left:Operatable operator: ("&&" / "||" / "===" / "==" / "!==" / "!=" / ">==" / ">=" / ">" / "<==" / "<=" / "<" / "+" / "-" / "%" / "*" / "/") right:Operation {
       return new OperatorExpression(operator, left, right);
     }
@@ -266,7 +266,7 @@ Modifiers
     }
   / (FunctionCall/ObjectReference)
 
-Modifier 
+Modifier
   = "|" _ name:ReferenceName parameters:Parameters? _ {
     return {
       name: name,
@@ -287,10 +287,10 @@ Object
   = Group/Hash/Number/StringLiteral/Reference
 
 Number
-  = value:("-"? ([0-9]+DecimalNumber? / DecimalNumber)) { 
+  = value:("-"? ([0-9]+DecimalNumber? / DecimalNumber)) {
       return new LiteralExpression(parseFloat(text()));
     }
-  
+
 DecimalNumber
   = "." [0-9]+
 
@@ -302,7 +302,7 @@ Reserved
       return new LiteralExpression(expression.value);
     }
 
-Boolean 
+Boolean
   = value:("true"/"false") {
       return {
         type: "boolean",
@@ -310,13 +310,13 @@ Boolean
       }
     }
 
-Undefined 
+Undefined
   = "undefined" { return { type: "undefined", value: void 0 }; }
 
-NaN 
+NaN
   = "NaN" { return { type: "nan", value: NaN }; }
 
-Infinity 
+Infinity
   = "Infinity" { return { type: "infinity", value: Infinity }; }
 
 Null
@@ -368,7 +368,7 @@ HashValue
 
 HashKey
   = key:StringLiteral { return key.value; }
-  / key:ReferenceName { return key; } 
+  / key:ReferenceName { return key; }
 
 
 StringLiteral "string"
@@ -393,6 +393,5 @@ SourceCharacter
 Word
   = chars:[a-zA-Z]+ { return chars.join(""); }
 
-_ 
+_
   = [ \n\r\t]*
-

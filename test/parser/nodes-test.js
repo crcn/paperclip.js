@@ -90,7 +90,7 @@ describe("parser/node#", function () {
     it("can parse bindings and text within attrbutes", function () {
       var ast = parser.parse("<input value='hello {{firstName}} {{lastName}}'></input>");
 
-      
+
       var fs = require("fs");
 
       try {
@@ -138,6 +138,16 @@ describe("parser/node#", function () {
       expect(tpl.bindings.clippedBuffer.buffer[0].clip.get("_id")).to.be("aa");
       expect(tpl.bindings.clippedBuffer.buffer[0].clip.get("_id2")).to.be("aaa");
       expect(tpl.bindings.clippedBuffer.buffer[0].clip.get("value")).to.be("john");
+    });
+
+    it("preserves whitespace between nodes & text nodes", function () {
+      var tpl = pc.template("<strong>hello</strong> world").bind(new bindable.Object());
+      expect(tpl.toString()).to.be("<strong>hello</strong> world");
+    });
+
+    it("preserves whitespace between nodes & blocks", function () {
+      var tpl = pc.template("<strong>hello</strong> {{name}}").bind(new bindable.Object({name:"john"}));
+      expect(tpl.toString()).to.be("<strong>hello</strong> john");
     });
 
   });
