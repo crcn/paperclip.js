@@ -22,7 +22,7 @@ describe("data-bind model#", function () {
     });
 
 
-    "change keyup".split(" ").forEach(function (eventName) {
+    "change keyup input".split(" ").forEach(function (eventName) {
       it("is triggered by a " + eventName + " event", function (next) {
         var t = pc.template("<input type='text' name='name' data-bind='{{ model: this }}' />", app),
         c = new bindable.Object({ name: "abba" });
