@@ -3,7 +3,11 @@ ONLY="."
 
 browser:
 	./node_modules/.bin/browserify ./lib/index.js -o ./build/paperclip.js
-	./node_modules/.bin/browserify ./lib/parser/index.js -o ./build/paperclip-compiler.js
+	./node_modules/.bin/browserify ./lib/parser2/index.js -o ./build/paperclip-compiler.js
+
+min:
+	./node_modules/.bin/uglifyjs ./build/paperclip.js > ./build/paperclip.min.js
+	./node_modules/.bin/uglifyjs ./build/paperclip-compiler.js > ./build/paperclip-compiler.min.js
 
 test-node:
 	mocha --recursive --ignore-leaks --timeout 10000
