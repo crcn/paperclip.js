@@ -1,4 +1,4 @@
-var parser = require("../../lib/parser2/parser.js"),
+var parser = require("../../lib/parser/parser.js"),
 expect     = require("expect.js"),
 pc         = require("../.."),
 bindable   = require("bindable");
