@@ -224,7 +224,7 @@ data-bind attributes are borrowed from [knockout.js](http://knockoutjs.com/). Th
 Input data-binding. [For example](http://jsfiddle.net/JTxdM/96/):
 
 ```html
-<input type="text" name="message" data-bind="{{ model: this }}"></input> {{ message }}
+<input type="text" name="message" data-bind={{ model: this }}></input> {{ message }}
 ```
 
 You can also reference `message` directly. [For example](http://jsfiddle.net/JTxdM/94/)
