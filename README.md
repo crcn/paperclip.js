@@ -161,9 +161,9 @@ Paperclip comes with various binding operators that give you full control over h
 specify whether to bind one way, two ways, or not at all. Here's the basic syntax:
 
 ```html
-<input data-bind="{{ model: <~>fullName }}" /> <!-- two-way data-binding against input -->
-<input data-bind="{{ model: ~>fullName }}" /> <!-- bind value once, and bind input value to fullName -->
-<input data-bind="{{ model: <~fullName }}" /> <!-- bind to input once -->
+<input data-bind={{ model: <~>fullName }} /> <!-- two-way data-binding against input -->
+<input data-bind={{ model: ~>fullName }} /> <!-- bind value once, and bind input value to fullName -->
+<input data-bind={{ model: <~fullName }} /> <!-- bind to input once -->
 {{ ~fullName }} <!-- unbound helper - get fullName value, but don't watch for changes -->
 ```
 
@@ -231,7 +231,7 @@ You can also reference `message` directly. [For example](http://jsfiddle.net/JTx
 
 
 ```html
-<input type="text" data-bind="{{ model: <=>message }}"></input> {{ message }}
+<input type="text" data-bind={{ model: <~>message }}></input> {{ message }}
 ```
 
 Notice the `<=>` operator. This tells paperclip to bind both ways. See [binding operators](#binding-operators).
@@ -257,7 +257,7 @@ Executed when an event is fired on the DOM element. Here are all the available e
 [Basic example](http://jsfiddle.net/JTxdM/77/):
 
 ```html
-<input type="text" data-bind="{{ model: <=>name, onEnter: sayHello() }}"></input>
+<input type="text" data-bind={{ model: <~>name, onEnter: sayHello() }}></input>
 ```
 
 
@@ -271,13 +271,13 @@ Toggles the display mode of a given element. This is similar to the `{{#if: expr
 Sets the css of a given element. [For example](http://jsfiddle.net/JTxdM/81/):
 
 ```html
-<strong data-bind="{{
+<strong data-bind={{
   css: {
       cool    : temp > 0,
       warm    : temp > 60,
       hot     : temp > 90
   }
-}}"> It's pretty warm! </strong>
+}}> It's pretty warm! </strong>
 ```
 
 #### {{ style: styles }}
@@ -285,12 +285,12 @@ Sets the css of a given element. [For example](http://jsfiddle.net/JTxdM/81/):
 Sets the style of a given element. [For example](http://jsfiddle.net/JTxdM/78/):
 
 ```
-<span data-bind="{{
+<span data-bind={{
   style: {
     color       : color,
     'font-size' : size
   }
-}}"> Hello World </span>
+}}> Hello World </span>
 ```
 
 #### {{ disable: bool }}
