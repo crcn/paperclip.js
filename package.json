@@ -1,12 +1,13 @@
 {
   "name": "paperclip",
-  "version": "0.4.11",
+  "version": "0.4.12",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "browserify": "./lib/browser.js",
   "scripts": {
     "test": "mocha ./test/*/*-test.js --ignore-leaks --bail"
   },
+  "transform": "./lib/transform.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/classdojo/paperclip.js.git"

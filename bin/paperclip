@@ -9,17 +9,12 @@ describe('i', 'paperclip template source').
 argv,
 path = require("path"),
 parser = require("../lib/parser"),
-formatter = require("../lib/parser/formatter"),
 fs = require("fs");
 
 try {
   console.log("// %s", argv.i);
   var source = fs.readFileSync(argv.i, "utf8"),
   script = parser.parse(source);
-
-  if (argv.p) {
-    script = formatter.format(script);
-  } 
 
 
 } catch (e) {
