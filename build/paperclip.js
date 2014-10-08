@@ -122,7 +122,7 @@ bindable.Object.extend(ClippedBuffer, {
 
 module.exports = ClippedBuffer;
 
-},{"./index":2,"bindable":51,"protoclass":102,"underscore":105}],2:[function(require,module,exports){
+},{"./index":2,"bindable":47,"protoclass":98,"underscore":101}],2:[function(require,module,exports){
 (function (process){
 var protoclass = require("protoclass"),
 dref           = require("dref"),
@@ -459,7 +459,7 @@ protoclass(BindableObject, Clip, {
 module.exports = Clip;
 
 }).call(this,require('_process'))
-},{"./ref":3,"_process":58,"bindable":51,"dref":59,"protoclass":102,"type-component":104,"underscore":105}],3:[function(require,module,exports){
+},{"./ref":3,"_process":54,"bindable":47,"dref":55,"protoclass":98,"type-component":100,"underscore":101}],3:[function(require,module,exports){
 var protoclass = require("protoclass"),
 _              = require("underscore");
 
@@ -484,18 +484,18 @@ protoclass(BindableReference, {
 
 module.exports = BindableReference;
 
-},{"protoclass":102,"underscore":105}],4:[function(require,module,exports){
+},{"protoclass":98,"underscore":101}],4:[function(require,module,exports){
 var paper = module.exports = require("./paper"),
 Application = require("mojo-application");
 
 Application.main.use(paper);
 
-
 if (typeof window !== "undefined") {
   window.paperclip = module.exports;
 }
-},{"./paper":38,"mojo-application":64}],5:[function(require,module,exports){
-var protoclass = require("protoclass");
+},{"./paper":35,"mojo-application":60}],5:[function(require,module,exports){
+var protoclass = require("protoclass"),
+loaf           = require("loaf");
 
 function PaperBinding (template, node, bindings, section, nodeFactory) {
   this.template    = template;
@@ -503,7 +503,6 @@ function PaperBinding (template, node, bindings, section, nodeFactory) {
   this.bindings    = bindings;
   this.section     = section;
   this.nodeFactory = nodeFactory;
-  this._i = 0;
 }
 
 
@@ -534,6 +533,7 @@ protoclass(PaperBinding, {
     if (context) {
       this.context = context;
     }
+    
 
     this.bindings.bind(this.context);
     return this;
@@ -574,75 +574,7 @@ protoclass(PaperBinding, {
 
 module.exports = PaperBinding;
 
-},{"protoclass":102}],6:[function(require,module,exports){
-var protoclass = require("protoclass");
-
-function BaseBinder (options) {
-  this.marker      = options.marker;
-  this.application = options.application;
-}
-
-protoclass(BaseBinder, {
-
-  /**
-   */
-
-  init: function () {
-    this._findPathToMarker();
-  },
-
-  /**
-   */
-
-  getBinding: function (node) {
-
-  },
-
-  /**
-   */
-
-  _findMark: function (node) {
-
-    var cn = node;
-
-    while (cn.parentNode) {
-      cn = cn.parentNode;
-    }
-
-    for (var i = 0, n = this.pathLength; i < n; i++) {
-      cn = cn.childNodes[this.path[i]];
-    }
-
-    return cn;
-  },
-
-  /**
-   */
-
-  _findPathToMarker: function () {
-    var path = [], 
-    marker = this.marker,
-    cn = marker;
-
-    while (cn.parentNode) {
-      var children = [];
-
-      for (var i = 0, n = cn.parentNode.childNodes.length; i < n; i++) {
-        children.push(cn.parentNode.childNodes[i]);
-      }
-
-      path.unshift(children.indexOf(cn));
-
-      cn = cn.parentNode;
-    }
-
-    this.path = path;
-    this.pathLength = path.length;
-  }
-});
-
-module.exports = BaseBinder;
-},{"protoclass":102}],7:[function(require,module,exports){
+},{"loaf":57,"protoclass":98}],6:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 function BaseBinding (node) {
@@ -659,7 +591,7 @@ protoclass(BaseBinding, {
 });
 
 module.exports = BaseBinding;
-},{"protoclass":102}],8:[function(require,module,exports){
+},{"protoclass":98}],7:[function(require,module,exports){
 var protoclass = require("protoclass"),
 BaseBinding    = require("./binding");
 
@@ -741,7 +673,7 @@ protoclass(BaseBinding, ScriptBinding, {
 
 module.exports = ScriptBinding;
 
-},{"./binding":7,"protoclass":102}],9:[function(require,module,exports){
+},{"./binding":6,"protoclass":98}],8:[function(require,module,exports){
 var BaseBinding   = require("./base/binding"),
 BindingCollection = require("./collection");
 
@@ -780,7 +712,7 @@ BaseBinding.extend(BinderCollection, {
 
 module.exports = BinderCollection;
 
-},{"./base/binding":7,"./collection":16}],10:[function(require,module,exports){
+},{"./base/binding":6,"./collection":15}],9:[function(require,module,exports){
 var BaseScriptBinding = require("../base/script");
 
 function BaseBlockBinding (options) {
@@ -830,7 +762,7 @@ BaseScriptBinding.extend(BaseBlockBinding, {
 
 module.exports = BaseBlockBinding;
 
-},{"../base/script":8}],11:[function(require,module,exports){
+},{"../base/script":7}],10:[function(require,module,exports){
 /*
 
 {{#when:condition}}
@@ -888,7 +820,7 @@ BaseBlockBinding.extend(ConditionalBlockBinding, {
 
 module.exports = ConditionalBlockBinding;
 
-},{"./base":10}],12:[function(require,module,exports){
+},{"./base":9}],11:[function(require,module,exports){
 var protoclass = require("protoclass"),
 BaseDecor      = require("./base");
 
@@ -902,7 +834,7 @@ protoclass(BaseDecor, DefaultDecor, {
 });
 
 module.exports = DefaultDecor;
-},{"./base":10,"protoclass":102}],13:[function(require,module,exports){
+},{"./base":9,"protoclass":98}],12:[function(require,module,exports){
 var BindingCollection = require("../collection"),
 loaf                  = require("loaf"),
 Clip                  = require("../../../clip"),
@@ -1019,7 +951,7 @@ module.exports = function (app) {
   return new Factory();
 }
 
-},{"../../../clip":2,"../collection":16,"./conditional":11,"./default":12,"./html":14,"./value":15,"loaf":61,"protoclass":102}],14:[function(require,module,exports){
+},{"../../../clip":2,"../collection":15,"./conditional":10,"./default":11,"./html":13,"./value":14,"loaf":57,"protoclass":98}],13:[function(require,module,exports){
 var type         = require("type-component"),
 BaseBlockBinding = require("./base");
 
@@ -1061,7 +993,7 @@ BaseBlockBinding.extend(HtmlBlockBinding, {
 
 module.exports = HtmlBlockBinding;
 
-},{"./base":10,"type-component":104}],15:[function(require,module,exports){
+},{"./base":9,"type-component":100}],14:[function(require,module,exports){
 var protoclass = require("protoclass"),
 BaseDecor      = require("./base");
 
@@ -1099,7 +1031,7 @@ ValueDecor.getNode = function (options) {
 }
 
 module.exports = ValueDecor;
-},{"./base":10,"protoclass":102}],16:[function(require,module,exports){
+},{"./base":9,"protoclass":98}],15:[function(require,module,exports){
 var BaseBinding = require("./base/binding");
 
 function BindingCollection (node, source) {
@@ -1124,7 +1056,7 @@ BaseBinding.extend(BindingCollection, {
 
 module.exports = BindingCollection;
 
-},{"./base/binding":7}],17:[function(require,module,exports){
+},{"./base/binding":6}],16:[function(require,module,exports){
 module.exports = function (app) {
   return {
     blockBindingFactory : require("./block/factory")(app),
@@ -1137,7 +1069,7 @@ module.exports.BaseNodeBinding     = require("./node/base");
 module.exports.BaseAttrBinding     = require("./node/attrs/text");
 module.exports.BaseAttrDataBinding = require("./node/attrs/dataBind/handlers/base");
 
-},{"./block/base":10,"./block/factory":13,"./node/attrs/dataBind/handlers/base":18,"./node/attrs/text":33,"./node/base":34,"./node/factory":35}],18:[function(require,module,exports){
+},{"./block/base":9,"./block/factory":12,"./node/attrs/dataBind/handlers/base":17,"./node/attrs/text":32,"./node/base":33,"./node/factory":34}],17:[function(require,module,exports){
 var BaseScriptBinding = require("../../../../base/script");
 
 function BaseDataBindHandler (application, node, clip, name) {
@@ -1150,7 +1082,7 @@ BaseScriptBinding.extend(BaseDataBindHandler, {
 
 module.exports = BaseDataBindHandler;
 
-},{"../../../../base/script":8}],19:[function(require,module,exports){
+},{"../../../../base/script":7}],18:[function(require,module,exports){
 var EventDataBinding = require("./event"),
 _                    = require("underscore");
 
@@ -1173,7 +1105,7 @@ EventDataBinding.extend(ChangeAttrBinding, {
 });
 
 module.exports = ChangeAttrBinding;
-},{"./event":27,"underscore":105}],20:[function(require,module,exports){
+},{"./event":26,"underscore":101}],19:[function(require,module,exports){
 var BaseDataBinding = require("./base");
 
 function CssAttrBinding () {
@@ -1210,7 +1142,7 @@ BaseDataBinding.extend(CssAttrBinding, {
 
 module.exports = CssAttrBinding;
 
-},{"./base":18}],21:[function(require,module,exports){
+},{"./base":17}],20:[function(require,module,exports){
 var protoclass = require("protoclass"),
 BaseBinding = require("./base"),
 noselector = require("noselector");
@@ -1224,7 +1156,7 @@ protoclass(BaseBinding, DefaultAttrBinding, {
 
 module.exports = DefaultAttrBinding;
 
-},{"./base":18,"noselector":86,"protoclass":102}],22:[function(require,module,exports){
+},{"./base":17,"noselector":82,"protoclass":98}],21:[function(require,module,exports){
 var EventDataBinding = require("./event");
 
 function DeleteAttrBinding () {
@@ -1245,7 +1177,7 @@ EventDataBinding.extend(DeleteAttrBinding, {
 
 module.exports = DeleteAttrBinding;
 
-},{"./event":27}],23:[function(require,module,exports){
+},{"./event":26}],22:[function(require,module,exports){
 var BaseDataBinding = require("./base");
 
 function DisableAttrBinding () {
@@ -1265,7 +1197,7 @@ BaseDataBinding.extend(DisableAttrBinding, {
 
 module.exports = DisableAttrBinding;
 
-},{"./base":18}],24:[function(require,module,exports){
+},{"./base":17}],23:[function(require,module,exports){
 var BaseDataBinding = require("./base");
 
 function EnableAttrBinding () {
@@ -1285,7 +1217,7 @@ BaseDataBinding.extend(EnableAttrBinding, {
 
 module.exports = EnableAttrBinding;
 
-},{"./base":18}],25:[function(require,module,exports){
+},{"./base":17}],24:[function(require,module,exports){
 var EventDataBinding = require("./event");
 
 function EnterAttrBinding () {
@@ -1307,7 +1239,7 @@ EventDataBinding.extend(EnterAttrBinding, {
 
 module.exports = EnterAttrBinding;
 
-},{"./event":27}],26:[function(require,module,exports){
+},{"./event":26}],25:[function(require,module,exports){
 var EventDataBinding = require("./event");
 
 function EscapeAttrBinding () {
@@ -1329,7 +1261,7 @@ EventDataBinding.extend(EscapeAttrBinding, {
 
 module.exports = EscapeAttrBinding;
 
-},{"./event":27}],27:[function(require,module,exports){
+},{"./event":26}],26:[function(require,module,exports){
 var BaseDataBinding = require("./base"),
 _                   = require("underscore"),
 noselector          = require("noselector");
@@ -1414,7 +1346,7 @@ BaseDataBinding.extend(EventDataBinding, {
 
 module.exports = EventDataBinding;
 
-},{"./base":18,"noselector":86,"underscore":105}],28:[function(require,module,exports){
+},{"./base":17,"noselector":82,"underscore":101}],27:[function(require,module,exports){
 var protoclass = require("protoclass"),
 BaseBinding = require("./base"),
 noselector = require("noselector");
@@ -1438,7 +1370,7 @@ protoclass(BaseBinding, FocusAttrBinding, {
 
 module.exports = FocusAttrBinding;
 
-},{"./base":18,"noselector":86,"protoclass":102}],29:[function(require,module,exports){
+},{"./base":17,"noselector":82,"protoclass":98}],28:[function(require,module,exports){
 (function (process){
 var _             = require("underscore"),
 ChangeAttrBinding = require("./change"),
@@ -1625,7 +1557,7 @@ BaseBinding.extend(ModelAttrBinding, {
 module.exports = ModelAttrBinding;
 
 }).call(this,require('_process'))
-},{"./base":18,"./change":19,"_process":58,"dref":59,"noselector":86,"type-component":104,"underscore":105}],30:[function(require,module,exports){
+},{"./base":17,"./change":18,"_process":54,"dref":55,"noselector":82,"type-component":100,"underscore":101}],29:[function(require,module,exports){
 var BaseDataBinding = require("./base"),
 noselector          = require("noselector");
 
@@ -1648,7 +1580,7 @@ BaseDataBinding.extend(ShowAttrBinding, {
 
 module.exports = ShowAttrBinding;
 
-},{"./base":18,"noselector":86}],31:[function(require,module,exports){
+},{"./base":17,"noselector":82}],30:[function(require,module,exports){
 var BaseDataBinding = require("./base"),
 noselector = require("noselector");
 
@@ -1679,7 +1611,7 @@ BaseDataBinding.extend(StyleAttrBinding, {
 
 module.exports = StyleAttrBinding;
 
-},{"./base":18,"noselector":86}],32:[function(require,module,exports){
+},{"./base":17,"noselector":82}],31:[function(require,module,exports){
 var Clip          = require("../../../../../clip"),
 BindingCollection = require("../../../collection"),
 BaseBinding       = require("../../base"),
@@ -1763,7 +1695,7 @@ module.exports.factory = function (app) {
   }
 }
 
-},{"../../../../../clip":2,"../../../collection":16,"../../base":34,"./handlers/change":19,"./handlers/css":20,"./handlers/default":21,"./handlers/delete":22,"./handlers/disable":23,"./handlers/enable":24,"./handlers/enter":25,"./handlers/escape":26,"./handlers/event":27,"./handlers/focus":28,"./handlers/model":29,"./handlers/show":30,"./handlers/style":31,"underscore":105}],33:[function(require,module,exports){
+},{"../../../../../clip":2,"../../../collection":15,"../../base":33,"./handlers/change":18,"./handlers/css":19,"./handlers/default":20,"./handlers/delete":21,"./handlers/disable":22,"./handlers/enable":23,"./handlers/enter":24,"./handlers/escape":25,"./handlers/event":26,"./handlers/focus":27,"./handlers/model":28,"./handlers/show":29,"./handlers/style":30,"underscore":101}],32:[function(require,module,exports){
 var type      = require("type-component"),
 ClippedBuffer = require("../../../../../clip/buffer"),
 BaseBinding   = require("../../base"),
@@ -1819,7 +1751,7 @@ BaseBinding.extend(NodeAttrBinding, {
 
 module.exports = NodeAttrBinding;
 
-},{"../../../../../clip/buffer":1,"../../base":34,"type-component":104,"underscore":105}],34:[function(require,module,exports){
+},{"../../../../../clip/buffer":1,"../../base":33,"type-component":100,"underscore":101}],33:[function(require,module,exports){
 var BaseBinding = require("../../base/binding");
 
 function BaseNodeBinding (options) {
@@ -1840,7 +1772,7 @@ BaseBinding.extend(BaseNodeBinding, {
 
 module.exports = BaseNodeBinding;
 
-},{"../../base/binding":7}],35:[function(require,module,exports){
+},{"../../base/binding":6}],34:[function(require,module,exports){
 var _      = require("underscore"),
 protoclass = require("protoclass");
 
@@ -2002,75 +1934,7 @@ module.exports = function (app) {
   return nodeFactory;
 }
 
-},{"./attrs/dataBind":32,"./attrs/text":33,"protoclass":102,"underscore":105}],36:[function(require,module,exports){
-var protoclass = require("protoclass"),
-BaseBinder     = require("../base/binder"),
-TextBinding    = require("./binding");
-
-function TextBlockBinder (options) {
-  BaseBinder.apply(this, arguments);
-  this.blocks = options.blocks;
-}
-
-BaseBinder.extend(TextBlockBinder, {
-
-  /**
-   */
-
-  getBinding: function (templateNode) {
-    var mark = this._findMark(templateNode);
-    return new TextBinding(mark, this.blocks, this.application);
-  }
-});
-
-module.exports = TextBlockBinder;
-},{"../base/binder":6,"./binding":37,"protoclass":102}],37:[function(require,module,exports){
-var protoclass = require("protoclass"),
-BaseBinding    = require("../base/binding"),
-ClippedBuffer  = require("../../../clip/buffer"),
-_              = require("underscore");
-
-function TextBlockBinding (textNode, blocks, application) {
-  this.node        = textNode;
-  this.blocks      = blocks;
-  this.application = application;
-  this.clip        = new ClippedBuffer(blocks, application);
-}
-
-BaseBinding.extend(TextBlockBinding, {
-
-  /**
-   */
-
-  bind: function (context) {
-    return this._binding = this.clip.reset(context).bind("value", _.bind(this.update, this)).now();
-  },
-
-  /**
-   */
-
-  unbind: function () {
-    this._binding.dispose();
-  },
-
-  /**
-   */
-
-  update: function () {
-
-    this.node.nodeValue = String(this.clip.value);
-
-    if (this.node.replaceText) {
-      this.node.replaceText(this.clip.value, true);
-    }
-  }
-
-});
-
-module.exports = TextBlockBinding;
-
-
-},{"../../../clip/buffer":1,"../base/binding":7,"protoclass":102,"underscore":105}],38:[function(require,module,exports){
+},{"./attrs/dataBind":31,"./attrs/text":32,"protoclass":98,"underscore":101}],35:[function(require,module,exports){
 var Clip         = require("../clip"),
 template         = require("./template"),
 nofactor         = require("nofactor"),
@@ -2157,7 +2021,7 @@ module.exports.BaseNodeBinding     = bindings.BaseNodeBinding;
 module.exports.BaseAttrBinding     = bindings.BaseAttrBinding;
 module.exports.BaseAttrDataBinding = bindings.BaseAttrDataBinding;
 
-},{"../clip":2,"./bindings":17,"./modifiers":39,"./template":40,"bindable":51,"mojo-application":64,"nofactor":68,"underscore":105}],39:[function(require,module,exports){
+},{"../clip":2,"./bindings":16,"./modifiers":36,"./template":37,"bindable":47,"mojo-application":60,"nofactor":64,"underscore":101}],36:[function(require,module,exports){
 module.exports = {
   uppercase: function (value) {
     return String(value).toUpperCase();
@@ -2175,7 +2039,7 @@ module.exports = {
     return JSON.stringify.apply(JSON, arguments);
   }
 };
-},{}],40:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 (function (process){
 var protoclass    = require("protoclass"),
 nofactor          = require("nofactor"),
@@ -2183,7 +2047,6 @@ FragmentWriter    = require("./writers/fragment"),
 BlockWriter       = require("./writers/block"),
 TextWriter        = require("./writers/text"),
 CommentWriter     = require("./writers/comment"),
-TextBlockWriter   = require("./writers/textBlock"),
 ElementWriter     = require("./writers/element"),
 ParseWriter       = require("./writers/parse"),
 BindingCollection = require("./bindings/collection"),
@@ -2200,6 +2063,7 @@ function Template (paper, application, ops) {
   this.application     = application;
   this.nodeFactory     = application.nodeFactory;
   this.useTemplateNode = ops.useTemplateNode;
+  this._bindingPool    = [];
 }
 
 
@@ -2259,8 +2123,7 @@ protoclass(Template, {
       text      : new TextWriter(this),
       comment   : new CommentWriter(this),
       element   : new ElementWriter(this),
-      parse     : new ParseWriter(this),
-      textBlock : new TextBlockWriter(this)
+      parse     : new ParseWriter(this)
     };
 
     var node = this.paper(
@@ -2269,7 +2132,6 @@ protoclass(Template, {
       writers.element.write,
       writers.text.write,
       writers.comment.write,
-      writers.textBlock.write,
       writers.parse.write,
       this.application.paperclip.modifiers
     );
@@ -2305,7 +2167,8 @@ var tpl = Template.prototype.creator = module.exports = function (paperOrSrc, ap
     paper = paperOrSrc;
   }
 
-  // check for all versions of IE
+  // check for all versions of IE - IE doesn't properly support 
+  // element.cloneNode(true), so we can't use that optimization.
   if (process.browser) {
     isIE = !!(~navigator.userAgent.toLowerCase().indexOf("msie") || ~navigator.userAgent.toLowerCase().indexOf("trident"))
   }
@@ -2322,7 +2185,7 @@ var tpl = Template.prototype.creator = module.exports = function (paperOrSrc, ap
 }
 
 }).call(this,require('_process'))
-},{"./binding":5,"./bindings/binders":9,"./bindings/collection":16,"./writers/block":42,"./writers/comment":43,"./writers/element":44,"./writers/fragment":45,"./writers/parse":46,"./writers/text":47,"./writers/textBlock":48,"_process":58,"bindable":51,"loaf":61,"mojo-animator":63,"mojo-application":64,"nofactor":68,"protoclass":102}],41:[function(require,module,exports){
+},{"./binding":5,"./bindings/binders":8,"./bindings/collection":15,"./writers/block":39,"./writers/comment":40,"./writers/element":41,"./writers/fragment":42,"./writers/parse":43,"./writers/text":44,"_process":54,"bindable":47,"loaf":57,"mojo-animator":59,"mojo-application":60,"nofactor":64,"protoclass":98}],38:[function(require,module,exports){
 var protoclass = require("protoclass"),
 _ = require("underscore");
 
@@ -2341,7 +2204,7 @@ protoclass(BaseWriter, {
 
 module.exports = BaseWriter;
 
-},{"protoclass":102,"underscore":105}],42:[function(require,module,exports){
+},{"protoclass":98,"underscore":101}],39:[function(require,module,exports){
 "use strict";
 
 var loaf            = require("loaf"),
@@ -2389,7 +2252,7 @@ BaseWriter.extend(BlockWriter, {
 
 module.exports = BlockWriter;
 
-},{"../../clip":2,"./base":41,"loaf":61}],43:[function(require,module,exports){
+},{"../../clip":2,"./base":38,"loaf":57}],40:[function(require,module,exports){
 var BaseWriter = require("./base");
 
 function CommentWriter () {
@@ -2404,7 +2267,7 @@ BaseWriter.extend(CommentWriter, {
 
 module.exports = CommentWriter;
 
-},{"./base":41}],44:[function(require,module,exports){
+},{"./base":38}],41:[function(require,module,exports){
 var type               = require("type-component"),
 BaseWriter             = require("./base");
 
@@ -2449,7 +2312,7 @@ BaseWriter.extend(ElementWriter, {
 
 module.exports = ElementWriter;
 
-},{"./base":41,"type-component":104}],45:[function(require,module,exports){
+},{"./base":38,"type-component":100}],42:[function(require,module,exports){
 var BaseWriter = require("./base");
 
 function FragmentWriter () {
@@ -2465,7 +2328,7 @@ BaseWriter.extend(FragmentWriter, {
 
 module.exports = FragmentWriter;
 
-},{"./base":41}],46:[function(require,module,exports){
+},{"./base":38}],43:[function(require,module,exports){
 (function (process){
 var BaseWriter = require("./base");
 
@@ -2491,7 +2354,7 @@ BaseWriter.extend(ParseWriter, {
 module.exports = ParseWriter;
 
 }).call(this,require('_process'))
-},{"./base":41,"_process":58}],47:[function(require,module,exports){
+},{"./base":38,"_process":54}],44:[function(require,module,exports){
 var BaseWriter = require("./base");
 
 function TextWriter () {
@@ -2506,35 +2369,7 @@ BaseWriter.extend(TextWriter, {
 
 module.exports = TextWriter;
 
-},{"./base":41}],48:[function(require,module,exports){
-var BaseWriter  = require("./base"),
-TextBlockBinder = require("../bindings/textBlock/binder");
-
-function TextBlockWriter () {
-  BaseWriter.apply(this, arguments);
-}
-
-BaseWriter.extend(TextBlockWriter, {
-
-  /**
-   */
-
-  write: function (blocks) {
-
-    var node = this.nodeFactory.createTextNode("");
-    
-    this.binders.push(new TextBlockBinder({
-      marker      : node,
-      blocks      : blocks,
-      application : this.application
-    }))
-
-    return node;
-  }
-});
-
-module.exports = TextBlockWriter;
-},{"../bindings/textBlock/binder":36,"./base":41}],49:[function(require,module,exports){
+},{"./base":38}],45:[function(require,module,exports){
 "use strict";
 
 var BindableObject = require("../object"),
@@ -2804,7 +2639,7 @@ BindableObject.extend(BindableCollection, {
 
 module.exports = BindableCollection;
 
-},{"../object":52,"../utils/computed":55,"sift":103}],50:[function(require,module,exports){
+},{"../object":48,"../utils/computed":51,"sift":99}],46:[function(require,module,exports){
 "use strict";
 var protoclass = require("protoclass");
 
@@ -2976,7 +2811,7 @@ EventEmitter.prototype.removeAllListeners = function (event) {
 
 module.exports = EventEmitter;
 
-},{"protoclass":102}],51:[function(require,module,exports){
+},{"protoclass":98}],47:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -2990,7 +2825,7 @@ module.exports = {
 if (typeof window !== "undefined") {
   window.bindable = module.exports;
 }
-},{"./collection":49,"./core/eventEmitter":50,"./object":52,"./utils/computed":55,"./utils/options":56}],52:[function(require,module,exports){
+},{"./collection":45,"./core/eventEmitter":46,"./object":48,"./utils/computed":51,"./utils/options":52}],48:[function(require,module,exports){
 "use strict";
 
 var EventEmitter    = require("../core/eventEmitter"),
@@ -3377,7 +3212,7 @@ protoclass(EventEmitter, Bindable, {
 
 module.exports = Bindable;
 
-},{"../core/eventEmitter":50,"./watchProperty":54,"protoclass":102}],53:[function(require,module,exports){
+},{"../core/eventEmitter":46,"./watchProperty":50,"protoclass":98}],49:[function(require,module,exports){
 "use strict";
 
 var toarray = require("toarray"),
@@ -3519,7 +3354,7 @@ function transform (bindable, fromProperty, options) {
 }
 
 module.exports = transform;
-},{"toarray":57,"underscore":105}],54:[function(require,module,exports){
+},{"toarray":53,"underscore":101}],50:[function(require,module,exports){
 (function (process){
 "use strict";
 
@@ -3844,7 +3679,7 @@ function watchProperty (bindable, property, fn) {
 
 module.exports = watchProperty;
 }).call(this,require('_process'))
-},{"../utils/options":56,"./transform":53,"_process":58,"underscore":105}],55:[function(require,module,exports){
+},{"../utils/options":52,"./transform":49,"_process":54,"underscore":101}],51:[function(require,module,exports){
 "use strict";
 
 var toarray = require("toarray");
@@ -3854,19 +3689,19 @@ module.exports = function (properties, fn) {
   fn.compute = properties;
   return fn;
 };
-},{"toarray":57}],56:[function(require,module,exports){
+},{"toarray":53}],52:[function(require,module,exports){
 "use strict";
 
 module.exports = {
   computedDelay : 0
 };
 
-},{}],57:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 module.exports = function(item) {
   if(item === undefined)  return [];
   return Object.prototype.toString.call(item) === "[object Array]" ? item : [item];
 }
-},{}],58:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -3931,7 +3766,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],59:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 (function (global){
 var _gss = global._gss = global._gss || [],
 type = require("type-component");
@@ -4069,7 +3904,7 @@ exports.use = function(gs) {
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"type-component":104}],60:[function(require,module,exports){
+},{"type-component":100}],56:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.4.1 by @mathias | MIT license */
 ;(function(root) {
@@ -4398,7 +4233,7 @@ exports.use = function(gs) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],61:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 var protoclass = require("protoclass"),
 nofactor       = require("nofactor");
 
@@ -4605,7 +4440,7 @@ Section = protoclass(Section, {
 module.exports = function (nodeFactory, start, end)  {
   return new Section(nodeFactory, start, end);
 }
-},{"nofactor":68,"protoclass":102}],62:[function(require,module,exports){
+},{"nofactor":64,"protoclass":98}],58:[function(require,module,exports){
 (function (process){
 var protoclass = require("protoclass");
 
@@ -4672,7 +4507,7 @@ protoclass(Animator, {
 module.exports = Animator;
 
 }).call(this,require('_process'))
-},{"_process":58,"protoclass":102}],63:[function(require,module,exports){
+},{"_process":54,"protoclass":98}],59:[function(require,module,exports){
 var Animator = require("./animator");
 
 module.exports = function (app) {
@@ -4682,7 +4517,7 @@ module.exports = function (app) {
   };
 }
 
-},{"./animator":62}],64:[function(require,module,exports){
+},{"./animator":58}],60:[function(require,module,exports){
 var bindable      = require("bindable"),
 nofactor          = require("nofactor");
 
@@ -4780,7 +4615,7 @@ module.exports = bindable.Object.extend(Application, {
 
 
 module.exports.main = new Application();
-},{"bindable":51,"nofactor":68}],65:[function(require,module,exports){
+},{"bindable":47,"nofactor":64}],61:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 
@@ -4846,7 +4681,7 @@ protoclass(BaseFactory, {
 
 module.exports = BaseFactory;
 
-},{"protoclass":102}],66:[function(require,module,exports){
+},{"protoclass":98}],62:[function(require,module,exports){
 var BaseFactory = require("./base"),
 factories       = require("factories");
 
@@ -4959,7 +4794,7 @@ module.exports = function (mainFactory, elements) {
 	return new CustomFactory(mainFactory, elements);
 };
 
-},{"./base":65,"factories":84}],67:[function(require,module,exports){
+},{"./base":61,"factories":80}],63:[function(require,module,exports){
 var Base = require("./base");
 
 /**
@@ -5030,7 +4865,7 @@ Base.extend(DomFactory, {
 });
 
 module.exports = new DomFactory();
-},{"./base":65}],68:[function(require,module,exports){
+},{"./base":61}],64:[function(require,module,exports){
 module.exports = {
   string  : require("./string"),
   dom     : require("./dom"),
@@ -5042,7 +4877,7 @@ module.exports["default"] = typeof window !== "undefined" ? module.exports.dom :
 if (typeof window !== "undefined") {
   window.nofactor = module.exports;
 }
-},{"./custom":66,"./dom":67,"./string":73}],69:[function(require,module,exports){
+},{"./custom":62,"./dom":63,"./string":69}],65:[function(require,module,exports){
 var Text = require("./text");
 
 function Comment () {
@@ -5074,7 +4909,7 @@ Text.extend(Comment, {
 });
 
 module.exports = Comment;
-},{"./text":76}],70:[function(require,module,exports){
+},{"./text":72}],66:[function(require,module,exports){
 var Node = require("./node");
 
 function Container () {
@@ -5195,7 +5030,7 @@ Node.extend(Container, {
 });
 
 module.exports = Container;
-},{"./node":74}],71:[function(require,module,exports){
+},{"./node":70}],67:[function(require,module,exports){
 var Container = require("./container"),
 Style         = require("./style");
 
@@ -5333,7 +5168,7 @@ Container.extend(Element, {
 
 module.exports = Element;
 
-},{"./container":70,"./style":75}],72:[function(require,module,exports){
+},{"./container":66,"./style":71}],68:[function(require,module,exports){
 var Container = require("./container");
 
 function Fragment () {
@@ -5371,7 +5206,7 @@ Container.extend(Fragment, {
 });
 
 module.exports = Fragment;
-},{"./container":70}],73:[function(require,module,exports){
+},{"./container":66}],69:[function(require,module,exports){
 var Base     = require("../base"),
 Element      = require("./element"),
 Fragment     = require("./fragment"),
@@ -5457,7 +5292,7 @@ module.exports.Fragment     = Fragment;
 module.exports.Text         = Text;
 module.exports.Container    = Container;
 module.exports.voidElements = voidElements;
-},{"../base":65,"./comment":69,"./container":70,"./element":71,"./fragment":72,"./text":76,"./voidElements":77}],74:[function(require,module,exports){
+},{"../base":61,"./comment":65,"./container":66,"./element":67,"./fragment":68,"./text":72,"./voidElements":73}],70:[function(require,module,exports){
 var protoclass  = require("protoclass");
 
 
@@ -5491,7 +5326,7 @@ protoclass(Node, {
 });
 
 module.exports = Node;
-},{"protoclass":102}],75:[function(require,module,exports){
+},{"protoclass":98}],71:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 function Style (element) {
@@ -5601,7 +5436,7 @@ protoclass(Style, {
 
 module.exports = Style;
 
-},{"protoclass":102}],76:[function(require,module,exports){
+},{"protoclass":98}],72:[function(require,module,exports){
 var Node = require("./node"),
 he      = require("he");
 
@@ -5644,7 +5479,7 @@ Node.extend(Text, {
 });
 
 module.exports = Text;
-},{"./node":74,"he":60}],77:[function(require,module,exports){
+},{"./node":70,"he":56}],73:[function(require,module,exports){
 var Element = require("./element");
 
 function VoidElement () {
@@ -5678,7 +5513,7 @@ keygen, link, meta, param, source, track, wbr
 ["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track"].forEach(function (name) {
 	exports[name] = VoidElement;
 });
-},{"./element":71}],78:[function(require,module,exports){
+},{"./element":67}],74:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var AnyFactory, factoryFactory,
@@ -5753,7 +5588,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./base":79,"./factory":81}],79:[function(require,module,exports){
+},{"./base":75,"./factory":77}],75:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var BaseFactory;
@@ -5773,7 +5608,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{}],80:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var ClassFactory,
@@ -5817,7 +5652,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./base":79}],81:[function(require,module,exports){
+},{"./base":75}],77:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var ClassFactory, FactoryFactory, FnFactory, factory, type,
@@ -5868,7 +5703,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./base":79,"./class":80,"./fn":82,"type-component":104}],82:[function(require,module,exports){
+},{"./base":75,"./class":76,"./fn":78,"type-component":100}],78:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var FnFactory;
@@ -5906,7 +5741,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{}],83:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var GroupFactory, factoryFactory,
@@ -5993,7 +5828,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./base":79,"./factory":81}],84:[function(require,module,exports){
+},{"./base":75,"./factory":77}],80:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   module.exports = {
@@ -6006,7 +5841,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./any":78,"./class":80,"./factory":81,"./fn":82,"./group":83}],85:[function(require,module,exports){
+},{"./any":74,"./class":76,"./factory":77,"./fn":78,"./group":79}],81:[function(require,module,exports){
 module.exports = function (element) {
 
 
@@ -6015,7 +5850,7 @@ module.exports = function (element) {
 
   return $(element);
 }
-},{}],86:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 var toarray = require("toarray");
 
 var selectors = {
@@ -6031,7 +5866,7 @@ module.exports = function (element) {
   return selector(elements);
 }
 
-},{"./dom":85,"./string":87,"toarray":101}],87:[function(require,module,exports){
+},{"./dom":81,"./string":83,"toarray":97}],83:[function(require,module,exports){
 var bindable = require("bindable"),
 _            = require("lodash"),
 toarray      = require("toarray");
@@ -6311,9 +6146,9 @@ function attrTester (query) {
   }
 }
 
-},{"bindable":90,"lodash":100,"toarray":101}],88:[function(require,module,exports){
-arguments[4][49][0].apply(exports,arguments)
-},{"../object":91,"../utils/computed":94,"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/lib/collection/index.js":49,"sift":97}],89:[function(require,module,exports){
+},{"bindable":86,"lodash":96,"toarray":97}],84:[function(require,module,exports){
+arguments[4][45][0].apply(exports,arguments)
+},{"../object":87,"../utils/computed":90,"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/lib/collection/index.js":45,"sift":93}],85:[function(require,module,exports){
 "use strict";
 var protoclass = require("protoclass");
 
@@ -6481,19 +6316,19 @@ EventEmitter.prototype.removeAllListeners = function (event) {
 
 module.exports = EventEmitter;
 
-},{"protoclass":96}],90:[function(require,module,exports){
-arguments[4][51][0].apply(exports,arguments)
-},{"./collection":88,"./core/eventEmitter":89,"./object":91,"./utils/computed":94,"./utils/options":95,"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/lib/index.js":51}],91:[function(require,module,exports){
-arguments[4][52][0].apply(exports,arguments)
-},{"../core/eventEmitter":89,"./watchProperty":93,"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/lib/object/index.js":52,"protoclass":96}],92:[function(require,module,exports){
-module.exports=require(53)
-},{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/lib/object/transform.js":53,"toarray":98,"underscore":99}],93:[function(require,module,exports){
-module.exports=require(54)
-},{"../utils/options":95,"./transform":92,"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/lib/object/watchProperty.js":54,"_process":58,"underscore":99}],94:[function(require,module,exports){
-module.exports=require(55)
-},{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/lib/utils/computed.js":55,"toarray":98}],95:[function(require,module,exports){
-module.exports=require(56)
-},{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/lib/utils/options.js":56}],96:[function(require,module,exports){
+},{"protoclass":92}],86:[function(require,module,exports){
+arguments[4][47][0].apply(exports,arguments)
+},{"./collection":84,"./core/eventEmitter":85,"./object":87,"./utils/computed":90,"./utils/options":91,"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/lib/index.js":47}],87:[function(require,module,exports){
+arguments[4][48][0].apply(exports,arguments)
+},{"../core/eventEmitter":85,"./watchProperty":89,"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/lib/object/index.js":48,"protoclass":92}],88:[function(require,module,exports){
+module.exports=require(49)
+},{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/lib/object/transform.js":49,"toarray":94,"underscore":95}],89:[function(require,module,exports){
+module.exports=require(50)
+},{"../utils/options":91,"./transform":88,"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/lib/object/watchProperty.js":50,"_process":54,"underscore":95}],90:[function(require,module,exports){
+module.exports=require(51)
+},{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/lib/utils/computed.js":51,"toarray":94}],91:[function(require,module,exports){
+module.exports=require(52)
+},{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/lib/utils/options.js":52}],92:[function(require,module,exports){
 function _copy (to, from) {
 
   for (var i = 0, n = from.length; i < n; i++) {
@@ -6562,7 +6397,7 @@ protoclass.setup = function (child) {
 
 
 module.exports = protoclass;
-},{}],97:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 /*
  * Sift
  * 
@@ -7132,9 +6967,9 @@ module.exports = protoclass;
 })();
 
 
-},{}],98:[function(require,module,exports){
-module.exports=require(57)
-},{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/node_modules/toarray/index.js":57}],99:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
+module.exports=require(53)
+},{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/node_modules/toarray/index.js":53}],95:[function(require,module,exports){
 //     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -8362,7 +8197,7 @@ module.exports=require(57)
 
 }).call(this);
 
-},{}],100:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -15151,11 +14986,11 @@ module.exports=require(57)
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],101:[function(require,module,exports){
-module.exports=require(57)
-},{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/node_modules/toarray/index.js":57}],102:[function(require,module,exports){
-module.exports=require(96)
-},{"/Users/craig/Developer/Public/paperclip.js/node_modules/noselector/node_modules/bindable/node_modules/protoclass/lib/index.js":96}],103:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
+module.exports=require(53)
+},{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/node_modules/toarray/index.js":53}],98:[function(require,module,exports){
+module.exports=require(92)
+},{"/Users/craig/Developer/Public/paperclip.js/node_modules/noselector/node_modules/bindable/node_modules/protoclass/lib/index.js":92}],99:[function(require,module,exports){
 /*
  * Sift
  * 
@@ -15712,7 +15547,7 @@ module.exports=require(96)
 })();
 
 
-},{}],104:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 
 /**
  * toString ref.
@@ -15744,6 +15579,6 @@ module.exports = function(val){
   return typeof val;
 };
 
-},{}],105:[function(require,module,exports){
-module.exports=require(99)
-},{"/Users/craig/Developer/Public/paperclip.js/node_modules/noselector/node_modules/bindable/node_modules/underscore/underscore.js":99}]},{},[4]);
+},{}],101:[function(require,module,exports){
+module.exports=require(95)
+},{"/Users/craig/Developer/Public/paperclip.js/node_modules/noselector/node_modules/bindable/node_modules/underscore/underscore.js":95}]},{},[4]);

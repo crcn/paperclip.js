@@ -25,6 +25,10 @@
     return trimNewLineChars(ws).replace(/(^\s+)|(\s+$)/, "");
   }
 
+  function trimEnds (ws) {
+    return ws.replace(/(^\s+)|(\s+$)/, "").replace(/[\r\n]/g,"\\n");
+  }
+
   function trimNewLineChars (ws) {
     return ws.replace(/[ \r\n\t]+/g, " ");
   }
@@ -84,7 +88,7 @@ ChildNodes
 
 CommentNode
   = _ "<!--" value:(!"-->" v:SourceCharacter { return v; })+ "-->" _ {
-    return new CommentNodeExpression(trimWhitespace(value.join("")));
+    return new CommentNodeExpression(trimEnds(value.join("")));
   }
   / DocType
 

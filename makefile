@@ -13,8 +13,8 @@ test-node:
 	mocha --recursive --ignore-leaks --timeout 10000
 
 parser:
-	mkdir -p ./lib/parser2
-	./node_modules/.bin/pegjs ./src/parser/grammar.peg ./lib/parser2/parser.js
+	mkdir -p ./lib/parser
+	./node_modules/.bin/pegjs ./src/parser/grammar.peg ./lib/parser/parser.js
 
 lint:
 	./node_modules/.bin/jshint ./lib --config jshint.json
