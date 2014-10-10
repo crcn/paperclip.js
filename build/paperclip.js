@@ -122,7 +122,7 @@ bindable.Object.extend(ClippedBuffer, {
 
 module.exports = ClippedBuffer;
 
-},{"./index":2,"bindable":47,"protoclass":98,"underscore":101}],2:[function(require,module,exports){
+},{"./index":2,"bindable":47,"protoclass":98,"underscore":100}],2:[function(require,module,exports){
 (function (process){
 var protoclass = require("protoclass"),
 dref           = require("dref"),
@@ -459,7 +459,7 @@ protoclass(BindableObject, Clip, {
 module.exports = Clip;
 
 }).call(this,require('_process'))
-},{"./ref":3,"_process":54,"bindable":47,"dref":55,"protoclass":98,"type-component":100,"underscore":101}],3:[function(require,module,exports){
+},{"./ref":3,"_process":54,"bindable":47,"dref":55,"protoclass":98,"type-component":99,"underscore":100}],3:[function(require,module,exports){
 var protoclass = require("protoclass"),
 _              = require("underscore");
 
@@ -484,7 +484,7 @@ protoclass(BindableReference, {
 
 module.exports = BindableReference;
 
-},{"protoclass":98,"underscore":101}],4:[function(require,module,exports){
+},{"protoclass":98,"underscore":100}],4:[function(require,module,exports){
 var paper = module.exports = require("./paper"),
 Application = require("mojo-application");
 
@@ -993,7 +993,7 @@ BaseBlockBinding.extend(HtmlBlockBinding, {
 
 module.exports = HtmlBlockBinding;
 
-},{"./base":9,"type-component":100}],14:[function(require,module,exports){
+},{"./base":9,"type-component":99}],14:[function(require,module,exports){
 var protoclass = require("protoclass"),
 BaseDecor      = require("./base");
 
@@ -1105,7 +1105,7 @@ EventDataBinding.extend(ChangeAttrBinding, {
 });
 
 module.exports = ChangeAttrBinding;
-},{"./event":26,"underscore":101}],19:[function(require,module,exports){
+},{"./event":26,"underscore":100}],19:[function(require,module,exports){
 var BaseDataBinding = require("./base");
 
 function CssAttrBinding () {
@@ -1346,7 +1346,7 @@ BaseDataBinding.extend(EventDataBinding, {
 
 module.exports = EventDataBinding;
 
-},{"./base":17,"noselector":82,"underscore":101}],27:[function(require,module,exports){
+},{"./base":17,"noselector":82,"underscore":100}],27:[function(require,module,exports){
 var protoclass = require("protoclass"),
 BaseBinding = require("./base"),
 noselector = require("noselector");
@@ -1557,7 +1557,7 @@ BaseBinding.extend(ModelAttrBinding, {
 module.exports = ModelAttrBinding;
 
 }).call(this,require('_process'))
-},{"./base":17,"./change":18,"_process":54,"dref":55,"noselector":82,"type-component":100,"underscore":101}],29:[function(require,module,exports){
+},{"./base":17,"./change":18,"_process":54,"dref":55,"noselector":82,"type-component":99,"underscore":100}],29:[function(require,module,exports){
 var BaseDataBinding = require("./base"),
 noselector          = require("noselector");
 
@@ -1695,7 +1695,7 @@ module.exports.factory = function (app) {
   }
 }
 
-},{"../../../../../clip":2,"../../../collection":15,"../../base":33,"./handlers/change":18,"./handlers/css":19,"./handlers/default":20,"./handlers/delete":21,"./handlers/disable":22,"./handlers/enable":23,"./handlers/enter":24,"./handlers/escape":25,"./handlers/event":26,"./handlers/focus":27,"./handlers/model":28,"./handlers/show":29,"./handlers/style":30,"underscore":101}],32:[function(require,module,exports){
+},{"../../../../../clip":2,"../../../collection":15,"../../base":33,"./handlers/change":18,"./handlers/css":19,"./handlers/default":20,"./handlers/delete":21,"./handlers/disable":22,"./handlers/enable":23,"./handlers/enter":24,"./handlers/escape":25,"./handlers/event":26,"./handlers/focus":27,"./handlers/model":28,"./handlers/show":29,"./handlers/style":30,"underscore":100}],32:[function(require,module,exports){
 var type      = require("type-component"),
 ClippedBuffer = require("../../../../../clip/buffer"),
 BaseBinding   = require("../../base"),
@@ -1751,7 +1751,7 @@ BaseBinding.extend(NodeAttrBinding, {
 
 module.exports = NodeAttrBinding;
 
-},{"../../../../../clip/buffer":1,"../../base":33,"type-component":100,"underscore":101}],33:[function(require,module,exports){
+},{"../../../../../clip/buffer":1,"../../base":33,"type-component":99,"underscore":100}],33:[function(require,module,exports){
 var BaseBinding = require("../../base/binding");
 
 function BaseNodeBinding (options) {
@@ -1934,7 +1934,7 @@ module.exports = function (app) {
   return nodeFactory;
 }
 
-},{"./attrs/dataBind":31,"./attrs/text":32,"protoclass":98,"underscore":101}],35:[function(require,module,exports){
+},{"./attrs/dataBind":31,"./attrs/text":32,"protoclass":98,"underscore":100}],35:[function(require,module,exports){
 var Clip         = require("../clip"),
 template         = require("./template"),
 nofactor         = require("nofactor"),
@@ -1962,6 +1962,13 @@ module.exports = function (app) {
 
     modifier: function (name, modifier) {
       return _modifiers[name] = modifier;
+    },
+
+    /**
+     */
+
+    template: function (source) {
+      return template(source, app);
     },
 
     /*
@@ -2021,7 +2028,7 @@ module.exports.BaseNodeBinding     = bindings.BaseNodeBinding;
 module.exports.BaseAttrBinding     = bindings.BaseAttrBinding;
 module.exports.BaseAttrDataBinding = bindings.BaseAttrDataBinding;
 
-},{"../clip":2,"./bindings":16,"./modifiers":36,"./template":37,"bindable":47,"mojo-application":60,"nofactor":64,"underscore":101}],36:[function(require,module,exports){
+},{"../clip":2,"./bindings":16,"./modifiers":36,"./template":37,"bindable":47,"mojo-application":60,"nofactor":64,"underscore":100}],36:[function(require,module,exports){
 module.exports = {
   uppercase: function (value) {
     return String(value).toUpperCase();
@@ -2037,6 +2044,9 @@ module.exports = {
   },
   json: function (value, count, delimiter) {
     return JSON.stringify.apply(JSON, arguments);
+  },
+  isNaN: function (value) {
+    return isNaN(value);
   }
 };
 },{}],37:[function(require,module,exports){
@@ -2177,7 +2187,7 @@ var tpl = Template.prototype.creator = module.exports = function (paperOrSrc, ap
     useTemplateNode: !isIE && !application.debug
   };
 
-  if (paper.template) {
+  if (paper.template && paper.template.application === application) {
     return paper.template;
   }
 
@@ -2204,7 +2214,7 @@ protoclass(BaseWriter, {
 
 module.exports = BaseWriter;
 
-},{"protoclass":98,"underscore":101}],39:[function(require,module,exports){
+},{"protoclass":98,"underscore":100}],39:[function(require,module,exports){
 "use strict";
 
 var loaf            = require("loaf"),
@@ -2312,7 +2322,7 @@ BaseWriter.extend(ElementWriter, {
 
 module.exports = ElementWriter;
 
-},{"./base":38,"type-component":100}],42:[function(require,module,exports){
+},{"./base":38,"type-component":99}],42:[function(require,module,exports){
 var BaseWriter = require("./base");
 
 function FragmentWriter () {
@@ -2374,7 +2384,7 @@ module.exports = TextWriter;
 
 var BindableObject = require("../object"),
 computed           = require("../utils/computed"),
-sift               = require("sift");
+_                  = require("underscore");
 
 /** 
  * @module mojo
@@ -2410,8 +2420,9 @@ sift               = require("sift");
 
 function BindableCollection (source) {
   BindableObject.call(this, this);
-  this._source = source || [];
+  this.source = source || [];
   this._updateInfo();
+  this.bind("source", _.bind(this._onSourceChange, this));
 }
 
 /**
@@ -2423,30 +2434,22 @@ BindableObject.extend(BindableCollection, {
    */
 
   __isBindableCollection: true,
+
+  /**
+   */
+
+  _onSourceChange: function (source) {
+    if (!source) this.source = [];
+    this._updateInfo();
+    this.emit("reset", source);
+  },
   
   /**
    * Resets the collection. Same as `source(value)`.
    */
 
   reset: function (source) {
-    return this.source(source);
-  },
-
-  /**
-   * Sets / Gets source array
-   * @method source
-   * @param {Array} source source of the collection
-   * @returns [Array] source
-   */
-
-  source: function (source) {
-
-    if (!arguments.length) return this._source;
-    var oldSource = this._source || [];
-    this._source = source || [];
-    this._updateInfo();
-
-    this.emit("reset", this._source);
+    return this.set("source", source);
   },
 
   /**
@@ -2457,7 +2460,7 @@ BindableObject.extend(BindableCollection, {
    */
 
   indexOf: function (item) {
-    return this._source.indexOf(item);
+    return this.source.indexOf(item);
   },
 
   /**
@@ -2467,21 +2470,7 @@ BindableObject.extend(BindableCollection, {
    */
 
   filter: function (fn) {
-    return this._source.filter(fn);
-  },
-
-  /**
-   */
-
-  search: function (query) {
-    return sift(query, this._source).shift();
-  },
-
-  /**
-   */
-
-  searchIndex: function (query) {
-    return this.indexOf(this.search(query));
+    return this.source.filter(fn);
   },
 
   /**
@@ -2491,7 +2480,7 @@ BindableObject.extend(BindableCollection, {
    */
 
   at: function (index) {
-    return this._source[index];
+    return this.source[index];
   },
 
   /**
@@ -2501,28 +2490,28 @@ BindableObject.extend(BindableCollection, {
    */
 
   each: computed(["length"], function (fn) {
-    this._source.forEach(fn);
+    this.source.forEach(fn);
   }),
 
   /**
    */
 
   map: function (fn) {
-    return this._source.map(fn);
+    return this.source.map(fn);
   },
 
   /**
    */
 
   join: function (sep) {
-    return this._source.join(sep);
+    return this.source.join(sep);
   },
 
   /**
    */
 
   slice: function () {
-    return this._source.slice.apply(this._source, arguments);
+    return this.source.slice.apply(this.source, arguments);
   },
 
   /**
@@ -2533,7 +2522,7 @@ BindableObject.extend(BindableCollection, {
 
   push: function () {
     var items = Array.prototype.slice.call(arguments);
-    this._source.push.apply(this._source, items);
+    this.source.push.apply(this.source, items);
     this._updateInfo();
 
     // DEPRECATED
@@ -2550,7 +2539,7 @@ BindableObject.extend(BindableCollection, {
   unshift: function () {
 
     var items = Array.prototype.slice.call(arguments);
-    this._source.unshift.apply(this._source, items);
+    this.source.unshift.apply(this.source, items);
     this._updateInfo();
 
     // DEPRECATED
@@ -2567,7 +2556,7 @@ BindableObject.extend(BindableCollection, {
 
   splice: function (index, count) {
     var newItems = Array.prototype.slice.call(arguments, 2),
-    oldItems     = this._source.splice.apply(this._source, arguments);
+    oldItems     = this.source.splice.apply(this.source, arguments);
 
     this._updateInfo();
 
@@ -2585,7 +2574,7 @@ BindableObject.extend(BindableCollection, {
   remove: function (item) {
     var i = this.indexOf(item);
     if (!~i) return false;
-    this._source.splice(i, 1);
+    this.source.splice(i, 1);
     this._updateInfo();
 
     this.emit("remove", item, i);
@@ -2600,8 +2589,8 @@ BindableObject.extend(BindableCollection, {
    */
 
   pop: function () {
-    if (!this._source.length) return;
-    return this.remove(this._source[this._source.length - 1]);
+    if (!this.source.length) return;
+    return this.remove(this.source[this.source.length - 1]);
   },
 
   /**
@@ -2611,15 +2600,15 @@ BindableObject.extend(BindableCollection, {
    */
 
   shift: function () {
-    if (!this._source.length) return;
-    return this.remove(this._source[0]);
+    if (!this.source.length) return;
+    return this.remove(this.source[0]);
   },
 
   /*
    */
 
   toJSON: function () {
-    return this._source.map(function (item) {
+    return this.source.map(function (item) {
       return item && item.toJSON ? item.toJSON() : item;
     });
   },
@@ -2629,17 +2618,17 @@ BindableObject.extend(BindableCollection, {
 
   _updateInfo: function () {
     this.setProperties({
-      first: this._source.length ? this._source[0] : void 0,
-      length: this._source.length,
-      empty: !this._source.length,
-      last: this._source.length ? this._source[this._source.length - 1] : void 0
+      first  : this.source.length ? this.source[0] : void 0,
+      length : this.source.length,
+      empty  : !this.source.length,
+      last   : this.source.length ? this.source[this.source.length - 1] : void 0
     });
   }
 });
 
 module.exports = BindableCollection;
 
-},{"../object":48,"../utils/computed":51,"sift":99}],46:[function(require,module,exports){
+},{"../object":48,"../utils/computed":51,"underscore":100}],46:[function(require,module,exports){
 "use strict";
 var protoclass = require("protoclass");
 
@@ -3354,7 +3343,7 @@ function transform (bindable, fromProperty, options) {
 }
 
 module.exports = transform;
-},{"toarray":53,"underscore":101}],50:[function(require,module,exports){
+},{"toarray":53,"underscore":100}],50:[function(require,module,exports){
 (function (process){
 "use strict";
 
@@ -3679,7 +3668,7 @@ function watchProperty (bindable, property, fn) {
 
 module.exports = watchProperty;
 }).call(this,require('_process'))
-},{"../utils/options":52,"./transform":49,"_process":54,"underscore":101}],51:[function(require,module,exports){
+},{"../utils/options":52,"./transform":49,"_process":54,"underscore":100}],51:[function(require,module,exports){
 "use strict";
 
 var toarray = require("toarray");
@@ -3904,7 +3893,7 @@ exports.use = function(gs) {
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"type-component":100}],56:[function(require,module,exports){
+},{"type-component":99}],56:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.4.1 by @mathias | MIT license */
 ;(function(root) {
@@ -5703,7 +5692,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./base":75,"./class":76,"./fn":78,"type-component":100}],78:[function(require,module,exports){
+},{"./base":75,"./class":76,"./fn":78,"type-component":99}],78:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var FnFactory;
@@ -6147,8 +6136,276 @@ function attrTester (query) {
 }
 
 },{"bindable":86,"lodash":96,"toarray":97}],84:[function(require,module,exports){
-arguments[4][45][0].apply(exports,arguments)
-},{"../object":87,"../utils/computed":90,"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/lib/collection/index.js":45,"sift":93}],85:[function(require,module,exports){
+"use strict";
+
+var BindableObject = require("../object"),
+computed           = require("../utils/computed"),
+sift               = require("sift");
+
+/** 
+ * @module mojo
+ * @submodule mojo-core
+ */
+
+/**
+ * @class BindableCollection
+ * @extends BindableObject
+ */
+
+/**
+ * Emitted when an item is inserted
+ * @event insert
+ * @param {Object} item inserted
+ */
+
+
+/**
+ * Emitted when an item is removed
+ * @event remove
+ * @param {Object} item removed
+ */
+
+/**
+ * Emitted when items are replaced
+ * @event replace
+ * @param {Array} newItems
+ * @param {Array} oldItems
+ */
+
+
+
+function BindableCollection (source) {
+  BindableObject.call(this, this);
+  this._source = source || [];
+  this._updateInfo();
+}
+
+/**
+ */
+
+BindableObject.extend(BindableCollection, {
+
+  /**
+   */
+
+  __isBindableCollection: true,
+  
+  /**
+   * Resets the collection. Same as `source(value)`.
+   */
+
+  reset: function (source) {
+    return this.source(source);
+  },
+
+  /**
+   * Sets / Gets source array
+   * @method source
+   * @param {Array} source source of the collection
+   * @returns [Array] source
+   */
+
+  source: function (source) {
+
+    if (!arguments.length) return this._source;
+    var oldSource = this._source || [];
+    this._source = source || [];
+    this._updateInfo();
+
+    this.emit("reset", this._source);
+  },
+
+  /**
+   * Returns the index of a value
+   * @method indexOf
+   * @param {Object} object to get index of
+   * @returns {Number} index or -1 (not found)
+   */
+
+  indexOf: function (item) {
+    return this._source.indexOf(item);
+  },
+
+  /**
+   * filters the collection
+   * @method filter
+   * @returns {Array} array of filtered items
+   */
+
+  filter: function (fn) {
+    return this._source.filter(fn);
+  },
+
+  /**
+   */
+
+  search: function (query) {
+    return sift(query, this._source).shift();
+  },
+
+  /**
+   */
+
+  searchIndex: function (query) {
+    return this.indexOf(this.search(query));
+  },
+
+  /**
+   * Returns an object at the given index
+   * @method at
+   * @returns {Object} Object at specific index
+   */
+
+  at: function (index) {
+    return this._source[index];
+  },
+
+  /**
+   * forEach item
+   * @method each
+   * @param {Function} fn function to call for each item
+   */
+
+  each: computed(["length"], function (fn) {
+    this._source.forEach(fn);
+  }),
+
+  /**
+   */
+
+  map: function (fn) {
+    return this._source.map(fn);
+  },
+
+  /**
+   */
+
+  join: function (sep) {
+    return this._source.join(sep);
+  },
+
+  /**
+   */
+
+  slice: function () {
+    return this._source.slice.apply(this._source, arguments);
+  },
+
+  /**
+   * Pushes an item onto the collection
+   * @method push
+   * @param {Object} item
+   */
+
+  push: function () {
+    var items = Array.prototype.slice.call(arguments);
+    this._source.push.apply(this._source, items);
+    this._updateInfo();
+
+    // DEPRECATED
+    this.emit("insert", items[0], this.length - 1);
+    this.emit("update", { insert: items, index: this.length - 1});
+  },
+
+  /**
+   * Unshifts an item onto the collection
+   * @method unshift
+   * @param {Object} item
+   */
+
+  unshift: function () {
+
+    var items = Array.prototype.slice.call(arguments);
+    this._source.unshift.apply(this._source, items);
+    this._updateInfo();
+
+    // DEPRECATED
+    this.emit("insert", items[0], 0);
+    this.emit("update", { insert: items });
+  },
+
+  /**
+   * Removes N Number of items
+   * @method splice
+   * @param {Number} index start index
+   * @param {Number} count number of items to remove
+   */
+
+  splice: function (index, count) {
+    var newItems = Array.prototype.slice.call(arguments, 2),
+    oldItems     = this._source.splice.apply(this._source, arguments);
+
+    this._updateInfo();
+
+    // DEPRECATED
+    this.emit("replace", newItems, oldItems, index);
+    this.emit("update", { insert: newItems, remove: oldItems });
+  },
+
+  /**
+   * Removes an item from the collection
+   * @method remove
+   * @param {Object} item item to remove
+   */
+
+  remove: function (item) {
+    var i = this.indexOf(item);
+    if (!~i) return false;
+    this._source.splice(i, 1);
+    this._updateInfo();
+
+    this.emit("remove", item, i);
+    this.emit("update", { remove: [item] });
+    return item;
+  },
+
+  /**
+   * Removes an item from the end
+   * @method pop
+   * @returns {Object} removed item
+   */
+
+  pop: function () {
+    if (!this._source.length) return;
+    return this.remove(this._source[this._source.length - 1]);
+  },
+
+  /**
+   * Removes an item from the beginning
+   * @method shift
+   * @returns {Object} removed item
+   */
+
+  shift: function () {
+    if (!this._source.length) return;
+    return this.remove(this._source[0]);
+  },
+
+  /*
+   */
+
+  toJSON: function () {
+    return this._source.map(function (item) {
+      return item && item.toJSON ? item.toJSON() : item;
+    });
+  },
+
+  /*
+   */
+
+  _updateInfo: function () {
+    this.setProperties({
+      first: this._source.length ? this._source[0] : void 0,
+      length: this._source.length,
+      empty: !this._source.length,
+      last: this._source.length ? this._source[this._source.length - 1] : void 0
+    });
+  }
+});
+
+module.exports = BindableCollection;
+
+},{"../object":87,"../utils/computed":90,"sift":93}],85:[function(require,module,exports){
 "use strict";
 var protoclass = require("protoclass");
 
@@ -14991,563 +15248,6 @@ module.exports=require(53)
 },{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable/node_modules/toarray/index.js":53}],98:[function(require,module,exports){
 module.exports=require(92)
 },{"/Users/craig/Developer/Public/paperclip.js/node_modules/noselector/node_modules/bindable/node_modules/protoclass/lib/index.js":92}],99:[function(require,module,exports){
-/*
- * Sift
- * 
- * Copryright 2011, Craig Condon
- * Licensed under MIT
- *
- * Inspired by mongodb's query language 
- */
-
-
-(function() {
-
-
-	/**
-	 */
-
-	var _convertDotToSubObject = function(keyParts, value) {
-
-		var subObject = {},
-		currentValue = subObject;
-
-		for(var i = 0, n = keyParts.length - 1; i < n; i++) {
-			currentValue = currentValue[keyParts[i]] = {};
-		}
-
-		currentValue[keyParts[i]] = value;
-		
-		return subObject;
-	}
-
-	/**
-	 */
-
-	var _queryParser = new (function() {
-
-		/**
-		 * tests against data
-		 */
-
-		var priority = this.priority = function(statement, data) {
-
-			var exprs = statement.exprs,
-			priority = 0;
-
-			//generally, expressions are ordered from least efficient, to most efficient.
-			for(var i = 0, n = exprs.length; i < n; i++) {
-
-				var expr = exprs[i],
-				p;
-
-				if(!~(p = expr.e(expr.v, _comparable(data), data))) return -1;
-
-				priority += p;
-
-			}
-
-
-			return priority;
-		}
-
-
-		/**
-		 * parses a statement into something evaluable
-		 */
-
-		var parse = this.parse = function(statement, key) {
-
-			//fixes sift(null, []) issue
-			if(!statement) statement = { $eq: statement };
-
-			var testers = [];
-				
-			//if the statement is an object, then we're looking at something like: { key: match }
-			if(statement.constructor == Object) {
-
-				for(var k in statement) {
-
-					//find the apropriate operator. If one doesn't exist, then it's a property, which means
-					//we create a new statement (traversing) 
-					var operator = !!_testers[k] ?  k : '$trav',
-
-					//value of given statement (the match)
-					value = statement[k],
-
-					//default = match
-					exprValue = value;
-
-					//if we're working with a traversable operator, then set the expr value
-					if(TRAV_OP[operator]) {
-
-
-						//using dot notation? convert into a sub-object
-						if(~k.indexOf(".")) {
-							var keyParts = k.split(".");
-							k = keyParts.shift(); //we're using the first key, so remove it
-
-							exprValue = value = _convertDotToSubObject(keyParts, value);
-						}
-						
-						//*if* the value is an array, then we're dealing with something like: $or, $and
-						if(value instanceof Array) {
-							
-							exprValue = [];
-
-							for(var i = value.length; i--;) {
-								exprValue.push(parse(value[i]));		
-							}
-
-						//otherwise we're dealing with $trav
-						} else {	
-							exprValue = parse(value, k);
-						}
-					} 
-
-					testers.push(_getExpr(operator, k, exprValue));
-
-				}
-								
-
-			//otherwise we're comparing a particular value, so set to eq
-			} else {
-				testers.push(_getExpr('$eq', k, statement));
-			}
-
-			var stmt =  { 
-				exprs: testers,
-				k: key,
-				test: function(value) {
-					return !!~stmt.priority(value);
-				},
-				priority: function(value) {
-					return priority(stmt, value);
-				}
-			};
-			
-			return stmt;
-		
-		}
-
-
-		//traversable statements
-		var TRAV_OP = this.traversable = {
-			$and: true,
-			$or: true,
-			$nor: true,
-			$trav: true,
-			$not: true
-		};
-
-
-		function _comparable(value) {
-			if(value instanceof Date) {
-				return value.getTime();
-			} else {
-				return value;
-			}
-		}
-
-		function btop(value) {
-			return value ? 0 : -1;
-		}
-
-		var _testers = this.testers =  {
-
-			/**
-			 */
-
-			$eq: function(a, b) {
-				return btop(a.test(b));
-			},
-
-			/**
-			 */
-
-			$ne: function(a, b) {
-				return btop(!a.test(b));
-			},
-
-			/**
-			 */
-
-			$lt: function(a, b) {
-				return btop(a > b);
-			},
-
-			/**
-			 */
-
-			$gt: function(a, b) {
-				return btop(a < b);
-			},
-
-			/**
-			 */
-
-			$lte: function(a, b) {
-				return btop(a >= b);
-			},
-
-			/**
-			 */
-
-			$gte: function(a, b) {
-				return btop(a <= b);
-			},
-
-
-			/**
-			 */
-
-			$exists: function(a, b) {
-				return btop(a === (b != null))
-			},
-
-			/**
-			 */
-
-			$in: function(a, b) {
-
-				//intersecting an array
-				if(b instanceof Array) {
-
-					for(var i = b.length; i--;) {
-						if(~a.indexOf(b[i])) return i;
-					}	
-
-				} else {
-					return btop(~a.indexOf(b));
-				}
-
-
-				return -1;
-			},
-
-			/**
-			 */
-
-			$not: function(a, b) {
-				if(!a.test) throw new Error("$not test should include an expression, not a value. Use $ne instead.");
-				return btop(!a.test(b));
-			},
-
-			/**
-			 */
-
-			$type: function(a, b, org) {
-
-				//instanceof doesn't work for strings / boolean. instanceof works with inheritance
-				return org ? btop(org instanceof a || org.constructor == a) : -1;
-			},
-
-			/**
-			 */
-
-
-			$nin: function(a, b) {
-				return ~_testers.$in(a, b) ? -1 : 0;
-			},
-
-			/**
-			 */
-
-			$mod: function(a, b) {
-				return b % a[0] == a[1] ? 0 : -1;
-			},
-
-			/**
-			 */
-
-			$all: function(a, b) {
-
-				for(var i = a.length; i--;) {
-					if(b.indexOf(a[i]) == -1) return -1;
-				}
-
-				return 0;
-			},
-
-			/**
-			 */
-
-			$size: function(a, b) {
-				return b ? btop(a == b.length) : -1;
-			},
-
-			/**
-			 */
-
-			$or: function(a, b) {
-
-				var i = a.length, p, n = i;
-
-				for(; i--;) {
-					if(~priority(a[i], b)) {
-						return i;
-					}
-				}
-
-				return btop(n == 0);
-			},
-
-			/**
-			 */
-
-			$nor: function(a, b) {
-
-				var i = a.length, n = i;
-
-				for(; i--;) {
-					if(~priority(a[i], b)) {
-						return -1;
-					}
-				}
-
-				return 0;
-			},
-
-			/**
-			 */
-
-			$and: function(a, b) {
-
-				for(var i = a.length; i--;) {
-					if(!~priority(a[i], b)) {
-						return -1;
-					}
-				}
-
-				return 0;
-			},
-
-			/**
-			 */
-
-			$trav: function(a, b) {
-
-
-
-				if(b instanceof Array) {
-					
-					for(var i = b.length; i--;) {
-						var subb = b[i];
-						if(subb[a.k] && ~priority(a, subb[a.k])) return i;
-					}
-
-					return -1;
-				}
-
-				//continue to traverse even if there isn't a value - this is needed for 
-				//something like name:{$exists:false}
-				return priority(a, b ? b[a.k] : undefined);
-			}
-		}
-
-		var _prepare = {
-			
-			/**
-			 */
-
-			$eq: function(a) {
-				
-				var fn;
-
-				if(a instanceof RegExp) {
-					return a;
-				} else if (a instanceof Function) {
-					fn = a;
-				} else {
-					
-					fn = function(b) {	
-						if(b instanceof Array) {		
-							return ~b.indexOf(a);
-						} else {
-							return a == b;
-						}
-					}
-				}
-
-				return {
-					test: fn
-				}
-
-			},
-			
-			/**
-			 */
-				
-			 $ne: function(a) {
-				return _prepare.$eq(a);
-			 }
-		};
-
-
-
-		var _getExpr = function(type, key, value) {
-
-			var v = _comparable(value);
-
-			return { 
-
-				//k key
-				k: key, 
-
-				//v value
-				v: _prepare[type] ? _prepare[type](v) : v, 
-
-				//e eval
-				e: _testers[type] 
-			};
-
-		}
-
-	})();
-
-
-	var getSelector = function(selector) {
-
-		if(!selector) {
-
-			return function(value) {
-				return value;
-			};
-
-		} else 
-		if(typeof selector == 'function') {
-			return selector;
-		}
-
-		throw new Error("Unknown sift selector " + selector);
-	}
-
-	var sifter = function(query, selector) {
-
-		//build the filter for the sifter
-		var filter = _queryParser.parse( query );
-			
-		//the function used to sift through the given array
-		var self = function(target) {
-				
-			var sifted = [], results = [], value, priority;
-
-			//I'll typically start from the end, but in this case we need to keep the order
-			//of the array the same.
-			for(var i = 0, n = target.length; i < n; i++) {
-
-				value = selector(target[i]);
-
-				//priority = -1? it's not something we can use.
-				if(!~(priority = filter.priority( value ))) continue;
-
-				//push all the sifted values to be sorted later. This is important particularly for statements
-				//such as $or
-				sifted.push({
-					value: value,
-					priority: priority
-				});
-			}
-
-			//sort the values
-			sifted.sort(function(a, b) {
-				return a.priority > b.priority ? -1 : 1;
-			});
-
-			var values = Array(sifted.length);
-
-			//finally, fetch the values & return them.
-			for(var i = sifted.length; i--;) {
-				values[i] = sifted[i].value;
-			}
-
-			return values;
-		}
-
-		//set the test function incase the sifter isn't needed
-		self.test   = filter.test;
-		self.score = filter.priority;
-		self.query  = query;
-
-		return self;
-	}
-
-
-	/**
-	 * sifts the given function
-	 * @param query the mongodb query
-	 * @param target the target array
-	 * @param rawSelector the selector for plucking data from the given target
-	 */
-
-	var sift = function(query, target, rawSelector) {
-
-		//must be an array
-		if(typeof target != "object") {
-			rawSelector = target;
-			target = undefined;
-		}
-
-
-		var sft  = sifter(query, getSelector(rawSelector));
-
-		//target given? sift through it and return the filtered result
-		if(target) return sft(target);
-
-		//otherwise return the sifter func
-		return sft;
-
-	}
-
-
-	sift.use = function(options) {
-		if(options.operators) sift.useOperators(options.operators);
-	}
-
-	sift.useOperators = function(operators) {
-		for(var key in operators) {
-			sift.useOperator(key, operators[key]);
-		}
-	}
-
-	sift.useOperator = function(operator, optionsOrFn) {
-
-		var options = {};
-
-		if(typeof optionsOrFn == "object") {
-			options = optionsOrFn;
-		} else {
-			options = { test: optionsOrFn };
-		}
-
-
-		var key = "$" + operator;
-		_queryParser.testers[key] = options.test;
-
-		if(options.traversable || options.traverse) {
-			_queryParser.traversable[key] = true;
-		}
-	}
-
-
-	//node.js?
-	if((typeof module != 'undefined') && (typeof module.exports != 'undefined')) {
-		
-		module.exports = sift;
-
-	} else 
-
-	//browser?
-	if(typeof window != 'undefined') {
-		
-		window.sift = sift;
-
-	}
-
-})();
-
-
-},{}],100:[function(require,module,exports){
 
 /**
  * toString ref.
@@ -15579,6 +15279,6 @@ module.exports = function(val){
   return typeof val;
 };
 
-},{}],101:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 module.exports=require(95)
 },{"/Users/craig/Developer/Public/paperclip.js/node_modules/noselector/node_modules/bindable/node_modules/underscore/underscore.js":95}]},{},[4]);
