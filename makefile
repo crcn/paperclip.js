@@ -23,7 +23,7 @@ parser-watch: parser
 	fswatch ./src/parser/grammar.peg | xargs -n1 make parser
 
 test-watch:
-	mocha --recursive --ignore-leaks --reporter $(REPORTER) -g $(ONLY) --timeout 10000 --watch ./test ./lib
+	mocha --recursive --ignore-leaks --reporter $(REPORTER) -b -g $(ONLY) --timeout 10000 --watch ./test ./lib
 
 
 test-cov:

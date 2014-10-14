@@ -9,12 +9,17 @@ var tpls = {
   three: pc.template("hello"),
   four: pc.template("{{'message'}} {{'message'}}"),
   five: pc.template("{{'message'}} {{'message'}} {{'message'}}"),
+  five: pc.template("{{'message'}} {{'message'}} {{'message'}}"),
   six: pc.template("<div></div><div></div><div></div>"),
-  seven: pc.template("hello <br /> hello <br /> hello <br /> hello <br /> hello <br /> hello <br /> hello hello")
+  seven: pc.template("hello <br /> hello <br /> hello <br /> hello <br /> hello <br /> hello <br /> hello hello"),
+  eight: pc.template("{{^name}}")
 }
 
 
 
+suite.add("{{^name}}", function () {
+  tpls.eight.bind(new bindable.Object());
+});
 
 suite.add("<div></div><div></div><div></div>", function () {
   tpls.six.bind(new bindable.Object());
@@ -37,6 +42,7 @@ suite.add("{{message}}", function () {
 suite.add("{{'message'}} {{'message'}}", function () {
   tpls.four.bind(new bindable.Object());
 });
+
 
 
 suite.add("{{'message'}} {{'message'}} {{'message'}}", function () {
