@@ -189,6 +189,12 @@ describe("parser/script#", function () {
       });
     });
 
+    it("can parse the fast operator", function () {
+      var ast = parser.parse("{{^a}}").childNodes.expressions.expressions[0].scripts;
+      expect(ast.value.value.value.fast).to.be(true);
+      expect(ast.value.value.value.unbound).to.be(true);
+    });
+
     describe("function calls", function () {
       it("can be parsed", function () {
         var ast = parser.parse("{{a.b.c(1,2,3 + 4)}}").childNodes.expressions.expressions[0];

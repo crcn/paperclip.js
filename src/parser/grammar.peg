@@ -332,7 +332,7 @@ FunctionCall
     }
 
 Reference
-  = bindingType:("~>"/"<~>"/"~"/"<~")? _ reference:ReferenceName path:("." ReferenceName)* _ {
+  = bindingType:("^"/"~>"/"<~>"/"~"/"<~")? _ reference:ReferenceName path:("." ReferenceName)* _ {
       path = [reference].concat(path.map(function (p) { return p[1] }));
       return new ReferenceExpression(path, bindingType);
     }
