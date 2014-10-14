@@ -59,7 +59,7 @@ describe("script#", function () {
       expect(pc.template("{{hello()}}").bind().render().toString()).to.be("");
     });
 
-    it("can call a nested function that doesn't exist", function () {
+    it("can call a can assign to a nested value function that doesn't exist", function () {
       expect(pc.template("{{a.b.hello()}}").bind().render().toString()).to.be("");
     });
 
@@ -198,7 +198,10 @@ describe("script#", function () {
 
   describe("assigning", function () {
 
-    var c = new bindable.Object();
+    var c;
+    beforeEach(function () {
+      c = new bindable.Object();
+    })
 
     it("can assign a=true", function () {
       expect(pc.template("{{a=true}}").bind(c).render().toString()).to.be("true");
@@ -206,7 +209,6 @@ describe("script#", function () {
     });
 
     it("can assign to a nested value", function () {
-      c.context({});
       expect(pc.template("{{a.b.c.d=!e}}").bind(c).render().toString()).to.be("true");
       expect(c.get("a.b.c.d")).to.be(true);
     });
@@ -301,7 +303,7 @@ describe("script#", function () {
       expect(t.toString()).to.be("b c");
     });
 
-    it("properly unwatches a bindable object if se to undefined", function () {
+    it("properly unwatches a bindable object if set to undefined", function () {
 
       var b = new bindable.Object({
         a: "a"
@@ -313,13 +315,13 @@ describe("script#", function () {
 
       var t = pc.template("{{b|json()}}").bind(context);
       expect(t.bindings.script._bindings.length).to.be(2);
-      expect(t.toString()).to.be("{&#x22;a&#x22;:&#x22;a&#x22;}");
+      expect(t.toString()).to.be("{&#x22;a&#x22;:&#x22;a&#x22;,&#x22;_events&#x22;:{}}");
       context.set("b", undefined);
       expect(t.bindings.script._bindings.length).to.be(1);
       expect(t.toString()).to.be("");
       context.set("b", b);
       expect(t.bindings.script._bindings.length).to.be(2);
-      expect(t.toString()).to.be("{&#x22;a&#x22;:&#x22;a&#x22;}");
+      expect(t.toString()).to.be("{&#x22;a&#x22;:&#x22;a&#x22;,&#x22;_events&#x22;:{}}");
     });
 
     it("can be nested", function () {
