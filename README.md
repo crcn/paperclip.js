@@ -160,7 +160,7 @@ Unbound helper - don't watch for any changes:
 
 #### &#123;&#123; html: content &#125;&#125;
 
-Similar to escaping content in mustache (`&#123;&#123;&#123;content&#125;&#125;&#125;`). Good for security.
+Similar to escaping content in mustache (`{{{content}}}`). Good for security.
 
 ```html
 Unsafe:
@@ -229,7 +229,7 @@ Executed when an event is fired on the DOM element. Here are all the available e
 
 #### &#123;&#123; show: bool &#125;&#125;
 
-Toggles the display mode of a given element. This is similar to the ` &#123;&#123;#if: expression &#125;&#125;` conditional helper.
+Toggles the display mode of a given element. This is similar to the `{{if:expression}}` conditional helper.
 
 
 #### &#123;&#123; css: styles &#125;&#125;
