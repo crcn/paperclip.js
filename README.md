@@ -323,7 +323,7 @@ var ComponentBlockBinding = pc.BaseBlockBinding.extend({
   bind: function (context) {
     this.view = this.template.bind();
     this.section.appendChild(this.view.render());
-    pc2.BaseBlockBinding.prototype.bind.call(this, context);
+    pc.BaseBlockBinding.prototype.bind.call(this, context);
   },
   _onChange: function (properties) {
     this.view.context.setProperties(properties);
