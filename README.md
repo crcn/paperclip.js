@@ -9,10 +9,14 @@ Paperclip is a very fast template engine for JavaScript.
 - compiled templates
 - explicit data-binding (one-way, two-way, unbound operators)
 - works with older browsers (IE 8+ tested)
+- accepts vanilla objects
+- works with NodeJS
 
 ### Examples
 
 - [50k items in 1.5 seconds](http://requirebin.com/?gist=02cb9f69551a6032ad93)
+- [simple number incrementer](http://requirebin.com/?gist=8be78007f4cb70da67b1)
+- [inline html](http://requirebin.com/?gist=bbb9b0eaccd3d7e41df1)
 
 
 ### Performance
@@ -41,12 +45,18 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 
 Pretty clear what's going on. Here's what we know at a glance:
 
-Generated DOM is identical to the HTML templates. No weird manipulations here.
-Data-bindings are identified as the template is created. Note that this happens once for every template. Paperclip takes each translated template, caches them, and uses the browser's native cloneNode() whenever a template is used.
-JavaScript references within the templates are identified at translation time, and cached in the data-binding.
-As it turns out, the method above for generating templates is very efficient. Essentially, paperclip does the least amount of work necessary to update the DOM since it know where everything is.
+<!--
+More stuff here - no innerHTML, DOM abstractions. Generated template item is a DOM element.
+-->
 
-Paperclip will also lazily batch DOM changes together into one update, and run them on requestAnimationFrame. This kind of optimization is similar to how layout engines work, and helps prevent unnecessary performance penalties in the browser.
+1. Generated DOM is identical to the HTML templates. No weird manipulations here.
+2. Data-bindings are identified *as the template is created*. Note that this happens *once* for every template. Paperclip takes each translated template, caches them, and uses the browser's native `cloneNode()` whenever a template is used. 
+3. JavaScript references within the templates are identified at translation time, and cached in the data-binding.
+
+As it turns out, the method above for generating templates is very efficient. Essentially, paperclip does the least amount of work necessary to update the DOM since it know where everything is. 
+
+Paperclip will also lazily batch DOM changes together into one update, and run them on requestAnimationFrame. This kind of optimization is similar to how layout engines work, and helps prevent
+unnecessary performance penalties in the browser.
 
 
 ### Installation
@@ -55,9 +65,44 @@ Paperclip will also lazily batch DOM changes together into one update, and run t
 npm install paperclip --save-exact
 ```
 
-## API
+## Basic API
 
-### template()
+#### template template(source)
+
+Creates a new template
+
+```javascript
+var pc = require("paperclip");
+var template = pc.template("hello {{name}}!");
+```
+
+#### template.bind(context).render()
+
+`context` - Object, or [BindableObject](https://github.com/mojo-js/bindable-object.js)
+
+binds the template to a context, and returns a document fragment
+
+```javascript
+var pc = require("paperclip");
+var template = pc.template("hello {{name}}!");
+var view = template.bind({ name: "Bull Murray" });
+document.body.appendChild(view.render()); // will show "hello Bill Murray"
+```
+
+#### paperclip.modifier(modifierName, modifier)
+
+registers a new modifier. Here's a markdown example:
+
+```javascript
+var pc = require("paperclip");
+pc.modifier("markdown", require("marked"));
+var template = pc.template("{{ content | markdown }}");
+document.body.appendChild(template.bind({
+  content: "hello **world**!"
+}).render());
+```
+
+
 
 ## Template Syntax
 
@@ -129,7 +174,7 @@ Unbound helper - don't watch for any changes:
 
 #### &#123;&#123; html: content &#125;&#125;
 
-Similar to escaping content in mustache (`&#123;&#123;&#123;content&#125;&#125;&#125;`). Good for security.
+Similar to escaping content in mustache (`{{{content}}}`). Good for security.
 
 ```html
 Unsafe:
@@ -198,7 +243,7 @@ Executed when an event is fired on the DOM element. Here are all the available e
 
 #### &#123;&#123; show: bool &#125;&#125;
 
-Toggles the display mode of a given element. This is similar to the ` &#123;&#123;#if: expression &#125;&#125;` conditional helper.
+Toggles the display mode of a given element. This is similar to the `{{if:expression}}` conditional helper.
 
 
 #### &#123;&#123; css: styles &#125;&#125;
