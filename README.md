@@ -11,6 +11,7 @@ Paperclip is a very fast template engine for JavaScript.
 - works with older browsers (IE 8+ tested)
 - accepts vanilla objects
 - works with NodeJS
+- supports custom pollyfills
 
 ### Examples
 
