@@ -305,27 +305,73 @@ Focuses cursor on an element.
 <input data-bind={{ focus: true }}></input>
 ```
 
-### Basic API
+### Advanced API
+
+{{
+  properties: {
+    category: "core api"
+  }
+}}
 
 
-#### paperclip([application])
+#### paperclip.blockBinding(name, blockBindingClass)
 
-initializes paperclip with the given application. `Application.main` will be used if this is omitted.
+Registers a new block binding class. Block bindings allow you to modify how templates behave. Some examples
+include the `&#123;&#123;#if:condition&#125;&#125;&#123;&#123;/&#125;&#125;`, and `&#123;&#123;html:content&#125;&#125;`.
 
-#### paperclip.modifier(modifierName, modifier)
+#### BaseBlockBinding(options)
 
-registers a new paperclip modifier within the context of the application. See example above.
+Base class to extend when creating custom block bindings. Here's an example for a [components binding](http://requirebin.com/?gist=858e3b7928eea5e1bed6):
 
-#### template paperclip.template(source)
+```javascript
+```
 
-Parses a template.
+#### override bind(context)
 
-#### template.bind(context).render()
+Called when the block is added, and bound to the DOM. This is where you initialize your binding.
+Be sure to call `paperclip.BaseBlockBinding.prototype.bind.call(this, context)` if you override.
+this method
 
-Binds a template, and returns a document fragment.
+#### override unbind()
 
-**For core paperclip documentation, see [Core API](/docs/core-api)**
+Called when the block is removed from the DOM. This is a cleanup method.
 
-<!--
-extended API - router docs
--->
+#### override _onChange(context)
+
+Called whenever the properties change for the block binding. These properties are defined in the
+template. Here's the syntax:
+
+```html
+{{blockName: blockProperties }}
+```
+
+#### nodeFactory
+
+the [node factory](https://github.com/mojo-js/nofactor.js) for creating elements. Use this to
+make your block binding compatible with the NodeJS and the browser.
+
+#### application
+
+the application
+
+#### clip
+
+the data binding
+
+#### scriptName
+
+the name registered for the block binding
+
+#### section
+
+the section which contains all the elements
+
+#### contentTemplate
+
+the content template - this might be undefined if your block binding doesn't have `&#123;&#123;#block:properties&#125;&#125;content&#123;&#123;/&#125;&#125;`.
+
+#### childBlockTemplate
+
+The child block template. Used in the [conditional block](https://github.com/mojo-js/paperclip.js/blob/master/lib/paper/bindings/block/conditional.js).
+
+
