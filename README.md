@@ -8,6 +8,11 @@ Paperclip is a very fast template engine for JavaScript.
 - inline javascript
 - compiled templates
 - explicit data-binding (one-way, two-way, unbound operators)
+- works with older browsers (IE 8+ tested)
+
+### Examples
+
+- [50k items in 1.5 seconds](http://requirebin.com/?gist=02cb9f69551a6032ad93)
 
 
 ### Performance
@@ -49,6 +54,10 @@ Paperclip will also lazily batch DOM changes together into one update, and run t
 ```
 npm install paperclip --save-exact
 ```
+
+## API
+
+### template()
 
 ## Template Syntax
 
