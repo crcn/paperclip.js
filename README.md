@@ -9,6 +9,7 @@ Paperclip is a very fast template engine for JavaScript.
 - compiled templates
 - explicit data-binding (one-way, two-way, unbound operators)
 - works with older browsers (IE 8+ tested)
+- accepts vanilla objects
 
 ### Examples
 
