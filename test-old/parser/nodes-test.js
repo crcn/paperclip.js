@@ -1,8 +1,9 @@
 var parser = require("../../lib/parser/parser.js"),
 expect     = require("expect.js"),
-BindableObject = require("bindable-object");
+pc         = require("../.."),
+bindable   = require("bindable");
 
-describe(__filename + "#", function () {
+describe("parser/node#", function () {
 
   it("can parse a node without children", function () {
     parser.parse("<a />");
@@ -100,51 +101,51 @@ describe(__filename + "#", function () {
       }
     });
 
-    xit("trims whitespace from attributes", function () {
+    it("trims whitespace from attributes", function () {
       var tpl = pc.template("<input value=' {{name}}'></input>");
       expect(tpl.bind(new bindable.Object({ name: "john"})).toString()).to.be('<input value="john">');
     });
 
-    xit("trims whitespace from the start & end of elements", function () {
+    it("trims whitespace from the start & end of elements", function () {
       var tpl = pc.template("<div> hello {{name}} </div>");
       expect(tpl.bind(new bindable.Object({ name: "john"})).toString()).to.be("<div>hello john</div>");
     });
 
-    xit("maintains attribute spaces with a text binding", function () {
+    it("maintains attribute spaces with a text binding", function () {
       var tpl = pc.template("<div class='blue red {{color}} yellow'></div>");
       expect(tpl.bind(new bindable.Object({ color: "blue" })).toString()).to.be('<div class="blue red blue yellow"></div>');
     });
 
-    xit("can data-bind unregistered atts", function () {
+    it("can data-bind unregistered atts", function () {
       var tpl = pc.template("{{_id:'aa'}}").bind(new bindable.Object());
       expect(tpl.bindings.clip.get("_id")).to.be("aa");
     });
 
-    xit("can set value: to the first arg if it's not there", function () {
+    it("can set value: to the first arg if it's not there", function () {
       var tpl = pc.template("{{name,_id:'aa',_id2:'aaa'}}").bind(new bindable.Object());
       expect(tpl.bindings.clip.get("_id")).to.be("aa");
     });
 
-    xit("can reference bindings from data-bind", function () {
+    it("can reference bindings from data-bind", function () {
       var tpl = pc.template("<div data-bind={{name,_id:'aa',_id2:'aaa'}}></div>").bind(new bindable.Object({name:"john"}));
       expect(tpl.bindings.clip.get("_id")).to.be("aa");
       expect(tpl.bindings.clip.get("_id2")).to.be("aaa");
       expect(tpl.bindings.clip.get("value")).to.be("john");
     });
 
-    xit("can reference bindings from any attribute", function () {
+    it("can reference bindings from any attribute", function () {
       var tpl = pc.template("<div class={{name,_id:'aa',_id2:'aaa'}}></div>").bind(new bindable.Object({name:"john"}));
       expect(tpl.bindings.clippedBuffer.buffer[0].clip.get("_id")).to.be("aa");
       expect(tpl.bindings.clippedBuffer.buffer[0].clip.get("_id2")).to.be("aaa");
       expect(tpl.bindings.clippedBuffer.buffer[0].clip.get("value")).to.be("john");
     });
 
-    xit("preserves whitespace between nodes & text nodes", function () {
+    it("preserves whitespace between nodes & text nodes", function () {
       var tpl = pc.template("<strong>hello</strong> world").bind(new bindable.Object());
       expect(tpl.toString()).to.be("<strong>hello</strong> world");
     });
 
-    xit("preserves whitespace between nodes & blocks", function () {
+    it("preserves whitespace between nodes & blocks", function () {
       var tpl = pc.template("<strong>hello</strong> {{name}}").bind(new bindable.Object({name:"john"}));
       expect(tpl.toString()).to.be("<strong>hello</strong> john");
     });

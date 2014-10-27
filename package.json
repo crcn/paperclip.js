@@ -1,9 +1,8 @@
 {
   "name": "paperclip",
-  "version": "0.5.19",
+  "version": "0.6.0",
   "description": "controller logic:",
   "main": "./lib/index.js",
-  "browserify": "./lib/browser.js",
   "scripts": {
     "test": "mocha ./test/*/*-test.js --ignore-leaks --bail"
   },
@@ -27,7 +26,11 @@
     "jsdom": "0.10.5",
     "jshint": "^2.5.4",
     "mocha": "~1.15.1",
+    "mojo-cli": "0.0.22",
+    "node-static": "^0.7.6",
     "pegjs": "^0.8.0",
+    "react": "^0.11.2",
+    "statsjs": "^1.0.6",
     "structr": "~0.2.3",
     "uglifyjs": "^2.3.6"
   },
@@ -37,7 +40,8 @@
   "dependencies": {
     "async": "0.7.x",
     "asyngleton": "0.1.x",
-    "bindable": "0.6.x",
+    "bindable-object": "0.0.6",
+    "document-section": "^0.2.6",
     "dref": "0.0.x",
     "gaze": "^0.6.4",
     "he": "~0.4.1",

@@ -2,7 +2,7 @@ var parser = require("../../lib/parser/parser.js"),
 expect     = require("expect.js"),
 bindable   = require("bindable");
 
-describe(__filename + "#", function () {
+describe("parser/script#", function () {
 
 
 
