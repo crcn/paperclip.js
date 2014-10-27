@@ -106,7 +106,7 @@ document.body.appendChild(template.bind({
 
 ## Template Syntax
 
-#### &#123;&#123; blocks &#125;&#125;
+#### {{ blocks }}
 
 Variable blocks as placeholders for information that might change. For example:
 
@@ -172,7 +172,7 @@ Unbound helper - don't watch for any changes:
 
 ### Built-in components
 
-#### &#123;&#123; html: content &#125;&#125;
+#### {{ html: content }}
 
 Similar to escaping content in mustache (`{{{content}}}`). Good for security.
 
@@ -184,7 +184,7 @@ Safe:
 {{ content }} <br />
 ```
 
-#### &#123;&#123; #if: condition &#125;&#125;
+#### {{ #if: condition }}
 
 Conditional block helper
 
@@ -204,7 +204,7 @@ Conditional block helper
 data-bind attributes are inspired by [knockout.js](http://knockoutjs.com/). This is useful if you want to attach behavior to any DOM element.
 
 
-#### &#123;&#123; model: context &#125;&#125;
+#### {{ model: context }}
 
 Input data-binding
 
@@ -215,7 +215,7 @@ Input data-binding
 
 Notice the `<~>` operator. This tells paperclip to bind both ways. See [binding operators](#binding-operators) for more info.
 
-#### &#123;&#123; event: expression &#125;&#125;
+#### {{ event: expression }}
 
 Executed when an event is fired on the DOM element. Here are all the available events:
 
@@ -241,12 +241,12 @@ Executed when an event is fired on the DOM element. Here are all the available e
 ```
 
 
-#### &#123;&#123; show: bool &#125;&#125;
+#### {{ show: bool }}
 
 Toggles the display mode of a given element. This is similar to the `{{if:expression}}` conditional helper.
 
 
-#### &#123;&#123; css: styles &#125;&#125;
+#### {{ css: styles }}
 
 Sets the css of a given element. [For example](http://jsfiddle.net/JTxdM/81/):
 
@@ -274,7 +274,7 @@ how hot is it (fahrenheit)?: <input type="text" class="form-control" data-bind="
 </strong>
 ```
 
-#### &#123;&#123; style: styles &#125;&#125;
+#### {{ style: styles }}
 
 Sets the style of a given element.
 
@@ -289,7 +289,7 @@ size: <input type="text" data-bind="{{ model: <~>size }}" class="form-control"><
 }}">Hello World</span>
 ```
 
-#### &#123;&#123; disable: bool &#125;&#125;
+#### {{ disable: bool }}
 
 Toggles the enabled state of an element.
 
@@ -297,7 +297,7 @@ Toggles the enabled state of an element.
 <button data-bind={{ disable: !formIsValid }}>Sign Up</button>
 ```
 
-#### &#123;&#123; focus: bool &#125;&#125;
+#### {{ focus: bool }}
 
 Focuses cursor on an element.
 
@@ -317,13 +317,35 @@ Focuses cursor on an element.
 #### paperclip.blockBinding(name, blockBindingClass)
 
 Registers a new block binding class. Block bindings allow you to modify how templates behave. Some examples
-include the `&#123;&#123;#if:condition&#125;&#125;&#123;&#123;/&#125;&#125;`, and `&#123;&#123;html:content&#125;&#125;`.
+include the `{{#if:condition}}{{/}}`, and `{{html:content}}`.
 
 #### BaseBlockBinding(options)
 
 Base class to extend when creating custom block bindings. Here's an example for a [components binding](http://requirebin.com/?gist=858e3b7928eea5e1bed6):
 
 ```javascript
+var pc = require("paperclip");
+
+var ComponentBlockBinding = pc.BaseBlockBinding.extend({
+  bind: function (context) {
+		this.view = this.template.bind();
+    this.section.appendChild(this.view.render());
+    pc2.BaseBlockBinding.prototype.bind.call(this, context);
+  },
+  _onChange: function (properties) {
+		this.view.context.setProperties(properties);
+  }
+});
+
+pc.blockBinding("hello", ComponentBlockBinding.extend({
+  hello: pc.template("hello <strong>{{message}}</strong>!")
+});
+```
+
+template:
+
+```html
+{{ hello: { message: "world" }}}
 ```
 
 #### override bind(context)
@@ -368,7 +390,7 @@ the section which contains all the elements
 
 #### contentTemplate
 
-the content template - this might be undefined if your block binding doesn't have `&#123;&#123;#block:properties&#125;&#125;content&#123;&#123;/&#125;&#125;`.
+the content template - this might be undefined if your block binding doesn't have `{{#block:properties}}content{{/}}`.
 
 #### childBlockTemplate
 
