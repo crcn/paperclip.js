@@ -57,7 +57,28 @@ npm install paperclip --save-exact
 
 ## API
 
-### template()
+### template template(source)
+
+Creates a new template
+
+```javascript
+var pc = require("paperclip");
+var template = pc.template("hello {{name}}!");
+```
+
+### template.bind(context).render()
+
+`context` - Object, or [BindableObject](https://github.com/mojo-js/bindable-object.js)
+
+binds the template to a context, and returns a document fragment
+
+```javascript
+var pc = require("paperclip");
+var template = pc.template("hello {{name}}!");
+template.bind({ name: "Bull Murray" });
+document.body.appendChild(template.render()); // will show "hello Bill Murray"
+```
+
 
 ## Template Syntax
 
