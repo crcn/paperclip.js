@@ -65,7 +65,7 @@ unnecessary performance penalties in the browser.
 npm install paperclip --save-exact
 ```
 
-## API
+## Basic API
 
 #### template template(source)
 
@@ -85,9 +85,23 @@ binds the template to a context, and returns a document fragment
 ```javascript
 var pc = require("paperclip");
 var template = pc.template("hello {{name}}!");
-template.bind({ name: "Bull Murray" });
-document.body.appendChild(template.render()); // will show "hello Bill Murray"
+var view = template.bind({ name: "Bull Murray" });
+document.body.appendChild(view.render()); // will show "hello Bill Murray"
 ```
+
+#### paperclip.modifier(modifierName, modifier)
+
+registers a new modifier. Here's a markdown example:
+
+```javascript
+var pc = require("paperclip");
+pc.modifier("markdown", require("marked"));
+var template = pc.template("{{ content | markdown }}");
+document.body.appendChild(template.bind({
+  content: "hello **world**!"
+}).render());
+```
+
 
 
 ## Template Syntax
