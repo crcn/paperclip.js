@@ -15,10 +15,13 @@ Paperclip is a very fast template engine for JavaScript.
 
 Paperclip templates are translated from HTML, straight to JavaScript - this also includes data-bindings. For example, here's a template:
 
+```html
 hello {{name}}!
+```
 
 Here's the templated translated to JavaScript:
 
+```javascript
 module.exports = (function(fragment, block, element, text, comment, parser, modifiers) {
   return fragment([text("hello "), block({
     'value': {
@@ -29,6 +32,7 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
     }
   })]);
 });
+```
 
 Pretty clear what's going on. Here's what we know at a glance:
 
