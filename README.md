@@ -17,6 +17,7 @@ Paperclip is a very fast template engine for JavaScript.
 - [50k items in 1.5 seconds](http://requirebin.com/?gist=02cb9f69551a6032ad93)
 - [simple number incrementer](http://requirebin.com/?gist=8be78007f4cb70da67b1)
 - [inline html](http://requirebin.com/?gist=bbb9b0eaccd3d7e41df1)
+- [custom block components](http://requirebin.com/?gist=858e3b7928eea5e1bed6)
 
 
 ### Performance
