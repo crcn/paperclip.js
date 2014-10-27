@@ -372,21 +372,13 @@ template. Here's the syntax:
 the [node factory](https://github.com/mojo-js/nofactor.js) for creating elements. Use this to
 make your block binding compatible with the NodeJS and the browser.
 
-#### application
-
-the application
-
-#### clip
-
-the data binding
-
 #### scriptName
 
 the name registered for the block binding
 
 #### section
 
-the section which contains all the elements
+the [document section](https://github.com/mojo-js/document-section.js) which contains all the elements
 
 #### contentTemplate
 
