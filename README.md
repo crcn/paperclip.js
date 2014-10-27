@@ -307,13 +307,6 @@ Focuses cursor on an element.
 
 ### Advanced API
 
-{{
-  properties: {
-    category: "core api"
-  }
-}}
-
-
 #### paperclip.blockBinding(name, blockBindingClass)
 
 Registers a new block binding class. Block bindings allow you to modify how templates behave. Some examples
