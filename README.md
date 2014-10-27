@@ -328,12 +328,12 @@ var pc = require("paperclip");
 
 var ComponentBlockBinding = pc.BaseBlockBinding.extend({
   bind: function (context) {
-		this.view = this.template.bind();
+    this.view = this.template.bind();
     this.section.appendChild(this.view.render());
     pc2.BaseBlockBinding.prototype.bind.call(this, context);
   },
   _onChange: function (properties) {
-		this.view.context.setProperties(properties);
+    this.view.context.setProperties(properties);
   }
 });
 
