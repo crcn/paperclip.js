@@ -7,7 +7,7 @@ _ = require("lodash");
 
 var buffer = [];
 
-var tpl = pc.template("item {{i}} {{i}}<br />");
+var tpl = pc.template("item {{~i}} {{~i}}<br />");
 
 var frag = document.createDocumentFragment();
 
@@ -72,7 +72,7 @@ global.renderVue = renderVue;
 
 function benchmark (label, run, complete) {
 
-  var times = [], _i = 0, _c = 10, _n = 1000 * 3;
+  var times = [], _i = 0, _c = 5, _n = 1000 * 5;
 
   var startTime = Date.now();
 
@@ -102,7 +102,7 @@ function benchmark (label, run, complete) {
 
   function tick () {
 
-    if (_i++ > _c) return finished();
+    if (_i++ >= _c) return finished();
     document.body.innerHTML = buffer.join("");
     var start = Date.now(), _t;
     run(_n);
