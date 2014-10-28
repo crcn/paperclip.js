@@ -7,15 +7,15 @@ _ = require("lodash");
 
 var buffer = [];
 
-var tpl = pc.template("{{'item ' + ~i + ' ' + ~i}}<br />");
+var tpl = pc.template("<div>{{#each:source}}<div>{{'item ' + ~model + ' ' + ~model}}<br /></div>{{/}}</div>");
 
 var frag = document.createDocumentFragment();
 
-frag.appendChild(document.createTextNode("item "));
-frag.appendChild(document.createTextNode("a"));
-frag.appendChild(document.createTextNode(""));
-frag.appendChild(document.createTextNode("a"));
-frag.appendChild(document.createElement("br"));
+var div = document.createElement("div");
+div.appendChild(document.createTextNode("item 1 2"));
+div.appendChild(document.createElement("br"));
+frag.appendChild(div);
+
 
 var BigList = React.createClass({
   render: function () {
@@ -42,11 +42,20 @@ function renderReact (i) {
 }
 
 function renderFragment (i) {
-  return frag.cloneNode(true);
+  var f = frag.cloneNode(true);
+
+  f.childNodes[0].childNodes[0].nodeValue = "item " + i + " " + i;
+
+  return f;
 }
 
 function renderTemplate (i) {
   return tpl.bind({i:i}).render();
+}
+
+function renderPaperclip (i) {
+  var source = Array.apply(null, new Array(i)).map(function (v, i) { return i; }).reverse();
+  document.body.appendChild(tpl.bind({source:source}).render());
 }
 
 
@@ -63,19 +72,19 @@ function renderVue (i) {
     data: { items: items },
     template: 
       '<div v-repeat="items">' +
-        'itemx {{i + " " + i}}<br />' +
+        '<div>item {{i + " " + i}}<br /></div>' +
       '</div>' 
   });
 }
 
 global.renderVue = renderVue;
 global.renderReact = renderReact;
-global.renderPaperclip = wrapRender(renderTemplate);
+global.renderPaperclip = renderPaperclip;
 
 
 function benchmark (label, run, complete) {
 
-  var times = [], _i = 0, _c = 5, _n = 1000;
+  var times = [], _i = 0, _c = 5, _n = 1000 * 5;
 
   var startTime = Date.now();
 
