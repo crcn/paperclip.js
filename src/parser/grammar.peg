@@ -44,7 +44,7 @@
   function attrValues (values) {
 
     values = values.filter(function (v) {
-      return!/^[ \n\t\r]+$/.test(v.value);
+      return!/^[\n\t\r]+$/.test(v.value);
     });
 
     var v = values.length === 1 && values[0].type === "string" ? values[0] : new ArrayExpression(new ParametersExpression(values));

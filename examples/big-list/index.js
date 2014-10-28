@@ -36,6 +36,14 @@ function wrapRender (render) {
     }
   }
 }
+function runGetChildNodes (i, withGetter) {
+  for (var j = i; j--;) {
+    var clone = div.cloneNode(true);
+    if (withGetter) clone.children[0];
+  }
+}
+
+global.runGetChildNodes = runGetChildNodes;
 
 function renderReact (i) {
   React.renderComponent(BigList({i:i}), document.body);
