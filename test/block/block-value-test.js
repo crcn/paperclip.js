@@ -32,4 +32,8 @@ describe(__filename + "#", function () {
     v.context.set("b", 3);
     expect(v.toString()).to.be('2 + 3 is 5');
   });
+
+  it("properly escapes html entities", function () {
+    expect(pc.template("{{content}}").bind({content:"<script />"}).render().toString()).to.be("&#x3C;script /&#x3E;");
+  });
 });

@@ -7,7 +7,7 @@ _ = require("lodash");
 
 var buffer = [];
 
-var tpl = pc.template("item {{~i}} {{~i}}<br />");
+var tpl = pc.template("{{'item ' + ~i + ' ' + ~i}}<br />");
 
 var frag = document.createDocumentFragment();
 
@@ -22,7 +22,7 @@ var BigList = React.createClass({
     var items = [];
     
     for (var i = this.props.i; i--;) {
-      items.push(React.DOM.div(null, "item " + i, " ", "item " + i, React.DOM.br()));
+      items.push(React.DOM.div(null, "item " + i + " " + i, React.DOM.br()));
     }
     
     return React.DOM.div(null, items);
@@ -49,6 +49,7 @@ function renderTemplate (i) {
   return tpl.bind({i:i}).render();
 }
 
+
 function renderVue (i) {
 
   var items = [];
@@ -62,17 +63,19 @@ function renderVue (i) {
     data: { items: items },
     template: 
       '<div v-repeat="items">' +
-        'itemx {{i}} {{i}}<br />' +
+        'itemx {{i + " " + i}}<br />' +
       '</div>' 
   });
 }
 
 global.renderVue = renderVue;
+global.renderReact = renderReact;
+global.renderPaperclip = wrapRender(renderTemplate);
 
 
 function benchmark (label, run, complete) {
 
-  var times = [], _i = 0, _c = 5, _n = 1000 * 5;
+  var times = [], _i = 0, _c = 5, _n = 1000;
 
   var startTime = Date.now();
 
@@ -124,10 +127,13 @@ window.renderTemplate = function () {
 
 window.runBenchmark = function () {
   async.waterfall([
-    _.bind(benchmark, void 0, "Paperclip", wrapRender(renderTemplate)),
+    _.bind(benchmark, void 0, "Paperclip", renderPaperclip),
     _.bind(benchmark, void 0, "Vue", renderVue),
     _.bind(benchmark, void 0, "React", renderReact),
-    _.bind(benchmark, void 0, "frag.cloneNode(true)", wrapRender(renderFragment))
+    _.bind(benchmark, void 0, "frag.cloneNode(true)", wrapRender(renderFragment)),
+    function () {
+      document.body.innerHTML = "";
+    }
   ]);
 }
 
