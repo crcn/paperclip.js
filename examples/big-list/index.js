@@ -1,6 +1,9 @@
 var pc = require("../../lib/index.js"),
 React = require("react"),
-stats = require("statsjs");
+stats = require("statsjs"),
+Vue = require("vue"),
+async = require("async"),
+_ = require("lodash");
 
 var buffer = [];
 
@@ -10,7 +13,7 @@ var frag = document.createDocumentFragment();
 
 frag.appendChild(document.createTextNode("item "));
 frag.appendChild(document.createTextNode("a"));
-frag.appendChild(document.createTextNode("&nbsp;"));
+frag.appendChild(document.createTextNode(""));
 frag.appendChild(document.createTextNode("a"));
 frag.appendChild(document.createElement("br"));
 
@@ -46,10 +49,30 @@ function renderTemplate (i) {
   return tpl.bind({i:i}).render();
 }
 
+function renderVue (i) {
+
+  var items = [];
+
+  for (var i2 = i; i2--;) {
+    items.push({ i: i2 });
+  }
+
+  var view = new Vue({
+    el: '#body',
+    data: { items: items },
+    template: 
+      '<div v-repeat="items">' +
+        'itemx {{i}} {{i}}<br />' +
+      '</div>' 
+  });
+}
+
+global.renderVue = renderVue;
+
 
 function benchmark (label, run, complete) {
 
-  var times = [], _i = 0, _c = 10, _n = 1000 * 5;
+  var times = [], _i = 0, _c = 10, _n = 1000 * 3;
 
   var startTime = Date.now();
 
@@ -96,13 +119,15 @@ window.renderTemplate = function () {
   document.body.appendChild(renderTemplate(Date.now()));
 }
 
+
+
+
 window.runBenchmark = function () {
-  benchmark("paperclipTemplate.bind({i:i}).render()", wrapRender(renderTemplate), function () {
-    benchmark("React.renderComponent(BigList(null), document.body)", renderReact, function () {
-      benchmark("frag.cloneNode(true)", wrapRender(renderFragment), function () {
-        document.body.innerHTML = "complete";
-      });
-    });
-  });
+  async.waterfall([
+    _.bind(benchmark, void 0, "Paperclip", wrapRender(renderTemplate)),
+    _.bind(benchmark, void 0, "Vue", renderVue),
+    _.bind(benchmark, void 0, "React", renderReact),
+    _.bind(benchmark, void 0, "frag.cloneNode(true)", wrapRender(renderFragment))
+  ]);
 }
 

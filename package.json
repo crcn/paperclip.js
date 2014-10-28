@@ -25,6 +25,7 @@
     "jquery": "~1.8.3",
     "jsdom": "0.10.5",
     "jshint": "^2.5.4",
+    "lodash": "^2.4.1",
     "mocha": "~1.15.1",
     "mojo-cli": "0.0.22",
     "node-static": "^0.7.6",
@@ -32,7 +33,8 @@
     "react": "^0.11.2",
     "statsjs": "^1.0.6",
     "structr": "~0.2.3",
-    "uglifyjs": "^2.3.6"
+    "uglifyjs": "^2.3.6",
+    "vue": "^0.10.6"
   },
   "bin": {
     "paperclip": "./bin/paperclip"

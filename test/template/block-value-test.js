@@ -10,6 +10,10 @@ describe(__filename + "#", function () {
     expect(pc.template("<span id='aa'>a{{a}}</span>{{#if:a}}b{{/else}}c{{/}}").bind().context).not.to.be(void 0);
   });
 
+  it("can render an undefined block binding", function () {
+    expect(pc.template("{{notFound:}}").bind().render().toString()).to.be("");
+  });
+
   it("can be rendered", function () {
     var tpl = pc.template("hello <strong id='a'>world</strong>!");
     expect(tpl.bind().render().toString()).to.be('hello <strong id="a">world</strong>!');
@@ -27,8 +31,5 @@ describe(__filename + "#", function () {
     expect(v.toString()).to.be('2 + 2 is 4');
     v.context.set("b", 3);
     expect(v.toString()).to.be('2 + 3 is 5');
-
-
   });
-
 });
