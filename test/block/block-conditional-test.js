@@ -1,6 +1,6 @@
 var pc   = require("../.."),
 expect   = require("expect.js"),
-bindable = require("bindable");
+BindableObject = require("bindable-object");
 
 describe(__filename + "#", function () {
 
@@ -53,7 +53,7 @@ describe(__filename + "#", function () {
 
   it("can toggle between different blocks", function () {
 
-    var c = new bindable.Object({
+    var c = new BindableObject({
       a: true,
       b: true
     })
@@ -67,6 +67,7 @@ describe(__filename + "#", function () {
         "c" + 
       "{{/}}"
     ).bind(c);
+
 
     expect(t.toString()).to.be("hello a");
     c.set("a", false);
@@ -82,7 +83,7 @@ describe(__filename + "#", function () {
 
   it("nest conditional statements", function () {
 
-    var c = new bindable.Object({
+    var c = new BindableObject({
       a: true,
       b: true
     });
@@ -113,7 +114,7 @@ describe(__filename + "#", function () {
 
   it("can be re-used after being disposed", function () {
 
-    var c = new bindable.Object({
+    var c = new BindableObject({
       running: true,
       show: true
     });

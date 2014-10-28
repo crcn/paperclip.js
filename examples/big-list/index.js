@@ -57,6 +57,10 @@ function renderFragment (i) {
   return f;
 }
 
+function renderFragmentNoGetChildNodes (i) {
+  return frag.cloneNode(true);
+}
+
 function renderTemplate (i) {
   return tpl.bind({i:i}).render();
 }
@@ -92,7 +96,7 @@ global.renderPaperclip = renderPaperclip;
 
 function benchmark (label, run, complete) {
 
-  var times = [], _i = 0, _c = 5, _n = 1000 * 5;
+  var times = [], _i = 0, _c = 20, _n = 1000 * 5;
 
   var startTime = Date.now();
 
@@ -145,9 +149,10 @@ window.renderTemplate = function () {
 window.runBenchmark = function () {
   async.waterfall([
     _.bind(benchmark, void 0, "Paperclip", renderPaperclip),
-    _.bind(benchmark, void 0, "Vue", renderVue),
+    // _.bind(benchmark, void 0, "Vue", renderVue),
     _.bind(benchmark, void 0, "React", renderReact),
     _.bind(benchmark, void 0, "frag.cloneNode(true)", wrapRender(renderFragment)),
+    _.bind(benchmark, void 0, "frag.cloneNode(true) no get childNodes", wrapRender(renderFragmentNoGetChildNodes)),
     function () {
       document.body.innerHTML = "";
     }

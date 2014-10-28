@@ -1,5 +1,6 @@
 var expect = require("expect.js"),
-pc         = require("../..");
+pc         = require("../.."),
+BindableObject = require("bindable-object");
 
 describe(__filename + "#", function () {
   it("can create a template", function () {
@@ -33,7 +34,53 @@ describe(__filename + "#", function () {
     expect(v.toString()).to.be('2 + 3 is 5');
   });
 
-  it("properly escapes html entities", function () {
+  it("properly encodes html entities", function () {
     expect(pc.template("{{content}}").bind({content:"<script />"}).render().toString()).to.be("&#x3C;script /&#x3E;");
+  });
+
+  it("can unbind a context", function () {
+
+    var c = new BindableObject({
+      name: "a"
+    });
+
+    var t = pc.template("hello {{name}}").bind(c);
+
+    expect(t.toString()).to.be("hello a");
+    t.unbind();
+    c.set("name", "b");
+    expect(t.toString()).to.be("hello a");
+  });
+
+  it("can be re-bound", function () {
+
+    var c = new BindableObject({
+      name: "a"
+    });
+
+    var t = pc.template("hello {{name}}").bind(c);
+
+    expect(t.toString()).to.be("hello a");
+    t.unbind();
+    c.set("name", "b");
+    expect(t.toString()).to.be("hello a");
+    t.bind(c);
+    expect(t.toString()).to.be("hello b");
+    c.set("name", "c");
+    expect(t.toString()).to.be("hello c");
+  });
+
+  it("doesn't double-bind values", function () {
+    var c = new BindableObject({
+      name: "a"
+    });
+
+    var i = 0;
+
+    pc.modifier("inc", function () {
+      return i++;
+    });
+
+    expect(pc.template("{{a|inc}}").bind(c).toString()).to.be("0");
   });
 });
