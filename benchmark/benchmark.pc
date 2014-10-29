@@ -1,15 +1,13 @@
 <html>
   <head>
-    <title>{{title}}</title>
+    <title>{{~title}}</title>
   </head>
   <body>
-    <p>{{text}}</p>
-    <!--{{#projects}}
-      <a href="{{url}}">{{name}}</a>
-      <p>{{description}}</p>
-    {{/projects}}
-    {{^projects}}
-      No projects
-    {{/projects}}-->
+    <p>{{~text}}</p>
+
+    {{#each:~projects}}
+      <a href="{{~url}}">{{~name}}</a>
+      <p>{{~description}}</p>
+    {{/}}
   </body>
 </html>
