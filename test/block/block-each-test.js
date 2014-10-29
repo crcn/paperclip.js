@@ -1,6 +1,6 @@
 var pc   = require("../.."),
 expect   = require("expect.js"),
-bindable = require("bindable");
+BindableCollection = require("bindable-collection");
 
 describe(__filename + "#", function () {
 
@@ -35,6 +35,12 @@ describe(__filename + "#", function () {
     expect(view.render().toString()).to.be("a12a34a56a78a910");
     var view = tpl.bind({ source: [[11,12], [13,14,15]]});
     expect(view.render().toString()).to.be("a1112a131415");
+  });
+
+  it("accepts bindable collections as source", function () {
+    var tpl = pc.template("{{#each:source,as:'a'}}{{a}}{{/}}");
+    var view = tpl.bind({ source: new BindableCollection([1,2,3,4,5])});
+    expect(view.render().toString()).to.be("12345");
   });
 
   it("can loop through a collection of item", function () {
