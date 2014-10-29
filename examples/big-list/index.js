@@ -143,8 +143,11 @@ window.renderTemplate = function () {
   document.body.appendChild(renderTemplate(Date.now()));
 }
 
-
-body.appendChild(paperclip.template("<input type='text' model={{<~>text}} focus={{true}}></input><input type='text' model={{<~>text}} focus={{true}}></input>{{text}}").bind().render());
+body.appendChild(paperclip.template("<input type='text' model={{<~>text}} onEnter={{text=_event()}} focus={{true}}></input><input type='text' model={{<~>text}} focus={{true}}></input>{{text}}").bind({
+  _event: function () {
+    return "abba";
+  }
+}).render());
 
 
 window.renderMatrix = function (count, levels) {

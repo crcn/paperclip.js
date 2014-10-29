@@ -24,6 +24,11 @@ describe(__filename + "#", function () {
     expect(view.render().toString()).to.be("67891011");
   });
 
+  it("can allocate a certain number of items", function () {
+    var tpl = pc.template("{{#each:source,allocate:10,chunk:10}}a{{/}}");
+    var view = tpl.bind();
+  });
+
   it("can nest each blocks", function () {
     var tpl = pc.template("{{#each:source,as:'a'}}a{{#each:a,as:'b'}}{{b}}{{/}}{{/}}");
     var view = tpl.bind({ source: [[1,2], [3,4], [5,6], [7,8], [9,10]]});
