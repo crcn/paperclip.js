@@ -93,7 +93,7 @@ CommentNode
   / DocType
 
 ElementNode
-  = startTag:StartTag children:ChildNodes endTag:EndTag {
+  = startTag:StartTag children:ChildNodes endTag:EndTag _ {
 
     if (startTag.name != endTag.name) {
       expected("</" + startTag.name + ">");

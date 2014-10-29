@@ -12,6 +12,20 @@ describe(__filename + "#", function () {
     var c = parser.parse("<!DOCTYPE html><a />");
   });
 
+  it("doesn't maintain whitespace between two nodes", function () {
+    var ast = parser.parse("<span>a</span>\n<span />");
+    expect(ast.childNodes.expressions.expressions.length).to.be(2);
+    ast = parser.parse("<br /> <br />")
+    expect(ast.childNodes.expressions.expressions.length).to.be(2);
+  });
+
+  it("maintains spaces between blocks", function () {
+    var ast = parser.parse("{{a}} {{b}}");
+    expect(ast.childNodes.expressions.expressions.length).to.be(3);
+    var ast = parser.parse("{{a}} {{b}} c");
+    expect(ast.childNodes.expressions.expressions.length).to.be(4);
+  });
+
   it("accepts many types of characters in the tag name", function () {
     parser.parse("<a />");
     parser.parse("<h3 />");
