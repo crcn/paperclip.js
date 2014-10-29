@@ -25,10 +25,18 @@ describe(__filename + "#", function () {
   });
 
   it("can nest each blocks", function () {
-    var tpl = pc.template("{{#each:source}}a{{#each:model}}{{model}}{{/}}{{/}}");
+    var tpl = pc.template("{{#each:source,as:'a'}}a{{#each:a,as:'b'}}{{b}}{{/}}{{/}}");
     var view = tpl.bind({ source: [[1,2], [3,4], [5,6], [7,8], [9,10]]});
     expect(view.render().toString()).to.be("a12a34a56a78a910");
     var view = tpl.bind({ source: [[11,12], [13,14,15]]});
     expect(view.render().toString()).to.be("a1112a131415");
+  });
+
+  it("can loop through a collection of item", function () {
+    var tpl = pc.template("{{#each:source,as:'a'}}{{a}}{{/}}");
+
+    var view = tpl.bind({ source: [1, 2, 3, 4, 5 ]});
+
+    expect(view.render().toString()).to.be("12345");
   });
 });
