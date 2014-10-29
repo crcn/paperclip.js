@@ -144,7 +144,7 @@ describe(__filename + "#", function () {
         parser.parse("a123$_.b123")
       });
 
-      it("don't get defined more than once", function () {
+      xit("don't get defined more than once", function () {
         var ast = parser.parse("{{a||a||a}}");
         expect(ast.childNodes.expressions.expressions[0].scripts.toJavaScript()).to.be('{\'value\':{run: function () { return this.context.a||this.context.a||this.context.a; }, refs: [["a"]]}}');
       })
