@@ -5,7 +5,7 @@ bindable = require("bindable");
 describe(__filename + "#", function () {
 
   it("can loop through a collection of item", function () {
-    var tpl = pc.template("{{#each:source}}{{model}}{{/}}");
+    var tpl = pc.template("{{#each:source,as:'model'}}{{model}}{{/}}");
 
     var view = tpl.bind({ source: [1, 2, 3, 4, 5 ]});
 
@@ -13,7 +13,7 @@ describe(__filename + "#", function () {
   });
 
   it("can replace a source", function () {
-    var tpl = pc.template("{{#each:source}}{{model}}{{/}}");
+    var tpl = pc.template("{{#each:source,as:'model'}}{{model}}{{/}}");
 
     var view = tpl.bind({ source: [1, 2, 3, 4, 5 ]});
 
@@ -38,5 +38,13 @@ describe(__filename + "#", function () {
     var view = tpl.bind({ source: [1, 2, 3, 4, 5 ]});
 
     expect(view.render().toString()).to.be("12345");
+  });
+
+  it("properly inherits properties from the parent view", function () {
+    var tpl = pc.template("{{#each:source,as:'a'}}{{a}}{{name}}{{/}}");
+
+    var view = tpl.bind({ source: [1, 2, 3, 4, 5 ], name: 'b'});
+
+    expect(view.render().toString()).to.be("1b2b3b4b5b");
   });
 });

@@ -5,7 +5,7 @@ Vue = require("vue"),
 async = require("async"),
 _ = require("lodash");
 
-var tpl = window.pcTpl = pc.template("<div>{{#each:source}}<div>{{'item ' + ~model + ' ' + ~model}}<br /></div>{{/}}</div>");
+var tpl = window.pcTpl = pc.template("<div>{{#each:source,as:'model'}}<div>{{'item ' + ~model + ' ' + ~model}}<br /></div>{{/}}</div>");
 
 var frag = document.createDocumentFragment();
 
@@ -153,7 +153,7 @@ window.renderMatrix = function (count, levels) {
 
   function getTemplate (buffer, i) {
     if (++i > levels) return "<div>" + buffer + "<br /></div>";
-    return  "<div>{{#each:model}}"+getTemplate(buffer, i)+"{{/}}</div>";
+    return  "<div>{{#each:model,as:'model'}}"+getTemplate(buffer, i)+"{{/}}</div>";
   }
 
   function repeatLine (n) {
