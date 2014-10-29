@@ -9,7 +9,7 @@ min:
 	./node_modules/.bin/uglifyjs ./dist/paperclip.js > ./dist/paperclip.min.js
 
 test-node:
-	mocha --recursive --ignore-leaks --timeout 10000
+	mocha --recursive --ignore-leaks --timeout 1000
 
 parser:
 	mkdir -p ./lib/parser
@@ -19,7 +19,7 @@ parser-watch: parser
 	fswatch ./src/parser/grammar.peg | xargs -n1 make parser
 
 test-watch:
-	mocha --recursive --ignore-leaks --reporter $(REPORTER) -b -g $(ONLY) --timeout 10000 --watch ./test ./lib
+	mocha --recursive --ignore-leaks --reporter $(REPORTER) -b -g $(ONLY) --timeout 1000 --watch ./test ./lib
 
 start-example-server:
 	./node_modules/.bin/mojo build ./examples/$(NAME)/index.js --debug --output=./examples/$(NAME)/index.bundle.js --serve=./examples --port=8085
