@@ -37,11 +37,6 @@ describe(__filename + "#", function () {
     expect(view.render().toString()).to.be("a1112a131415");
   });
 
-  it("accepts bindable collections as source", function () {
-    var tpl = pc.template("{{#each:source,as:'a'}}{{a}}{{/}}");
-    var view = tpl.bind({ source: new BindableCollection([1,2,3,4,5])});
-    expect(view.render().toString()).to.be("12345");
-  });
 
   it("can loop through a collection of item", function () {
     var tpl = pc.template("{{#each:source,as:'a'}}{{a}}{{/}}");
@@ -57,5 +52,21 @@ describe(__filename + "#", function () {
     var view = tpl.bind({ source: [1, 2, 3, 4, 5 ], name: 'b'});
 
     expect(view.render().toString()).to.be("1b2b3b4b5b");
+  });
+
+  it("accepts bindable collections as source", function () {
+    var tpl = pc.template("{{#each:source,as:'a'}}{{a}}{{/}}");
+    var view = tpl.bind({ source: new BindableCollection([1,2,3,4,5])});
+    expect(view.render().toString()).to.be("12345");
+  });
+
+  it("updates the template if the source changes", function () {
+    var tpl = pc.template("{{#each:source,as:'a'}}{{a}}{{/}}"), src;
+    var view = tpl.bind({ source: src = new BindableCollection([1,2,3,4,5])});
+    expect(view.render().toString()).to.be("12345");
+    src.splice(0, 1);
+    expect(view.toString()).to.be("2345");
+    src.splice(0, 0,-1,0,1);
+    expect(view.toString()).to.be("-1012345");
   });
 });
