@@ -90,7 +90,6 @@ describe(__filename + "#", function () {
     e.initEvent("keydown");
     e.keyCode = 8;
     t.node.dispatchEvent(e);
-
   });
 
   it("can capture an onEscape event", function (next) {
