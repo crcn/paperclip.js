@@ -5,9 +5,7 @@ Vue = require("vue"),
 async = require("async"),
 _ = require("lodash");
 
-var buffer = [];
-
-var tpl = pc.template("<div>{{#each:source}}<div>{{'item ' + ~model + ' ' + ~model}}<br /></div>{{/}}</div>");
+var tpl = window.pcTpl = pc.template("<div>{{#each:source}}<div>{{'item ' + ~model + ' ' + ~model}}<br /></div>{{/}}</div>");
 
 var frag = document.createDocumentFragment();
 
@@ -94,9 +92,11 @@ global.renderReact = renderReact;
 global.renderPaperclip = renderPaperclip;
 
 
-function benchmark (label, run, complete) {
+function benchmark (_c, _n, label, run, complete) {
 
-  var times = [], _i = 0, _c = 20, _n = 1000 * 5;
+  document.body.innerHTML = "";
+
+  var times = [], _i = 0;
 
   var startTime = Date.now();
 
@@ -127,7 +127,7 @@ function benchmark (label, run, complete) {
   function tick () {
 
     if (_i++ >= _c) return finished();
-    document.body.innerHTML = buffer.join("");
+    document.body.innerHTML = "";
     var start = Date.now(), _t;
     run(_n);
     times.push(_t = Date.now() - start);
@@ -144,15 +144,93 @@ window.renderTemplate = function () {
 }
 
 
+body.appendChild(paperclip.template("<input type='text' model={{<~>text}} focus={{true}}></input><input type='text' model={{<~>text}} focus={{true}}></input>{{text}}").bind().render());
 
 
-window.runBenchmark = function () {
+window.renderMatrix = function (count, levels) {
+  if (!count) count = 5;
+  if (!levels) levels = 2;
+
+  function getTemplate (buffer, i) {
+    if (++i > levels) return "<div>" + buffer + "<br /></div>";
+    return  "<div>{{#each:model}}"+getTemplate(buffer, i)+"{{/}}</div>";
+  }
+
+  function repeatLine (n) {
+    return Array.apply(null, new Array(n)).map(function () { return "--" }).join("");
+  }
+
+  function getSource (count, i) {
+    if (++i > levels) return Array.apply(null, new Array(count)).map(function (a, j) { return j; });
+    return Array.apply(null, new Array(count)).map(function () { 
+      return getSource(count, i);
+    });
+  }
+
+
+  var tplSource = getTemplate("{{model}}", 0);
+
+  var tpl = paperclip.template(tplSource);
+
+  console.log(tplSource);
+
+
+  var source = getSource(count, 1);
+
+
+
+
+
+
+  var v = tpl.bind();
+
+  document.body.innerHTML = "";
+
+  document.body.appendChild(v.render());
+
+  window.resizeMatrix = function (count) {
+
+    var n = Math.pow(count, levels);
+
+    if (n > 1000 * 100) {
+      return console.warn("cannot render more than 100,000 items! (trying to render %d items)", n);
+    }
+
+    v.context.set("model", getSource(count, 1));
+    console.log("rendering %d items in a matrix", n);
+  }
+
+  resizeMatrix(count);
+};
+
+
+
+
+var v;
+
+window.renderListItems = function (n, s) {
+
+  if (!s) s = 0;
+  
+  if (!v) {
+    v = tpl.bind();
+    document.body.appendChild(v.render());
+  }
+  v.context.set("source", Array.apply(null, new Array(n)).map(function (a, i) { return s + i; }));
+}
+
+
+window.runBenchmark = function (n, c) {
+
+  if (!c) c = 5;
+  if (!n) n = 1000 * 5;
+
   async.waterfall([
-    _.bind(benchmark, void 0, "Paperclip", renderPaperclip),
+    _.bind(benchmark, void 0, c, n, "Paperclip", renderPaperclip),
     // _.bind(benchmark, void 0, "Vue", renderVue),
-    _.bind(benchmark, void 0, "React", renderReact),
-    _.bind(benchmark, void 0, "frag.cloneNode(true)", wrapRender(renderFragment)),
-    _.bind(benchmark, void 0, "frag.cloneNode(true) no get childNodes", wrapRender(renderFragmentNoGetChildNodes)),
+    _.bind(benchmark, void 0, c, n, "React", renderReact),
+    _.bind(benchmark, void 0, c, n, "frag.cloneNode(true)", wrapRender(renderFragment)),
+    _.bind(benchmark, void 0, c, n, "frag.cloneNode(true) no get childNodes", wrapRender(renderFragmentNoGetChildNodes)),
     function () {
       document.body.innerHTML = "";
     }
