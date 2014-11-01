@@ -55,12 +55,9 @@
     "platform": "1.0.x",
     "protoclass": "0.0.x",
     "runlater": "0.0.x",
-    "sift": "0.0.12",
-    "strscanner": "0.0.x",
     "type-component": "0.0.x",
     "uglify-js": "1.3.x",
     "underscore": "1.4.x",
-    "walkr": "0.0.x",
     "watch_r": "0.0.x"
   }
 }
