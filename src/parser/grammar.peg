@@ -83,7 +83,7 @@ DocType
     }
 
 ChildNodes
-  = children:(TextNode/BlockBinding/CommentNode/ElementNode)* { return new ArrayExpression(new ParametersExpression(trimTextExpressions(children))) }
+  = children:(ElementNode/TextNode/BlockBinding/CommentNode)* { return new ArrayExpression(new ParametersExpression(trimTextExpressions(children))) }
 
 
 CommentNode
@@ -93,7 +93,7 @@ CommentNode
   / DocType
 
 ElementNode
-  = startTag:StartTag children:ChildNodes endTag:EndTag _ {
+  = startTag:StartTag children:ChildNodes endTag:EndTag {
 
     if (startTag.name != endTag.name) {
       expected("</" + startTag.name + ">");

@@ -19,6 +19,11 @@ describe(__filename + "#", function () {
     expect(ast.childNodes.expressions.expressions.length).to.be(2);
   });
 
+  it("maintains whitespace if text is after an element", function () {
+    var ast = parser.parse("<span>a</span> b");
+    expect(ast.childNodes.expressions.expressions[1].value).to.be(" b");
+  });
+
   it("maintains spaces between blocks", function () {
     var ast = parser.parse("{{a}} {{b}}");
     expect(ast.childNodes.expressions.expressions.length).to.be(3);
