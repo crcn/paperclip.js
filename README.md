@@ -11,7 +11,6 @@ Paperclip is a template engine designed for the DOM. It works by leveraging the 
 - works with older browsers (IE 8+ tested)
 - accepts vanilla javascript objects
 - works with NodeJS
-- supports custom pollyfills
 - 50kb minified
 - no browser dependencies
 
