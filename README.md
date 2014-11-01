@@ -119,8 +119,7 @@ inline-json {{ {'5+10 is':5+10, 'message is defined?' : message ? 'yes' : 'no' }
 
 ## Modifiers
 
-Modifiers format data in a variable block. A good example of this might be presenting data to the user depending on their locale, or parsing data into markdown. Here are a few examples of how you can use
-modifiers:
+Modifiers format data in a variable block. A good example of this might be presenting data to the user depending on their locale, or parsing data into markdown. Here's an example of how you can use modifiers:
 
 <!--
 function () {
