@@ -16,11 +16,7 @@ Paperclip is a template engine designed for the DOM. It works by leveraging the 
 
 ### Examples
 
-- [50k items in 1.5 seconds](http://requirebin.com/?gist=02cb9f69551a6032ad93)
-- [simple number incrementer](http://requirebin.com/?gist=8be78007f4cb70da67b1)
 - [inline html](http://requirebin.com/?gist=bbb9b0eaccd3d7e41df1)
-- [custom block components](http://requirebin.com/?gist=858e3b7928eea5e1bed6)
-- [each block](http://requirebin.com/?gist=d716391c84986bdf4878)
 - [partial todomvc example](http://paperclip-todomvc-example.herokuapp.com/)
 
 
