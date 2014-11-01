@@ -201,7 +201,7 @@ Conditional block helper
 {{/}}
 ```
 
-#### {{#each:source}}
+#### {{#each: source }}
 
 Creates a list of items. 
 
