@@ -3,27 +3,37 @@ Paperclip is a template engine designed for the DOM. It works by leveraging the 
 
 ### Features
 
+- mustache-like syntax
+- extensible
+- super fast
 - inline javascript
 - compiled templates
 - explicit data-binding (one-way, two-way, unbound operators)
 - works with older browsers (IE 8+ tested)
-- accepts vanilla objects
+- accepts vanilla javascript objects
 - works with NodeJS
-- supports custom pollyfills
+- 50kb minified
+- no browser dependencies
 
 ### Examples
 
-- [50k items in 1.5 seconds](http://requirebin.com/?gist=02cb9f69551a6032ad93)
-- [simple number incrementer](http://requirebin.com/?gist=8be78007f4cb70da67b1)
 - [inline html](http://requirebin.com/?gist=bbb9b0eaccd3d7e41df1)
-- [custom block components](http://requirebin.com/?gist=858e3b7928eea5e1bed6)
-- [each block](http://requirebin.com/?gist=d716391c84986bdf4878)
+- [partial todomvc example](http://paperclip-todomvc-example.herokuapp.com/)
 
 
 ### Installation
 
-NPM: `npm install paperclip`
-Bower: `bower install paperclip`
+NPM: 
+
+```
+npm install paperclip
+```
+
+Bower: 
+
+```
+bower install paperclip
+```
 
 
 ## API
@@ -53,7 +63,7 @@ document.body.appendChild(view.render()); // will show "hello Bill Murray"
 
 #### paperclip.modifier(modifierName, modifier)
 
-registers a new modifier. Here's a [markdown example](http://requirebin.com/?gist=d8ab295c936e577a172f):
+registers a new modifier.
 
 ```javascript
 var pc = require("paperclip");
@@ -110,8 +120,7 @@ inline-json {{ {'5+10 is':5+10, 'message is defined?' : message ? 'yes' : 'no' }
 
 ## Modifiers
 
-Modifiers format data in a variable block. A good example of this might be presenting data to the user depending on their locale, or parsing data into markdown. Here are a few examples of how you can use
-modifiers:
+Modifiers format data in a variable block. A good example of this might be presenting data to the user depending on their locale, or parsing data into markdown. Here's an example of how you can use modifiers:
 
 <!--
 function () {
@@ -201,7 +210,7 @@ Conditional block helper
 {{/}}
 ```
 
-#### {{#each:source}}
+#### {{#each: source }}
 
 Creates a list of items. 
 
