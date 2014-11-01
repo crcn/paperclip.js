@@ -10,6 +10,7 @@ Paperclip is a template engine designed for the DOM. It works by leveraging the 
 - accepts vanilla objects
 - works with NodeJS
 - supports custom pollyfills
+- 50kb minified
 
 ### Examples
 
@@ -22,8 +23,17 @@ Paperclip is a template engine designed for the DOM. It works by leveraging the 
 
 ### Installation
 
-NPM: `npm install paperclip`
-Bower: `bower install paperclip`
+NPM: 
+
+```
+npm install paperclip
+```
+
+Bower: 
+
+```
+bower install paperclip
+```
 
 
 ## API
