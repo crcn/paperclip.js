@@ -4,6 +4,7 @@ Paperclip is a template engine designed for the DOM. It works by leveraging the 
 ### Features
 
 - mustache-like syntax
+- extensible
 - super fast
 - inline javascript
 - compiled templates
