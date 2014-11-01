@@ -62,7 +62,7 @@ document.body.appendChild(view.render()); // will show "hello Bill Murray"
 
 #### paperclip.modifier(modifierName, modifier)
 
-registers a new modifier. Here's a [markdown example](http://requirebin.com/?gist=d8ab295c936e577a172f):
+registers a new modifier.
 
 ```javascript
 var pc = require("paperclip");
