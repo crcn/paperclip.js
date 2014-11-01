@@ -1,6 +1,5 @@
 var pc   = require("../.."),
-expect   = require("expect.js"),
-bindable = require("bindable");
+expect   = require("expect.js");
 
 describe(__filename + "#", function () {
 
