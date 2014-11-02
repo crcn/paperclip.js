@@ -19,6 +19,7 @@ Paperclip is a fast template engine for the DOM. It works by converting HTML tem
 - canvas rendering engine
 - angularjs support
 - backbonejs support
+- native Object.observe adapter for modern browsers
 
 ### Examples
 
