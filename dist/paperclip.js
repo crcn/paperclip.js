@@ -3,6 +3,7 @@ var protoclass = require("protoclass");
 
 function BaseAttrBinding (view, node, scripts, attrName) {
   this.view     = view;
+  this.application = view.template.application;
   this.node     = node;
   this.scripts  = scripts;
   this.attrName = attrName
@@ -14,11 +15,20 @@ protoclass(BaseAttrBinding, {
    */
 
   bind: function (context) {
-    var self = this;
+    var self = this, binding = true;
     this.context = context;
     this._scriptBinding = this.scripts.value.bind(context, function (value, oldValue) {
       if (value === oldValue) return;
-      self.didChange(value, oldValue);
+
+      // if rendering, do this immediately
+      if(binding) return self.didChange(value, oldValue);
+
+      // otherwise defer to rAf
+      self.application.animate({
+        update: function () {
+          self.didChange(value, oldValue);
+        }
+      });
     });
 
     this._scriptBinding.now();
@@ -47,7 +57,7 @@ protoclass(BaseAttrBinding, {
 });
 
 module.exports = BaseAttrBinding;
-},{"protoclass":103}],2:[function(require,module,exports){
+},{"protoclass":106}],2:[function(require,module,exports){
 var EventDataBinding = require("./event"),
 _bind                = require("../../utils/bind");
 
@@ -254,7 +264,7 @@ protoclass(EventAttrBinding, {
 });
 
 module.exports = EventAttrBinding;
-},{"../../utils/bind":49,"protoclass":103}],8:[function(require,module,exports){
+},{"../../utils/bind":49,"protoclass":106}],8:[function(require,module,exports){
 extend = require("../../utils/extend");
 
 "<div data-onClick={{}}></div>"
@@ -523,8 +533,9 @@ function BaseBlockBinding (view, name, scripts, section, contentTemplate, childT
   this.view            = view;
   this.scripts         = scripts;
   this.mainScript      = scripts[name];
+  this.application     = view.template.application;
   this.section         = section;
-  this.nodeFactory     = view.template.application.nodeFactory;
+  this.nodeFactory     = this.application.nodeFactory;
   this.contentTemplate = contentTemplate;
   this.childTemplate   = childTemplate;
 }
@@ -535,14 +546,22 @@ protoclass(BaseBlockBinding, {
    */
 
   bind: function (context) {
-    var self = this;
+    var self = this, binding = true;
     this.context = context;
     this._scriptBinding = this.mainScript.bind(context, function (value, oldValue) {
       if (value === oldValue) return;
-      self.didChange(value, oldValue);
+      if (binding) return self.didChange(value, oldValue);
+
+      // rAf
+      self.application.animate({
+        update: function () {
+          self.didChange(value, oldValue);
+        }
+      });
     });
 
-    this._scriptBinding.now()
+    this._scriptBinding.now();
+    binding = false;
   },
 
   /**
@@ -561,7 +580,7 @@ protoclass(BaseBlockBinding, {
 });
 
 module.exports = BaseBlockBinding;
-},{"protoclass":103}],13:[function(require,module,exports){
+},{"protoclass":106}],13:[function(require,module,exports){
 var BaseBlockBinding = require("./base");
 
 module.exports = BaseBlockBinding.extend({
@@ -570,7 +589,6 @@ module.exports = BaseBlockBinding.extend({
     // cast as a boolean value - might be something like
     // an integer
     value = !!value;
-
 
 
     if (this._oldValue === value) {
@@ -818,7 +836,7 @@ protoclass(Bindings, {
 });
 
 module.exports = Bindings;
-},{"protoclass":103}],19:[function(require,module,exports){
+},{"protoclass":106}],19:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
@@ -864,7 +882,7 @@ protoclass(Clips, {
 });
 
 module.exports = Clips;
-},{"protoclass":103}],20:[function(require,module,exports){
+},{"protoclass":106}],20:[function(require,module,exports){
 module.exports = {
   uppercase: function (value) {
     return String(value).toUpperCase();
@@ -909,7 +927,14 @@ module.exports = function (app) {
   blockBindingFactory = createBlockBindingFacory(app),
   attrBindingFactory  = createAttrBindingFactory(app);
 
+  if (!app.animate) app.use(require("mojo-animator"));
+
   return app.paperclip = {
+
+    /**
+     */
+
+    application: app,
 
     /**
      */
@@ -964,7 +989,7 @@ module.exports.BaseAttrBinding  = BaseAttrBinding;
 module.exports.parser = require("./parser");
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./bindings/attrs/base":1,"./bindings/attrs/factory":8,"./bindings/block/base":12,"./bindings/block/factory":16,"./defaultModifiers":20,"./parser":43,"./register":45,"./template":48,"./utils/extend":50,"_process":69,"mojo-application":72}],22:[function(require,module,exports){
+},{"./bindings/attrs/base":1,"./bindings/attrs/factory":8,"./bindings/block/base":12,"./bindings/block/factory":16,"./defaultModifiers":20,"./parser":43,"./register":45,"./template":48,"./utils/extend":50,"_process":69,"mojo-animator":73,"mojo-application":75}],22:[function(require,module,exports){
 var BaseExpression = require("./base"),
 ParametersExpression = require("./parameters");
 
@@ -1063,7 +1088,7 @@ protoclass(BaseExpression, {
 });
 
 module.exports = BaseExpression;
-},{"protoclass":103}],25:[function(require,module,exports){
+},{"protoclass":106}],25:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function BlockBindingExpression (scripts, contentTemplate, childBlock) {
@@ -1418,7 +1443,7 @@ BaseExpression.extend(ScriptExpression, {
 });
 
 module.exports = ScriptExpression;
-},{"./base":24,"underscore":105}],40:[function(require,module,exports){
+},{"./base":24,"underscore":108}],40:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function StringExpression (value) {
@@ -5447,7 +5472,7 @@ protoclass(BindableReference, {
 
 module.exports = BindableReference;
 
-},{"protoclass":103}],48:[function(require,module,exports){
+},{"protoclass":106}],48:[function(require,module,exports){
 var protoclass = require("protoclass"),
 parser         = require("./parser"),
 View           = require("./view"),
@@ -5551,7 +5576,7 @@ function create (source, application) {
 }
 
 module.exports = create;
-},{"./clips":19,"./parser":43,"./view":53,"./viewRecycler":54,"./writers/block":57,"./writers/comment":58,"./writers/element":60,"./writers/fragment":61,"./writers/text":62,"protoclass":103}],49:[function(require,module,exports){
+},{"./clips":19,"./parser":43,"./view":53,"./viewRecycler":54,"./writers/block":57,"./writers/comment":58,"./writers/element":60,"./writers/fragment":61,"./writers/text":62,"protoclass":106}],49:[function(require,module,exports){
 module.exports = function (callback, context) {
   return function () {
     return callback.apply(context, arguments);
@@ -5693,7 +5718,7 @@ protoclass(View, {
 });
 
 module.exports = View;
-},{"./bindings":18,"./utils/syncBindableObjectChanges":52,"bindable-object":63,"document-section":70,"protoclass":103}],54:[function(require,module,exports){
+},{"./bindings":18,"./utils/syncBindableObjectChanges":52,"bindable-object":63,"document-section":70,"protoclass":106}],54:[function(require,module,exports){
 var protoclass            = require("protoclass"),
 Bindings                  = require("./bindings"),
 createSection             = require("document-section"),
@@ -5782,7 +5807,7 @@ protoclass(ViewRecycler, {
 });
 
 module.exports = ViewRecycler;
-},{"./bindings":18,"./utils/syncBindableObjectChanges":52,"bindable-object":63,"document-section":70,"protoclass":103}],55:[function(require,module,exports){
+},{"./bindings":18,"./utils/syncBindableObjectChanges":52,"bindable-object":63,"document-section":70,"protoclass":106}],55:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 function UnboundValueBinding (script, textNode) {
@@ -5816,47 +5841,34 @@ protoclass(UnboundValueBinding, {
 });
 
 module.exports = UnboundValueBinding;
-},{"protoclass":103}],56:[function(require,module,exports){
-var protoclass = require("protoclass");
+},{"protoclass":106}],56:[function(require,module,exports){
+var protoclass = require("protoclass"),
+Base = require("../../../bindings/block/base");
 
 function BoundValueBinding (view, script, textNode) {
   this.view       = view;
-  this.script     = script;
+  this.mainScript     = script;
+  this.application = view.template.application;
   this.textNode   = textNode;
   this.nodeFactory = view.template.application.nodeFactory;
 }
 
-protoclass(BoundValueBinding, {
+Base.extend(BoundValueBinding, {
 
   /**
    */
 
-  bind: function (context) {
-    this.context = context;
-    var self = this;
-    this._scriptBinding = this.script.bind(context, function (value) {
-      if (value == null) value = "";
-      if (self.nodeFactory.name === "dom") {
-        self.textNode.nodeValue = String(value);
-      } else {
-        self.textNode.replaceText(value, true);
-      }
-    }).now();
-  },
-
-  /**
-   */
-
-  unbind: function () {
-    if (this._scriptBinding) {
-      this._scriptBinding.dispose();
-      this._scriptBinding = void 0;
+  didChange: function (value) {
+    if (this.nodeFactory.name === "dom") {
+      this.textNode.nodeValue = String(value);
+    } else {
+      this.textNode.replaceText(value, true);
     }
   }
 });
 
 module.exports = BoundValueBinding;
-},{"protoclass":103}],57:[function(require,module,exports){
+},{"../../../bindings/block/base":12,"protoclass":106}],57:[function(require,module,exports){
 var createSection = require("document-section"),
 utils = require("../../utils"),
 ValueBinding = require("./bindings/value"),
@@ -5974,38 +5986,9 @@ module.exports = function (template) {
   };
 }
 },{}],59:[function(require,module,exports){
-var protoclass = require("protoclass");
+var Base = require("../../../bindings/attrs/base")
 
-function ValueAttrBinding (view, node, scripts, attrName) {
-  this.view     = view;
-  this.node     = node;
-  this.scripts  = scripts;
-  this.attrName = attrName
-}
-
-protoclass(ValueAttrBinding, {
-
-  /**
-   */
-
-  bind: function (context) {
-    var self = this;
-    this.context = context;
-    
-    this._scriptBinding = this.scripts.value.bind(context, function (value, oldValue) {
-      if (value === oldValue) return;
-      self.didChange(value, oldValue);
-    });
-
-    this._scriptBinding.now();
-  },
-
-  /**
-   */
-
-  unbind: function () {
-    this._scriptBinding.dispose();
-  },
+module.exports = Base.extend({
 
   /**
    */
@@ -6015,8 +5998,7 @@ protoclass(ValueAttrBinding, {
   }
 });
 
-module.exports = ValueAttrBinding;
-},{"protoclass":103}],60:[function(require,module,exports){
+},{"../../../bindings/attrs/base":1}],60:[function(require,module,exports){
 var utils     = require("../../utils"),
 ValueBinding  = require("./bindings/value"),
 createScripts = require("../../script");
@@ -6270,7 +6252,7 @@ BindableObject.computed = function (properties, fn) {
 
 module.exports = BindableObject;
 
-},{"./watchProperty":65,"fast-event-emitter":66,"protoclass":103,"toarray":67}],64:[function(require,module,exports){
+},{"./watchProperty":65,"fast-event-emitter":66,"protoclass":106,"toarray":67}],64:[function(require,module,exports){
 "use strict";
 
 var toarray = require("toarray");
@@ -6913,7 +6895,7 @@ EventEmitter.prototype.removeAllListeners = function (event) {
 
 module.exports = EventEmitter;
 
-},{"protoclass":103}],67:[function(require,module,exports){
+},{"protoclass":106}],67:[function(require,module,exports){
 module.exports = function(item) {
   if(item === undefined)  return [];
   return Object.prototype.toString.call(item) === "[object Array]" ? item : [item];
@@ -7209,7 +7191,7 @@ Section = protoclass(Section, {
 module.exports = function (nodeFactory, start, end)  {
   return new Section(nodeFactory, start, end);
 }
-},{"nofactor":86,"protoclass":103}],71:[function(require,module,exports){
+},{"nofactor":89,"protoclass":106}],71:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.4.1 by @mathias | MIT license */
 ;(function(root) {
@@ -7539,6 +7521,160 @@ module.exports = function (nodeFactory, start, end)  {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],72:[function(require,module,exports){
+(function (process){
+var protoclass = require("protoclass");
+
+/**
+ * @module mojo
+ * @submodule mojo-core
+ */
+
+/**
+ * Animator that makes changes to the UI state of the application. Prevents layout thrashing.
+ *
+ * @class Animator
+ */
+
+function Animator () {
+  this._animationQueue = [];
+}
+
+protoclass(Animator, {
+
+  /**
+   * Runs animatable object on requestAnimationFrame. This gets
+   * called whenever the UI state changes.
+   *
+   * @method animate
+   * @param {Object} animatable object. Must have `update()`
+   */
+
+  animate: function (animatable) {
+
+    // if not browser, or fake app
+    if (!process.browser) {
+      return animatable.update();
+    }
+
+    // push on the animatable object
+    this._animationQueue.push(animatable);
+
+    var self = this;
+
+    // if animating, don't continue
+    if (this._requestingFrame) return;
+    this._requestingFrame = true;
+    var self = this;
+
+    function runAnimations () {
+
+      var queue = self._animationQueue;
+      self._animationQueue = [];
+
+      // queue.length is important here, because animate() can be
+      // called again immediately after an update
+      for (var i = 0; i < queue.length; i++) {
+        queue[i].update();
+
+        // check for anymore animations - need to run
+        // them in order
+        if (self._animationQueue.length) {
+          runAnimations();
+        }
+      }
+    }
+
+    // run the animation frame, and callback all the animatable objects
+    requestAnimationFrame(function () {
+      runAnimations();
+      self._requestingFrame = false;
+    });
+  }
+});
+
+module.exports = Animator;
+
+}).call(this,require('_process'))
+},{"_process":69,"protoclass":74}],73:[function(require,module,exports){
+var Animator = require("./animator");
+
+module.exports = function (app) {
+  var animator = new Animator();
+  app.animate = function (animatable) {
+    animator.animate(animatable);
+  };
+}
+
+},{"./animator":72}],74:[function(require,module,exports){
+function _copy (to, from) {
+
+  for (var i = 0, n = from.length; i < n; i++) {
+
+    var target = from[i];
+
+    for (var property in target) {
+      to[property] = target[property];
+    }
+  }
+
+  return to;
+}
+
+function protoclass (parent, child) {
+
+  var mixins = Array.prototype.slice.call(arguments, 2);
+
+  if (typeof child !== "function") {
+    if(child) mixins.unshift(child); // constructor is a mixin
+    child   = parent;
+    parent  = function() { };
+  }
+
+  _copy(child, parent); 
+
+  function ctor () {
+    this.constructor = child;
+  }
+
+  ctor.prototype  = parent.prototype;
+  child.prototype = new ctor();
+  child.__super__ = parent.prototype;
+  child.parent = child.superclass = parent;
+
+  _copy(child.prototype, mixins);
+
+  protoclass.setup(child);
+
+  return child;
+}
+
+protoclass.setup = function (child) {
+
+
+  if (!child.extend) {
+    child.extend = function(constructor) {
+
+      var args = Array.prototype.slice.call(arguments, 0);
+
+      if (typeof constructor !== "function") {
+        args.unshift(constructor = function () {
+          constructor.parent.apply(this, arguments);
+        });
+      }
+
+      return protoclass.apply(this, [this].concat(args));
+    }
+    child.mixin = function(proto) {
+      _copy(this.prototype, arguments);
+    }
+  }
+
+  return child;
+}
+
+
+module.exports = protoclass;
+},{}],75:[function(require,module,exports){
 var bindable      = require("bindable"),
 nofactor          = require("nofactor");
 
@@ -7636,7 +7772,7 @@ module.exports = bindable.Object.extend(Application, {
 
 
 module.exports.main = new Application();
-},{"bindable":75,"nofactor":86}],73:[function(require,module,exports){
+},{"bindable":78,"nofactor":89}],76:[function(require,module,exports){
 "use strict";
 
 var BindableObject = require("../object"),
@@ -7886,7 +8022,7 @@ BindableObject.extend(BindableCollection, {
 
 module.exports = BindableCollection;
 
-},{"../object":76,"../utils/computed":79,"underscore":105}],74:[function(require,module,exports){
+},{"../object":79,"../utils/computed":82,"underscore":108}],77:[function(require,module,exports){
 "use strict";
 var protoclass = require("protoclass");
 
@@ -8058,7 +8194,7 @@ EventEmitter.prototype.removeAllListeners = function (event) {
 
 module.exports = EventEmitter;
 
-},{"protoclass":81}],75:[function(require,module,exports){
+},{"protoclass":84}],78:[function(require,module,exports){
 "use strict";
 
 module.exports = {
@@ -8072,7 +8208,7 @@ module.exports = {
 if (typeof window !== "undefined") {
   window.bindable = module.exports;
 }
-},{"./collection":73,"./core/eventEmitter":74,"./object":76,"./utils/computed":79,"./utils/options":80}],76:[function(require,module,exports){
+},{"./collection":76,"./core/eventEmitter":77,"./object":79,"./utils/computed":82,"./utils/options":83}],79:[function(require,module,exports){
 "use strict";
 
 var EventEmitter    = require("../core/eventEmitter"),
@@ -8370,7 +8506,7 @@ protoclass(EventEmitter, Bindable, {
 
 module.exports = Bindable;
 
-},{"../core/eventEmitter":74,"./watchProperty":78,"protoclass":81}],77:[function(require,module,exports){
+},{"../core/eventEmitter":77,"./watchProperty":81,"protoclass":84}],80:[function(require,module,exports){
 "use strict";
 
 var toarray = require("toarray"),
@@ -8512,7 +8648,7 @@ function transform (bindable, fromProperty, options) {
 }
 
 module.exports = transform;
-},{"toarray":82,"underscore":105}],78:[function(require,module,exports){
+},{"toarray":85,"underscore":108}],81:[function(require,module,exports){
 (function (process){
 "use strict";
 
@@ -8836,7 +8972,7 @@ function watchProperty (bindable, property, fn) {
 
 module.exports = watchProperty;
 }).call(this,require('_process'))
-},{"../utils/options":80,"./transform":77,"_process":69,"underscore":105}],79:[function(require,module,exports){
+},{"../utils/options":83,"./transform":80,"_process":69,"underscore":108}],82:[function(require,module,exports){
 "use strict";
 
 var toarray = require("toarray");
@@ -8846,85 +8982,18 @@ module.exports = function (properties, fn) {
   fn.compute = properties;
   return fn;
 };
-},{"toarray":82}],80:[function(require,module,exports){
+},{"toarray":85}],83:[function(require,module,exports){
 "use strict";
 
 module.exports = {
   computedDelay : 0
 };
 
-},{}],81:[function(require,module,exports){
-function _copy (to, from) {
-
-  for (var i = 0, n = from.length; i < n; i++) {
-
-    var target = from[i];
-
-    for (var property in target) {
-      to[property] = target[property];
-    }
-  }
-
-  return to;
-}
-
-function protoclass (parent, child) {
-
-  var mixins = Array.prototype.slice.call(arguments, 2);
-
-  if (typeof child !== "function") {
-    if(child) mixins.unshift(child); // constructor is a mixin
-    child   = parent;
-    parent  = function() { };
-  }
-
-  _copy(child, parent); 
-
-  function ctor () {
-    this.constructor = child;
-  }
-
-  ctor.prototype  = parent.prototype;
-  child.prototype = new ctor();
-  child.__super__ = parent.prototype;
-  child.parent = child.superclass = parent;
-
-  _copy(child.prototype, mixins);
-
-  protoclass.setup(child);
-
-  return child;
-}
-
-protoclass.setup = function (child) {
-
-
-  if (!child.extend) {
-    child.extend = function(constructor) {
-
-      var args = Array.prototype.slice.call(arguments, 0);
-
-      if (typeof constructor !== "function") {
-        args.unshift(constructor = function () {
-          constructor.parent.apply(this, arguments);
-        });
-      }
-
-      return protoclass.apply(this, [this].concat(args));
-    }
-    child.mixin = function(proto) {
-      _copy(this.prototype, arguments);
-    }
-  }
-
-  return child;
-}
-
-
-module.exports = protoclass;
-},{}],82:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
+module.exports=require(74)
+},{"/Users/craig/Developer/Public/paperclip.js/node_modules/mojo-animator/node_modules/protoclass/lib/index.js":74}],85:[function(require,module,exports){
 module.exports=require(67)
-},{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable-object/node_modules/toarray/index.js":67}],83:[function(require,module,exports){
+},{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable-object/node_modules/toarray/index.js":67}],86:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 
@@ -8990,7 +9059,7 @@ protoclass(BaseFactory, {
 
 module.exports = BaseFactory;
 
-},{"protoclass":103}],84:[function(require,module,exports){
+},{"protoclass":106}],87:[function(require,module,exports){
 var BaseFactory = require("./base"),
 factories       = require("factories");
 
@@ -9103,7 +9172,7 @@ module.exports = function (mainFactory, elements) {
 	return new CustomFactory(mainFactory, elements);
 };
 
-},{"./base":83,"factories":102}],85:[function(require,module,exports){
+},{"./base":86,"factories":105}],88:[function(require,module,exports){
 var Base = require("./base");
 
 /**
@@ -9174,7 +9243,7 @@ Base.extend(DomFactory, {
 });
 
 module.exports = new DomFactory();
-},{"./base":83}],86:[function(require,module,exports){
+},{"./base":86}],89:[function(require,module,exports){
 module.exports = {
   string  : require("./string"),
   dom     : require("./dom"),
@@ -9186,7 +9255,7 @@ module.exports["default"] = typeof window !== "undefined" ? module.exports.dom :
 if (typeof window !== "undefined") {
   window.nofactor = module.exports;
 }
-},{"./custom":84,"./dom":85,"./string":91}],87:[function(require,module,exports){
+},{"./custom":87,"./dom":88,"./string":94}],90:[function(require,module,exports){
 var Text = require("./text");
 
 function Comment () {
@@ -9218,7 +9287,7 @@ Text.extend(Comment, {
 });
 
 module.exports = Comment;
-},{"./text":94}],88:[function(require,module,exports){
+},{"./text":97}],91:[function(require,module,exports){
 var Node = require("./node");
 
 function Container () {
@@ -9339,7 +9408,7 @@ Node.extend(Container, {
 });
 
 module.exports = Container;
-},{"./node":92}],89:[function(require,module,exports){
+},{"./node":95}],92:[function(require,module,exports){
 var Container = require("./container"),
 Style         = require("./style");
 
@@ -9477,7 +9546,7 @@ Container.extend(Element, {
 
 module.exports = Element;
 
-},{"./container":88,"./style":93}],90:[function(require,module,exports){
+},{"./container":91,"./style":96}],93:[function(require,module,exports){
 var Container = require("./container");
 
 function Fragment () {
@@ -9515,7 +9584,7 @@ Container.extend(Fragment, {
 });
 
 module.exports = Fragment;
-},{"./container":88}],91:[function(require,module,exports){
+},{"./container":91}],94:[function(require,module,exports){
 var Base     = require("../base"),
 Element      = require("./element"),
 Fragment     = require("./fragment"),
@@ -9601,7 +9670,7 @@ module.exports.Fragment     = Fragment;
 module.exports.Text         = Text;
 module.exports.Container    = Container;
 module.exports.voidElements = voidElements;
-},{"../base":83,"./comment":87,"./container":88,"./element":89,"./fragment":90,"./text":94,"./voidElements":95}],92:[function(require,module,exports){
+},{"../base":86,"./comment":90,"./container":91,"./element":92,"./fragment":93,"./text":97,"./voidElements":98}],95:[function(require,module,exports){
 var protoclass  = require("protoclass");
 
 
@@ -9635,7 +9704,7 @@ protoclass(Node, {
 });
 
 module.exports = Node;
-},{"protoclass":103}],93:[function(require,module,exports){
+},{"protoclass":106}],96:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 function Style (element) {
@@ -9745,7 +9814,7 @@ protoclass(Style, {
 
 module.exports = Style;
 
-},{"protoclass":103}],94:[function(require,module,exports){
+},{"protoclass":106}],97:[function(require,module,exports){
 var Node = require("./node"),
 he      = require("he");
 
@@ -9788,7 +9857,7 @@ Node.extend(Text, {
 });
 
 module.exports = Text;
-},{"./node":92,"he":71}],95:[function(require,module,exports){
+},{"./node":95,"he":71}],98:[function(require,module,exports){
 var Element = require("./element");
 
 function VoidElement () {
@@ -9822,7 +9891,7 @@ keygen, link, meta, param, source, track, wbr
 ["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track"].forEach(function (name) {
 	exports[name] = VoidElement;
 });
-},{"./element":89}],96:[function(require,module,exports){
+},{"./element":92}],99:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var AnyFactory, factoryFactory,
@@ -9897,7 +9966,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./base":97,"./factory":99}],97:[function(require,module,exports){
+},{"./base":100,"./factory":102}],100:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var BaseFactory;
@@ -9917,7 +9986,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{}],98:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var ClassFactory,
@@ -9961,7 +10030,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./base":97}],99:[function(require,module,exports){
+},{"./base":100}],102:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var ClassFactory, FactoryFactory, FnFactory, factory, type,
@@ -10012,7 +10081,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./base":97,"./class":98,"./fn":100,"type-component":104}],100:[function(require,module,exports){
+},{"./base":100,"./class":101,"./fn":103,"type-component":107}],103:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var FnFactory;
@@ -10050,7 +10119,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{}],101:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   var GroupFactory, factoryFactory,
@@ -10137,7 +10206,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./base":97,"./factory":99}],102:[function(require,module,exports){
+},{"./base":100,"./factory":102}],105:[function(require,module,exports){
 // Generated by CoffeeScript 1.6.2
 (function() {
   module.exports = {
@@ -10150,7 +10219,7 @@ keygen, link, meta, param, source, track, wbr
 
 }).call(this);
 
-},{"./any":96,"./class":98,"./factory":99,"./fn":100,"./group":101}],103:[function(require,module,exports){
+},{"./any":99,"./class":101,"./factory":102,"./fn":103,"./group":104}],106:[function(require,module,exports){
 function _copy (to, from) {
 
   for (var i = 0, n = from.length; i < n; i++) {
@@ -10226,7 +10295,7 @@ protoclass.setup = function (child) {
 
 
 module.exports = protoclass;
-},{}],104:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 
 /**
  * toString ref.
@@ -10258,7 +10327,7 @@ module.exports = function(val){
   return typeof val;
 };
 
-},{}],105:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 //     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
