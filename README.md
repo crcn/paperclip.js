@@ -1,8 +1,4 @@
-Paperclip is a fast template engine for the DOM. It works by converting HTML templates to JavaScript, then leverages native DOM api's to render views. The result looks something like this:
-
-![flamegraph](https://cloud.githubusercontent.com/assets/757408/4873978/c90becf0-6232-11e4-8cc6-9ef8fbc6e63f.png)
-
-
+Paperclip is a fast template engine for the DOM. It works by converting HTML templates to JavaScript, then leverages native DOM api's to render views.
 
 ### Features
 
