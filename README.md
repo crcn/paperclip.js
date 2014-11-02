@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mojo-js/paperclip.js.svg?branch=master)](https://travis-ci.org/mojo-js/paperclip.js)
+
 Paperclip is a template engine designed for the DOM. It works by compiling templates to document fragments, then clones them whenever they're needed.
 
 <!--
