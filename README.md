@@ -11,7 +11,7 @@ Paperclip is a fast template engine for the DOM. It works by converting HTML tem
 - works with older browsers (IE 8+ tested)
 - accepts vanilla javascript objects
 - works with NodeJS
-- 50kb minified
+- 50kb minified & gzipped
 - no browser dependencies
 
 ### Roadmap
