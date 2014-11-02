@@ -97,7 +97,7 @@ registers a new modifier.
 var pc = require("paperclip");
 pc.modifier("markdown", require("marked"));
 var template = pc.template("{{ content | markdown }}");
-document.body.appendChild(template.bind({
+document.body.appendChild(template.view({
   content: "hello **world**!"
 }).render());
 ```
