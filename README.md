@@ -42,6 +42,7 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 
 ### Examples
 
+- [updating 1000 items](http://requirebin.com/?gist=425cdb646205bb819477)
 - [inline html](http://requirebin.com/?gist=bbb9b0eaccd3d7e41df1)
 - [partial todomvc example](http://paperclip-todomvc-example.herokuapp.com/)
 
