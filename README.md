@@ -76,7 +76,7 @@ var pc = require("paperclip");
 var template = pc.template("hello {{name}}!");
 ```
 
-#### template.bind(context).render()
+#### template.view(context).render()
 
 `context` - Object, or [BindableObject](https://github.com/mojo-js/bindable-object.js)
 
@@ -85,7 +85,7 @@ binds the template to a context, and returns a document fragment
 ```javascript
 var pc = require("paperclip");
 var template = pc.template("hello {{name}}!");
-var view = template.bind({ name: "Bull Murray" });
+var view = template.view({ name: "Bull Murray" });
 document.body.appendChild(view.render()); // will show "hello Bill Murray"
 ```
 
