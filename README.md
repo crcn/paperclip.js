@@ -1,5 +1,22 @@
 Paperclip is a fast template engine for the DOM. It works by converting HTML templates to JavaScript, then leverages native DOM api's to render views.
 
+<!--
+// test.pc
+"use strict";
+module.exports = (function(fragment, block, element, text, comment, parser, modifiers) {
+    return fragment([text("hello "), block({
+        'value': {
+            run: function() {
+                return this.context.get(['name']);
+            },
+            refs: [
+                ["name"]
+            ]
+        }
+    }, void 0), text("! ")]);
+})
+-->
+
 ### Features
 
 - mustache-like syntax
