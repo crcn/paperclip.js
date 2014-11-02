@@ -1,5 +1,23 @@
+[![Build Status](https://travis-ci.org/mojo-js/paperclip.js.svg?branch=master)](https://travis-ci.org/mojo-js/paperclip.js)
 
-Paperclip is a template engine designed for the DOM. It works by leveraging the browser's built-in cloneNode() method whenever a template is used. 
+Paperclip is a template engine designed for the DOM. It works by compiling templates to document fragments, then clones them whenever they're needed.
+
+<!--
+// test.pc
+"use strict";
+module.exports = (function(fragment, block, element, text, comment, parser, modifiers) {
+    return fragment([text("hello "), block({
+        'value': {
+            run: function() {
+                return this.context.get(['name']);
+            },
+            refs: [
+                ["name"]
+            ]
+        }
+    }, void 0), text("! ")]);
+})
+-->
 
 ### Features
 
@@ -12,17 +30,21 @@ Paperclip is a template engine designed for the DOM. It works by leveraging the 
 - works with older browsers (IE 8+ tested)
 - accepts vanilla javascript objects
 - works with NodeJS
-- 50kb minified
+- 50kb minified & gzipped
 - no browser dependencies
 
 ### Roadmap
 
 - canvas rendering engine
+- [string template translator](https://github.com/mojo-js/paperclip.js/issues/150)
 - angularjs support
 - backbonejs support
+- native Object.observe adapter for modern browsers
+- famo.us rendering engine
 
 ### Examples
 
+- [updating 1000 items](http://requirebin.com/?gist=425cdb646205bb819477)
 - [inline html](http://requirebin.com/?gist=bbb9b0eaccd3d7e41df1)
 - [partial todomvc example](http://paperclip-todomvc-example.herokuapp.com/)
 
