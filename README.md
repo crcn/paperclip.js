@@ -34,6 +34,7 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 ### Roadmap
 
 - canvas rendering engine
+- [string template translator](https://github.com/mojo-js/paperclip.js/issues/150)
 - angularjs support
 - backbonejs support
 - native Object.observe adapter for modern browsers
