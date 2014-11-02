@@ -15,6 +15,12 @@ Paperclip is a template engine designed for the DOM. It works by leveraging the 
 - 50kb minified
 - no browser dependencies
 
+### Roadmap
+
+- canvas rendering engine
+- angularjs support
+- backbonejs support
+
 ### Examples
 
 - [inline html](http://requirebin.com/?gist=bbb9b0eaccd3d7e41df1)
