@@ -133,10 +133,10 @@ function benchmark (_c, _n, label, run, complete) {
     times.push(_t = Date.now() - start);
 
     console.log("%c %d %s : %d items rendered in %d MS ", "color:#999", _i, label, _n, _t);
-    requestAnimationFrame(tick);
+    paperclip.application.animate({ update: tick });
   }
 
-  requestAnimationFrame(tick);
+  paperclip.application.animate({ update: tick });
 }
 
 window.renderTemplate = function () {
