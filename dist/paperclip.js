@@ -5521,9 +5521,17 @@ protoclass(Template, {
   },
 
   /**
+   * DEPRECATED
    */
 
   bind: function (context) {
+    return new ViewRecycler(this).bind(context);
+  },
+
+  /**
+   */
+
+  view: function (context) {
     return new ViewRecycler(this).bind(context);
   },
 
