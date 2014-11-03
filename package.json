@@ -6,6 +6,7 @@
   "scripts": {
     "test": "mocha ./test/*/*-test.js --ignore-leaks --bail"
   },
+  "keywords": ["template","templates","ui","browser","dom","reactive"],
   "transform": "./lib/transform.js",
   "repository": {
     "type": "git",
