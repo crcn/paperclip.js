@@ -549,9 +549,8 @@ protoclass(BaseBlockBinding, {
     var self = this, binding = true;
     this.context = context;
     this._scriptBinding = this.mainScript.bind(context, function (value, oldValue) {
-      if (value === oldValue) return;
       if (binding) return self.didChange(value, oldValue);
-
+      if (value === oldValue) return;
       // rAf
       self.application.animate({
         update: function () {
@@ -5882,6 +5881,8 @@ Base.extend(BoundValueBinding, {
    */
 
   didChange: function (value) {
+    
+    if (value == null) value = "";
     if (this.nodeFactory.name === "dom") {
       this.textNode.nodeValue = String(value);
     } else {

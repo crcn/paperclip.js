@@ -111,6 +111,19 @@ describe(__filename + "#", function () {
     expect(t.toString()).to.be("hello bb");
   });
 
+  it("can show a conditional else if the false is undefined", function () {
+
+    var t = pc.template(
+      "{{#if:doesNotExist}}" +
+        "yes" +
+      "{{/else}}" +
+        "showing else" +
+      "{{/}}"
+    ).view();
+
+    expect(t.toString()).to.be("showing else");
+  })
+
 
   it("can be re-used after being disposed", function () {
 
