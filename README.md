@@ -114,6 +114,14 @@ document.body.appendChild(template.view({
 }).render());
 ```
 
+#### paperclip.parser.parse(source)
+
+translates templates into javascript source code
+
+#### paperclip.parser.compile(source)
+
+compiles templates into a javascript function
+
 ## Block Syntax
 
 #### {{ blocks }}
