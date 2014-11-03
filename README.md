@@ -66,6 +66,15 @@ Bower:
 bower install paperclip
 ```
 
+## Command line usage
+
+Paperclip templates can also be compiled straight to javascript. Simply run:
+
+```
+./node_modules/.bin/paperclip -i ./template.pc > ./template.pc.js
+```
+
+to compile templates into JavaScript.
 
 ## API
 
