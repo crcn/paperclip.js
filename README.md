@@ -30,6 +30,8 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 - works with older browsers (IE 8+ tested)
 - accepts vanilla javascript objects
 - works with NodeJS
+- unit testable in node, and in the browser
+- [works well with coverage tools such as istanbul](https://cloud.githubusercontent.com/assets/757408/4878446/ab0896ba-630c-11e4-9d14-fa1fc0179b1e.png)
 - 50kb minified & gzipped
 - no browser dependencies
 
@@ -39,6 +41,7 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 - [string template translator](https://github.com/mojo-js/paperclip.js/issues/150)
 - angularjs support
 - backbonejs support
+- docs on how to register custom web components
 - native Object.observe adapter for modern browsers
 - famo.us rendering engine
 
@@ -63,6 +66,15 @@ Bower:
 bower install paperclip
 ```
 
+## Command line usage
+
+Paperclip templates can also be compiled straight to javascript. Simply run:
+
+```
+./node_modules/.bin/paperclip -i ./template.pc > ./template.pc.js
+```
+
+to compile templates into JavaScript.
 
 ## API
 
@@ -76,7 +88,7 @@ var pc = require("paperclip");
 var template = pc.template("hello {{name}}!");
 ```
 
-#### template.bind(context).render()
+#### template.view(context).render()
 
 `context` - Object, or [BindableObject](https://github.com/mojo-js/bindable-object.js)
 
@@ -85,7 +97,7 @@ binds the template to a context, and returns a document fragment
 ```javascript
 var pc = require("paperclip");
 var template = pc.template("hello {{name}}!");
-var view = template.bind({ name: "Bull Murray" });
+var view = template.view({ name: "Bull Murray" });
 document.body.appendChild(view.render()); // will show "hello Bill Murray"
 ```
 
@@ -97,10 +109,18 @@ registers a new modifier.
 var pc = require("paperclip");
 pc.modifier("markdown", require("marked"));
 var template = pc.template("{{ content | markdown }}");
-document.body.appendChild(template.bind({
+document.body.appendChild(template.view({
   content: "hello **world**!"
 }).render());
 ```
+
+#### paperclip.parser.parse(source)
+
+translates templates into javascript source code
+
+#### paperclip.parser.compile(source)
+
+compiles templates into a javascript function
 
 ## Block Syntax
 
