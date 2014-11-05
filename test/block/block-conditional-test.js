@@ -121,6 +121,8 @@ describe(__filename + "#", function () {
       "{{/}}"
     ).view();
 
+    t.render();
+
     expect(t.toString()).to.be("showing else");
   })
 
@@ -139,6 +141,7 @@ describe(__filename + "#", function () {
         "no" +
       "{{/}}"
     ).bind(c);
+    t.render();
 
     expect(t.toString()).to.be("yes");
 
