@@ -37,6 +37,12 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 
 ### Roadmap
 
+- Custom parsers
+  - jade
+  - mustache
+  
+
+
 - textmate code highlighting
 - canvas rendering engine
 - [string template translator](https://github.com/mojo-js/paperclip.js/issues/150)
