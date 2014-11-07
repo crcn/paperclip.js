@@ -35,6 +35,10 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 - 50kb minified & gzipped
 - no browser dependencies
 
+### Adapters
+
+- [MarionetteJS](https://github.com/mojo-js/marionette-paperclip)
+
 ### Roadmap
 
 - Custom parsers
