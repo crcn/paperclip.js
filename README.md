@@ -24,7 +24,6 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 - mustache-like syntax
 - extensible
 - super fast
-- polymer support
 - inline javascript
 - compiled templates
 - explicit data-binding (one-way, two-way, unbound operators)
@@ -43,6 +42,7 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 ### Roadmap
 
 - web components
+- polymer support
 - Custom parsers
   - jade
   - mustache
