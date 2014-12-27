@@ -114,7 +114,7 @@ document.body.appendChild(view.render()); // will show "hello Bill Murray"
 
 #### paperclip.modifier(modifierName, modifier)
 
-registers a new modifier.
+registers a new global modifier.
 
 ```javascript
 var pc = require("paperclip");
