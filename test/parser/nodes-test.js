@@ -31,6 +31,11 @@ describe(__filename + "#", function () {
     expect(ast.childNodes.expressions.expressions.length).to.be(4);
   });
 
+  xit("doesn't maintain whitespace if the space is a new line character", function () {
+    var ast = parser.parse("{{a}}\n\t{{a}}");
+    expect(ast.childNodes.expressions.expressions.length).to.be(2);
+  });
+
   it("accepts many types of characters in the tag name", function () {
     parser.parse("<a />");
     parser.parse("<h3 />");
