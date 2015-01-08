@@ -212,7 +212,7 @@ return function (element, block) {
 }
 ```
 
-In this case, the current implementation of paperclip would bind the embedded block to the context of the `repeat block. So, to change this, the created DOM elements should be a virtual DOM. For instance:
+In this case, the current implementation of paperclip would bind the embedded block to the context of the `repeat` block. So, to change this, the created DOM elements should be a virtual DOM. For instance:
 
 ```javascript
 var br = element("br");
