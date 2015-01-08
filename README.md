@@ -13,7 +13,7 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
             },
             refs: [
                 ["name"]
-            ]
+           ]
         }
     }, void 0), text("! ")]);
 })

@@ -188,5 +188,33 @@ Resolution:
 Note that `<child />` will happen at the parser level.
 
 
+There is a change to the implementation of paperclip when changing to a purely dom-based template engine - there would no longer be embedded templates. For example:
 
+```html
+<repeat each={{items}}>
+  hello {{model}} <br />
+</repeat>
+```
 
+would be converted to:
+
+```javascript
+return function (element, block) {
+  return element("repeat", {
+    each: {
+      run: function () { return items; }
+    }
+  }, [
+    text("hello"),
+    block({ run: function() { return model; }}),
+    element("br")
+  ])
+}
+```
+
+In this case, the current implementation of paperclip would bind the embedded block to the context of the `repeat block. So, to change this, the created DOM elements should be a virtual DOM. For instance:
+
+```javascript
+var br = element("br");
+br.render(options); // render the br element - return it.
+```

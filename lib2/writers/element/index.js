@@ -28,7 +28,13 @@ module.exports = function (template) {
   attrBindingFactory = template.paperclip.attrBindingFactory;
 
   return function (name, attributes, childNodes) {
+
+    // TODO - check here for custom component?
+    // also need to figure out how to change the context of child block bindings
+    // the elements could also be virtual - this would allow us the freedom to setup the DOM 
+    // however we want. How do we setup marker elements though? 
     var element = nodeFactory.createElement(name);
+
 
     for (var key in attributes) {
 
