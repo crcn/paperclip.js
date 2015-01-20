@@ -41,12 +41,12 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 
 ### Roadmap
 
+- web components
+- polymer support
 - Custom parsers
   - jade
   - mustache
-  
-
-
+- transitions
 - textmate code highlighting
 - canvas rendering engine
 - [string template translator](https://github.com/mojo-js/paperclip.js/issues/150)
@@ -93,28 +93,58 @@ to compile templates into JavaScript.
 
 Creates a new template
 
-
 ```javascript
 var pc = require("paperclip");
 var template = pc.template("hello {{name}}!");
 ```
 
-#### template.view(context).render()
+#### view template.view([context])
 
-`context` - Object, or [BindableObject](https://github.com/mojo-js/bindable-object.js)
+Creates a new view which controls a cloned document fragment provided by the template. 
 
-binds the template to a context, and returns a document fragment
+`context` - Object, or [BindableObject](https://github.com/mojo-js/bindable-object.js). The context contains properties which get displayed in the template.
+
+#### view.render()
+
+Returns the cloned document fragment which can be added to the DOM.
 
 ```javascript
 var pc = require("paperclip");
 var template = pc.template("hello {{name}}!");
-var view = template.view({ name: "Bull Murray" });
+var view = template.view({ name: "Bill Murray" });
 document.body.appendChild(view.render()); // will show "hello Bill Murray"
 ```
 
+#### view.bind(context)
+
+Binds the view to a new context.
+
+```javascript
+var pc = require("paperclip");
+var template = pc.template("hello {{name}}!");
+var view = template.view({ name: "Bill Murray" });
+document.body.appendChild(view.render()); // will show "hello George Clooney"
+view.bind({ name: "Bill Clinton" }); // will show "hello Bill Clinton"
+```
+
+#### view.context
+
+The context that the view is currently bound to. This is a [BindableObject](https://github.com/mojo-js/bindable-object.js).
+
+```javascript
+var tpl = paperclip.template("hello {{name}}!");
+var view = tpl.view({ name: "Will Smith" });
+document.body.appendChild(view.render());  // will show "hello Will Smith"
+view.context.set("name", "Oprah Winfrey");  // will show "hello Oprah Winfrey"
+```
+
+#### view.remove()
+
+Removes the views from the DOM.
+
 #### paperclip.modifier(modifierName, modifier)
 
-registers a new modifier.
+registers a new modifier. 
 
 ```javascript
 var pc = require("paperclip");
@@ -127,11 +157,11 @@ document.body.appendChild(template.view({
 
 #### paperclip.parser.parse(source)
 
-translates templates into javascript source code
+Parses your templates, and converts them into javascript.
 
 #### paperclip.parser.compile(source)
 
-compiles templates into a javascript function
+compiles your templates into a javascript function.
 
 ## Block Syntax
 
