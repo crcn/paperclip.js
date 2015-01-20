@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "0.6.23",
+  "version": "0.6.28",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   "transform": "./lib/transform.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ojo-js/paperclip.js"
+    "url": "https://github.com/mojo-js/paperclip.js"
   },
   "author": "",
   "license": "MIT",
