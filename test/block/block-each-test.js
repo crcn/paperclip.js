@@ -69,4 +69,13 @@ describe(__filename + "#", function () {
     src.splice(0, 0,-1,0,1);
     expect(view.toString()).to.be("-1012345");
   });
+
+  it("can be sorted", function () {
+    var tpl = pc.template("{{#each:source,as:'a',sort:sorter}}{{a}}{{/}}");
+    var view = tpl.bind({source:[5,4,3,2,1], sorter: function (a, b) {
+      return a > b ? 1 : -1;
+    }});
+
+    expect(view.render().toString()).to.be("12345");
+  })
 });
