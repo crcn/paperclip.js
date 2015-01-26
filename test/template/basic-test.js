@@ -73,5 +73,25 @@ describe(__filename + "#", function () {
     expect(ctx.name).to.be("b");
   });
 
+  it("can change the context of a view", function () {
+    var v = template("{{name}}").view({name:"a"});
+    expect(v.render().toString()).to.be("a");
+    v.bind({name:"b"})
+    expect(v.render().toString()).to.be("b");
+  });
+
+  it("doesn't sync changes from previous context", function () {
+
+    var ac = new BindableObject({name:"a"}),
+    bc     = new BindableObject({name:"b"});
+
+    var v = template("{{name}}").view(ac);
+    expect(v.render().toString()).to.be("a");
+    v.bind(bc)
+    expect(v.render().toString()).to.be("b");
+    ac.set("name", "c");
+    expect(v.render().toString()).to.be("b");
+  });
+
 
 });
