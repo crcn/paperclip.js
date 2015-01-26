@@ -52,5 +52,10 @@ describe(__filename + "#", function () {
   it("can parse tag elements", function () {
     var tpl = template("<span>hello world</span>").view();
     expect(tpl.render().toString()).to.be("<span>hello world</span>");
-  })
+  });
+
+  xit("can parse block elements", function () {
+    var tpl = template("{{name}}").view({name:"joe"});
+    expect(tpl.render().toString()).to.be("joe");
+  });
 });
