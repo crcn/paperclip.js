@@ -1,6 +1,7 @@
 var expect = require("expect.js"),
 template   = require("../../lib/template"),
-parser  = require("../../lib/parser");
+parser  = require("../../lib/parser"),
+BindableObject = require("bindable-object");
 
 /*
 
@@ -45,17 +46,32 @@ describe(__filename + "#", function () {
   });
 
   it("can parse text elements", function () {
-    var tpl = template("hello world").view();
-    expect(tpl.render().toString()).to.be("hello world");
+    var v = template("hello world").view();
+    expect(v.render().toString()).to.be("hello world");
   });
 
   it("can parse tag elements", function () {
-    var tpl = template("<span>hello world</span>").view();
-    expect(tpl.render().toString()).to.be("<span>hello world</span>");
+    var v = template("<span>hello world</span>").view();
+    expect(v.render().toString()).to.be("<span>hello world</span>");
   });
 
-  xit("can parse block elements", function () {
-    var tpl = template("{{name}}").view({name:"joe"});
-    expect(tpl.render().toString()).to.be("joe");
+  it("can parse block elements", function () {
+    var v = template("{{name}}").view({name:"a"});
+    expect(v.render().toString()).to.be("a");
   });
+
+  it("can pass a bindable object as the context of a view", function () {
+    var v = template("{{name}}").view(new BindableObject({name: "a" }));
+    expect(v.render().toString()).to.be("a");
+  });
+
+  it("syncs changes from the view context back to a vanilla object", function () {
+    var ctx;
+    var v = template("{{name}}").view(ctx = {name:"a"});
+    v.context.set("name", "b");
+    expect(v.render().toString()).to.be("b");
+    expect(ctx.name).to.be("b");
+  });
+
+
 });
