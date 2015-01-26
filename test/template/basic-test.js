@@ -12,14 +12,13 @@ describe(__filename + "#", function () {
 
   it("can create a new template with a string source", function () {
     var tpl = template("hello world");
-    expect(tpl.script).not.to.be(void 0);
-    expect(typeof tpl.script).to.be("function");
+    expect(typeof tpl.vnode).to.be("object");
   });
 
   it("can create a new template with a script as the source", function () {
     var script,
     tpl = template(script = parser.compile("hello world"));
-    expect(tpl.script).to.be(script);
+    expect(typeof tpl.vnode).to.be("object");
   });
 
   it("throws an error if the source is anything other than a string, or function", function () {
@@ -33,16 +32,16 @@ describe(__filename + "#", function () {
     expect(err).not.to.be(void 0);
   });
 
-  it("template is cached if the source is a string, and has been re-used", function () {
+  it("template is not cached if the source is a string, and has been re-used", function () {
     var source,
     tpl = template(source = "hello world");
-    expect(tpl).to.be(template(source));
+    expect(tpl).not.to.be(template(source));
   });
 
-  it("template is cached if the source is a function, and has been re-used", function () {
+  it("template is not cached if the source is a function, and has been re-used", function () {
     var script,
     tpl = template(script = parser.compile("hello world"));
-    expect(tpl).to.be(template(script));
+    expect(tpl).not.to.be(template(script));
   });
 
   it("can parse text elements", function () {
@@ -92,6 +91,5 @@ describe(__filename + "#", function () {
     ac.set("name", "c");
     expect(v.render().toString()).to.be("b");
   });
-
 
 });
