@@ -13,17 +13,15 @@ describe(__filename + "#", function () {
 
 
   function makeComponent (tpl) {
-    return function (name, attributes, children, view) {
+    return function (options) {
       var v = tpl.view();
-      this.render = function () {
-        return v.render();
-      };
       this.bind = function (context) {
         v.bind(context);
       }
       this.unbind = function () {
 
       }
+      options.section.appendChild(v.render());
     }
   }
 
@@ -50,5 +48,31 @@ describe(__filename + "#", function () {
     var v = ct.view({name:"d"});
 
     expect(v.render().toString()).to.be("c b a d");
+  });
+
+  it("can register a very basic repeat component", function () {
+
+     function repeatComponent (options) {
+
+      var attrs = options.attributes;
+
+      var count = Number(attrs.count),
+      as        = attrs.as || "model";
+
+      for (var i = 0; i < count; i++) {
+        var model = new BindableObject();
+        model.set(as, i);
+        options.section.appendChild(options.children.view(model).render());
+      }
+    };
+
+    var tpl = template("<repeat count='5' as='number'>{{number}}</repeat>", { components:{repeat:repeatComponent}});
+    var v = tpl.view({});
+
+    expect(v.render().toString()).to.be("01234");
+  });
+
+  it("can register a dynamic repeat component", function () {
+
   });
 });
