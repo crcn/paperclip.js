@@ -43,4 +43,9 @@ describe(__filename + "#", function () {
     tpl = template(script = parser.compile("hello world"));
     expect(tpl).to.be(template(script));
   });
+
+  it("can create a new view out of a template", function () {
+    var tpl = template("hello world").view();
+    expect(tpl.render().toString()).to.be("hello world");
+  });
 });

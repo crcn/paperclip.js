@@ -218,3 +218,4 @@ In this case, the current implementation of paperclip would bind the embedded bl
 var br = element("br");
 br.render(options); // render the br element - return it.
 ```
+
