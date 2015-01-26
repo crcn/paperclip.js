@@ -44,8 +44,13 @@ describe(__filename + "#", function () {
     expect(tpl).to.be(template(script));
   });
 
-  it("can create a new view out of a template", function () {
+  it("can parse text elements", function () {
     var tpl = template("hello world").view();
     expect(tpl.render().toString()).to.be("hello world");
   });
+
+  it("can parse tag elements", function () {
+    var tpl = template("<span>hello world</span>").view();
+    expect(tpl.render().toString()).to.be("<span>hello world</span>");
+  })
 });
