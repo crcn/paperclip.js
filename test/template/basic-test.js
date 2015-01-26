@@ -44,14 +44,19 @@ describe(__filename + "#", function () {
     expect(tpl).not.to.be(template(script));
   });
 
-  it("can parse text elements", function () {
+  it("can rener text elements", function () {
     var v = template("hello world").view();
     expect(v.render().toString()).to.be("hello world");
   });
 
-  it("can parse tag elements", function () {
+  it("can render tag elements", function () {
     var v = template("<span>hello world</span>").view();
     expect(v.render().toString()).to.be("<span>hello world</span>");
+  });
+
+  it("can render comment elements", function () {
+    var v = template("<!--comment-->").view()
+    expect(v.render().toString()).to.be("<!--comment-->");
   });
 
   it("can parse block elements", function () {
@@ -92,5 +97,5 @@ describe(__filename + "#", function () {
     expect(v.render().toString()).to.be("b");
   });
 
-  
+
 });
