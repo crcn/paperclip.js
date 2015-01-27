@@ -56,7 +56,7 @@ describe(__filename + "#", function () {
   });
 
   it("can attach the stack component to an existing element", function () {
-    var tpl = template("<div stack state={{index}}><span>hello</span><span>world</span></div>", paperclip);
+    var tpl = template("<div stack.state={{index}}><span>hello</span><span>world</span></div>", paperclip);
 
     var v = tpl.view({index:1});
     expect(v.render().toString()).to.be("<div><span>world</span></div>");

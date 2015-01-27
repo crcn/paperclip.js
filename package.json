@@ -41,6 +41,7 @@
     "noselector": "0.0.13",
     "pegjs": "^0.8.0",
     "react": "^0.11.2",
+    "sinon": "^1.12.2",
     "statsjs": "^1.0.6",
     "structr": "~0.2.3",
     "uglifyjs": "^2.3.6",

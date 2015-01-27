@@ -1,21 +1,21 @@
-var pc   = require("../.."),
-expect   = require("expect.js"),
+var pc         = require("../.."),
+expect         = require("expect.js"),
 BindableObject = require("bindable-object");
 
 describe(__filename + "#", function () {
 
   it("can apply a show helper", function () {
 
-    var t = pc.template(
+    var v = pc.template(
       "<div show='{{" +
         "show" +
       "}}'>" +
       "</div>"
-    ).bind({
+    , pc).view({
       show: false
     });
 
-    expect(t.toString()).to.be("<div style=\"display:none;\"></div>");
+    expect(v.toString()).to.be("<div style=\"display:none;\"></div>");
   });
 
   it("respects the original display style", function () {
@@ -24,14 +24,12 @@ describe(__filename + "#", function () {
       show: false
     })
 
-    var t = pc.template(
+    var v = pc.template(
       "<div style='display:block;' show='{{" +
         "show" +
       "}}'>" +
       "</div>"
-    );
-
-    var v = t.bind(ctx);
+    , pc ).view(ctx);
 
 
     expect(v.toString()).to.be("<div style=\"display:none;\"></div>");

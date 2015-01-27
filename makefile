@@ -1,7 +1,7 @@
 REPORTER=dot
 ONLY="."
 NAME=big-list
-TIMEOUT=200
+TIMEOUT=1000
 
 browser:
 	./node_modules/.bin/browserify ./lib/index.js -o ./dist/paperclip.js

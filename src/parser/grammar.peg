@@ -73,7 +73,6 @@
 Start
   = Template
 
-
 Template
   = children:ChildNodes { return new RootNodeExpression(children); }
 
@@ -143,7 +142,7 @@ EndTag
     }
 
 TagName
-  = _ word:[a-zA-Z0-9:_-]+ { return word.join(""); }
+  = _ word:[a-zA-Z0-9:_\.-]+ { return word.join(""); }
 
 Attribute
   = name:TagName _ "=" _ values:AttributeValues {
