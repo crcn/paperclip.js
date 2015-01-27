@@ -9,6 +9,9 @@ function StyleBinding (view, node, script, attrName) {
 
 BaseBinding.extend(StyleBinding, {
 
+  /**
+   */
+   
   bind: function (context) {
     this._currentStyles = {};
     BaseBinding.prototype.bind.call(this, context);

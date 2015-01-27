@@ -6,7 +6,14 @@
   "scripts": {
     "test": "mocha ./test/*/*-test.js --ignore-leaks --bail"
   },
-  "keywords": ["template","templates","ui","browser","dom","reactive"],
+  "keywords": [
+    "template",
+    "templates",
+    "ui",
+    "browser",
+    "dom",
+    "reactive"
+  ],
   "transform": "./lib/transform.js",
   "repository": {
     "type": "git",
@@ -31,6 +38,7 @@
     "mocha": "~1.15.1",
     "mojo-cli": "0.0.22",
     "node-static": "^0.7.6",
+    "noselector": "0.0.13",
     "pegjs": "^0.8.0",
     "react": "^0.11.2",
     "statsjs": "^1.0.6",
