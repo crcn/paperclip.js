@@ -35,7 +35,6 @@ module.exports = function (template) {
     // however we want. How do we setup marker elements though? 
     var element = nodeFactory.createElement(name);
 
-
     for (var key in attributes) {
 
       var value = attributes[key], bindingClass = attrBindingFactory.getClass(key, value);

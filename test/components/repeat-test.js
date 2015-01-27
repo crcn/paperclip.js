@@ -22,5 +22,13 @@ describe(__filename + "#", function () {
     v.context.set("numbers", [4,5,6,7]);
     expect(v.render().toString()).to.be("4567");
   });
+
+  it("can apply a repeat block to an existing element", function () {
+    var tpl = template("<ul repeat each={{numbers}} as='number'><li>{{number}}</li></ul>", paperclip);
+    var v = tpl.view({numbers:[0,1,2,3]});
+    expect(v.render().toString()).to.be("0123");
+    v.context.set("numbers", [4,5,6,7]);
+    expect(v.render().toString()).to.be("4567");
+  });
 });
 
