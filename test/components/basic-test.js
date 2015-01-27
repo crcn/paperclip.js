@@ -59,6 +59,7 @@ describe(__filename + "#", function () {
       var count = Number(attrs.count),
       as        = attrs.as || "model";
 
+
       for (var i = 0; i < count; i++) {
         var model = new BindableObject();
         model.set(as, i);

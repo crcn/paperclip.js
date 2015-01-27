@@ -18,14 +18,6 @@ describe(__filename + "#", function () {
         var ast = parser.parse("{{ a : b, c: d, e:f}}");
     });
 
-    it("can have no values", function () {
-        var ast = parser.parse("{{a:}}")
-    });
-    it("can be parsed with ws", function () {
-        var ast = parser.parse("{{ a: }}");
-        ast.toJavaScript();
-    });
-
   });
 
   describe("hashes", function () {

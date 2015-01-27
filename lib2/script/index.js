@@ -178,10 +178,10 @@ function boundScripts (scripts) {
 
 
 module.exports = function (value) {
-  if (typeof value !== "object") return { value: staticScript(value) };
+  if (typeof value !== "object") return staticScript(value);
   if (value.length) {
     if (value.length === 1) return boundScripts(value[0]);
-    return { value: bufferedScript(value) };
+    return bufferedScript(value);
   } else {
     return boundScripts(value);
   }
