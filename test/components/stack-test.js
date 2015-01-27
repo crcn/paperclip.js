@@ -25,6 +25,36 @@ describe(__filename + "#", function () {
     expect(v.render().toString()).to.be("<span>hello</span>");
   });
 
+  it("can have embedded stacks", function () {
+
+    var tpl = template(
+      "<stack state={{s1}}>" +
+        "<stack state={{s2}} name='a'>" + 
+          "<span name='b'>a</span>" +
+          "<span  name='c'>b</span>" +
+        "</stack>" +
+        "<stack state={{s3}} name='b'>" +
+          "<span name='d'>c</span>" + 
+          "<span name='e'>d</span>" +
+        "</stack>" +
+      "</stack>",
+      paperclip
+    );
+
+    var v = tpl.view({s1:'a',s2:'b'});
+    expect(v.render().toString()).to.be('<span>a</span>');
+    v.context.setProperties({s1:'a',s2:'c'});
+    expect(v.render().toString()).to.be('<span>b</span>');
+    v.context.setProperties({s1:'b',s3:'d'});
+    expect(v.render().toString()).to.be('<span>c</span>');
+    v.context.setProperties({s1:'b',s3:'e'});
+    expect(v.render().toString()).to.be('<span>d</span>');
+    v.context.setProperties({s1:'b',s3:'c'});
+    expect(v.render().toString()).to.be('');
+    v.context.setProperties({s1:'a',s3:'c'});
+    expect(v.render().toString()).to.be('<span>b</span>');
+  });
+
   it("can attach the stack component to an existing element", function () {
     var tpl = template("<div stack state={{index}}><span>hello</span><span>world</span></div>", paperclip);
 
