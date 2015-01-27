@@ -16,7 +16,6 @@ describe(__filename + "#", function () {
 
     var helloTpl = template("hello world");
 
-
     var v = template("<hello />", {
       components: {
         hello: helloTpl.component()
