@@ -24,6 +24,7 @@ describe(__filename + "#", function () {
     "mouseDown", 
     "mouseMove", 
     "mouseUp",
+    "change",
     "mouseOver",
     "mouseOut",
     "focusIn:focus",
@@ -57,7 +58,6 @@ describe(__filename + "#", function () {
     });
   });
 
-  return;
 
 
   it("can capture an onEnter event", function (next) {
@@ -66,7 +66,7 @@ describe(__filename + "#", function () {
       "<div onEnter='{{" +
         "onEvent(event)" +
       "}}'></div>"
-    , app).bind({
+    , paperclip).view({
       onEvent: function (event) {
         next();
       }
@@ -77,7 +77,7 @@ describe(__filename + "#", function () {
     var e = document.createEvent("event");
     e.initEvent("keydown");
     e.keyCode = 13;
-    t.node.dispatchEvent(e);
+    t.render().childNodes[1].dispatchEvent(e);
 
 
     t.dispose();
@@ -89,7 +89,7 @@ describe(__filename + "#", function () {
       "<div onDelete='{{" +
         "onEvent(event)" +
       "}}'></div>"
-    , app).bind({
+    , paperclip).view({
       onEvent: function (event) {
         next();
       }
@@ -98,7 +98,7 @@ describe(__filename + "#", function () {
     var e = document.createEvent("event");
     e.initEvent("keydown");
     e.keyCode = 8;
-    t.node.dispatchEvent(e);
+    t.render().childNodes[1].dispatchEvent(e);
   });
 
   it("can capture an onEscape event", function (next) {
@@ -107,7 +107,7 @@ describe(__filename + "#", function () {
       "<div onEscape='{{" +
         "onEvent(event)" +
       "}}'></div>"
-    , app).bind({
+    , paperclip).view({
       onEvent: function (event) {
         next();
       }
@@ -116,6 +116,6 @@ describe(__filename + "#", function () {
     var e = document.createEvent("event");
     e.initEvent("keydown");
     e.keyCode = 27;
-    t.node.dispatchEvent(e);
+    t.render().childNodes[1].dispatchEvent(e);
   });
 });
