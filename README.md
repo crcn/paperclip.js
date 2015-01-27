@@ -41,10 +41,8 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 
 ### Roadmap
 
-- Custom parsers
-  - jade
-  - mustache
-  
+- handlebars adapter
+- jade adapter
 
 
 - textmate code highlighting
