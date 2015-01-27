@@ -128,7 +128,7 @@ describe(__filename + "#", function () {
           initialize: function () {
             this.section.appendChild(this.node = this.nodeFactory.createTextNode(""));
           },
-          didChange: function () {
+          update: function () {
             this.node.replaceText("b" + this.attributes.value);
           }
         })
