@@ -105,25 +105,26 @@ describe(__filename + "#", function () {
   });
 
   it("can register a dynamic repeat component with embedded components", function () {
-    function repeatComponent (options) {
 
-      var attrs = options.attributes;
+    var RepeatComponent = Component.extend({
+      update: function () {
+        this.section.removeAll();
 
-      var count = Number(attrs.count),
-      as        = attrs.as || "model";
+        var count = Number(this.attributes.count || 0),
+        as = this.attributes.as || "model";
 
-      this.bind = function () {
         for (var i = 0; i < count; i++) {
           var model = new BindableObject();
           model.set(as, i);
-          options.section.appendChild(options.children.view(model).render());
+          this.section.appendChild(this.children.view(model).render());
         }
       }
-    };
+    });
+
 
     var tpl = template("<repeat count='5' as='number'>a<show value={{number}} /></repeat>", { 
       components: {
-        repeat: repeatComponent,
+        repeat: RepeatComponent,
         show: Component.extend({
           initialize: function () {
             this.section.appendChild(this.node = this.nodeFactory.createTextNode(""));
