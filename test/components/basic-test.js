@@ -121,18 +121,18 @@ describe(__filename + "#", function () {
       }
     };
 
-    var tpl = template("<repeat count='5' as='number'><show value={{number}} /></repeat>", { 
+    var tpl = template("<repeat count='5' as='number'>a<show value={{number}} /></repeat>", { 
       components: {
         repeat: repeatComponent,
         show: function (options) {
           this.bind = function () {
-            options.section.appendChild(options.view.template.nodeFactory.createTextNode("a" + options.attributes.value));
+            options.section.appendChild(options.view.template.nodeFactory.createTextNode("b" + options.attributes.value));
           }
         }
       }
     });
     var v = tpl.view({});
 
-    expect(v.render().toString()).to.be("a0a1a2a3a4");
+    expect(v.render().toString()).to.be("ab0ab1ab2ab3ab4");
   });
 });
