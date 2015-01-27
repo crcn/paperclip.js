@@ -52,7 +52,7 @@ describe(__filename + "#", function () {
 
   it("can register a very basic repeat component", function () {
 
-     function repeatComponent (options) {
+    function repeatComponent (options) {
 
       var attrs = options.attributes;
 
@@ -101,6 +101,38 @@ describe(__filename + "#", function () {
     expect(v.render().toString()).to.be("012");
     v.context.set("count", 8);
     expect(v.render().toString()).to.be("01234567");
+  });
 
+  it("can register a dynamic repeat component with embedded components", function () {
+    function repeatComponent (options) {
+
+      var attrs = options.attributes;
+
+      var count = Number(attrs.count),
+      as        = attrs.as || "model";
+
+
+      this.bind = function () {
+        for (var i = 0; i < count; i++) {
+          var model = new BindableObject();
+          model.set(as, i);
+          options.section.appendChild(options.children.view(model).render());
+        }
+      }
+    };
+
+    var tpl = template("<repeat count='5' as='number'><show value={{number}} /></repeat>", { 
+      components: {
+        repeat: repeatComponent,
+        show: function (options) {
+          this.bind = function () {
+            options.section.appendChild(options.view.template.nodeFactory.createTextNode("a" + options.attributes.value));
+          }
+        }
+      }
+    });
+    var v = tpl.view({});
+
+    expect(v.render().toString()).to.be("a0a1a2a3a4");
   });
 });
