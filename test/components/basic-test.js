@@ -60,11 +60,10 @@ describe(__filename + "#", function () {
       var count = Number(attrs.count),
       as        = attrs.as || "model";
 
-
       for (var i = 0; i < count; i++) {
         var model = new BindableObject();
         model.set(as, i);
-        options.section.appendChild(options.children.view(model).render());
+        options.section.appendChild(options.childTemplate.view(model).render());
       }
     };
 
@@ -84,7 +83,7 @@ describe(__filename + "#", function () {
         for (var i = 0; i < attrs.count; i++) {
           var model = new BindableObject();
           model.set(attrs.as, i);
-          options.section.appendChild(options.children.view(model).render());
+          options.section.appendChild(options.childTemplate.view(model).render());
         }
       }
 
@@ -116,7 +115,7 @@ describe(__filename + "#", function () {
         for (var i = 0; i < count; i++) {
           var model = new BindableObject();
           model.set(as, i);
-          this.section.appendChild(this.children.view(model).render());
+          this.section.appendChild(this.childTemplate.view(model).render());
         }
       }
     });
@@ -135,6 +134,7 @@ describe(__filename + "#", function () {
         })
       }
     });
+
     var v = tpl.view({});
 
     expect(v.render().toString()).to.be("ab0ab1ab2ab3ab4");
