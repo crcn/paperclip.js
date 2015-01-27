@@ -12,20 +12,6 @@ var tpl = paperclip.template("abba")
 describe(__filename + "#", function () {
 
 
-
-  function makeComponent (tpl) {
-    return function (options) {
-      var v = tpl.view();
-      this.bind = function (context) {
-        v.bind(context);
-      }
-      this.unbind = function () {
-
-      }
-      options.section.appendChild(v.render());
-    }
-  }
-
   it("can register a component", function () {
 
     var helloTpl = template("hello world");
@@ -33,7 +19,7 @@ describe(__filename + "#", function () {
 
     var v = template("<hello />", {
       components: {
-        hello: makeComponent(helloTpl)
+        hello: helloTpl.component()
       }
     }).view();
 
@@ -43,8 +29,8 @@ describe(__filename + "#", function () {
   it("can register a component with a sub component", function () {
 
     var at = template("a {{name}}"),
-    bt     = template("b <at />", { components: { at: makeComponent(at) }}),
-    ct     = template("c <bt />", { components: { bt: makeComponent(bt) }});
+    bt     = template("b <at />", { components: { at: at.component() }}),
+    ct     = template("c <bt />", { components: { bt: bt.component() }});
 
     var v = ct.view({name:"d"});
 

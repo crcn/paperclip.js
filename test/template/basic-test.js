@@ -22,6 +22,7 @@ describe(__filename + "#", function () {
   });
 
   it("throws an error if the source is anything other than a string, or function", function () {
+    
     var err;
     try {
       template({});
