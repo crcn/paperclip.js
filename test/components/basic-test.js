@@ -1,7 +1,8 @@
-var expect = require("expect.js"),
-template   = require("../../lib/template"),
-parser  = require("../../lib/parser"),
-BindableObject = require("bindable-object");
+var expect     = require("expect.js"),
+template       = require("../../lib/template"),
+parser         = require("../../lib/parser"),
+BindableObject = require("bindable-object"),
+Component      = require("../../lib").Component;
 
 /*
 
@@ -111,7 +112,6 @@ describe(__filename + "#", function () {
       var count = Number(attrs.count),
       as        = attrs.as || "model";
 
-
       this.bind = function () {
         for (var i = 0; i < count; i++) {
           var model = new BindableObject();
@@ -124,11 +124,14 @@ describe(__filename + "#", function () {
     var tpl = template("<repeat count='5' as='number'>a<show value={{number}} /></repeat>", { 
       components: {
         repeat: repeatComponent,
-        show: function (options) {
-          this.bind = function () {
-            options.section.appendChild(options.view.template.nodeFactory.createTextNode("b" + options.attributes.value));
+        show: Component.extend({
+          initialize: function () {
+            this.section.appendChild(this.node = this.nodeFactory.createTextNode(""));
+          },
+          didChange: function () {
+            this.node.replaceText("b" + this.attributes.value);
           }
-        }
+        })
       }
     });
     var v = tpl.view({});
