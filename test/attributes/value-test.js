@@ -1,8 +1,6 @@
 var expect     = require("expect.js"),
-template       = require("../../lib/template"),
-parser         = require("../../lib/parser"),
-BindableObject = require("bindable-object"),
-Component      = require("../../lib").Component;
+paperclip      = require("../../lib"),
+template       = paperclip.template;
 
 /*
 
@@ -15,5 +13,10 @@ describe(__filename + "#", function () {
   it("doesn't add an attribute binding if the attr is a string", function () {
     var tpl = template("<input value='test'></input>"), v = tpl.view();
     expect(v.render().toString()).to.be('<input value="test">');
+  });
+
+  it("binds the input to the value if the value is a script", function () {
+    var tpl = template("<input value={{<~>value}}></input>", paperclip), v = tpl.view({});
+    expect(v.render().toString()).to.be('<input>');
   });
 });
