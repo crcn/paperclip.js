@@ -220,7 +220,7 @@ Unbound helper - don't watch for any changes:
 
 ## Built-in components
 
-#### <unsafe html={{html}} />
+#### &lt;unsafe html={{html}} /&gt;
 
 Allows unsafe HTML to be embedded in the template.
 
@@ -235,7 +235,7 @@ Unsafe: <unsafe html={{content}} />
 ```
 
 
-#### <show when={{condition}} />
+#### &lt;show when={{condition}} /&gt;
 
 Conditional block helper
 
@@ -261,7 +261,7 @@ Conditional block helper
 </show>
 ```
 
-#### <switch />
+#### &lt;switch /&gt;
 
 Switch conditional helper
 
