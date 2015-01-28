@@ -19,6 +19,7 @@ describe(__filename + "#", function () {
 
   [
     "click", 
+    "doubleClick:dblclick",
     "load", 
     "submit", 
     "mouseDown", 
