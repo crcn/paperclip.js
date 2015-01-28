@@ -7,7 +7,6 @@ var apc = Application.main.paperclip;
 
 describe(__filename + "#", function () {
 
-  return;
 
   it("can ignore a reference with ~", function () {
     var c = new BindableObject({
@@ -18,16 +17,7 @@ describe(__filename + "#", function () {
     expect(t.render().toString()).to.be("a");
   });
 
-  xit("can ignore a reference with ticks", function () {
-
-    var c = new BindableObject({
-      a: "a"
-    }), t = pc.template("{{`a`}}").view(c);
-    expect(t.render().toString()).to.be("a");
-    c.set("a", "b");
-    expect(t.render().toString()).to.be("a");
-  });
-
+  return;
   it("<~ can bind a reference, but not be settable", function () {
     var c = new BindableObject({
       a: "a"
@@ -41,6 +31,7 @@ describe(__filename + "#", function () {
     ref.value("baab");
     expect(ref.value()).to.be("b");
   });
+
 
   it("drops ~> refs from being watched, but casts them s a bindable ref", function () {
     var c = new BindableObject({

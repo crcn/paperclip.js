@@ -9,7 +9,7 @@ var tpl = paperclip.template("abba")
 
 describe(__filename + "#", function () {
 
-  it("can show conditional content", function () {
+  xit("can show conditional content", function () {
     var v = pc.template(
       "hello <show when={{true}}>" + 
         "world" +
@@ -19,7 +19,7 @@ describe(__filename + "#", function () {
     expect(v.toString()).to.be("hello world");
   });
 
-  it("can hide conditional content", function () {
+  xit("can hide conditional content", function () {
     var v = pc.template(
       "hello <show when={{false}}>" + 
         "world" +
@@ -29,7 +29,7 @@ describe(__filename + "#", function () {
     expect(v.toString()).to.be("hello ");
   });
 
-  it("can toggle conditional content", function () {
+  xit("can toggle conditional content", function () {
     var v = pc.template(
       "hello <show when={{show}}>" + 
         "world" +
@@ -41,6 +41,17 @@ describe(__filename + "#", function () {
     expect(v.toString()).to.be("hello ");
     v.context.set("show", true);
     expect(v.toString()).to.be("hello world");
+  });
+
+  it("can add a show block to an existing element", function () {
+    var v = pc.template(
+      "hello <span show.when={{show}}>world</span>"
+    , pc).view({show:true});
+    expect(v.toString()).to.be("hello <span>world</span>");
+    v.context.set("show", false);
+    expect(v.toString()).to.be("hello <span></span>");
+    v.context.set("show", true);
+    expect(v.toString()).to.be("hello <span>world</span>");
   });
 
 });
