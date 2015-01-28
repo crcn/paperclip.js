@@ -37,7 +37,7 @@ describe(__filename + "#", function () {
       name: "bob"
     });
 
-    var t = pc.template("hello <unsafe value={{content}} />", pc).view(c),
+    var t = pc.template("hello <unsafe html={{content}} />", pc).view(c),
     t2    = pc.template("world", pc),
     t3    = pc.template("{{name}}", pc);
 
