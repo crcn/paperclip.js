@@ -5,7 +5,13 @@ Vue = require("vue"),
 async = require("async"),
 _ = require("lodash");
 
-var tpl = window.pcTpl = pc.template("<div>{{#each:source,as:'model'}}<div>{{'item ' + ~model + ' ' + ~model}}<br /></div>{{/}}</div>");
+
+var pcTpl = 
+"div <div repeat.each={{source}} repeat.as='model'>" +
+    "<span>{{'item ' + ~model + ' ' + ~model }}<br /></span>" +
+"</div>";
+
+var tpl = window.pcTpl = pc.template(pcTpl, pc);
 
 var frag = document.createDocumentFragment();
 
@@ -65,7 +71,11 @@ function renderTemplate (i) {
 
 function renderPaperclip (i) {
   var source = Array.apply(null, new Array(i)).map(function (v, i) { return i; }).reverse();
-  document.body.appendChild(tpl.bind({source:source}).render());
+
+  var view = tpl.view({source:source});
+  var frag = view.render();
+
+  document.body.appendChild(frag);
 }
 
 
@@ -133,10 +143,10 @@ function benchmark (_c, _n, label, run, complete) {
     times.push(_t = Date.now() - start);
 
     console.log("%c %d %s : %d items rendered in %d MS ", "color:#999", _i, label, _n, _t);
-    paperclip.application.animate({ update: tick });
+    requestAnimationFrame(tick);
   }
 
-  paperclip.application.animate({ update: tick });
+  requestAnimationFrame(tick);
 }
 
 window.renderTemplate = function () {

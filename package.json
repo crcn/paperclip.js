@@ -35,8 +35,9 @@
     "pegjs": "^0.8.0",
     "react": "^0.11.2",
     "sinon": "^1.12.2",
-    "uglifyjs": "^2.3.6",
-    "uglify-js": "1.3.x"
+    "statsjs": "^1.0.6",
+    "uglify-js": "1.3.x",
+    "uglifyjs": "^2.3.6"
   },
   "bin": {
     "paperclip": "./bin/paperclip"
