@@ -7,6 +7,8 @@ var apc = Application.main.paperclip;
 
 describe(__filename + "#", function () {
 
+  return;
+
   it("can ignore a reference with ~", function () {
     var c = new BindableObject({
       a: "a"

@@ -44,6 +44,39 @@ describe(__filename + "#", function () {
     expect(v.render().toString()).to.be("45673");
   });
 
+  it("can nest repeat elements", function () {
+
+
+    var tpl = template(
+      "<repeat each={{source}} as='a'>" +
+        "a" +
+        "<repeat each={{a}} as='b'>" +
+          "b {{b}}" +
+        "</repeat>" +
+      "</repeat>"
+    , paperclip);
+
+    var v = tpl.view({
+      source: [
+        [0, 1],
+        [2, 3],
+        [4, 5],
+        [6, 7]
+      ]
+    });
+
+    expect(v.toString()).to.be("ab 0b 1ab 2b 3ab 4b 5ab 6b 7");
+
+  });
+
+  it("properly inherits properties from the parent view", function () {
+    var tpl = template("<repeat each={{source}} as='a'>{{a}}{{name}}</repeat>", paperclip);
+
+    var view = tpl.view({ source: [1, 2, 3, 4, 5 ], name: 'b'});
+
+    expect(view.render().toString()).to.be("1b2b3b4b5b");
+  });
+
   it("can apply a repeat block to an existing element", function () {
     var tpl = template("<ul repeat.each={{numbers}} repeat.as='number'><li>{{number}}</li></ul>", paperclip);
     var v = tpl.view({numbers:[0,1,2,3]});
