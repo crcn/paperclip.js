@@ -1,9 +1,7 @@
 var pc   = require("../.."),
 expect   = require("expect.js"),
-BindableObject = require("bindable-object"),
-Application  = require("mojo-application");
+BindableObject = require("bindable-object");
 
-var apc = Application.main.paperclip;
 
 describe(__filename + "#", function () {
 
