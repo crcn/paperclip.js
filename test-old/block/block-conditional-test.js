@@ -4,25 +4,6 @@ BindableObject = require("bindable-object");
 
 describe(__filename + "#", function () {
 
-  it("can show conditional content", function () {
-    var t = pc.template(
-      "hello {{#if:true}}" +
-        "world" + 
-      "{{/}}"
-    ).bind();
-
-    expect(t.toString()).to.be("hello world");
-  });
-
-  it("can hide conditional content", function () {
-    var t = pc.template(
-      "hello {{#if:false}}" +
-        "world" + 
-      "{{/}}"
-    ).bind();
-
-    expect(t.toString()).to.be("hello ");
-  });
 
   it("can show an 'else' block", function () {
     
