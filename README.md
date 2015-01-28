@@ -87,10 +87,15 @@ to compile templates into JavaScript.
 
 ## API
 
-#### template template(source)
+#### template template(source, options)
 
 Creates a new template
 
+- `source` - source of the template
+- `options`
+  - `components` - component class hash map
+  - `attributes` - attrbitues class hash map
+  - `modifiers` - modifiers class hash map
 
 ```javascript
 var pc = require("paperclip");
@@ -110,26 +115,13 @@ var view = template.view({ name: "Bull Murray" });
 document.body.appendChild(view.render()); // will show "hello Bill Murray"
 ```
 
-#### paperclip.modifier(modifierName, modifier)
+#### paperclip.Component
 
-registers a new global modifier.
+component base class
 
-```javascript
-var pc = require("paperclip");
-pc.modifier("markdown", require("marked"));
-var template = pc.template("{{ content | markdown }}");
-document.body.appendChild(template.view({
-  content: "hello **world**!"
-}).render());
-```
+#### paperclip.Attribute
 
-#### paperclip.parser.parse(source)
-
-translates templates into javascript source code
-
-#### paperclip.parser.compile(source)
-
-compiles templates into a javascript function
+attribute base class
 
 ## Block Syntax
 
