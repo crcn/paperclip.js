@@ -13,7 +13,7 @@ describe(__filename + "#", function () {
 
   it("can embed unsafe html", function () {
     var v = pc.template(
-      "<unsafe value={{html}} />"
+      "<unsafe html={{html}} />"
     , pc).view({
       html: "<h1>a b</h1>"
     });
@@ -22,12 +22,12 @@ describe(__filename + "#", function () {
   });
 
   it("can render an html string", function () {
-    var frag = pc.template("hello <unsafe value={{content}} />", pc).view({ content: "abc" }).render();
+    var frag = pc.template("hello <unsafe html={{content}} />", pc).view({ content: "abc" }).render();
     expect(frag.toString()).to.be("hello abc");
   });
 
   it("can accept an undefined value", function () {
-    var t = pc.template("hello <unsafe value={{undefined}} />", pc).view().render();
+    var t = pc.template("hello <unsafe html={{undefined}} />", pc).view().render();
     expect(t.toString()).to.be("hello ");
   });
 
@@ -62,8 +62,8 @@ describe(__filename + "#", function () {
     c2    = new BindableObject(),
     c3    = new BindableObject();
 
-    var t = pc.template("hello <unsafe value={{content}} />", pc).view(c),
-    t2    = pc.template("my name is <unsafe value={{content}} />",  pc).view(c2),
+    var t = pc.template("hello <unsafe html={{content}} />", pc).view(c),
+    t2    = pc.template("my name is <unsafe html={{content}} />",  pc).view(c2),
     t3    = pc.template("{{name}}", pc).view(c3);
 
     expect(t.toString()).to.be("hello ");
@@ -86,7 +86,7 @@ describe(__filename + "#", function () {
 
     var t = pc.template(
       "hello <show when={{condition}}>" + 
-        "<unsafe value={{content}} />" +
+        "<unsafe html={{content}} />" +
       "</show>!"
     , pc).view(c);
 

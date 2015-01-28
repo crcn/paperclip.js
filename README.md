@@ -220,7 +220,7 @@ Unbound helper - don't watch for any changes:
 
 ## Built-in components
 
-#### <unsafe value={{html}} />
+#### <unsafe html={{html}} />
 
 Allows unsafe HTML to be embedded in the template.
 
@@ -231,7 +231,7 @@ Allows unsafe HTML to be embedded in the template.
 -->
 
 ```html
-Unsafe: <unsafe value={{content}} />
+Unsafe: <unsafe html={{content}} />
 ```
 
 
