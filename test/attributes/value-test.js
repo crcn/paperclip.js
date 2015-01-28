@@ -27,8 +27,7 @@ describe(__filename + "#", function () {
     c.set("this", c);
 
     var b = t.view(c);
-    var r = b.render();
-    var input = r.childNodes[1];
+    var input = b.render();
     input.value = "baab";
     var e = document.createEvent("Event");
     e.initEvent("change");
@@ -47,9 +46,7 @@ describe(__filename + "#", function () {
     c.set("this", c);
 
     var b = t.view(c);
-    var r = b.render();
-
-    var input = r.childNodes[1];
+    var input = b.render();
     input.value = "baab";
     var e = document.createEvent("Event");
     e.initEvent("change");
@@ -68,9 +65,7 @@ describe(__filename + "#", function () {
     c.set("this", c);
 
     var b = t.view(c);
-    var r = b.render();
-
-    var input = r.childNodes[1];
+    var input = b.render();
     input.value = "baab";
     var e = document.createEvent("Event");
     e.initEvent("change");
@@ -93,9 +88,7 @@ describe(__filename + "#", function () {
     c.set("this", c);
 
     var b = t.view(c);
-    var r = b.render();
-
-    var input = r.childNodes[1];
+    var input = b.render();
     input.value = "baab";
     var e = document.createEvent("Event");
     e.initEvent("change");
@@ -120,9 +113,7 @@ describe(__filename + "#", function () {
       c.set("this", c);
 
       var b = t.view(c);
-      var r = b.render();
-
-      var input = r.childNodes[1];
+      var input = b.render();
       input.value = "baab";
 
       setTimeout(function () {

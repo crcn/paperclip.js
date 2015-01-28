@@ -55,7 +55,7 @@ describe(__filename + "#", function () {
 
       var e = document.createEvent("event");
       e.initEvent(name.toLowerCase());
-      t.section.start.nextSibling.dispatchEvent(e);
+      t.section.node.dispatchEvent(e);
     });
   });
 
@@ -78,7 +78,7 @@ describe(__filename + "#", function () {
     var e = document.createEvent("event");
     e.initEvent("keydown");
     e.keyCode = 13;
-    t.render().childNodes[1].dispatchEvent(e);
+    t.render().dispatchEvent(e);
 
 
     t.dispose();
@@ -99,7 +99,7 @@ describe(__filename + "#", function () {
     var e = document.createEvent("event");
     e.initEvent("keydown");
     e.keyCode = 8;
-    t.render().childNodes[1].dispatchEvent(e);
+    t.render().dispatchEvent(e);
   });
 
   it("can capture an onEscape event", function (next) {
@@ -117,6 +117,6 @@ describe(__filename + "#", function () {
     var e = document.createEvent("event");
     e.initEvent("keydown");
     e.keyCode = 27;
-    t.render().childNodes[1].dispatchEvent(e);
+    t.render().dispatchEvent(e);
   });
 });
