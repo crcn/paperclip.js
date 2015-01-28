@@ -287,7 +287,7 @@ Switch conditional helper
 </switch>
 ```
 
-#### <repeat each={{items}} as='item' />
+#### &lt;repeat each={{items}} as='item' /&gt;
 
 Creates a list of items. 
 
@@ -312,7 +312,7 @@ template will be the iterated item itself.
 </ul>
 ```
 
-#### <stack state={{state}} />
+#### &lt;stack state={{state}} /&gt;
 
 Similar to switch view, matches the visible child element with the given state.
 
