@@ -15,6 +15,11 @@ describe(__filename + "#", function () {
     expect(tpl.view().render().toString()).to.be("hello world");
   });
 
+  it("can pass a bindable object as the context of a view", function () {
+    var v = template("{{name}}").view(new BindableObject({name: "a" }));
+    expect(v.render().toString()).to.be("a");
+  });
+
   it("can render a view & still bind without a context", function () {
     var tpl = template("hello {{name}}"), v = tpl.view();
     expect(v.context).to.be(void 0);

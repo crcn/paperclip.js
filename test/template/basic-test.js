@@ -1,5 +1,6 @@
 var expect = require("expect.js"),
-template   = require("../../lib/template"),
+pc         = require("../.."),
+template   = pc.template,
 parser  = require("../../lib/parser"),
 BindableObject = require("bindable-object");
 
@@ -65,10 +66,14 @@ describe(__filename + "#", function () {
     expect(v.render().toString()).to.be("a");
   });
 
-  it("can pass a bindable object as the context of a view", function () {
-    var v = template("{{name}}").view(new BindableObject({name: "a" }));
-    expect(v.render().toString()).to.be("a");
+  it("converts HTML entities to real characters", function() {
+    var tpl = pc.template("hello &gt;");
+    expect(tpl.view().toString()).to.be("hello >")
   });
 
-
+  it("doesn't do overzealous HTML entity decoding", function() {
+    var tpl = pc.template("foo &amp;amp; bar");
+    expect(tpl.view().toString()).to.be("foo &amp; bar")
+  });
+  
 });
