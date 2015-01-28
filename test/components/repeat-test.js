@@ -1,6 +1,7 @@
-var expect     = require("expect.js"),
-paperclip      = require("../../lib")
-template       = paperclip.template;
+var expect         = require("expect.js"),
+paperclip          = require("../../lib"),
+BindableCollection = require("bindable-collection"),
+template           = paperclip.template;
 
 /*
 
@@ -21,6 +22,26 @@ describe(__filename + "#", function () {
     expect(v.render().toString()).to.be("0123");
     v.context.set("numbers", [4,5,6,7]);
     expect(v.render().toString()).to.be("4567");
+  });
+
+  it("accepts source as a bindable collection", function () {
+    var tpl = template("<repeat each={{numbers}} as='number'>{{number}}</repeat>", paperclip);
+    var v = tpl.view({numbers: new BindableCollection([0,1,2,3])});
+    expect(v.render().toString()).to.be("0123");
+    v.context.set("numbers", new BindableCollection([4,5,6,7]));
+    expect(v.render().toString()).to.be("4567");
+  });
+
+
+  it("updates the block if the source changes", function () {
+    var tpl = template("<repeat each={{numbers}} as='number'>{{number}}</repeat>", paperclip);
+    var src = new BindableCollection([0,1,2,3]);
+    var v = tpl.view({numbers: src});
+    expect(v.render().toString()).to.be("0123");
+    src.splice(0, 1, 4);
+    expect(v.render().toString()).to.be("4123");
+    src.splice(1, 2, 5, 6, 7);
+    expect(v.render().toString()).to.be("45673");
   });
 
   it("can apply a repeat block to an existing element", function () {
