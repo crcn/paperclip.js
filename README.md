@@ -226,11 +226,11 @@ Unbound helper - don't watch for any changes:
 {{ ~name }}
 ```
 
-## Built-in block helpers
+## Built-in components
 
-#### {{ html: content }}
+#### <unsafe value={{html}} />
 
-Similar to escaping content in mustache (`{{{content}}}`). Good for security.
+Allows unsafe HTML to be embedded in the template.
 
 <!--
 {
@@ -239,14 +239,11 @@ Similar to escaping content in mustache (`{{{content}}}`). Good for security.
 -->
 
 ```html
-Unsafe:
-{{ html: content }} <br />
-
-Safe:
-{{ content }} <br />
+Unsafe: <unsafe value={{content}} />
 ```
 
-#### {{ #if: condition }}
+
+#### <show when={{condition}} />
 
 Conditional block helper
 
@@ -258,16 +255,47 @@ Conditional block helper
 
 ```html
 <input type="text" class="form-control" placeholder="What's your age?" model="{{ <~>age }}"></input>
-{{#if: age >= 18 }}
+
+<show when={{age >= 18}}>
   You're legally able to vote in the U.S.
-{{/elseif: age > 16 }}
+</show>
+
+<show when={{age > 16}}>
   You're almost old enough to vote in the U.S.
-{{/else}}
+</show>
+
+<show when={{age < 16}}>
   You're too young to vote in the U.S.
-{{/}}
+</show>
 ```
 
-#### {{#each: source }}
+#### <switch />
+
+Switch conditional helper
+
+<!--
+{
+  age: 24
+}
+-->
+
+```html
+<input type="text" class="form-control" placeholder="What's your age?" model="{{ <~>age }}"></input>
+
+<switch>
+  <show when={{age >= 18}}>
+    You're legally able to vote in the U.S.
+  </show>
+  <show when={{age > 16}}>
+    You're almost old enough to vote in the U.S.
+  </show>
+  <show>
+    You're too young to vote in the U.S.
+  </show>
+</switch>
+```
+
+#### <repeat each={{items}} as='item' />
 
 Creates a list of items. 
 
@@ -281,16 +309,37 @@ template will be the iterated item itself.
 -->
 
 ```html
-{{#each:items,as:"i"}}
-  item {{i}} <br />
-{{/}}
+<repeat each={{items}} as='item'>
+  item {{item}} <br />
+</repeat>
+
+<!-- also valid -->
+
+<ul repeat.each={{item}} repeat.as='item'>
+  <li>{{item}}</li>
+</ul>
+```
+
+#### <stack state={{state}} />
+
+Similar to switch view, matches the visible child element with the given state.
+
+```html
+
+<!-- show the home state -->
+<stack state='home'>
+  <div name='home'>
+  </div>
+  <div name='contact'>
+  </div>
+</stack>
 ```
 
 ## Attribute helpers
 
 Below are a list of data binding attributes you can use with elements.
 
-#### model={{ context }}
+#### value={{ context }}
 
 Input data binding
 
@@ -301,7 +350,7 @@ Input data binding
 -->
 
 ```html
-<input type="text" class="form-control" placeholder="Type in a message" model="{{ <~>message }}"></input>
+<input type="text" class="form-control" placeholder="Type in a message" value="{{ <~>message }}"></input>
 <h3>{{message}}</h3>
 ```
 
@@ -337,11 +386,6 @@ Executed when an event is fired on the DOM element. Here are all the available e
   enter pressed
 {{/}}
 ```
-
-#### show={{ bool }}
-
-Toggles the display mode of a given element. This is similar to the `{{if:expression}}` conditional helper.
-
 
 #### enable={{ bool }}
 
