@@ -5,43 +5,43 @@ BindableObject = require("bindable-object");
 describe(__filename + "#", function () {
 
 
-  return false;
   
   it("can call uppercase()", function () {
-    expect(pc.template("{{name|uppercase()}}").bind({name:"abc"}).render().toString()).to.be("ABC");
+    expect(pc.template("{{name|uppercase()}}").view({name:"abc"}).render().toString()).to.be("ABC");
   });
 
   it("can call lowercase()", function () {
-    expect(pc.template("{{name|lowercase()}}").bind({name:"ABC"}).render().toString()).to.be("abc");
+    expect(pc.template("{{name|lowercase()}}").view({name:"ABC"}).render().toString()).to.be("abc");
   });
 
   it("can call titlecase()", function () {
-    expect(pc.template("{{name|titlecase()}}").bind({name:"abc"}).render().toString()).to.be("Abc");
+    expect(pc.template("{{name|titlecase()}}").view({name:"abc"}).render().toString()).to.be("Abc");
   });
 
   it("can call json()", function () {
-    expect(pc.template("{{a|json()}}").bind({a:{b:1,c:2}}).render().toString()).to.be("{&#x22;b&#x22;:1,&#x22;c&#x22;:2}");
+    expect(pc.template("{{a|json()}}").view({a:{b:1,c:2}}).render().toString()).to.be("{&#x22;b&#x22;:1,&#x22;c&#x22;:2}");
   });
 
   it("can call multiple modifiers on one expression", function () {
-    expect(pc.template("{{name|lowercase()|titlecase()}}").bind({name:"ABC"}).render().toString()).to.be("Abc");
+    expect(pc.template("{{name|lowercase()|titlecase()}}").view({name:"ABC"}).render().toString()).to.be("Abc");
   });
 
   it("modifies the last expression only", function () {
-    expect(pc.template("{{a+b|uppercase()}}").bind({a:"a",b:"b"}).render().toString()).to.be("aB");
+    expect(pc.template("{{a+b|uppercase()}}").view({a:"a",b:"b"}).render().toString()).to.be("aB");
   });
 
   it("respects grouped expressions", function () {
-    expect(pc.template("{{(a+b)|uppercase()}}").bind({a:"a",b:"b"}).render().toString()).to.be("AB");
+    expect(pc.template("{{(a+b)|uppercase()}}").view({a:"a",b:"b"}).render().toString()).to.be("AB");
   });
 
   it("can register a custom modifer", function () {
-    apc.modifier("concat", function (name, value) {
-      return name + value;
-    });
 
-    expect(pc.template("{{a|concat('b')}}").bind({a:"a"}).render().toString()).to.be("ab")
-    apc.modifier("concat", undefined);
+    var tpl = pc.template("{{a|concat('b')}}");
+    tpl.modifiers.concat = function (name, value) {
+      return name + value;
+    };
+    
+    expect(tpl.view({a:"a"}).render().toString()).to.be("ab")
   });
 
   it("recalls the modifier if a value changes", function () {
@@ -49,7 +49,7 @@ describe(__filename + "#", function () {
       a: "a"
     });
 
-    var t = pc.template("{{a|uppercase()}}").bind(c);
+    var t = pc.template("{{a|uppercase()}}").view(c);
     expect(t.toString()).to.be("A");
     c.set("a", "b");
     expect(t.toString()).to.be("B");
@@ -58,17 +58,22 @@ describe(__filename + "#", function () {
 
   // TODO - make this work!
   xit("can bind to a model", function () {
-    apc.modifier("fullName", function(v) {
-      if (v) this.bindings.push(v.on("change", v.update));
-      return [v.get("firstName"), v.get("lastName")].join(" ");
-    });
+    
 
     var context = new BindableObject({
       firstName: "a",
       lastName: "b"
     });
 
-    var v = pc.template("{{ ctx | fullName() }}").bind({ ctx: context });
+    var tpl = pc.template("{{ ctx | fullName() }}");
+
+    tpl.modifiers.fullName = function (v) {
+      console.log(this);
+      // if (v) this.bindings.push(v.on("change", v.update));
+      return [v.get("firstName"), v.get("lastName")].join(" ");
+    };
+
+    var v = tpl.view({ ctx: context });
 
     expect(v.toString()).to.be("a b");
     context.set("lastName", "c");
@@ -87,7 +92,7 @@ describe(__filename + "#", function () {
       b: b
     });
 
-    var t = pc.template("{{b|json()}}").bind(context);
+    var t = pc.template("{{b|json()}}").view(context);
     expect(t.bindings.script._bindings.length).to.be(2);
     expect(t.toString()).to.be("{&#x22;a&#x22;:&#x22;a&#x22;,&#x22;_events&#x22;:{}}");
     context.set("b", undefined);
@@ -99,10 +104,11 @@ describe(__filename + "#", function () {
   });
 
   it("can be nested", function () {
-    apc.modifier("concat", function (name, value) {
+
+    var tpl = pc.template("{{a|concat('b'|uppercase())}}");
+    tpl.modifiers.concat = function (name, value) {
       return name + value;
-    });
-    expect(pc.template("{{a|concat('b'|uppercase())}}").bind({a:"a"}).render().toString()).to.be("aB");
-    apc.modifier("concat", undefined);
+    };
+    expect(tpl.view({a:"a"}).render().toString()).to.be("aB");
   });
 });

@@ -7,7 +7,7 @@ _ = require("lodash");
 
 
 var pcTpl = 
-"div <div repeat.each={{source}} repeat.as='model'>" +
+"<div repeat.each={{source}} repeat.as='model'>" +
     "<span>{{'item ' + ~model + ' ' + ~model }}<br /></span>" +
 "</div>";
 

@@ -15,8 +15,7 @@ describe(__filename + "#", function () {
     expect(t.render().toString()).to.be("a");
   });
 
-  return;
-  it("<~ can bind a reference, but not be settable", function () {
+  xit("<~ can bind a reference, but not be settable", function () {
     var c = new BindableObject({
       a: "a"
     }), t = pc.template("{{<~a}}").view(c);
@@ -31,7 +30,7 @@ describe(__filename + "#", function () {
   });
 
 
-  it("drops ~> refs from being watched, but casts them s a bindable ref", function () {
+  xit("drops ~> refs from being watched, but casts them s a bindable ref", function () {
     var c = new BindableObject({
       a: "a"
     }), t = pc.template("{{~>a}}").view(c);
@@ -44,7 +43,7 @@ describe(__filename + "#", function () {
     expect(t.render().toString()).to.be("a");
   });
 
-  it("can use a data-binding with an or statement", function () {
+  xit("can use a data-binding with an or statement", function () {
     var c = new BindableObject();
     pc.template("{{a||<~>a}}").view(c);
     pc.template("{{a||~a}}").view(c);
@@ -52,7 +51,7 @@ describe(__filename + "#", function () {
     pc.template("{{a||~>a}}").view(c);
   });
 
-  it("allows for references with <~> to be bound both ways", function () {
+  xit("allows for references with <~> to be bound both ways", function () {
     var c = new BindableObject({
       a: "a"
     }), t = pc.template("{{<~>a}}").view(c);
