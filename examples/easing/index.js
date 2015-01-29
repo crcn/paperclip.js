@@ -8,7 +8,7 @@ _ = require("lodash");
 var pcTpl = 
 "<input type='text' value={{<~>count}}></input>" +
 "<div repeat.each={{ range(count) }} repeat.as='model'>" +
-    "<span easeIn={{fadeIn(node)}} easeOut={{fadeOut(node, complete)}}>{{'item ' + ~model + ' ' + ~model }}<br /></span>" +
+    "<span easeIn={{fadeIn(transition)}} easeOut={{fadeOut(transition)}}>{{'item ' + ~model + ' ' + ~model }}<br /></span>" +
 "</div>";
 
 var tpl = window.pcTpl = pc.template(pcTpl, pc);
@@ -18,11 +18,11 @@ var view = tpl.view({
   range: function (count) {
     return _.range(count);
   },
-  fadeIn: function (node) {
-    $(node).fadeIn();
+  fadeIn: function (transition) {
+    $(transition.node).fadeIn();
   },
-  fadeOut: function (node, complete) {
-    $(node).fadeOut(complete);
+  fadeOut: function (transition) {
+    $(transition.node).fadeOut(transition.complete);
   }
 });
 
