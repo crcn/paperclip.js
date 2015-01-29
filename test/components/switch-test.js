@@ -151,6 +151,14 @@ describe(__filename + "#", function () {
     , pc).view({});
 
     expect(v.toString()).to.be("a c");
-  })
+  });
+
+  it("can rebind to a different context", function () {
+    var tpl = template("<switch><show>{{name}}</show></switch>", pc);
+    var v = tpl.view({name:"a"});
+    expect(v.render().toString()).to.be("a");
+    v.bind({name:"b"})
+    expect(v.render().toString()).to.be("b");
+  });
 });
 

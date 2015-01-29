@@ -63,5 +63,6 @@ describe(__filename + "#", function () {
     v.context.set("index", 0);
     expect(v.render().toString()).to.be("<div><span>hello</span></div>");
   });
+
 });
 
