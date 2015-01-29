@@ -205,14 +205,14 @@ specify whether to bind one way, two ways, or not at all. Here's the basic synta
 
 ```html
 Two-way binding:
-<input class="form-control" model="{{ <~>name }}" />
+<input class="form-control" value="{{ <~>name }}" />
 
 Bind input value to name only:
-<input class="form-control" model="{{ ~>name }}" />
+<input class="form-control" value="{{ ~>name }}" />
 
 Bind name to input value only:
 
-<input class="form-control" model="{{ <~name }}" />
+<input class="form-control" value="{{ <~name }}" />
 
 Unbound helper - don't watch for any changes:
 {{ ~name }}
@@ -246,7 +246,7 @@ Conditional block helper
 -->
 
 ```html
-<input type="text" class="form-control" placeholder="What's your age?" model="{{ <~>age }}"></input>
+<input type="text" class="form-control" placeholder="What's your age?" value="{{ <~>age }}"></input>
 
 <show when={{age >= 18}}>
   You're legally able to vote in the U.S.
@@ -272,7 +272,7 @@ Switch conditional helper
 -->
 
 ```html
-<input type="text" class="form-control" placeholder="What's your age?" model="{{ <~>age }}"></input>
+<input type="text" class="form-control" placeholder="What's your age?" value="{{ <~>age }}"></input>
 
 <switch>
   <show when={{age >= 18}}>
