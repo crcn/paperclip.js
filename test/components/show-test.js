@@ -43,6 +43,19 @@ describe(__filename + "#", function () {
     expect(v.toString()).to.be("hello world");
   });
 
+  it("works when the conditional is a different type", function () {
+    var v = pc.template(
+      "<show when={{show}}>" + 
+        "a" +
+      "</show>" 
+    , pc).view({show:1});
+    expect(v.toString()).to.be("a");
+    v.context.set("show", 2);
+    expect(v.toString()).to.be("a");
+    v.context.set("show", 3);
+    expect(v.toString()).to.be("a");
+  });
+
   it("can add a show block to an existing element", function () {
     var v = pc.template(
       "hello <span show.when={{show}}>world</span>"
