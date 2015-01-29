@@ -23,8 +23,8 @@ function renderPaperclip (i) {
     document.body.appendChild(view.render());
   }
 
-  var source = Array.apply(null, new Array(i)).map(function (v, i) { return i; }).reverse();
-  view.bind({source:source})
+  var source = Array.apply(null, new Array(i)).map(function (v, i) { return i; });
+  view.bind({source:_.shuffle(source)})
 
   var frag = view.render();
 
