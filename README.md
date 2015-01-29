@@ -22,6 +22,7 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 ### Features
 
 - mustache-like syntax
+- animations
 - extensible
 - super fast
 - inline javascript
