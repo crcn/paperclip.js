@@ -62,7 +62,7 @@ describe(__filename + "#", function () {
     , pc).view({show:true});
     expect(v.toString()).to.be("hello <span>world</span>");
     v.context.set("show", false);
-    expect(v.toString()).to.be("hello <span></span>");
+    expect(v.toString()).to.be("hello ");
     v.context.set("show", true);
     expect(v.toString()).to.be("hello <span>world</span>");
   });
