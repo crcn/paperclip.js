@@ -56,6 +56,15 @@ describe(__filename + "#", function () {
     expect(v.toString()).to.be("a");
   });
 
+  it("doesn't show is conditional is undefined", function () {
+    var v = pc.template(
+      "<show when={{show}}>" + 
+        "a" +
+      "</show>" 
+    , pc).view({show:void 0});
+    expect(v.toString()).to.be("");
+  });
+
   it("can add a show block to an existing element", function () {
     var v = pc.template(
       "hello <span show.when={{show}}>world</span>"
