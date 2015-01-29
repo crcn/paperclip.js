@@ -20,7 +20,7 @@ describe(__filename + "#", function () {
     expect(v.render().toString()).to.be("a");
   });
 
-  it("can render a view & still bind without a context", function () {
+  xit("can render a view & still bind without a context", function () {
     var tpl = template("hello {{name}}"), v = tpl.view();
     expect(v.context).to.be(void 0);
     var bindSpy = sinon.spy(v, "bind");

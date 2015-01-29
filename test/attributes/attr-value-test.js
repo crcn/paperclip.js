@@ -56,7 +56,7 @@ describe(__filename + "#", function () {
   });
 
   it("removes an attribute value if undefined", function () {
-    var v = pc.template("<div class='{{a}}' />").view();
+    var v = pc.template("<div class='{{a}}' />").view({});
     expect(v.toString()).to.be("<div></div>");
     v.context.set("a", "b");
     expect(v.toString()).to.be("<div class=\"b\"></div>");
