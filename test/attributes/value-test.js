@@ -40,6 +40,27 @@ describe(__filename + "#", function () {
     }, 10);
   });
 
+  it("can data-bind to a checkbox", function (next) {
+    var t = pc.template("<input type='checkbox' checked={{ <~>checked }} />", pc),
+    c = new BindableObject({name:"abba"});
+    c.set("this", c);
+
+    var b = t.view(c);
+    var input = b.render();
+    input.checked = true;
+    var e = document.createEvent("Event");
+    e.initEvent("change");
+    input.dispatchEvent(e);
+
+    setTimeout(function () {
+      expect(c.get("checked")).to.be(true);
+      c.set("checked", false);
+      expect(input.checked).to.be(false);
+      b.dispose();
+      next();
+    }, 10);
+  });
+
   it("can data-bind to a ref path", function (next) {
     var t = pc.template("<input type='text' value={{ <~>a.b.c.d.e }} />", pc),
     c = new BindableObject();
