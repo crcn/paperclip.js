@@ -10,7 +10,7 @@ min:
 	./node_modules/.bin/uglifyjs ./dist/paperclip.js > ./dist/paperclip.min.js
 
 test-node:
-	mocha --recursive --ignore-leaks --timeout $(TIMEOUT)
+	mocha ./test/*/**-test.js --ignore-leaks --timeout $(TIMEOUT)
 
 parser:
 	mkdir -p ./lib/parser
