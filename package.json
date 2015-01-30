@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "0.7.19",
+  "version": "0.7.20",
   "description": "controller logic:",
   "main": "./lib/index.js",
   "scripts": {
@@ -46,6 +46,7 @@
     "bindable-collection": "0.0.2",
     "bindable-object": "0.0.6",
     "document-section": "^0.2.6",
+    "frame-runner": "0.0.x",
     "he": "~0.4.1",
     "nofactor": "0.0.x",
     "optimist": "0.4.x",
