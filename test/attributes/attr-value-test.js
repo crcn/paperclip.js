@@ -1,5 +1,6 @@
 var pc   = require("../.."),
-expect   = require("expect.js");
+expect   = require("expect.js"),
+$        = require("noselector");
 
 describe(__filename + "#", function () {
 
@@ -8,6 +9,11 @@ describe(__filename + "#", function () {
     var v = pc.template(
       "<div class={{'some-class'}} id='abc'>abb</div>"
     , pc).view();
+
+
+    // TODO - do this
+    // console.log($(v.render()).find("div").attr("class"))
+    // expect($(v.render()).attr)
 
     expect(v.toString()).to.be('<div id="abc" class="some-class">abb</div>');
   });

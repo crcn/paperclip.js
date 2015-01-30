@@ -15,6 +15,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+      'test/0-init/jquery.js',
       'test/*/**-test.js'
     ],
 
@@ -24,7 +25,7 @@ module.exports = function(config) {
       'init-test.js',
       '0-init',
       '*init*',
-      './test/0-init/*'
+      './test/0-init/*-test*'
     ],
 
 
