@@ -31,7 +31,7 @@ test-cov:
 
 test-coveralls:
 	PC_DEBUG=1 ./node_modules/.bin/istanbul cover \
-	./node_modules/.bin/_mocha ./test/*/**-test.js --timeout $(TIMEOUT) --reporter $(REPORTER) -- -R spec && \
+	./node_modules/.bin/_mocha ./test/*/**-test.js --timeout $(TIMEOUT) -- --reporter $(REPORTER)  && \
 	cat ./coverage/lcov.info | ./node_modules/.bin/coveralls --verbose
 
 test-karma:
