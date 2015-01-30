@@ -7,7 +7,7 @@ describe(__filename + "#", function () {
 
   describe("scripts", function () {
     it("automatically assigns value script", function () {
-        var ast = parser.parse("{{ a }}")
+        var ast = parser.parse("{{ a }}");
     });
 
     it("properly parses scripts", function () {
