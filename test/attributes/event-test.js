@@ -3,6 +3,7 @@ expect   = require("expect.js"),
 BindableObject = require("bindable-object"),
 nofactor = require("nofactor"),
 paperclip = require("../../lib"),
+stringifyView = require("../utils/stringifyView"),
 template = paperclip.template;
 
 describe(__filename + "#", function () {
@@ -53,8 +54,8 @@ describe(__filename + "#", function () {
 
       t.render(); 
 
-      var e = document.createEvent("event");
-      e.initEvent(name.toLowerCase());
+      var e = document.createEvent("Event");
+      e.initEvent(name.toLowerCase(), true, true);
       t.section.node.dispatchEvent(e);
     });
   });
@@ -75,8 +76,8 @@ describe(__filename + "#", function () {
 
 
 
-    var e = document.createEvent("event");
-    e.initEvent("keydown");
+    var e = document.createEvent("Event");
+    e.initEvent("keydown", true, true);
     e.keyCode = 13;
     t.render().dispatchEvent(e);
 
@@ -96,8 +97,8 @@ describe(__filename + "#", function () {
       }
     }); 
 
-    var e = document.createEvent("event");
-    e.initEvent("keydown");
+    var e = document.createEvent("Event");
+    e.initEvent("keydown", true, true);
     e.keyCode = 8;
     t.render().dispatchEvent(e);
   });
@@ -114,8 +115,8 @@ describe(__filename + "#", function () {
       }
     }); 
 
-    var e = document.createEvent("event");
-    e.initEvent("keydown");
+    var e = document.createEvent("Event");
+    e.initEvent("keydown", true, true);
     e.keyCode = 27;
     t.render().dispatchEvent(e);
   });

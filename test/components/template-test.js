@@ -1,6 +1,7 @@
 var expect     = require("expect.js"),
 pc             = require("../../lib")
-template       = pc.template;
+template       = pc.template,
+stringifyView = require("../utils/stringifyView");
 
 /*
 
@@ -28,10 +29,10 @@ describe(__filename + "#", function () {
     });
 
     var v = tpl.view({message:"a"});
-    expect(v.toString()).to.be("hello a!");
+    expect(stringifyView(v)).to.be("hello a!");
     v.context.set("message", "b");
     v.runner.update();
-    expect(v.toString()).to.be("hello b!");
+    expect(stringifyView(v)).to.be("hello b!");
   });
 
   it("attributes don't override context properties", function () {
@@ -43,7 +44,7 @@ describe(__filename + "#", function () {
     });
 
     var v = tpl.view({message:"a"});
-    expect(v.toString()).to.be("hello world!");
+    expect(stringifyView(v)).to.be("hello world!");
     v.runner.update();
     expect(v.context.message).to.be("a");
   });
@@ -57,12 +58,12 @@ describe(__filename + "#", function () {
     });
 
     var v = tpl.view({message:"world"});
-    expect(v.toString()).to.be("hello world!");
+    expect(stringifyView(v)).to.be("hello world!");
     var ctx = v.context;
     v.unbind(ctx);
     ctx.set("message", "a");
     v.runner.update();
-    expect(v.toString()).to.be("hello world!");
+    expect(stringifyView(v)).to.be("hello world!");
   });
 
 });

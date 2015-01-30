@@ -1,6 +1,7 @@
 var pc         = require("../.."),
 expect         = require("expect.js"),
-BindableObject = require("bindable-object");
+BindableObject = require("bindable-object"),
+stringifyView = require("../utils/stringifyView");
 
 describe(__filename + "#", function () {
 
@@ -19,7 +20,7 @@ describe(__filename + "#", function () {
       show: false
     });
 
-    expect(v.toString()).to.be("<div style=\"display:none;\"></div>");
+    expect(stringifyView(v)).to.be("<div style=\"display:none;\"></div>");
   });
 
   it("respects the original display style", function () {
@@ -36,11 +37,11 @@ describe(__filename + "#", function () {
     , pc ).view(ctx);
 
 
-    expect(v.toString()).to.be("<div style=\"display:none;\"></div>");
+    expect(stringifyView(v)).to.be("<div style=\"display:none;\"></div>");
     ctx.set("show", true);
-    expect(v.toString()).to.be("<div style=\"display:block;\"></div>");
+    expect(stringifyView(v)).to.be("<div style=\"display:block;\"></div>");
     ctx.set("show", false);
-    expect(v.toString()).to.be("<div style=\"display:none;\"></div>");
+    expect(stringifyView(v)).to.be("<div style=\"display:none;\"></div>");
   });
 
 });

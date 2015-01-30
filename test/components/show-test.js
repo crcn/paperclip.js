@@ -1,6 +1,7 @@
 var expect     = require("expect.js"),
 pc             = require("../../lib")
-template       = pc.template;
+template       = pc.template,
+stringifyView = require("../utils/stringifyView");
 
 /*
 
@@ -16,7 +17,7 @@ describe(__filename + "#", function () {
       "</show>" 
     , pc).view();
 
-    expect(v.toString()).to.be("hello world");
+    expect(stringifyView(v)).to.be("hello world");
   });
 
   xit("can hide conditional content", function () {
@@ -26,7 +27,7 @@ describe(__filename + "#", function () {
       "</show>" 
     , pc).view();
 
-    expect(v.toString()).to.be("hello ");
+    expect(stringifyView(v)).to.be("hello ");
   });
 
   xit("can toggle conditional content", function () {
@@ -36,13 +37,13 @@ describe(__filename + "#", function () {
       "</show>" 
     , pc).view({show:true});
 
-    expect(v.toString()).to.be("hello world");
+    expect(stringifyView(v)).to.be("hello world");
     v.context.set("show", false);
     v.runner.update();
-    expect(v.toString()).to.be("hello ");
+    expect(stringifyView(v)).to.be("hello ");
     v.context.set("show", true);
     v.runner.update();
-    expect(v.toString()).to.be("hello world");
+    expect(stringifyView(v)).to.be("hello world");
   });
 
   it("works when the conditional is a different type", function () {
@@ -51,13 +52,13 @@ describe(__filename + "#", function () {
         "a" +
       "</show>" 
     , pc).view({show:1});
-    expect(v.toString()).to.be("a");
+    expect(stringifyView(v)).to.be("a");
     v.context.set("show", 2);
     v.runner.update();
-    expect(v.toString()).to.be("a");
+    expect(stringifyView(v)).to.be("a");
     v.context.set("show", 3);
     v.runner.update();
-    expect(v.toString()).to.be("a");
+    expect(stringifyView(v)).to.be("a");
   });
 
   it("doesn't show is conditional is undefined", function () {
@@ -66,20 +67,20 @@ describe(__filename + "#", function () {
         "a" +
       "</show>" 
     , pc).view({show:void 0});
-    expect(v.toString()).to.be("");
+    expect(stringifyView(v)).to.be("");
   });
 
   it("can add a show block to an existing element", function () {
     var v = pc.template(
       "hello <span show.when={{show}}>world</span>"
     , pc).view({show:true});
-    expect(v.toString()).to.be("hello <span>world</span>");
+    expect(stringifyView(v)).to.be("hello <span>world</span>");
     v.context.set("show", false);
     v.runner.update();
-    expect(v.toString()).to.be("hello <span></span>");
+    expect(stringifyView(v)).to.be("hello <span></span>");
     v.context.set("show", true);
     v.runner.update();
-    expect(v.toString()).to.be("hello <span>world</span>");
+    expect(stringifyView(v)).to.be("hello <span>world</span>");
   });
 
 });

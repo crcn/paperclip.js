@@ -1,6 +1,7 @@
 var expect     = require("expect.js"),
 paperclip      = require("../../lib")
-template       = paperclip.template;
+template       = paperclip.template,
+stringifyView = require("../utils/stringifyView");
 
 /*
 
@@ -12,19 +13,19 @@ describe(__filename + "#", function () {
   it("can create a stack component that toggles between child visibility", function () {
     var tpl = template("<stack state={{index}}><span>hello</span><span>world</span></stack>", paperclip);
     var v = tpl.view({index:1});
-    expect(v.toString()).to.be("<span>world</span>");
+    expect(stringifyView(v)).to.be("<span>world</span>");
     v.context.set("index", 0);
     v.runner.update();
-    expect(v.toString()).to.be("<span>hello</span>");
+    expect(stringifyView(v)).to.be("<span>hello</span>");
   });
 
   it("can show a component based on the name of an element", function () {
     var tpl = template("<stack state={{state}}><span name='hello'>hello</span><span name='world'>world</span></stack>", paperclip);
     var v = tpl.view({state:'world'});
-    expect(v.toString()).to.be("<span name=\"world\">world</span>");
+    expect(stringifyView(v)).to.be("<span name=\"world\">world</span>");
     v.context.set("state", 'hello');
     v.runner.update();
-    expect(v.toString()).to.be("<span name=\"hello\">hello</span>");
+    expect(stringifyView(v)).to.be("<span name=\"hello\">hello</span>");
   });
 
   it("can have embedded stacks", function () {
@@ -44,32 +45,32 @@ describe(__filename + "#", function () {
     );
 
     var v = tpl.view({s1:'a',s2:'b'});
-    expect(v.toString()).to.be('<span name="b">a</span>');
+    expect(stringifyView(v)).to.be('<span name="b">a</span>');
     v.context.setProperties({s1:'a',s2:'c'});
     v.runner.update();
-    expect(v.toString()).to.be('<span name="c">b</span>');
+    expect(stringifyView(v)).to.be('<span name="c">b</span>');
     v.context.setProperties({s1:'b',s3:'d'});
     v.runner.update();
-    expect(v.toString()).to.be('<span name="d">c</span>');
+    expect(stringifyView(v)).to.be('<span name="d">c</span>');
     v.context.setProperties({s1:'b',s3:'e'});
     v.runner.update();
-    expect(v.toString()).to.be('<span name="e">d</span>');
+    expect(stringifyView(v)).to.be('<span name="e">d</span>');
     v.context.setProperties({s1:'b',s3:'c'});
     v.runner.update();
-    expect(v.toString()).to.be('');
+    expect(stringifyView(v)).to.be('');
     v.context.setProperties({s1:'a',s3:'c'});
     v.runner.update();
-    expect(v.toString()).to.be('<span name="c">b</span>');
+    expect(stringifyView(v)).to.be('<span name="c">b</span>');
   });
 
   it("can attach the stack component to an existing element", function () {
     var tpl = template("<div stack.state={{index}}><span>hello</span><span>world</span></div>", paperclip);
 
     var v = tpl.view({index:1});
-    expect(v.toString()).to.be("<div><span>world</span></div>");
+    expect(stringifyView(v)).to.be("<div><span>world</span></div>");
     v.context.set("index", 0);
     v.runner.update();
-    expect(v.toString()).to.be("<div><span>hello</span></div>");
+    expect(stringifyView(v)).to.be("<div><span>hello</span></div>");
   });
 
 });

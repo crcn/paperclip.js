@@ -15,7 +15,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'test/0-init/jquery.js',
+      'test/libs/*',
       'test/*/**-test.js'
     ],
 
@@ -25,7 +25,7 @@ module.exports = function(config) {
       'init-test.js',
       '0-init',
       '*init*',
-      './test/0-init/*-test*'
+      './test/0-init/*'
     ],
 
 
@@ -33,6 +33,7 @@ module.exports = function(config) {
     // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
     
     preprocessors: {
+      'test/libs/*': [ 'browserify' ],
       'test/**/**.js': [ 'browserify' ]
     },
 
@@ -68,7 +69,7 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome'],
+    browsers: ['Chrome','Firefox','Safari'],
 
 
     // Continuous Integration mode

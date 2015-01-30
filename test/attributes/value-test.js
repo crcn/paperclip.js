@@ -30,7 +30,7 @@ describe(__filename + "#", function () {
     var input = b.render();
     input.value = "baab";
     var e = document.createEvent("Event");
-    e.initEvent("change");
+    e.initEvent("change", true, true);
     input.dispatchEvent(e);
 
     setTimeout(function () {
@@ -49,7 +49,7 @@ describe(__filename + "#", function () {
     var input = b.render();
     input.checked = true;
     var e = document.createEvent("Event");
-    e.initEvent("change");
+    e.initEvent("change", true, true);
     input.dispatchEvent(e);
 
     setTimeout(function () {
@@ -70,7 +70,7 @@ describe(__filename + "#", function () {
     var input = b.render();
     input.value = "baab";
     var e = document.createEvent("Event");
-    e.initEvent("change");
+    e.initEvent("change", true, true);
     input.dispatchEvent(e);
 
     setTimeout(function () {
@@ -89,7 +89,7 @@ describe(__filename + "#", function () {
     var input = b.render();
     input.value = "baab";
     var e = document.createEvent("Event");
-    e.initEvent("change");
+    e.initEvent("change", true, true);
     input.dispatchEvent(e);
 
     setTimeout(function () {
@@ -112,7 +112,7 @@ describe(__filename + "#", function () {
     var input = b.render();
     input.value = "baab";
     var e = document.createEvent("Event");
-    e.initEvent("change");
+    e.initEvent("change", true, true);
     input.dispatchEvent(e);
 
     setTimeout(function () {

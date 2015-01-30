@@ -1,7 +1,8 @@
 var expect     = require("expect.js"),
 pc             = require("../../lib")
 template       = pc.template,
-BindableObject = require("bindable-object");
+BindableObject = require("bindable-object"),
+stringifyView = require("../utils/stringifyView")
 
 /*
 
@@ -19,17 +20,17 @@ describe(__filename + "#", function () {
       html: "<h1>a b</h1>"
     });
 
-    expect(v.toString()).to.be("<h1>a b</h1>");
+    expect(stringifyView(v)).to.be("<h1>a b</h1>");
   });
 
   it("can render an html string", function () {
     var v = pc.template("hello <unsafe html={{content}} />", pc).view({ content: "abc" });
-    expect(v.toString()).to.be("hello abc");
+    expect(stringifyView(v)).to.be("hello abc");
   });
 
   it("can accept an undefined value", function () {
     var v = pc.template("hello <unsafe html={{undefined}} />", pc).view();
-    expect(v.toString()).to.be("hello ");
+    expect(stringifyView(v)).to.be("hello ");
   });
 
 

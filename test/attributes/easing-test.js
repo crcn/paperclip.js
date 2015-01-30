@@ -1,5 +1,6 @@
 var pc   = require("../.."),
-expect   = require("expect.js");
+expect   = require("expect.js"),
+stringifyView = require("../utils/stringifyView")
 
 describe(__filename + "#", function () {
 
@@ -82,10 +83,10 @@ describe(__filename + "#", function () {
     v.render();
     v.dispose();
     expect(tpl._viewPool.length).to.be(0);
-    expect(v.toString()).to.be("<div><span></span></div>");
+    expect(stringifyView(v)).to.be("<div><span></span></div>");
     setTimeout(function () {
       expect(tpl._viewPool.length).to.be(1);
-      expect(v.toString()).to.be("<div></div>");
+      expect(stringifyView(v)).to.be("<div></div>");
       next();
     }, 10);
   }); 

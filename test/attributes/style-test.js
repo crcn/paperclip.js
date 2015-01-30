@@ -1,5 +1,6 @@
 var pc   = require("../.."),
-expect   = require("expect.js");
+expect   = require("expect.js"),
+stringifyView = require("../utils/stringifyView");
 
 describe(__filename + "#", function () {
 
@@ -8,7 +9,7 @@ describe(__filename + "#", function () {
       "<div style='background-color:#FFF;'></div>"
     , pc).view();
 
-    expect(v.toString()).to.be('<div style="background-color:#FFF;"></div>');
+    expect(stringifyView(v)).to.be('<div style="background-color:#FFF;"></div>');
   });
 
   it("can add a style attribute with a block to a div element", function () {
@@ -16,7 +17,7 @@ describe(__filename + "#", function () {
       "<div style='background-color:#FFF;{{'color:#000;'}}'></div>"
     , pc).view();
 
-    expect(v.toString()).to.be('<div style="background-color:#FFF;color:#000;"></div>');
+    expect(stringifyView(v)).to.be('<div style="background-color:#FFF;color:#000;"></div>');
   });
 
   it("can add a style binding to a div element", function () {

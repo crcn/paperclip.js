@@ -1,6 +1,7 @@
 var pc   = require("../.."),
 expect   = require("expect.js"),
-BindableObject = require("bindable-object");
+BindableObject = require("bindable-object"),
+stringifyView = require("../utils/stringifyView");
 
 // TODO - clean me up!
 
@@ -42,9 +43,9 @@ describe(__filename + "#", function () {
       var v = pc.template("{{name.first || 'doesn\\'t exist!' }}").view();
 
       if (process.browser) {
-        expect(v.toString()).to.be("doesn't exist!");
+        expect(stringifyView(v)).to.be("doesn't exist!");
       } else {
-        expect(v.toString()).to.be("doesn&#x27;t exist!");
+        expect(stringifyView(v)).to.be("doesn&#x27;t exist!");
       }
     });
 

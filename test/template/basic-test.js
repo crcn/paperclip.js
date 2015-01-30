@@ -2,7 +2,8 @@ var expect = require("expect.js"),
 pc         = require("../.."),
 template   = pc.template,
 parser  = require("../../lib/parser"),
-BindableObject = require("bindable-object");
+BindableObject = require("bindable-object"),
+stringifyView = require("../utils/stringifyView");;
 
 /*
 
@@ -48,22 +49,22 @@ describe(__filename + "#", function () {
 
   it("can rener text elements", function () {
     var v = template("hello world").view();
-    expect(v.toString()).to.be("hello world");
+    expect(stringifyView(v)).to.be("hello world");
   });
 
   it("can render tag elements", function () {
     var v = template("<span>hello world</span>").view();
-    expect(v.toString()).to.be("<span>hello world</span>");
+    expect(stringifyView(v)).to.be("<span>hello world</span>");
   });
 
   it("can render comment elements", function () {
     var v = template("<!--comment-->").view()
-    expect(v.toString()).to.be("<!--comment-->");
+    expect(stringifyView(v)).to.be("<!--comment-->");
   });
 
   it("can parse block elements", function () {
     var v = template("{{name}}").view({name:"a"});
-    expect(v.toString()).to.be("a");
+    expect(stringifyView(v)).to.be("a");
   });
 
   it("converts HTML entities to real characters", function() {

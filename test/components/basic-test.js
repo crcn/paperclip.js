@@ -2,7 +2,8 @@ var expect     = require("expect.js"),
 template       = require("../../lib/template"),
 parser         = require("../../lib/parser"),
 BindableObject = require("bindable-object"),
-Component      = require("../../lib").Component;
+Component      = require("../../lib").Component,
+stringifyView = require("../utils/stringifyView")
 
 /*
 
@@ -22,7 +23,7 @@ describe(__filename + "#", function () {
       }
     }).view();
 
-    expect(v.toString()).to.be("hello world");
+    expect(stringifyView(v)).to.be("hello world");
   });
 
   it("can register a component with a sub component", function () {
@@ -33,7 +34,7 @@ describe(__filename + "#", function () {
 
     var v = ct.view({name:"d"});
 
-    expect(v.toString()).to.be("c b a d");
+    expect(stringifyView(v)).to.be("c b a d");
   });
 
   it("can register a very basic repeat component", function () {
@@ -55,7 +56,7 @@ describe(__filename + "#", function () {
     var tpl = template("<repeat count='5' as='number'>{{number}}</repeat>", { components:{repeat:repeatComponent}});
     var v = tpl.view({});
 
-    expect(v.toString()).to.be("01234");
+    expect(stringifyView(v)).to.be("01234");
   });
 
   it("can register a dynamic repeat component", function () {
@@ -81,13 +82,13 @@ describe(__filename + "#", function () {
     var tpl = template("<repeat count={{count}} as='number'>{{number}}</repeat>", { components:{repeat:repeatComponent}});
     var v = tpl.view({count:5});
 
-    expect(v.toString()).to.be("01234");
+    expect(stringifyView(v)).to.be("01234");
     v.context.set("count", 3);
     v.runner.update();
-    expect(v.toString()).to.be("012");
+    expect(stringifyView(v)).to.be("012");
     v.context.set("count", 8);
     v.runner.update();
-    expect(v.toString()).to.be("01234567");
+    expect(stringifyView(v)).to.be("01234567");
   });
 
   it("can register a dynamic repeat component with embedded components", function () {
@@ -128,6 +129,6 @@ describe(__filename + "#", function () {
 
     var v = tpl.view({});
 
-    expect(v.toString()).to.be("ab0ab1ab2ab3ab4");
+    expect(stringifyView(v)).to.be("ab0ab1ab2ab3ab4");
   });
 });

@@ -1,7 +1,8 @@
 var expect         = require("expect.js"),
 paperclip          = require("../../lib"),
 BindableCollection = require("bindable-collection"),
-template           = paperclip.template;
+template           = paperclip.template,
+stringifyView = require("../utils/stringifyView");
 
 /*
 
@@ -13,25 +14,25 @@ describe(__filename + "#", function () {
   it("can embed a repeat component with a vanilla array", function () {
     var tpl = template("<repeat each={{numbers}} as='number'>{{number}}</repeat>", paperclip);
     var v = tpl.view({numbers:[0,1,2,3]});
-    expect(v.toString()).to.be("0123");
+    expect(stringifyView(v)).to.be("0123");
   });
 
   it("can dynamically update the repeat tag", function () {
     var tpl = template("<repeat each={{numbers}} as='number'>{{number}}</repeat>", paperclip);
     var v = tpl.view({numbers:[0,1,2,3]});
-    expect(v.toString()).to.be("0123");
+    expect(stringifyView(v)).to.be("0123");
     v.context.set("numbers", [4,5,6,7]);
     v.runner.update();
-    expect(v.toString()).to.be("4567");
+    expect(stringifyView(v)).to.be("4567");
   });
 
   it("accepts source as a bindable collection", function () {
     var tpl = template("<repeat each={{numbers}} as='number'>{{number}}</repeat>", paperclip);
     var v = tpl.view({numbers: new BindableCollection([0,1,2,3])});
-    expect(v.toString()).to.be("0123");
+    expect(stringifyView(v)).to.be("0123");
     v.context.set("numbers", new BindableCollection([4,5,6,7]));
     v.runner.update();
-    expect(v.toString()).to.be("4567");
+    expect(stringifyView(v)).to.be("4567");
   });
 
 
@@ -39,13 +40,13 @@ describe(__filename + "#", function () {
     var tpl = template("<repeat each={{numbers}} as='number'>{{number}}</repeat>", paperclip);
     var src = new BindableCollection([0,1,2,3]);
     var v = tpl.view({numbers: src});
-    expect(v.toString()).to.be("0123");
+    expect(stringifyView(v)).to.be("0123");
     src.splice(0, 1, 4);
     v.runner.update();
-    expect(v.toString()).to.be("4123");
+    expect(stringifyView(v)).to.be("4123");
     src.splice(1, 2, 5, 6, 7);
     v.runner.update();
-    expect(v.toString()).to.be("45673");
+    expect(stringifyView(v)).to.be("45673");
   });
 
   it("can nest repeat elements", function () {
@@ -69,7 +70,7 @@ describe(__filename + "#", function () {
       ]
     });
 
-    expect(v.toString()).to.be("ab 0b 1ab 2b 3ab 4b 5ab 6b 7");
+    expect(stringifyView(v)).to.be("ab 0b 1ab 2b 3ab 4b 5ab 6b 7");
 
   });
 
@@ -84,10 +85,10 @@ describe(__filename + "#", function () {
   it("can apply a repeat block to an existing element", function () {
     var tpl = template("<ul repeat.each={{numbers}} repeat.as='number'><li>{{number}}</li></ul>", paperclip);
     var v = tpl.view({numbers:[0,1,2,3]});
-    expect(v.toString()).to.be("<ul><li>0</li><li>1</li><li>2</li><li>3</li></ul>");
+    expect(stringifyView(v)).to.be("<ul><li>0</li><li>1</li><li>2</li><li>3</li></ul>");
     v.context.set("numbers", [4,5,6,7]);
     v.runner.update();
-    expect(v.toString()).to.be("<ul><li>4</li><li>5</li><li>6</li><li>7</li></ul>");
+    expect(stringifyView(v)).to.be("<ul><li>4</li><li>5</li><li>6</li><li>7</li></ul>");
   });
 });
 

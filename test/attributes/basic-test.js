@@ -1,5 +1,6 @@
 var pc   = require("../.."),
-expect   = require("expect.js");
+expect   = require("expect.js"),
+stringifyView = require("../utils/stringifyView");
 
 describe(__filename + "#", function () {
 
@@ -17,7 +18,7 @@ describe(__filename + "#", function () {
     });
 
     var v = tpl.view({});
-    expect(v.toString()).to.be("<div>hello world!</div>");
+    expect(stringifyView(v)).to.be("<div>hello world!</div>");
   });
 
 });

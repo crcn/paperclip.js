@@ -1,6 +1,7 @@
 var expect = require("expect.js"),
 pc         = require("../.."),
-BindableObject = require("bindable-object");
+BindableObject = require("bindable-object"),
+stringifyView = require("../utils/stringifyView");
 
 describe(__filename + "#", function () {
 
@@ -20,10 +21,10 @@ describe(__filename + "#", function () {
     expect((v = tpl.view({ a: 1, b: 2 })).toString()).to.be('1 + 2 is 3');
     v.context.set("a", 2);
     v.runner.update();
-    expect(v.toString()).to.be('2 + 2 is 4');
+    expect(stringifyView(v)).to.be('2 + 2 is 4');
     v.context.set("b", 3);
     v.runner.update();
-    expect(v.toString()).to.be('2 + 3 is 5');
+    expect(stringifyView(v)).to.be('2 + 3 is 5');
   });
 
   if (!process.browser)
@@ -39,10 +40,10 @@ describe(__filename + "#", function () {
 
     var v = pc.template("hello {{name}}").view(c);
 
-    expect(v.toString()).to.be("hello a");
+    expect(stringifyView(v)).to.be("hello a");
     v.unbind();
     c.set("name", "b");
-    expect(v.toString()).to.be("hello a");
+    expect(stringifyView(v)).to.be("hello a");
   });
 
   it("can be re-bound", function () {
@@ -53,16 +54,16 @@ describe(__filename + "#", function () {
 
     var v = pc.template("hello {{name}}").view(c);
 
-    expect(v.toString()).to.be("hello a");
+    expect(stringifyView(v)).to.be("hello a");
     v.unbind();
     c.set("name", "b");
     v.runner.update();
-    expect(v.toString()).to.be("hello a");
+    expect(stringifyView(v)).to.be("hello a");
     v.bind(c);
-    expect(v.toString()).to.be("hello b");
+    expect(stringifyView(v)).to.be("hello b");
     c.set("name", "c");
     v.runner.update();
-    expect(v.toString()).to.be("hello c");
+    expect(stringifyView(v)).to.be("hello c");
   });
   
   xit("doesn't double-bind values", function () {

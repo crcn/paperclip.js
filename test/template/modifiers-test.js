@@ -1,6 +1,7 @@
 var pc   = require("../.."),
 expect   = require("expect.js"),
-BindableObject = require("bindable-object");
+BindableObject = require("bindable-object"),
+stringifyView = require("../utils/stringifyView");
 
 describe(__filename + "#", function () {
 
@@ -23,9 +24,9 @@ describe(__filename + "#", function () {
     var v = pc.template("{{a|json()}}").view({a:{b:1,c:2}});
 
     if (process.browser) {
-      expect(v.toString()).to.be('{"b":1,"c":2}');
+      expect(stringifyView(v)).to.be('{"b":1,"c":2}');
     } else {
-      expect(v.toString()).to.be("{&#x22;b&#x22;:1,&#x22;c&#x22;:2}");
+      expect(stringifyView(v)).to.be("{&#x22;b&#x22;:1,&#x22;c&#x22;:2}");
     }
   });
 
@@ -57,10 +58,10 @@ describe(__filename + "#", function () {
     });
 
     var v = pc.template("{{a|uppercase()}}").view(c);
-    expect(v.toString()).to.be("A");
+    expect(stringifyView(v)).to.be("A");
     c.set("a", "b");
     v.runner.update();
-    expect(v.toString()).to.be("B");
+    expect(stringifyView(v)).to.be("B");
   })
 
 
@@ -83,11 +84,11 @@ describe(__filename + "#", function () {
 
     var v = tpl.view({ ctx: context });
 
-    expect(v.toString()).to.be("a b");
+    expect(stringifyView(v)).to.be("a b");
     context.set("lastName", "c");
-    expect(v.toString()).to.be("a c");
+    expect(stringifyView(v)).to.be("a c");
     context.set("firstName", "b");
-    expect(v.toString()).to.be("b c");
+    expect(stringifyView(v)).to.be("b c");
   });
 
   xit("properly unwatches a bindable object if set to undefined", function () {
