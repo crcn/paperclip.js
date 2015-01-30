@@ -32,6 +32,7 @@ describe(__filename + "#", function () {
     , pc).view({useClass:true});
     expect(v.toString()).to.be('<div class="class class2"></div>');
     v.context.set("useClass", false);
+    v.runner.update();
     expect(v.toString()).to.be('<div class="class2"></div>');
   });
 });

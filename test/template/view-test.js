@@ -12,12 +12,12 @@ describe(__filename + "#", function () {
 
   it("can render a view", function () {
     var tpl = template("hello world");
-    expect(tpl.view().render().toString()).to.be("hello world");
+    expect(tpl.view().toString()).to.be("hello world");
   });
 
   it("can pass a bindable object as the context of a view", function () {
     var v = template("{{name}}").view(new BindableObject({name: "a" }));
-    expect(v.render().toString()).to.be("a");
+    expect(v.toString()).to.be("a");
   });
 
   xit("can render a view & still bind without a context", function () {
@@ -34,15 +34,16 @@ describe(__filename + "#", function () {
     var ctx;
     var v = template("{{name}}").view(ctx = {name:"a"});
     v.context.set("name", "b");
-    expect(v.render().toString()).to.be("b");
+    v.runner.update();
+    expect(v.toString()).to.be("b");
     expect(ctx.name).to.be("b");
   });
 
   it("can change the context of a view", function () {
     var v = template("{{name}}").view({name:"a"});
-    expect(v.render().toString()).to.be("a");
+    expect(v.toString()).to.be("a");
     v.bind({name:"b"})
-    expect(v.render().toString()).to.be("b");
+    expect(v.toString()).to.be("b");
   });
 
   it("doesn't sync changes from previous context", function () {
@@ -51,11 +52,11 @@ describe(__filename + "#", function () {
     bc     = new BindableObject({name:"b"});
 
     var v = template("{{name}}").view(ac);
-    expect(v.render().toString()).to.be("a");
+    expect(v.toString()).to.be("a");
     v.bind(bc)
-    expect(v.render().toString()).to.be("b");
+    expect(v.toString()).to.be("b");
     ac.set("name", "c");
-    expect(v.render().toString()).to.be("b");
+    expect(v.toString()).to.be("b");
   });
 
 });

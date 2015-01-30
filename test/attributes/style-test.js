@@ -13,7 +13,7 @@ describe(__filename + "#", function () {
 
   it("can add a style attribute with a block to a div element", function () {
     var v = pc.template(
-      "<div style='background-color:#FFF;{{'color:#000'}}'></div>"
+      "<div style='background-color:#FFF;{{'color:#000;'}}'></div>"
     , pc).view();
 
     expect(v.toString()).to.be('<div style="background-color:#FFF;color:#000;"></div>');
@@ -21,17 +21,18 @@ describe(__filename + "#", function () {
 
   it("can add a style binding to a div element", function () {
     var v = pc.template(
-      "<div style={{{color:'#000',backgroundColor:'#FFF'}}}></div>"
+      "<div style={{{'font-weight':'bold','text-decoration':'none'}}}></div>"
     , pc).view();
-    expect(v.toString()).to.be('<div style="color:#000;backgroundColor:#FFF;"></div>');
+    expect(v.toString().replace(/:\s/g,":").replace(/;\s/g,";")).to.be('<div style="font-weight:bold;text-decoration:none;"></div>');
   });
 
   it("can dynamically change the styles", function () {
     var v = pc.template(
-      "<div style={{{color:color,backgroundColor:'#FFF'}}}></div>"
-    , pc).view({color:'#000'});
-    expect(v.toString()).to.be('<div style="color:#000;backgroundColor:#FFF;"></div>');
-    v.context.set("color", "#F60");
-    expect(v.toString()).to.be('<div style="color:#F60;backgroundColor:#FFF;"></div>');
+      "<div style={{{'font-weight':fontWeight,'text-decoration':'none'}}}></div>"
+    , pc).view({fontWeight:'bold'});
+    expect(v.toString().replace(/:\s/g,":").replace(/;\s/g,";")).to.be('<div style="font-weight:bold;text-decoration:none;"></div>');
+    v.context.set("fontWeight", "normal");
+    v.runner.update();
+    expect(v.toString().replace(/:\s/g,":").replace(/;\s/g,";")).to.be('<div style="font-weight:normal;text-decoration:none;"></div>');
   });
 });

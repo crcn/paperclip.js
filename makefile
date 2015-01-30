@@ -10,7 +10,7 @@ min:
 	./node_modules/.bin/uglifyjs ./dist/paperclip.js > ./dist/paperclip.min.js
 
 test-node:
-	mocha ./test/*/**-test.js --ignore-leaks --timeout $(TIMEOUT)
+	PC_DEBUG=1 mocha ./test/*/**-test.js --ignore-leaks --timeout $(TIMEOUT)
 
 parser:
 	mkdir -p ./lib/parser
@@ -20,17 +20,17 @@ parser-watch: parser
 	fswatch ./src/parser/grammar.peg | xargs -n1 make parser
 
 test-watch:
-	mocha --recursive --ignore-leaks --reporter $(REPORTER) -b -g $(ONLY) --timeout $(TIMEOUT) --watch ./test ./lib
+	PC_DEBUG=1 mocha --recursive --ignore-leaks --reporter $(REPORTER) -b -g $(ONLY) --timeout $(TIMEOUT) --watch ./test ./lib
 
 start-example-server:
 	./node_modules/.bin/mojo build ./examples/$(NAME)/index.js --debug --output=./examples/$(NAME)/index.bundle.js --serve=./examples --port=8085
 
 test-cov:
-	./node_modules/.bin/istanbul cover \
+	PC_DEBUG=1 ./node_modules/.bin/istanbul cover \
 	./node_modules/.bin/_mocha ./test/*/**-test.js --ignore-leaks --timeout 100
 
 test-coveralls:
-	./node_modules/.bin/istanbul cover \
+	PC_DEBUG=1 ./node_modules/.bin/istanbul cover \
 	./node_modules/.bin/_mocha ./test/*/**-test.js --timeout 100 --report lcovonly -- -R spec && \
 	cat ./coverage/lcov.info | ./node_modules/.bin/coveralls --verbose
 

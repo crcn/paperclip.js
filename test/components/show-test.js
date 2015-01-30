@@ -38,8 +38,10 @@ describe(__filename + "#", function () {
 
     expect(v.toString()).to.be("hello world");
     v.context.set("show", false);
+    v.runner.update();
     expect(v.toString()).to.be("hello ");
     v.context.set("show", true);
+    v.runner.update();
     expect(v.toString()).to.be("hello world");
   });
 
@@ -51,8 +53,10 @@ describe(__filename + "#", function () {
     , pc).view({show:1});
     expect(v.toString()).to.be("a");
     v.context.set("show", 2);
+    v.runner.update();
     expect(v.toString()).to.be("a");
     v.context.set("show", 3);
+    v.runner.update();
     expect(v.toString()).to.be("a");
   });
 
@@ -71,8 +75,10 @@ describe(__filename + "#", function () {
     , pc).view({show:true});
     expect(v.toString()).to.be("hello <span>world</span>");
     v.context.set("show", false);
+    v.runner.update();
     expect(v.toString()).to.be("hello <span></span>");
     v.context.set("show", true);
+    v.runner.update();
     expect(v.toString()).to.be("hello <span>world</span>");
   });
 

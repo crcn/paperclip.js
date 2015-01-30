@@ -16,7 +16,7 @@ describe(__filename + "#", function () {
         hello: htpl.component
       }
     });
-    expect(tpl.view().render().toString()).to.be("hello world!");
+    expect(tpl.view().toString()).to.be("hello world!");
   });
 
   it("binds attribute properties to the context of a template view", function () {
@@ -28,9 +28,10 @@ describe(__filename + "#", function () {
     });
 
     var v = tpl.view({message:"a"});
-    expect(v.render().toString()).to.be("hello a!");
+    expect(v.toString()).to.be("hello a!");
     v.context.set("message", "b");
-    expect(v.render().toString()).to.be("hello b!");
+    v.runner.update();
+    expect(v.toString()).to.be("hello b!");
   });
 
   it("attributes don't override context properties", function () {
@@ -42,7 +43,8 @@ describe(__filename + "#", function () {
     });
 
     var v = tpl.view({message:"a"});
-    expect(v.render().toString()).to.be("hello world!");
+    expect(v.toString()).to.be("hello world!");
+    v.runner.update();
     expect(v.context.message).to.be("a");
   });
 
@@ -55,11 +57,12 @@ describe(__filename + "#", function () {
     });
 
     var v = tpl.view({message:"world"});
-    expect(v.render().toString()).to.be("hello world!");
+    expect(v.toString()).to.be("hello world!");
     var ctx = v.context;
     v.unbind(ctx);
     ctx.set("message", "a");
-    expect(v.render().toString()).to.be("hello world!");
+    v.runner.update();
+    expect(v.toString()).to.be("hello world!");
   });
 
 });

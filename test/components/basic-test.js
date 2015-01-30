@@ -22,7 +22,7 @@ describe(__filename + "#", function () {
       }
     }).view();
 
-    expect(v.render().toString()).to.be("hello world");
+    expect(v.toString()).to.be("hello world");
   });
 
   it("can register a component with a sub component", function () {
@@ -33,7 +33,7 @@ describe(__filename + "#", function () {
 
     var v = ct.view({name:"d"});
 
-    expect(v.render().toString()).to.be("c b a d");
+    expect(v.toString()).to.be("c b a d");
   });
 
   it("can register a very basic repeat component", function () {
@@ -55,7 +55,7 @@ describe(__filename + "#", function () {
     var tpl = template("<repeat count='5' as='number'>{{number}}</repeat>", { components:{repeat:repeatComponent}});
     var v = tpl.view({});
 
-    expect(v.render().toString()).to.be("01234");
+    expect(v.toString()).to.be("01234");
   });
 
   it("can register a dynamic repeat component", function () {
@@ -81,11 +81,13 @@ describe(__filename + "#", function () {
     var tpl = template("<repeat count={{count}} as='number'>{{number}}</repeat>", { components:{repeat:repeatComponent}});
     var v = tpl.view({count:5});
 
-    expect(v.render().toString()).to.be("01234");
+    expect(v.toString()).to.be("01234");
     v.context.set("count", 3);
-    expect(v.render().toString()).to.be("012");
+    v.runner.update();
+    expect(v.toString()).to.be("012");
     v.context.set("count", 8);
-    expect(v.render().toString()).to.be("01234567");
+    v.runner.update();
+    expect(v.toString()).to.be("01234567");
   });
 
   it("can register a dynamic repeat component with embedded components", function () {
@@ -114,7 +116,11 @@ describe(__filename + "#", function () {
             this.section.appendChild(this.node = this.nodeFactory.createTextNode(""));
           },
           update: function () {
-            this.node.replaceText("b" + this.attributes.value);
+            if (this.nodeFactory.name === "dom") {
+              this.node.nodeValue = "b" + this.attributes.value;
+            } else {
+              this.node.replaceText("b" + this.attributes.value);
+            }
           }
         })
       }
@@ -122,6 +128,6 @@ describe(__filename + "#", function () {
 
     var v = tpl.view({});
 
-    expect(v.render().toString()).to.be("ab0ab1ab2ab3ab4");
+    expect(v.toString()).to.be("ab0ab1ab2ab3ab4");
   });
 });

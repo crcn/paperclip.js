@@ -7,31 +7,38 @@ describe(__filename + "#", function () {
 
   
   it("can call uppercase()", function () {
-    expect(pc.template("{{name|uppercase()}}").view({name:"abc"}).render().toString()).to.be("ABC");
+    expect(pc.template("{{name|uppercase()}}").view({name:"abc"}).toString()).to.be("ABC");
   });
 
   it("can call lowercase()", function () {
-    expect(pc.template("{{name|lowercase()}}").view({name:"ABC"}).render().toString()).to.be("abc");
+    expect(pc.template("{{name|lowercase()}}").view({name:"ABC"}).toString()).to.be("abc");
   });
 
   it("can call titlecase()", function () {
-    expect(pc.template("{{name|titlecase()}}").view({name:"abc"}).render().toString()).to.be("Abc");
+    expect(pc.template("{{name|titlecase()}}").view({name:"abc"}).toString()).to.be("Abc");
   });
 
   it("can call json()", function () {
-    expect(pc.template("{{a|json()}}").view({a:{b:1,c:2}}).render().toString()).to.be("{&#x22;b&#x22;:1,&#x22;c&#x22;:2}");
+
+    var v = pc.template("{{a|json()}}").view({a:{b:1,c:2}});
+
+    if (process.browser) {
+      expect(v.toString()).to.be('{"b":1,"c":2}');
+    } else {
+      expect(v.toString()).to.be("{&#x22;b&#x22;:1,&#x22;c&#x22;:2}");
+    }
   });
 
   it("can call multiple modifiers on one expression", function () {
-    expect(pc.template("{{name|lowercase()|titlecase()}}").view({name:"ABC"}).render().toString()).to.be("Abc");
+    expect(pc.template("{{name|lowercase()|titlecase()}}").view({name:"ABC"}).toString()).to.be("Abc");
   });
 
   it("modifies the last expression only", function () {
-    expect(pc.template("{{a+b|uppercase()}}").view({a:"a",b:"b"}).render().toString()).to.be("aB");
+    expect(pc.template("{{a+b|uppercase()}}").view({a:"a",b:"b"}).toString()).to.be("aB");
   });
 
   it("respects grouped expressions", function () {
-    expect(pc.template("{{(a+b)|uppercase()}}").view({a:"a",b:"b"}).render().toString()).to.be("AB");
+    expect(pc.template("{{(a+b)|uppercase()}}").view({a:"a",b:"b"}).toString()).to.be("AB");
   });
 
   it("can register a custom modifer", function () {
@@ -41,7 +48,7 @@ describe(__filename + "#", function () {
       return name + value;
     };
     
-    expect(tpl.view({a:"a"}).render().toString()).to.be("ab")
+    expect(tpl.view({a:"a"}).toString()).to.be("ab")
   });
 
   it("recalls the modifier if a value changes", function () {
@@ -49,10 +56,11 @@ describe(__filename + "#", function () {
       a: "a"
     });
 
-    var t = pc.template("{{a|uppercase()}}").view(c);
-    expect(t.toString()).to.be("A");
+    var v = pc.template("{{a|uppercase()}}").view(c);
+    expect(v.toString()).to.be("A");
     c.set("a", "b");
-    expect(t.toString()).to.be("B");
+    v.runner.update();
+    expect(v.toString()).to.be("B");
   })
 
 
@@ -96,9 +104,11 @@ describe(__filename + "#", function () {
     expect(t.bindings.script._bindings.length).to.be(2);
     expect(t.toString()).to.be("{&#x22;a&#x22;:&#x22;a&#x22;,&#x22;_events&#x22;:{}}");
     context.set("b", undefined);
+    v.runner.update();
     expect(t.bindings.script._bindings.length).to.be(1);
     expect(t.toString()).to.be("");
     context.set("b", b);
+    v.runner.update();
     expect(t.bindings.script._bindings.length).to.be(2);
     expect(t.toString()).to.be("{&#x22;a&#x22;:&#x22;a&#x22;,&#x22;_events&#x22;:{}}");
   });
@@ -109,6 +119,6 @@ describe(__filename + "#", function () {
     tpl.modifiers.concat = function (name, value) {
       return name + value;
     };
-    expect(tpl.view({a:"a"}).render().toString()).to.be("aB");
+    expect(tpl.view({a:"a"}).toString()).to.be("aB");
   });
 });

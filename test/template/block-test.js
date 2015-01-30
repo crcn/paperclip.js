@@ -7,25 +7,28 @@ describe(__filename + "#", function () {
 
   it("can be rendered", function () {
     var tpl = pc.template("hello <strong id='a'>world</strong>!");
-    expect(tpl.view().render().toString()).to.be('hello <strong id="a">world</strong>!');
+    expect(tpl.view().toString()).to.be('hello <strong id="a">world</strong>!');
   });
 
   it("can render an unbound block", function () {
     var tpl = pc.template("{{~a}} + {{~b}} is {{~a+~b}}");
-    expect(tpl.view({ a: 1, b: 2 }).render().toString()).to.be('1 + 2 is 3');
+    expect(tpl.view({ a: 1, b: 2 }).toString()).to.be('1 + 2 is 3');
   });
 
   it("can render a bound block", function () {
     var tpl = pc.template("{{a}} + {{b}} is {{a+b}}"), v;
-    expect((v = tpl.view({ a: 1, b: 2 })).render().toString()).to.be('1 + 2 is 3');
+    expect((v = tpl.view({ a: 1, b: 2 })).toString()).to.be('1 + 2 is 3');
     v.context.set("a", 2);
+    v.runner.update();
     expect(v.toString()).to.be('2 + 2 is 4');
     v.context.set("b", 3);
+    v.runner.update();
     expect(v.toString()).to.be('2 + 3 is 5');
   });
 
+  if (!process.browser)
   it("properly encodes html entities", function () {
-    expect(pc.template("{{content}}").view({content:"<script />"}).render().toString()).to.be("&#x3C;script /&#x3E;");
+    expect(pc.template("{{content}}").view({content:"<script />"}).toString()).to.be("&#x3C;script /&#x3E;");
   });
 
   it("can unbind a context", function () {
@@ -34,12 +37,12 @@ describe(__filename + "#", function () {
       name: "a"
     });
 
-    var t = pc.template("hello {{name}}").view(c);
+    var v = pc.template("hello {{name}}").view(c);
 
-    expect(t.toString()).to.be("hello a");
-    t.unbind();
+    expect(v.toString()).to.be("hello a");
+    v.unbind();
     c.set("name", "b");
-    expect(t.toString()).to.be("hello a");
+    expect(v.toString()).to.be("hello a");
   });
 
   it("can be re-bound", function () {
@@ -48,16 +51,18 @@ describe(__filename + "#", function () {
       name: "a"
     });
 
-    var t = pc.template("hello {{name}}").view(c);
+    var v = pc.template("hello {{name}}").view(c);
 
-    expect(t.toString()).to.be("hello a");
-    t.unbind();
+    expect(v.toString()).to.be("hello a");
+    v.unbind();
     c.set("name", "b");
-    expect(t.toString()).to.be("hello a");
-    t.bind(c);
-    expect(t.toString()).to.be("hello b");
+    v.runner.update();
+    expect(v.toString()).to.be("hello a");
+    v.bind(c);
+    expect(v.toString()).to.be("hello b");
     c.set("name", "c");
-    expect(t.toString()).to.be("hello c");
+    v.runner.update();
+    expect(v.toString()).to.be("hello c");
   });
   
   xit("doesn't double-bind values", function () {

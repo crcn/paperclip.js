@@ -23,13 +23,13 @@ describe(__filename + "#", function () {
   });
 
   it("can render an html string", function () {
-    var frag = pc.template("hello <unsafe html={{content}} />", pc).view({ content: "abc" }).render();
-    expect(frag.toString()).to.be("hello abc");
+    var v = pc.template("hello <unsafe html={{content}} />", pc).view({ content: "abc" });
+    expect(v.toString()).to.be("hello abc");
   });
 
   it("can accept an undefined value", function () {
-    var t = pc.template("hello <unsafe html={{undefined}} />", pc).view().render();
-    expect(t.toString()).to.be("hello ");
+    var v = pc.template("hello <unsafe html={{undefined}} />", pc).view();
+    expect(v.toString()).to.be("hello ");
   });
 
 
@@ -47,12 +47,16 @@ describe(__filename + "#", function () {
     c.set("content", b2 = t2.view({}));
 
 
+    t.runner.update();
     expect(t.toString()).to.be("hello world");
     c.set("content", b3 = t3.view(c));
+    t.runner.update();
     expect(t.toString()).to.be("hello bob");
     c.set("content", b2);
+    t.runner.update();
     expect(t.toString()).to.be("hello world");
     c.set("content", b3);
+    t.runner.update();
     expect(t.toString()).to.be("hello bob");
   });
 
@@ -69,11 +73,14 @@ describe(__filename + "#", function () {
 
     expect(t.toString()).to.be("hello ");
     c.set("content", t2);
+    t.runner.update();
     expect(t.toString()).to.be("hello my name is ");
     c2.set("content", t3);
     c3.set("name", "bob");
+    t.runner.update();
     expect(t.toString()).to.be("hello my name is bob");
     c.set("content", t3);
+    t.runner.update();
     expect(t.toString()).to.be("hello bob");
   });
 
@@ -93,6 +100,7 @@ describe(__filename + "#", function () {
 
     expect(t.toString()).to.be("hello bob!")
     c.set("condition", false);
+    t.runner.update();
     expect(t.toString()).to.be("hello !");
   });
 

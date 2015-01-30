@@ -16,8 +16,11 @@ describe(__filename + "#", function () {
     var n = v.render(), c = v.context;
 
 
-    expect(n.toString()).to.be("<input>");
+    expect(v.toString()).to.be("<input>");
     c.set('enable', false);
-    expect(n.toString()).to.be("<input disabled=\"disabled\">");
+
+    // TODO - check raf here
+    v.runner.update();
+    expect(v.toString()).to.be("<input disabled=\"disabled\">");
   });
 });
