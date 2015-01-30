@@ -1,3 +1,4 @@
+var extend = require("xtend");
 // Karma configuration
 // Generated on Fri Jan 30 2015 11:49:56 GMT-0800 (PST)
 
@@ -5,7 +6,7 @@ module.exports = function(config) {
 
   // Example set of browsers to run on Sauce Labs
   // Check out https://saucelabs.com/platforms for all browser/platform combos
-  var customLaunchers = {
+  var slLaunchers = {
     sl_chrome: {
       base: 'SauceLabs',
       browserName: 'chrome',
@@ -31,7 +32,53 @@ module.exports = function(config) {
     }
   };
 
+  var bsLaunchers = {
 
+    bs_ffox_35: {
+      base: 'BrowserStack',
+      browser: 'firefox',
+      browser_version: '35.0',
+      os: 'OS X',
+      os_version: 'Mountain Lion'
+    },
+    bs_chrome_30: {
+      base: 'BrowserStack',
+      browser: 'chrome',
+      browser_version: '30.0',
+      os: 'OS X',
+      os_version: 'Mountain Lion'
+    },
+    bs_safari: {
+      base: 'BrowserStack',
+      browser: 'safari',
+      os: 'OS X',
+      os_version: 'Yosemite'
+    },
+    /*bs_ie_9: {
+      base: 'BrowserStack',
+      browser: 'ie',
+      browser_version: '9.0',
+      os: 'Windows',
+      os_version: '7'
+    },*/
+    bs_ie_10: {
+      base: 'BrowserStack',
+      browser: 'ie',
+      browser_version: '10.0',
+      os: 'Windows',
+      os_version: '8'
+    },
+    bs_ie_11: {
+      base: 'BrowserStack',
+      browser: 'ie',
+      browser_version: '11.0',
+      os: 'Windows',
+      os_version: '8.1'
+    }
+  };
+
+
+  var hasBrowserStack = !!process.env.BS_USERNAME;
   var hasSauceLabs = !!process.env.SAUCE_USERNAME;
 
   config.set({
@@ -70,6 +117,13 @@ module.exports = function(config) {
     },
 
 
+    // global config of your BrowserStack account
+    browserStack: {
+      username: process.env.BS_USERNAME,
+      accessKey: process.env.BS_ACCESS_KEY
+    },
+
+
     browserify: {
       debug: true,
       transform: [ ]
@@ -79,7 +133,10 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: hasSauceLabs ? ['dots','saucelabs'] : ['dots'],
+    reporters: 
+      hasBrowserStack ? ['dots'] : 
+      hasSauceLabs ? ['dots','saucelabs'] : 
+      ['dots'],
 
 
     sauceLabs: {
@@ -103,12 +160,15 @@ module.exports = function(config) {
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: false,
 
-    customLaunchers: customLaunchers,
+    customLaunchers: extend(slLaunchers, bsLaunchers),
 
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: hasSauceLabs ? Object.keys(customLaunchers) : ['Chrome','Firefox','Safari'],
+    browsers: 
+    hasBrowserStack ? Object.keys(bsLaunchers) :
+    hasSauceLabs    ? Object.keys(slLaunchers) : 
+    ['Chrome','Firefox','Safari'],
 
 
     // Continuous Integration mode
