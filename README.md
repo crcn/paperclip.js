@@ -44,14 +44,10 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 
 - handlebars adapter
 - jade adapter
-
-
 - textmate code highlighting
 - canvas rendering engine
 - [string template translator](https://github.com/mojo-js/paperclip.js/issues/150)
 - angularjs support
-- backbonejs support
-- docs on how to register custom web components
 - native Object.observe adapter for modern browsers
 - famo.us rendering engine
 
