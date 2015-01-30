@@ -2,6 +2,38 @@
 // Generated on Fri Jan 30 2015 11:49:56 GMT-0800 (PST)
 
 module.exports = function(config) {
+
+  // Example set of browsers to run on Sauce Labs
+  // Check out https://saucelabs.com/platforms for all browser/platform combos
+  var customLaunchers = {
+    sl_chrome: {
+      base: 'SauceLabs',
+      browserName: 'chrome',
+      platform: 'Windows 7',
+      version: '35'
+    },
+    sl_firefox: {
+      base: 'SauceLabs',
+      browserName: 'firefox',
+      version: '35'
+    },/*
+    sl_ios_safari: {
+      base: 'SauceLabs',
+      browserName: 'iphone',
+      platform: 'OS X 10.9',
+      version: '7.1'
+    },*/
+    sl_ie_11: {
+      base: 'SauceLabs',
+      browserName: 'internet explorer',
+      platform: 'Windows 8.1',
+      version: '11'
+    }
+  };
+
+
+  var hasSauceLabs = !!process.env.SAUCE_USERNAME;
+
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -47,7 +79,12 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: hasSauceLabs ? ['dots','saucelabs'] : ['dots'],
+
+
+    sauceLabs: {
+        testName: 'Paperclip.js unit test'
+    },
 
 
     // web server port
@@ -66,10 +103,12 @@ module.exports = function(config) {
     // enable / disable watching file and executing tests whenever any file changes
     autoWatch: false,
 
+    customLaunchers: customLaunchers,
+
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome','Firefox','Safari'],
+    browsers: hasSauceLabs ? Object.keys(customLaunchers) : ['Chrome','Firefox','Safari'],
 
 
     // Continuous Integration mode

@@ -10,7 +10,7 @@ min:
 	./node_modules/.bin/uglifyjs ./dist/paperclip.js > ./dist/paperclip.min.js
 
 test-node:
-	PC_DEBUG=1 mocha ./test/*/**-test.js --ignore-leaks --timeout $(TIMEOUT)
+	PC_DEBUG=1 ./node_modules/.bin/mocha ./test/*/**-test.js --ignore-leaks --timeout $(TIMEOUT) --reporter $(REPORTER)
 
 parser:
 	mkdir -p ./lib/parser
@@ -27,12 +27,13 @@ start-example-server:
 
 test-cov:
 	PC_DEBUG=1 ./node_modules/.bin/istanbul cover \
-	./node_modules/.bin/_mocha ./test/*/**-test.js --ignore-leaks --timeout 100
+	./node_modules/.bin/mocha ./test/*/**-test.js --ignore-leaks --timeout $(TIMEOUT) --reporter $(REPORTER)
 
 test-coveralls:
 	PC_DEBUG=1 ./node_modules/.bin/istanbul cover \
-	./node_modules/.bin/_mocha ./test/*/**-test.js --timeout 100 --report lcovonly -- -R spec && \
+	./node_modules/.bin/mocha ./test/*/**-test.js --timeout $(TIMEOUT) --reporter $(REPORTER) -- -R spec && \
 	cat ./coverage/lcov.info | ./node_modules/.bin/coveralls --verbose
 
 test-karma:
 	./node_modules/karma/bin/karma start
+
