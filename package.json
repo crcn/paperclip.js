@@ -34,6 +34,7 @@
     "jsdom": "0.10.5",
     "karma": "^0.12.31",
     "karma-browserify": "^3.0.1",
+    "karma-browserstack-launcher": "^0.1.2",
     "karma-chrome-launcher": "^0.1.7",
     "karma-firefox-launcher": "^0.1.4",
     "karma-mocha": "^0.1.10",
