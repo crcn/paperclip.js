@@ -50,6 +50,7 @@
     "he": "~0.4.1",
     "nofactor": "0.0.x",
     "optimist": "0.4.x",
-    "protoclass": "0.0.x"
+    "protoclass": "0.0.x",
+    "scoped-bindable-object": "0.0.x"
   }
 }
