@@ -39,6 +39,7 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 ### Adapters
 
 - [MarionetteJS](https://github.com/mojo-js/marionette-paperclip)
+- [AngularJS](https://github.com/mojo-js/ng-paperclip)
 
 ### Roadmap
 
