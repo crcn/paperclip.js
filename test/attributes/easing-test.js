@@ -11,7 +11,7 @@ describe(__filename + "#", function () {
       "<div easeIn='fade'>abb</div>"
     , {
       attributes: {
-        easeIn: pc.Attribute.extend({
+        easein: pc.Attribute.extend({
           initialize: function () {
             this.view.transitions.push(this);
           },
@@ -34,7 +34,7 @@ describe(__filename + "#", function () {
       "<div easeOut='fade' />"
     , {
       attributes: {
-        easeOut: pc.Attribute.extend({
+        easeout: pc.Attribute.extend({
           initialize: function () {
             this.view.transitions.push(this);
           },
@@ -63,7 +63,7 @@ describe(__filename + "#", function () {
       "<div><span easeOut='fade' /></div>"
     , {
       attributes: {
-        easeOut: pc.Attribute.extend({
+        easeout: pc.Attribute.extend({
           initialize: function () {
             this.view.transitions.push(this);
           },
