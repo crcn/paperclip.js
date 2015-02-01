@@ -6317,7 +6317,7 @@ function Comment (value) {
 module.exports = protoclass(Comment, {
   initialize: function (template) {
     return template.nodeFactory.createComment(this.value);
-  },
+  }
 });
 
 module.exports.create = function (value) {
