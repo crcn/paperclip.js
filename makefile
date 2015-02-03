@@ -1,6 +1,6 @@
 REPORTER=dot
 ONLY="."
-NAME=vanilla-objects
+NAME=big-list
 TIMEOUT=1000
 
 browser:

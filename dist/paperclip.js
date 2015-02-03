@@ -32,8 +32,8 @@ module.exports = protoclass(Attribute, {
   /**
    */
 
-  bind: function (scopet) {
-    this.scope = scopet;
+  bind: function (scope) {
+    this.scope = scope;
   },
 
   /**
@@ -212,8 +212,8 @@ Base.extend(EventAttribute, {
   /**
    */
 
-  bind: function (scopet) {
-    Base.prototype.bind.call(this, scopet);
+  bind: function (scope) {
+    Base.prototype.bind.call(this, scope);
     this.bound = true;
   },
 
@@ -303,10 +303,10 @@ module.exports = BaseAttribute.extend({
   /**
    */
 
-  bind: function (scopet) {
-    BaseAttribute.prototype.bind.call(this, scopet)
+  bind: function (scope) {
+    BaseAttribute.prototype.bind.call(this, scope)
     var self = this;
-    this._binding = this.value.bind(this.view, scopet, function (nv, ov) {
+    this._binding = this.value.bind(this.view, scope, function (nv, ov) {
       if (nv == ov) return;
       self.currentValue = nv;
       self.update();
@@ -371,9 +371,9 @@ module.exports = ScriptAttribute.extend({
   /**
    */
    
-  bind: function (scopet) {
+  bind: function (scope) {
     this._currentStyles = {};
-    ScriptAttribute.prototype.bind.call(this, scopet);
+    ScriptAttribute.prototype.bind.call(this, scope);
   },
 
   /**
@@ -1060,7 +1060,7 @@ var paperclip = module.exports = {
   /**
    */
 
-  Controller: require("./scope/base"),
+  Scope: require("./scope/base"),
 
   /**
    */
@@ -5448,6 +5448,7 @@ function BaseScope (context) {
 }
 
 module.exports = protoclass(BaseScope, {
+  __isScope: true,
   get: function (path) {
     // override me
   },
@@ -5462,6 +5463,9 @@ module.exports = protoclass(BaseScope, {
   },
   child: function (context) {
     // override me
+  },
+  dispose: function () {
+    
   }
 });
 
@@ -5475,13 +5479,27 @@ function BindableObjectController (properties, parent) {
   this.watcher = this;
   this.deserializer = this;
 
-  this.on("change", function (k, v) {
-    properties[k] = v;
-  });
+  if (properties) {
+    var self = this;
+    this.on("change", function (k, v) {
+      // if (~k.indexOf(".")) return;
+      if (properties.__isBindable) {
+        if (properties.get(k) != v) properties.set(k, v);
+      } else {
+        properties[k] = v;
+      }
+    });
+    if (properties.__isBindable) {
+      properties.on("change", function (k, v) {
+        if (self[k] !== v) self.set(k, v);
+      });
+    }
+  }
 }
 
 
 module.exports = ScopedBindableObject.extend(BindableObjectController, {
+  __isScope: true,
   // get is defined
   // set is defined
   watch: function (property, listener) {
@@ -6140,7 +6158,7 @@ protoclass(View, {
 
     var scope;
 
-    if (scopeOrContext.constructor === Object) {
+    if (!scopeOrContext.__isScope) {
       scope = new this.template.scopeClass(scopeOrContext);
     } else {
       scope = scopeOrContext;

@@ -90,5 +90,14 @@ describe(__filename + "#", function () {
     v.runner.update();
     expect(stringifyView(v)).to.be("<ul><li>4</li><li>5</li><li>6</li><li>7</li></ul>");
   });
+
+  it("can apply a repeat block with unbound child values & still update", function () {
+    var tpl = template("<ul repeat.each={{numbers}} repeat.as='number'><li>{{~number}}</li></ul>", paperclip);
+    var v = tpl.view({numbers:[0,1,2,3]})
+    expect(stringifyView(v)).to.be("<ul><li>0</li><li>1</li><li>2</li><li>3</li></ul>");
+    v.scope.set("numbers", [4,5,6,7]);
+    v.runner.update();
+    expect(stringifyView(v)).to.be("<ul><li>4</li><li>5</li><li>6</li><li>7</li></ul>");
+  });
 });
 
