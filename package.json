@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "bindable-collection": "0.0.2",
-    "bindable-object": "0.0.6",
+    "bindable-object": "0.0.x",
     "document-section": "^0.2.6",
     "frame-runner": "0.0.x",
     "he": "~0.4.1",
