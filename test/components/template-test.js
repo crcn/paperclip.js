@@ -30,7 +30,7 @@ describe(__filename + "#", function () {
 
     var v = tpl.view({message:"a"});
     expect(stringifyView(v)).to.be("hello a!");
-    v.controller.set("message", "b");
+    v.scope.set("message", "b");
     v.runner.update();
     expect(stringifyView(v)).to.be("hello b!");
   });
@@ -46,7 +46,7 @@ describe(__filename + "#", function () {
     var v = tpl.view({message:"a"});
     expect(stringifyView(v)).to.be("hello world!");
     v.runner.update();
-    expect(v.controller.message).to.be("a");
+    expect(v.scope.message).to.be("a");
   });
 
   it("properly unbinds the template component", function () {
@@ -59,7 +59,7 @@ describe(__filename + "#", function () {
 
     var v = tpl.view({message:"world"});
     expect(stringifyView(v)).to.be("hello world!");
-    var ctx = v.controller;
+    var ctx = v.scope;
     v.unbind(ctx);
     ctx.set("message", "a");
     v.runner.update();

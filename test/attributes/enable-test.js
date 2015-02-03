@@ -14,7 +14,7 @@ describe(__filename + "#", function () {
       "</input>"
     , pc).view({});
 
-    var n = v.render(), c = v.controller;
+    var n = v.render(), c = v.scope;
 
 
     expect(stringifyView(v)).to.be("<input>");

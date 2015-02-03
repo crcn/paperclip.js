@@ -23,18 +23,18 @@ describe(__filename + "#", function () {
 
   xit("can render a view & still bind without a context", function () {
     var tpl = template("hello {{name}}"), v = tpl.view();
-    expect(v.controller).to.be(void 0);
+    expect(v.scope).to.be(void 0);
     var bindSpy = sinon.spy(v, "bind");
     v.render();
     expect(bindSpy.callCount).to.be(1);
-    expect(v.controller).not.to.be(void 0);
+    expect(v.scope).not.to.be(void 0);
   });
 
 
   it("syncs changes from the view context back to a vanilla object", function () {
     var ctx;
     var v = template("{{name}}").view(ctx = {name:"a"});
-    v.controller.set("name", "b");
+    v.scope.set("name", "b");
     v.runner.update();
     expect(stringifyView(v)).to.be("b");
     expect(ctx.name).to.be("b");

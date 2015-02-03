@@ -14,7 +14,7 @@ describe(__filename + "#", function () {
     var tpl = template("<stack state={{index}}><span>hello</span><span>world</span></stack>", paperclip);
     var v = tpl.view({index:1});
     expect(stringifyView(v)).to.be("<span>world</span>");
-    v.controller.set("index", 0);
+    v.scope.set("index", 0);
     v.runner.update();
     expect(stringifyView(v)).to.be("<span>hello</span>");
   });
@@ -23,7 +23,7 @@ describe(__filename + "#", function () {
     var tpl = template("<stack state={{state}}><span name='hello'>hello</span><span name='world'>world</span></stack>", paperclip);
     var v = tpl.view({state:'world'});
     expect(stringifyView(v)).to.be("<span name=\"world\">world</span>");
-    v.controller.set("state", 'hello');
+    v.scope.set("state", 'hello');
     v.runner.update();
     expect(stringifyView(v)).to.be("<span name=\"hello\">hello</span>");
   });
@@ -46,19 +46,19 @@ describe(__filename + "#", function () {
 
     var v = tpl.view({s1:'a',s2:'b'});
     expect(stringifyView(v)).to.be('<span name="b">a</span>');
-    v.controller.setProperties({s1:'a',s2:'c'});
+    v.scope.setProperties({s1:'a',s2:'c'});
     v.runner.update();
     expect(stringifyView(v)).to.be('<span name="c">b</span>');
-    v.controller.setProperties({s1:'b',s3:'d'});
+    v.scope.setProperties({s1:'b',s3:'d'});
     v.runner.update();
     expect(stringifyView(v)).to.be('<span name="d">c</span>');
-    v.controller.setProperties({s1:'b',s3:'e'});
+    v.scope.setProperties({s1:'b',s3:'e'});
     v.runner.update();
     expect(stringifyView(v)).to.be('<span name="e">d</span>');
-    v.controller.setProperties({s1:'b',s3:'c'});
+    v.scope.setProperties({s1:'b',s3:'c'});
     v.runner.update();
     expect(stringifyView(v)).to.be('');
-    v.controller.setProperties({s1:'a',s3:'c'});
+    v.scope.setProperties({s1:'a',s3:'c'});
     v.runner.update();
     expect(stringifyView(v)).to.be('<span name="c">b</span>');
   });
@@ -68,7 +68,7 @@ describe(__filename + "#", function () {
 
     var v = tpl.view({index:1});
     expect(stringifyView(v)).to.be("<div><span>world</span></div>");
-    v.controller.set("index", 0);
+    v.scope.set("index", 0);
     v.runner.update();
     expect(stringifyView(v)).to.be("<div><span>hello</span></div>");
   });
