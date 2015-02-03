@@ -223,7 +223,7 @@ Base.extend(EventAttribute, {
   _onEvent: function (event) {
     if (!this.bound) return;
     event.preventDefault();
-    this.scope.event = event;
+    this.scope.context.event = event;
     this.value.evaluate(this.view, this.scope);
   },
 
@@ -695,12 +695,19 @@ module.exports = BaseComponent.extend({
 
     for (var i = 0, n = source.length; i < n; i++) {
 
-      var properties = { index: i };
-      properties[name] = source[i];
+      var properties, model = source[i];
+
+
+        var properties = { index: i };
+        properties[name] = model;
 
       if (i < this._children.length) {
         var c = this._children[i];
-        c.scope.setProperties(properties);
+
+        // model is different? rebind
+        if (c.scope.context[name] !== model) {
+          c.bind(properties);
+        }
       } else {
 
         // cannot be this - must be default scope
@@ -5442,8 +5449,9 @@ require.extensions[".pc"] = function (module, filename) {
 },{"./parser":47,"fs":83}],50:[function(require,module,exports){
 var protoclass = require("protoclass");
 
-function BaseScope (context) {
+function BaseScope (context, parent) {
   this.context = context;
+  this.parent  = parent;
   this.watcher = this;
 }
 
@@ -5455,7 +5463,10 @@ module.exports = protoclass(BaseScope, {
   set: function (path, value) {
     // override me
   },
-  watchProperty: function (path, listener) {
+  watch: function (path, listener) {
+    return this.watcher.watchProperty(this.context, path, listener);
+  },
+  watchProperty: function (target, path, listener) {
     // override me
   },
   watchColletion: function (target, operation, listener) {
@@ -5471,44 +5482,45 @@ module.exports = protoclass(BaseScope, {
 
 
 },{"protoclass":110}],51:[function(require,module,exports){
-var ScopedBindableObject = require("scoped-bindable-object");
+var BaseScope  = require("./base"),
+ScopedBindableObject = require("scoped-bindable-object");
 
-function BindableObjectController (properties, parent) {
-  ScopedBindableObject.call(this, properties, parent);
-  this.context = this;
+function BindableObjectScope (properties, parent) {
+  if (!properties) properties = {};
+
+  var context = properties.__isBindable ? properties : new ScopedBindableObject(properties, parent ? parent.context : void 0);
+
+  BaseScope.call(this, context, parent);
   this.watcher = this;
   this.deserializer = this;
 
-  if (properties) {
+
+  if (!properties.__isBindable) {
     var self = this;
-    this.on("change", function (k, v) {
-      // if (~k.indexOf(".")) return;
-      if (properties.__isBindable) {
-        if (properties.get(k) != v) properties.set(k, v);
-      } else {
-        properties[k] = v;
-      }
+    this.context.on("change", function (k, v) {
+      if (!~k.indexOf(".")) properties[k] = v;
     });
-    if (properties.__isBindable) {
-      properties.on("change", function (k, v) {
-        if (self[k] !== v) self.set(k, v);
-      });
-    }
   }
 }
 
 
-module.exports = ScopedBindableObject.extend(BindableObjectController, {
+module.exports = BaseScope.extend(BindableObjectScope, {
   __isScope: true,
-  // get is defined
-  // set is defined
+  get: function (path) { 
+    return this.context.get(path);
+  },
+  set: function (path, value) { 
+    return this.context.set(path, value); 
+  },
   watch: function (property, listener) {
-    return this.bind(property, listener);
+    return this.context.bind(property, listener);
+  },
+  setProperties: function (properties) {
+    this.context.setProperties(properties);
   },
   child: function (properties) {
-    return new BindableObjectController(properties, this);
+    return new BindableObjectScope(properties, this);
   },
-
 
   // watcher
   watchProperty: function (target, property, listener) {
@@ -5534,7 +5546,7 @@ module.exports = ScopedBindableObject.extend(BindableObjectController, {
   },
 
 });
-},{"scoped-bindable-object":111}],52:[function(require,module,exports){
+},{"./base":50,"scoped-bindable-object":111}],52:[function(require,module,exports){
 var BindableReference = require("./ref");
 
 /**
@@ -5557,7 +5569,8 @@ function createClip (view) {
     },
     call: function (ctxPath, key, params) {
 
-      var ctx = ctxPath ? this.scope.get(ctxPath) : this.scope;
+      // TODO - check for ctxPath undefined
+      var ctx = ctxPath ? this.scope.get(ctxPath) : this.scope.context;
       if (!ctx) return;
       var fn = ctx[key];
       if (fn) return fn.apply(ctx, params);
@@ -5579,7 +5592,7 @@ function boundScript (script) {
 
   return {
     refs: refs,
-    evaluate: function (view, context) {
+    evaluate: function (view) {
       return run.call(createClip(view));
     },
     bind: function (view, context, listener) {
