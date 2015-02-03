@@ -14,7 +14,7 @@ describe(__filename + "#", function () {
     var htpl = template("hello {{message}}!");
     var tpl = template("<hello message='world' />", {
       components: {
-        hello: htpl.component
+        hello: htpl.createComponentClass()
       }
     });
     expect(tpl.view().toString()).to.be("hello world!");
@@ -24,7 +24,7 @@ describe(__filename + "#", function () {
     var htpl = template("hello {{message}}!");
     var tpl = template("<hello message={{message}} />", {
       components: {
-        hello: htpl.component
+        hello: htpl.createComponentClass()
       }
     });
 
@@ -39,7 +39,7 @@ describe(__filename + "#", function () {
     var htpl = template("hello {{message}}!");
     var tpl = template("<hello message='world' />", {
       components: {
-        hello: htpl.component
+        hello: htpl.createComponentClass()
       }
     });
 
@@ -53,7 +53,7 @@ describe(__filename + "#", function () {
     var htpl = template("hello {{message}}!");
     var tpl = template("<hello message={{message}} />", {
       components: {
-        hello: htpl.component
+        hello: htpl.createComponentClass()
       }
     });
 

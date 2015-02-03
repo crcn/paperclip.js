@@ -19,7 +19,7 @@ describe(__filename + "#", function () {
 
     var v = template("<hello />", {
       components: {
-        hello: helloTpl.component
+        hello: helloTpl.createComponentClass()
       }
     }).view();
 
@@ -29,8 +29,8 @@ describe(__filename + "#", function () {
   it("can register a component with a sub component", function () {
 
     var at = template("a {{name}}"),
-    bt     = template("b <at />", { components: { at: at.component }}),
-    ct     = template("c <bt />", { components: { bt: bt.component }});
+    bt     = template("b <at />", { components: { at: at.createComponentClass() }}),
+    ct     = template("c <bt />", { components: { bt: bt.createComponentClass() }});
 
     var v = ct.view({name:"d"});
 
