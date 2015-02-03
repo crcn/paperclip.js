@@ -59,14 +59,14 @@ describe(__filename + "#", function () {
 
     var v = tpl.view(scope);
 
-    expect(v.render().toString()).to.be("a\u00A0b");
+    expect(stringifyView(v)).to.be("a\u00A0b");
 
     // woo for vanilla objects!
     context.a = "b";
     context.a2.b2 = "c";
 
     v.runner.update();
-    expect(v.render().toString()).to.be("b\u00A0c");
+    expect(stringifyView(v)).to.be("b\u00A0c");
 
   });
 
@@ -74,9 +74,9 @@ describe(__filename + "#", function () {
     var t = pc.template("{{^a}}");
     var c = new ObjectScope({a:1});
     var v = t.view(c);
-    expect(v.render().toString()).to.be("1");
+    expect(stringifyView(v)).to.be("1");
     c.context.a = 2;
     v.runner.update();
-    expect(v.render().toString()).to.be("2");
+    expect(stringifyView(v)).to.be("2");
   });
 });
