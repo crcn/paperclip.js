@@ -32,8 +32,8 @@ module.exports = protoclass(Attribute, {
   /**
    */
 
-  bind: function (controllert) {
-    this.controller = controllert;
+  bind: function (scopet) {
+    this.scope = scopet;
   },
 
   /**
@@ -54,6 +54,7 @@ module.exports = ScriptAttribute.extend({
    */
 
   update: function () {
+
 
     var classes = this.currentValue;
 
@@ -119,7 +120,7 @@ module.exports = BaseAttribue.extend({
   enter: function () {
     var v = this.value;
     if (v.evaluate) {
-      v = v.evaluate(this.view, this.controller);
+      v = v.evaluate(this.view, this.scope);
       v(this.node, function(){})
     }
   }
@@ -137,7 +138,7 @@ module.exports = BaseAttribue.extend({
   exit: function (complete) {
     var v = this.value;
     if (v.evaluate) {
-      v = v.evaluate(this.view, this.controller);
+      v = v.evaluate(this.view, this.scope);
       return v(this.node, complete);
     }
     complete();
@@ -211,8 +212,8 @@ Base.extend(EventAttribute, {
   /**
    */
 
-  bind: function (controllert) {
-    Base.prototype.bind.call(this, controllert);
+  bind: function (scopet) {
+    Base.prototype.bind.call(this, scopet);
     this.bound = true;
   },
 
@@ -222,8 +223,8 @@ Base.extend(EventAttribute, {
   _onEvent: function (event) {
     if (!this.bound) return;
     event.preventDefault();
-    this.controller.event = event;
-    this.value.evaluate(this.view, this.controller);
+    this.scope.event = event;
+    this.value.evaluate(this.view, this.scope);
   },
 
   /**
@@ -302,10 +303,10 @@ module.exports = BaseAttribute.extend({
   /**
    */
 
-  bind: function (controllert) {
-    BaseAttribute.prototype.bind.call(this, controllert)
+  bind: function (scopet) {
+    BaseAttribute.prototype.bind.call(this, scopet)
     var self = this;
-    this._binding = this.value.bind(this.view, controllert, function (nv, ov) {
+    this._binding = this.value.bind(this.view, scopet, function (nv, ov) {
       if (nv == ov) return;
       self.currentValue = nv;
       self.update();
@@ -370,9 +371,9 @@ module.exports = ScriptAttribute.extend({
   /**
    */
    
-  bind: function (controllert) {
+  bind: function (scopet) {
     this._currentStyles = {};
-    ScriptAttribute.prototype.bind.call(this, controllert);
+    ScriptAttribute.prototype.bind.call(this, scopet);
   },
 
   /**
@@ -446,8 +447,8 @@ BaseAttribute.extend(ValueAttribute, {
   /**
    */
 
-  bind: function (controller) {
-    BaseAttribute.prototype.bind.call(this, controller);
+  bind: function (scope) {
+    BaseAttribute.prototype.bind.call(this, scope);
 
     var self = this;
 
@@ -480,7 +481,7 @@ BaseAttribute.extend(ValueAttribute, {
 
     var self = this;
 
-    this._modelBindings = this.controller.watch(model.path, function (value) {
+    this._modelBindings = this.scope.watch(model.path, function (value) {
       self._elementValue(self._parseValue(value));
     }).now();
   },
@@ -620,8 +621,8 @@ module.exports = protoclass(Component, {
   /**
    */
 
-  bind: function (controller) {
-    this.controller = controller;
+  bind: function (scope) {
+    this.scope = scope;
     this.update();
   },
 
@@ -629,7 +630,7 @@ module.exports = protoclass(Component, {
    */
 
   _onChange: function (key, value) {
-    if (this.controller) this.view.runner.run(this);
+    if (this.scope) this.view.runner.run(this);
   },
 
   /**
@@ -673,24 +674,21 @@ module.exports = BaseComponent.extend({
   update: function () {
     if (this._updateListener) this._updateListener.dispose();
 
-    var name = this.attributes.as,
-    source   = this.attributes.each;
+    var name      = this.attributes.as,
+    source        = this.attributes.each,
+    watcher       = this.view.scope.watcher,
+    deserializer  = this.view.scope.deserializer;
 
     if (!name) throw new Error("'as' must exist for repeat block");
 
     if (!source) source = [];
 
-    if (source.__isBindableCollection) {
+    this._updateListener = watcher.watchCollection(source, "change", function () {
+      self.view.runner.run(self);
+    });
 
-      var self = this, collection = source;
+    source = deserializer.deserializeCollection(source);
 
-      this._updateListener = source.once("update", function () {
-        // rAF
-        self.view.runner.run(self);
-      });
-
-      source = source.source;
-    }
 
     if (!this._children) this._children = [];
     var self = this;
@@ -702,9 +700,12 @@ module.exports = BaseComponent.extend({
 
       if (i < this._children.length) {
         var c = this._children[i];
-        c.controller.setProperties(properties);
+        c.scope.setProperties(properties);
       } else {
-        var child = this.childTemplate.view(new ScopedBindableObject(properties, this.controller));
+
+        // cannot be this - must be default scope
+        // new ScopedBindableObject(properties, this.scope)
+        var child = this.childTemplate.view(this.scope.child(properties));
         this._children.push(child);
         this.section.appendChild(child.render());
       }
@@ -747,7 +748,7 @@ module.exports = BaseComponent.extend(ShowComponent, {
 
 
     if (show) {
-      this._view = this.childTemplate.view(this.controller);
+      this._view = this.childTemplate.view(this.scope);
       this.section.appendChild(this._view.render());
     } else {
       if (this._view) this._view.dispose();
@@ -805,7 +806,7 @@ module.exports = BaseComponent.extend(StackComponent, {
     this.currentTemplate = currentTpl;
     if (this.currentView) this.currentView.dispose();
     if (!currentTpl) return;
-    this.currentView = currentTpl.view(this.controller);
+    this.currentView = currentTpl.view(this.scope);
     this.currentTemplate = currentTpl;
     this.section.appendChild(this.currentView.render());
   }
@@ -838,15 +839,15 @@ module.exports = BaseComponent.extend(SwitchComponent, {
   /**
    */
 
-  bind: function (controller) {
-    BaseComponent.prototype.bind.call(this, controller);
+  bind: function (scope) {
+    BaseComponent.prototype.bind.call(this, scope);
 
     this.bindings = [];
     var update = _bind(this.update, this);
     for (var i = 0, n = this.childTemplates.length; i < n; i++) {
       var when = this.childTemplates[i].vnode.attributes.when;
       if (!when) continue;
-      this.bindings.push(when.bind(this.view, controller, update));
+      this.bindings.push(when.bind(this.view, scope, update));
     }
   },
 
@@ -868,15 +869,15 @@ module.exports = BaseComponent.extend(SwitchComponent, {
       var child = this.childTemplates[i];
       var when = child.vnode.attributes.when;
 
-      if (!when || when.evaluate(this.view, this.controller)) {
+      if (!when || when.evaluate(this.view, this.scope)) {
         break;
       }
     }
 
     if (this.currentChild == child) {
       
-      if (this._view && this._view.controller !== this.controller) {
-        this._view.bind(this.controller);
+      if (this._view && this._view.scope !== this.scope) {
+        this._view.bind(this.scope);
       }
 
       return;
@@ -893,7 +894,7 @@ module.exports = BaseComponent.extend(SwitchComponent, {
     // bypass the show component
     var childChildTemplate = child.child(child.vnode.children);
 
-    this._view = childChildTemplate.view(this.controller);
+    this._view = childChildTemplate.view(this.scope);
     this.section.appendChild(this._view.render());
   }
 });
@@ -960,42 +961,6 @@ module.exports = BaseComponent.extend(EscapeComponent, {
   }
 });
 },{"./base":16,"bindable-collection":77,"bindable-object":78}],22:[function(require,module,exports){
-var protoclass = require("protoclass");
-
-function BaseController () {
-
-}
-
-module.exports = protoclass(BaseController, {
-  get: function (path) {
-    // override me
-  },
-  set: function (path, value) {
-    // override me
-  },
-  watch: function (path, listener) {
-    // override m
-  }
-});
-
-
-},{"protoclass":110}],23:[function(require,module,exports){
-var BindableObject = require("bindable-object");
-
-function BindableObjectController (properties) {
-  BindableObject.call(this, properties);
-  this.context = this;
-}
-
-
-module.exports = BindableObject.extend(BindableObjectController, {
-  // get is defined
-  // set is defined
-  watch: function (property, listener) {
-    return this.bind(property, listener);
-  }
-});
-},{"bindable-object":78}],24:[function(require,module,exports){
 module.exports = {
   uppercase: function (value) {
     return String(value).toUpperCase();
@@ -1016,14 +981,14 @@ module.exports = {
     return isNaN(value);
   }
 };
-},{}],25:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 (function (process){
 var frameRunner = require("frame-runner");
 module.exports = frameRunner(
   process.browser ? void 0 : process.env.PC_DEBUG ? process.nextTick : void 0
 );
 }).call(this,require('_process'))
-},{"_process":84,"frame-runner":86}],26:[function(require,module,exports){
+},{"_process":84,"frame-runner":86}],24:[function(require,module,exports){
 module.exports = {
   /**
    */
@@ -1077,7 +1042,7 @@ module.exports = {
 
   modifiers: require("./defaultModifiers")
 };
-},{"./attributes/class":2,"./attributes/delete":3,"./attributes/easeIn":4,"./attributes/easeOut":5,"./attributes/enable":6,"./attributes/enter":7,"./attributes/escape":8,"./attributes/event":9,"./attributes/focus":10,"./attributes/show":13,"./attributes/style":14,"./attributes/value":15,"./components/repeat":17,"./components/show":18,"./components/stack":19,"./components/switch":20,"./components/unsafe":21,"./defaultModifiers":24}],27:[function(require,module,exports){
+},{"./attributes/class":2,"./attributes/delete":3,"./attributes/easeIn":4,"./attributes/easeOut":5,"./attributes/enable":6,"./attributes/enter":7,"./attributes/escape":8,"./attributes/event":9,"./attributes/focus":10,"./attributes/show":13,"./attributes/style":14,"./attributes/value":15,"./components/repeat":17,"./components/show":18,"./components/stack":19,"./components/switch":20,"./components/unsafe":21,"./defaultModifiers":22}],25:[function(require,module,exports){
 (function (process){
 var nofactor    = require("nofactor"),
 parser          = require("./parser"),
@@ -1095,14 +1060,12 @@ var paperclip = module.exports = {
   /**
    */
 
-
-  Controller: require("./controllers/base"),
+  Controller: require("./scope/base"),
 
   /**
    */
 
-  defaultControllerClass: require("./controllers/bindableObject"),
-
+  scopeClass: require("./scope/bindableObject"),
 
   /**
    */
@@ -1164,7 +1127,7 @@ if (typeof window !== "undefined") {
   }
 }
 }).call(this,require('_process'))
-},{"./attributes/base":1,"./components/base":16,"./controllers/base":22,"./controllers/bindableObject":23,"./defaultRunner":25,"./defaults":26,"./parser":49,"./register":51,"./template":57,"_process":84,"nofactor":91}],28:[function(require,module,exports){
+},{"./attributes/base":1,"./components/base":16,"./defaultRunner":23,"./defaults":24,"./parser":47,"./register":49,"./scope/base":50,"./scope/bindableObject":51,"./template":57,"_process":84,"nofactor":91}],26:[function(require,module,exports){
 var BaseExpression = require("./base"),
 ParametersExpression = require("./parameters");
 
@@ -1181,7 +1144,7 @@ BaseExpression.extend(ArrayExpression, {
 });
 
 module.exports = ArrayExpression;
-},{"./base":30,"./parameters":42}],29:[function(require,module,exports){
+},{"./base":28,"./parameters":40}],27:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function AssignmentExpression (reference, value) {
@@ -1201,7 +1164,7 @@ BaseExpression.extend(AssignmentExpression, {
 });
 
 module.exports = AssignmentExpression;
-},{"./base":30}],30:[function(require,module,exports){
+},{"./base":28}],28:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 function BaseExpression () {
@@ -1263,7 +1226,7 @@ protoclass(BaseExpression, {
 });
 
 module.exports = BaseExpression;
-},{"protoclass":110}],31:[function(require,module,exports){
+},{"protoclass":110}],29:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function BlockBindingExpression (scripts, contentTemplate, childBlock) {
@@ -1288,7 +1251,7 @@ BaseExpression.extend(BlockBindingExpression, {
 });
 
 module.exports = BlockBindingExpression;
-},{"./base":30}],32:[function(require,module,exports){
+},{"./base":28}],30:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function CallExpression (reference, parameters) {
@@ -1324,7 +1287,7 @@ BaseExpression.extend(CallExpression, {
 });
 
 module.exports = CallExpression;
-},{"./base":30}],33:[function(require,module,exports){
+},{"./base":28}],31:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function CommentNodeExpression (value) {
@@ -1340,7 +1303,7 @@ BaseExpression.extend(CommentNodeExpression, {
 });
 
 module.exports = CommentNodeExpression;
-},{"./base":30}],34:[function(require,module,exports){
+},{"./base":28}],32:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function DoctypeExpression (value) {
@@ -1356,7 +1319,7 @@ BaseExpression.extend(DoctypeExpression, {
 });
 
 module.exports = DoctypeExpression;
-},{"./base":30}],35:[function(require,module,exports){
+},{"./base":28}],33:[function(require,module,exports){
 var BaseExpression = require("./base"),
 ArrayExpression    = require("./array");
 
@@ -1375,7 +1338,7 @@ BaseExpression.extend(ElementNodeExpression, {
 });
 
 module.exports = ElementNodeExpression;
-},{"./array":28,"./base":30}],36:[function(require,module,exports){
+},{"./array":26,"./base":28}],34:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function GroupExpression (expression) {
@@ -1391,7 +1354,7 @@ BaseExpression.extend(GroupExpression, {
 });
 
 module.exports = GroupExpression;
-},{"./base":30}],37:[function(require,module,exports){
+},{"./base":28}],35:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function HashExpression (values) {
@@ -1415,7 +1378,7 @@ BaseExpression.extend(HashExpression, {
 });
 
 module.exports = HashExpression;
-},{"./base":30}],38:[function(require,module,exports){
+},{"./base":28}],36:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function LiteralExpression (value) {
@@ -1431,7 +1394,7 @@ BaseExpression.extend(LiteralExpression, {
 });
 
 module.exports = LiteralExpression;
-},{"./base":30}],39:[function(require,module,exports){
+},{"./base":28}],37:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function ModifierExpression (name, parameters) {
@@ -1459,7 +1422,7 @@ BaseExpression.extend(ModifierExpression, {
 });
 
 module.exports = ModifierExpression;
-},{"./base":30}],40:[function(require,module,exports){
+},{"./base":28}],38:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function NotExpression (operator, expression) {
@@ -1476,7 +1439,7 @@ BaseExpression.extend(NotExpression, {
 });
 
 module.exports = NotExpression;
-},{"./base":30}],41:[function(require,module,exports){
+},{"./base":28}],39:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function OperatorExpression (operator, left, right) {
@@ -1494,7 +1457,7 @@ BaseExpression.extend(OperatorExpression, {
 });
 
 module.exports = OperatorExpression;
-},{"./base":30}],42:[function(require,module,exports){
+},{"./base":28}],40:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function ParametersExpression (expressions) {
@@ -1512,7 +1475,7 @@ BaseExpression.extend(ParametersExpression, {
 });
 
 module.exports = ParametersExpression;
-},{"./base":30}],43:[function(require,module,exports){
+},{"./base":28}],41:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function ReferenceExpression (path, bindingType) {
@@ -1545,7 +1508,7 @@ BaseExpression.extend(ReferenceExpression, {
 });
 
 module.exports = ReferenceExpression;
-},{"./base":30}],44:[function(require,module,exports){
+},{"./base":28}],42:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function RootExpression (children) {
@@ -1578,7 +1541,7 @@ BaseExpression.extend(RootExpression, {
 });
 
 module.exports = RootExpression;
-},{"./base":30}],45:[function(require,module,exports){
+},{"./base":28}],43:[function(require,module,exports){
 var BaseExpression = require("./base"),
 uniq               = require("../../utils/uniq");
 
@@ -1618,7 +1581,7 @@ BaseExpression.extend(ScriptExpression, {
 });
 
 module.exports = ScriptExpression;
-},{"../../utils/uniq":76,"./base":30}],46:[function(require,module,exports){
+},{"../../utils/uniq":76,"./base":28}],44:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function StringExpression (value) {
@@ -1634,7 +1597,7 @@ BaseExpression.extend(StringExpression, {
 });
 
 module.exports = StringExpression;
-},{"./base":30}],47:[function(require,module,exports){
+},{"./base":28}],45:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function TernaryConditionExpression (condition, tExpression, fExpression) {
@@ -1652,7 +1615,7 @@ BaseExpression.extend(TernaryConditionExpression, {
 });
 
 module.exports = TernaryConditionExpression;
-},{"./base":30}],48:[function(require,module,exports){
+},{"./base":28}],46:[function(require,module,exports){
 var BaseExpression = require("./base"),
 he                 = require("he");
 
@@ -1675,7 +1638,7 @@ BaseExpression.extend(TextNodeExpression, {
 
 module.exports = TextNodeExpression;
 
-},{"./base":30,"he":87}],49:[function(require,module,exports){
+},{"./base":28,"he":87}],47:[function(require,module,exports){
 var parser = require("./parser");
 
 var scripts = {}, parse;
@@ -1718,7 +1681,7 @@ module.exports = {
   }
 }
 
-},{"./parser":50}],50:[function(require,module,exports){
+},{"./parser":48}],48:[function(require,module,exports){
 module.exports = (function() {
   /*
    * Generated by PEG.js 0.8.0.
@@ -5445,7 +5408,7 @@ module.exports = (function() {
   };
 })();
 
-},{"./ast/array":28,"./ast/assignment":29,"./ast/blockBinding":31,"./ast/call":32,"./ast/commentNode":33,"./ast/doctype":34,"./ast/elementNode":35,"./ast/group":36,"./ast/hash":37,"./ast/literal":38,"./ast/modifier":39,"./ast/not":40,"./ast/operator":41,"./ast/parameters":42,"./ast/reference":43,"./ast/rootNode":44,"./ast/script":45,"./ast/string":46,"./ast/ternaryCondition":47,"./ast/textNode":48}],51:[function(require,module,exports){
+},{"./ast/array":26,"./ast/assignment":27,"./ast/blockBinding":29,"./ast/call":30,"./ast/commentNode":31,"./ast/doctype":32,"./ast/elementNode":33,"./ast/group":34,"./ast/hash":35,"./ast/literal":36,"./ast/modifier":37,"./ast/not":38,"./ast/operator":39,"./ast/parameters":40,"./ast/reference":41,"./ast/rootNode":42,"./ast/script":43,"./ast/string":44,"./ast/ternaryCondition":45,"./ast/textNode":46}],49:[function(require,module,exports){
 var parser = require("./parser"),
 fs         = require("fs");
 
@@ -5472,11 +5435,88 @@ require.extensions[".pc"] = function (module, filename) {
 
   module.exports = function () {
     compileOnce();
-    watch();
+    watchProperty();
     return paper.apply(this, arguments);
   }
 };
-},{"./parser":49,"fs":83}],52:[function(require,module,exports){
+},{"./parser":47,"fs":83}],50:[function(require,module,exports){
+var protoclass = require("protoclass");
+
+function BaseScope (context) {
+  this.context = context;
+  this.watcher = this;
+}
+
+module.exports = protoclass(BaseScope, {
+  get: function (path) {
+    // override me
+  },
+  set: function (path, value) {
+    // override me
+  },
+  watchProperty: function (path, listener) {
+    // override me
+  },
+  watchColletion: function (target, operation, listener) {
+    // override me
+  },
+  child: function (context) {
+    // override me
+  }
+});
+
+
+},{"protoclass":110}],51:[function(require,module,exports){
+var ScopedBindableObject = require("scoped-bindable-object");
+
+function BindableObjectController (properties, parent) {
+  ScopedBindableObject.call(this, properties, parent);
+  this.context = this;
+  this.watcher = this;
+  this.deserializer = this;
+
+  this.on("change", function (k, v) {
+    properties[k] = v;
+  });
+}
+
+
+module.exports = ScopedBindableObject.extend(BindableObjectController, {
+  // get is defined
+  // set is defined
+  watch: function (property, listener) {
+    return this.bind(property, listener);
+  },
+  child: function (properties) {
+    return new BindableObjectController(properties, this);
+  },
+
+
+  // watcher
+  watchProperty: function (target, property, listener) {
+
+  },
+
+  watchCollection: function (target, operation, listener) {
+    if (!target.__isBindableCollection) return { dispose: function(){} };
+    if (operation === "change") {
+      return target.on("update", listener);
+    }
+  },
+
+  /**
+   */
+
+  deserializeObject: function (object) {
+    return object.toJSON();
+  },
+
+  deserializeCollection: function (collection) {
+    return collection.source || collection;
+  },
+
+});
+},{"scoped-bindable-object":111}],52:[function(require,module,exports){
 var BindableReference = require("./ref");
 
 /**
@@ -5484,21 +5524,22 @@ var BindableReference = require("./ref");
 
 function createClip (view) {
   return {
-    controller: view.controller,
-    context: view.controller.context,
+    scope: view.scope,
+    context: view.scope.context,
+    accessor: view.accessor,
     view: view,
     get: function (path) {
-      return this.controller.get(path);
+      return this.scope.get(path);
     },
     set: function (path, value) {
-      return this.controller.set(path, value);
+      return this.scope.set(path, value);
     },
     bindTo: function (path, settable) {
       return new BindableReference(this, path, settable);
     },
     call: function (ctxPath, key, params) {
 
-      var ctx = ctxPath ? this.controller.get(ctxPath) : this.controller;
+      var ctx = ctxPath ? this.scope.get(ctxPath) : this.scope;
       if (!ctx) return;
       var fn = ctx[key];
       if (fn) return fn.apply(ctx, params);
@@ -5874,21 +5915,23 @@ function TemplateComponent (options) {
 
 module.exports = BaseComponent.extend(TemplateComponent, {
   initialize: function () {
-    this.viewController = new this.controllerClass(this.attributes.toJSON());
+    this.context = new this.contextClass(this.attributes.toJSON());
+    this.childScope = new this.template.scopeClass(this.context);
     this.view = this.template.view();
     this.section.appendChild(this.view.render());
     this.attributes.on("change", this._onAttrsChange = _bind(this._onAttrsChange, this));
   },
-  bind: function (parentController) {
+  bind: function (parentScope) {
+    this.childScope.parent = parentScope;
     this._bindings = [];
-    this.view.bind(this.viewController);
-    BaseComponent.prototype.bind.call(this, parentController);
+    this.view.bind(this.childScope);
+    BaseComponent.prototype.bind.call(this, parentScope);
   },
   unbind: function () {
     this.view.unbind();
   },
   _onAttrsChange: function (key, value) {
-    this.viewController.set(key, value);
+    this.childScope.set(key, value);
   }
 });
 },{"../components/base":16,"../utils/bind":73,"scoped-bindable-object":111}],57:[function(require,module,exports){
@@ -5907,8 +5950,7 @@ NodeSection       = require("../section/node"),
 TemplateComponent = require("./component"),
 defaults          = require("../defaults"),
 defaultRunner     = require("../defaultRunner"),
-BindableObject    = require("bindable-object"),
-BindableController = require("../controllers/bindableObject");
+DefaultScope      = require("../scope/bindableObject");
 
 /**
  * Compiles the template 
@@ -5925,14 +5967,14 @@ if (process.browser) {
 function Template (script, options) {
 
 
-  this.options                = options;
-  this.defaultControllerClass = options.defaultControllerClass || BindableController;
-  this.components             = options.components  || {};
-  this.modifiers              = options.modifiers   || {};
-  this.attributes             = options.attributes  || {};
-  this.runner                 = options.runner      || defaultRunner;
-  this.useCloneNode           = !isIE;
-  this.nodeFactory            = options.nodeFactory || nofactor.default;
+  this.options         = options;
+  this.scopeClass      = options.scopeClass || DefaultScope;
+  this.components      = options.components  || {};
+  this.modifiers       = options.modifiers   || {};
+  this.attributes      = options.attributes  || {};
+  this.runner          = options.runner      || defaultRunner;
+  this.useCloneNode    = !isIE;
+  this.nodeFactory     = options.nodeFactory || nofactor.default;
 
 
   if (typeof script === "function") {
@@ -5984,10 +6026,10 @@ module.exports = protoclass(Template, {
   /**
    */
 
-  createComponentClass: function (controllerClass) {
+  createComponentClass: function (contextClass) {
     return TemplateComponent.extend({
-      template        : this,
-      controllerClass : controllerClass || BindableObject
+      template     : this,
+      contextClass : contextClass || Object
     });
   },
 
@@ -6003,10 +6045,10 @@ module.exports = protoclass(Template, {
 
   /**
    * Creates a new or recycled view which binds a cloned node
-   * from the template to a context (or view controller). 
+   * from the template to a context (or view scope). 
    */
 
-  view: function (controller) {
+  view: function (scope) {
 
     var clonedSection;
 
@@ -6031,7 +6073,7 @@ module.exports = protoclass(Template, {
     }
 
     var view = this._viewPool.pop() || new View(this, this._viewPool, clonedSection, this.hydrators);
-    if (controller) view.bind(controller);
+    if (scope) view.bind(scope);
     return view;
   }
 });
@@ -6059,7 +6101,7 @@ module.exports = function (source, options) {
   return new Template(script, options || defaults);
 }
 }).call(this,require('_process'))
-},{"../controllers/bindableObject":23,"../defaultRunner":25,"../defaults":26,"../parser":49,"../section/fragment":54,"../section/node":55,"./component":56,"./view":58,"./vnode/block":62,"./vnode/comment":64,"./vnode/element":68,"./vnode/fragment":70,"./vnode/text":71,"_process":84,"bindable-object":78,"nofactor":91,"protoclass":110}],58:[function(require,module,exports){
+},{"../defaultRunner":23,"../defaults":24,"../parser":47,"../scope/bindableObject":51,"../section/fragment":54,"../section/node":55,"./component":56,"./view":58,"./vnode/block":62,"./vnode/comment":64,"./vnode/element":68,"./vnode/fragment":70,"./vnode/text":71,"_process":84,"nofactor":91,"protoclass":110}],58:[function(require,module,exports){
 var protoclass = require("protoclass"),
 BindableObject = require("bindable-object"),
 Transitions    = require("./transitions"),
@@ -6090,21 +6132,26 @@ protoclass(View, {
   /**
    */
 
-  bind: function (controller) {
+  bind: function (scopeOrContext) {
 
-    if (this.controller) this.unbind();
+    if (this.scope) this.unbind();
 
-    if (!controller) controller = {};
+    if (!scopeOrContext) scopeOrContext = {};
 
-    if (controller.constructor === Object) {
-      controller = this._createController(controller);
+    var scope;
+
+    if (scopeOrContext.constructor === Object) {
+      scope = new this.template.scopeClass(scopeOrContext);
+    } else {
+      scope = scopeOrContext;
     }
 
+
     // must wrap around a bindable object
-    this.controller = controller;
+    this.scope = scope;
 
     for (var i = 0, n = this.bindings.length; i < n; i++) {
-      this.bindings[i].bind(this.controller);
+      this.bindings[i].bind(scope);
     }
   },
 
@@ -6121,7 +6168,7 @@ protoclass(View, {
    */
 
   render: function () {
-    if (!this.controller) this.bind({});
+    if (!this.scope) this.bind({});
     this.transitions.enter();
     return this.section.render();
   },
@@ -6165,18 +6212,6 @@ protoclass(View, {
     }
 
     return node.toString();
-  },
-
-  /**
-   * creates a new bindable object, but syncs any changes back to the original object.
-   */
-
-  _createController: function (context) {
-    var b = new this.template.defaultControllerClass(context);
-    b.on("change", function (k, v) {
-      context[k] = v;
-    });
-    return b;
   }
 });
 
@@ -10008,18 +10043,7 @@ function ScopedBindableObject (properties, parent) {
 
 BindableObject.extend(ScopedBindableObject, {
 
-  /*
-   */
-
-  define: [
-
-    /**
-     * The parent subindable object
-     * @property {SubindableObject} parent
-     */
-
-    "parent"
-  ],
+  parent: void 0,
 
   /*
    */
@@ -10075,6 +10099,7 @@ BindableObject.extend(ScopedBindableObject, {
 
     // already a prop? Don't inherit (even if undefined)
     if (key in this) return;
+    this[key] = void 0;
 
     var parentPropertyBinding,
     parentBinding,
@@ -10104,7 +10129,6 @@ BindableObject.extend(ScopedBindableObject, {
       }).now();
     }).now();
 
-
     // now bind to THIS context incase explicitly set
     valueBinding = this.bind(key, function(value) {
 
@@ -10132,4 +10156,4 @@ BindableObject.extend(ScopedBindableObject, {
 
 
 module.exports = ScopedBindableObject;
-},{"bindable-object":78}]},{},[27]);
+},{"bindable-object":78}]},{},[25]);
