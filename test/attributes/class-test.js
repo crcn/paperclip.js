@@ -32,7 +32,7 @@ describe(__filename + "#", function () {
       "<div class={{{class:useClass,class2:true}}}></div>"
     , pc).view({useClass:true});
     expect(stringifyView(v)).to.be('<div class="class class2"></div>');
-    v.context.set("useClass", false);
+    v.controller.set("useClass", false);
     v.runner.update();
     expect(stringifyView(v)).to.be('<div class="class2"></div>');
   });

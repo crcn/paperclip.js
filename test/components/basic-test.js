@@ -83,10 +83,10 @@ describe(__filename + "#", function () {
     var v = tpl.view({count:5});
 
     expect(stringifyView(v)).to.be("01234");
-    v.context.set("count", 3);
+    v.controller.set("count", 3);
     v.runner.update();
     expect(stringifyView(v)).to.be("012");
-    v.context.set("count", 8);
+    v.controller.set("count", 8);
     v.runner.update();
     expect(stringifyView(v)).to.be("01234567");
   });

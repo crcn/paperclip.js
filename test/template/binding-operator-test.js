@@ -22,7 +22,7 @@ describe(__filename + "#", function () {
     expect(t.toString()).to.be("a");
     c.set("a", "b");
     expect(t.toString()).to.be("b");
-    var ref = t.clips._clips[0].script.evaluate(t.context);
+    var ref = t.clips._clips[0].script.evaluate(t.controller);
 
     expect(ref.__isBindableReference).to.be(true);
     ref.value("baab");
@@ -35,7 +35,7 @@ describe(__filename + "#", function () {
       a: "a"
     }), t = pc.template("{{~>a}}").view(c);
     expect(t.toString()).to.be("a");
-    var ref = t.clips._clips[0].script.evaluate(t.context);
+    var ref = t.clips._clips[0].script.evaluate(t.controller);
 
     expect(t.clips._clips[0].script.refs.length).to.be(0);
     expect(ref.__isBindableReference).to.be(true);
@@ -56,7 +56,7 @@ describe(__filename + "#", function () {
       a: "a"
     }), t = pc.template("{{<~>a}}").view(c);
     expect(t.toString()).to.be("a");
-    var ref = t.clips._clips[0].script.evaluate(t.context);
+    var ref = t.clips._clips[0].script.evaluate(t.controller);
     expect(t.clips._clips[0].script.refs.length).to.be(1);
     expect(ref.__isBindableReference).to.be(true);
     expect(ref.value()).to.be("a");

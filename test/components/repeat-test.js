@@ -21,7 +21,7 @@ describe(__filename + "#", function () {
     var tpl = template("<repeat each={{numbers}} as='number'>{{number}}</repeat>", paperclip);
     var v = tpl.view({numbers:[0,1,2,3]});
     expect(stringifyView(v)).to.be("0123");
-    v.context.set("numbers", [4,5,6,7]);
+    v.controller.set("numbers", [4,5,6,7]);
     v.runner.update();
     expect(stringifyView(v)).to.be("4567");
   });
@@ -30,7 +30,7 @@ describe(__filename + "#", function () {
     var tpl = template("<repeat each={{numbers}} as='number'>{{number}}</repeat>", paperclip);
     var v = tpl.view({numbers: new BindableCollection([0,1,2,3])});
     expect(stringifyView(v)).to.be("0123");
-    v.context.set("numbers", new BindableCollection([4,5,6,7]));
+    v.controller.set("numbers", new BindableCollection([4,5,6,7]));
     v.runner.update();
     expect(stringifyView(v)).to.be("4567");
   });
@@ -86,7 +86,7 @@ describe(__filename + "#", function () {
     var tpl = template("<ul repeat.each={{numbers}} repeat.as='number'><li>{{number}}</li></ul>", paperclip);
     var v = tpl.view({numbers:[0,1,2,3]});
     expect(stringifyView(v)).to.be("<ul><li>0</li><li>1</li><li>2</li><li>3</li></ul>");
-    v.context.set("numbers", [4,5,6,7]);
+    v.controller.set("numbers", [4,5,6,7]);
     v.runner.update();
     expect(stringifyView(v)).to.be("<ul><li>4</li><li>5</li><li>6</li><li>7</li></ul>");
   });

@@ -38,10 +38,10 @@ describe(__filename + "#", function () {
     , pc).view({show:true});
 
     expect(stringifyView(v)).to.be("hello world");
-    v.context.set("show", false);
+    v.controller.set("show", false);
     v.runner.update();
     expect(stringifyView(v)).to.be("hello ");
-    v.context.set("show", true);
+    v.controller.set("show", true);
     v.runner.update();
     expect(stringifyView(v)).to.be("hello world");
   });
@@ -53,10 +53,10 @@ describe(__filename + "#", function () {
       "</show>" 
     , pc).view({show:1});
     expect(stringifyView(v)).to.be("a");
-    v.context.set("show", 2);
+    v.controller.set("show", 2);
     v.runner.update();
     expect(stringifyView(v)).to.be("a");
-    v.context.set("show", 3);
+    v.controller.set("show", 3);
     v.runner.update();
     expect(stringifyView(v)).to.be("a");
   });
@@ -75,10 +75,10 @@ describe(__filename + "#", function () {
       "hello <span show.when={{show}}>world</span>"
     , pc).view({show:true});
     expect(stringifyView(v)).to.be("hello <span>world</span>");
-    v.context.set("show", false);
+    v.controller.set("show", false);
     v.runner.update();
     expect(stringifyView(v)).to.be("hello <span></span>");
-    v.context.set("show", true);
+    v.controller.set("show", true);
     v.runner.update();
     expect(stringifyView(v)).to.be("hello <span>world</span>");
   });

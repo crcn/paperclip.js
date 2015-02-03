@@ -44,8 +44,8 @@ describe(__filename + "#", function () {
       "<div class='a {{b}} {{c}} d' id='abc'>abb</div>"
     ).view({b:"e",c:"f"});
 
-    v.context.set("b", "g");
-    v.context.set("c", "h");
+    v.controller.set("b", "g");
+    v.controller.set("c", "h");
 
     // bypass rAF
     v.runner.update();
@@ -64,10 +64,10 @@ describe(__filename + "#", function () {
   it("removes an attribute value if undefined", function () {
     var v = pc.template("<div class='{{a}}' />").view({});
     expect(stringifyView(v)).to.be("<div></div>");
-    v.context.set("a", "b");
+    v.controller.set("a", "b");
     v.runner.update();
     expect(stringifyView(v)).to.be("<div class=\"b\"></div>");
-    v.context.set("a", void 0);
+    v.controller.set("a", void 0);
     v.runner.update();
     expect(stringifyView(v)).to.be("<div></div>");
     v.dispose();

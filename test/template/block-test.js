@@ -19,10 +19,10 @@ describe(__filename + "#", function () {
   it("can render a bound block", function () {
     var tpl = pc.template("{{a}} + {{b}} is {{a+b}}"), v;
     expect((v = tpl.view({ a: 1, b: 2 })).toString()).to.be('1 + 2 is 3');
-    v.context.set("a", 2);
+    v.controller.set("a", 2);
     v.runner.update();
     expect(stringifyView(v)).to.be('2 + 2 is 4');
-    v.context.set("b", 3);
+    v.controller.set("b", 3);
     v.runner.update();
     expect(stringifyView(v)).to.be('2 + 3 is 5');
   });

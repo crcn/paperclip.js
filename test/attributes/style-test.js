@@ -32,7 +32,7 @@ describe(__filename + "#", function () {
       "<div style={{{'font-weight':fontWeight,'text-decoration':'none'}}}></div>"
     , pc).view({fontWeight:'bold'});
     expect(stringifyView(v).replace(/:\s/g,":").replace(/;\s/g,";")).to.be('<div style="text-decoration:none;font-weight:bold;"></div>');
-    v.context.set("fontWeight", "normal");
+    v.controller.set("fontWeight", "normal");
     v.runner.update();
     expect(stringifyView(v)).to.be('<div style="text-decoration:none;font-weight:normal;"></div>');
   });

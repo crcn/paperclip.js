@@ -92,18 +92,18 @@ describe(__filename + "#", function () {
 
 
     expect(stringifyView(v)).to.be("a ");
-    v.context.set("a", true);
+    v.controller.set("a", true);
     v.runner.update();
     expect(stringifyView(v)).to.be("a b");
-    v.context.set("a", false);
-    v.context.set("b", true);
+    v.controller.set("a", false);
+    v.controller.set("b", true);
     v.runner.update();
     expect(stringifyView(v)).to.be("a c");
-    v.context.set("b", false);
-    v.context.set("c", true);
+    v.controller.set("b", false);
+    v.controller.set("c", true);
     v.runner.update();
     expect(stringifyView(v)).to.be("a d");
-    v.context.set("a", true);
+    v.controller.set("a", true);
     v.runner.update();
     expect(stringifyView(v)).to.be("a b");
   });
@@ -131,18 +131,18 @@ describe(__filename + "#", function () {
     , pc).view({});
 
     expect(stringifyView(v)).to.be("a ");
-    v.context.set("a", true);
+    v.controller.set("a", true);
     v.runner.update();
     expect(stringifyView(v)).to.be("a b4");
-    v.context.set("a2", true);
+    v.controller.set("a2", true);
     v.runner.update();
     expect(stringifyView(v)).to.be("a b2");
-    v.context.set("a2", false);
-    v.context.set("a3", true);
+    v.controller.set("a2", false);
+    v.controller.set("a3", true);
     v.runner.update();
     expect(stringifyView(v)).to.be("a b3");
-    v.context.set("a", false);
-    v.context.set("b", true);
+    v.controller.set("a", false);
+    v.controller.set("b", true);
     v.runner.update();
     expect(stringifyView(v)).to.be("a c");
   });
