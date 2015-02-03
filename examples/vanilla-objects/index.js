@@ -43,7 +43,7 @@ pc.Controller.extend(ObjectController, {
 
 var pcTpl = 
 "<ul repeat.each={{dots}} repeat.as='dot'>" +
-  "<ul>{{dot.i}}</ul>" + 
+  "<ul>{{^dot.i}}</ul>" + 
 "</ul>";
 
 pc.defaultControllerClass = ObjectController;
@@ -51,7 +51,7 @@ pc.defaultControllerClass = ObjectController;
 var tpl = window.pcTpl = pc.template(pcTpl, pc);
 
 var context = {
-  dots: _.range(100).map(function (i) {
+  dots: _.range(5).map(function (i) {
     return {
       i: i
     }
