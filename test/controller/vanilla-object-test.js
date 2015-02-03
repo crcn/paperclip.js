@@ -11,13 +11,13 @@ var tpl = paperclip.template("abba")
 
 describe(__filename + "#", function () {
 
-  function ObjectController (context) {
+  function ObjectScope (context) {
     this.context  = context;
     this._getters = {};
     this._setters = {};
   }
 
-  pc.Controller.extend(ObjectController, {
+  pc.Scope.extend(ObjectScope, {
     get: function (path) {
       var pt = path.join("."), getter;
       if (!(getter = this._getters[pt])) {
@@ -55,9 +55,9 @@ describe(__filename + "#", function () {
       }
     }
 
-    var controller = new ObjectController(context);
+    var scope = new ObjectScope(context);
 
-    var v = tpl.view(controller);
+    var v = tpl.view(scope);
 
     expect(v.render().toString()).to.be("a\u00A0b");
 
@@ -72,7 +72,7 @@ describe(__filename + "#", function () {
 
   it("properly access properties on the context of the view controller if ^", function () {
     var t = pc.template("{{^a}}");
-    var c = new ObjectController({a:1});
+    var c = new ObjectScope({a:1});
     var v = t.view(c);
     expect(v.render().toString()).to.be("1");
     c.context.a = 2;
