@@ -84,10 +84,10 @@ describe(__filename + "#", function () {
 
     expect(stringifyView(v)).to.be("01234");
     v.scope.set("count", 3);
-    v.runner.update();
+    // v.runner.update();
     expect(stringifyView(v)).to.be("012");
     v.scope.set("count", 8);
-    v.runner.update();
+    // v.runner.update();
     expect(stringifyView(v)).to.be("01234567");
   });
 

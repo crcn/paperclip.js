@@ -48,7 +48,7 @@ describe(__filename + "#", function () {
     v.scope.set("c", "h");
 
     // bypass rAF
-    v.runner.update();
+    // v.runner.update();
 
     expect(stringifyView(v)).to.be('<div id="abc" class="a g h d">abb</div>');
   });
@@ -65,10 +65,10 @@ describe(__filename + "#", function () {
     var v = pc.template("<div class='{{a}}' />").view({});
     expect(stringifyView(v)).to.be("<div></div>");
     v.scope.set("a", "b");
-    v.runner.update();
+    // v.runner.update();
     expect(stringifyView(v)).to.be("<div class=\"b\"></div>");
     v.scope.set("a", void 0);
-    v.runner.update();
+    // v.runner.update();
     expect(stringifyView(v)).to.be("<div></div>");
     v.dispose();
   });

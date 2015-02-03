@@ -223,13 +223,13 @@ describe(__filename + "#", function () {
       expect(c.get("d")).to.be(1);
 
       c.set("c", 2);
-      v.runner.update();
+      // v.runner.update();
 
       // triggers re-evaluation. All values should STILL be 1
       expect(c.get("c")).to.be(1);
 
       c.set("d", 2);
-      v.runner.update();
+      // v.runner.update();
       expect(c.get("aa.a")).to.be(2);
       expect(c.get("a")).to.be(2);
       expect(c.get("b")).to.be(2);

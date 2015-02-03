@@ -31,7 +31,7 @@ describe(__filename + "#", function () {
     var v = tpl.view({message:"a"});
     expect(stringifyView(v)).to.be("hello a!");
     v.scope.set("message", "b");
-    v.runner.update();
+    // v.runner.update();
     expect(stringifyView(v)).to.be("hello b!");
   });
 
@@ -45,7 +45,7 @@ describe(__filename + "#", function () {
 
     var v = tpl.view({message:"a"});
     expect(stringifyView(v)).to.be("hello world!");
-    v.runner.update();
+    // v.runner.update();
     expect(v.scope.context.message).to.be("a");
   });
 
@@ -62,7 +62,7 @@ describe(__filename + "#", function () {
     var ctx = v.scope;
     v.unbind(ctx);
     ctx.set("message", "a");
-    v.runner.update();
+    // v.runner.update();
     expect(stringifyView(v)).to.be("hello world!");
   });
 

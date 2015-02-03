@@ -33,7 +33,7 @@ describe(__filename + "#", function () {
     , pc).view({useClass:true});
     expect(stringifyView(v)).to.be('<div class="class class2"></div>');
     v.scope.set("useClass", false);
-    v.runner.update();
+    // v.runner.update();
     expect(stringifyView(v)).to.be('<div class="class2"></div>');
   });
 });

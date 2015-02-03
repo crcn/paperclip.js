@@ -20,10 +20,10 @@ describe(__filename + "#", function () {
     var tpl = pc.template("{{a}} + {{b}} is {{a+b}}"), v;
     expect((v = tpl.view({ a: 1, b: 2 })).toString()).to.be('1 + 2 is 3');
     v.scope.set("a", 2);
-    v.runner.update();
+    // v.runner.update();
     expect(stringifyView(v)).to.be('2 + 2 is 4');
     v.scope.set("b", 3);
-    v.runner.update();
+    // v.runner.update();
     expect(stringifyView(v)).to.be('2 + 3 is 5');
   });
 
@@ -57,12 +57,12 @@ describe(__filename + "#", function () {
     expect(stringifyView(v)).to.be("hello a");
     v.unbind();
     c.set("name", "b");
-    v.runner.update();
+    // v.runner.update();
     expect(stringifyView(v)).to.be("hello a");
     v.bind(c);
     expect(stringifyView(v)).to.be("hello b");
     c.set("name", "c");
-    v.runner.update();
+    // v.runner.update();
     expect(stringifyView(v)).to.be("hello c");
   });
   

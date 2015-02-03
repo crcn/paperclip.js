@@ -60,7 +60,7 @@ describe(__filename + "#", function () {
     var v = pc.template("{{a|uppercase()}}").view(c);
     expect(stringifyView(v)).to.be("A");
     c.set("a", "b");
-    v.runner.update();
+    // v.runner.update();
     expect(stringifyView(v)).to.be("B");
   })
 
@@ -105,11 +105,11 @@ describe(__filename + "#", function () {
     expect(t.bindings.script._bindings.length).to.be(2);
     expect(t.toString()).to.be("{&#x22;a&#x22;:&#x22;a&#x22;,&#x22;_events&#x22;:{}}");
     context.set("b", undefined);
-    v.runner.update();
+    // v.runner.update();
     expect(t.bindings.script._bindings.length).to.be(1);
     expect(t.toString()).to.be("");
     context.set("b", b);
-    v.runner.update();
+    // v.runner.update();
     expect(t.bindings.script._bindings.length).to.be(2);
     expect(t.toString()).to.be("{&#x22;a&#x22;:&#x22;a&#x22;,&#x22;_events&#x22;:{}}");
   });

@@ -35,7 +35,7 @@ describe(__filename + "#", function () {
     var ctx;
     var v = template("{{name}}").view(ctx = {name:"a"});
     v.scope.set("name", "b");
-    v.runner.update();
+    // v.runner.update();
     expect(stringifyView(v)).to.be("b");
     expect(ctx.name).to.be("b");
   });

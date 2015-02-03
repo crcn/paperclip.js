@@ -33,7 +33,7 @@ describe(__filename + "#", function () {
     , pc).view({fontWeight:'bold'});
     expect(stringifyView(v).replace(/:\s/g,":").replace(/;\s/g,";")).to.be('<div style="text-decoration:none;font-weight:bold;"></div>');
     v.scope.set("fontWeight", "normal");
-    v.runner.update();
+    // v.runner.update();
     expect(stringifyView(v)).to.be('<div style="text-decoration:none;font-weight:normal;"></div>');
   });
 });
