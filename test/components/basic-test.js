@@ -29,8 +29,8 @@ describe(__filename + "#", function () {
   it("can register a component with a sub component", function () {
 
     var at = template("a {{name}}"),
-    bt     = template("b <at />", { components: { at: at.createComponentClass() }}),
-    ct     = template("c <bt />", { components: { bt: bt.createComponentClass() }});
+    bt     = template("b <at name={{name}} />", { components: { at: at.createComponentClass() }}),
+    ct     = template("c <bt name={{name}} />", { components: { bt: bt.createComponentClass() }});
 
     var v = ct.view({name:"d"});
 
