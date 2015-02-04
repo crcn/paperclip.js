@@ -31,7 +31,7 @@ describe(__filename + "#", function () {
     var v = tpl.view({message:"a"});
     expect(stringifyView(v)).to.be("hello a!");
     v.scope.set("message", "b");
-    // v.runner.update();
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("hello b!");
   });
 

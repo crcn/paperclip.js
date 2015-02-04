@@ -48,16 +48,16 @@ describe(__filename + "#", function () {
     c.set("content", b2 = t2.view({}));
 
 
-    // t.runner.update();
+    t.runloop.runNow();
     expect(t.toString()).to.be("hello world");
     c.set("content", b3 = t3.view(c));
-    // t.runner.update();
+    t.runloop.runNow();
     expect(t.toString()).to.be("hello bob");
     c.set("content", b2);
-    // t.runner.update();
+    t.runloop.runNow();
     expect(t.toString()).to.be("hello world");
     c.set("content", b3);
-    // t.runner.update();
+    t.runloop.runNow();
     expect(t.toString()).to.be("hello bob");
   });
 
@@ -74,14 +74,14 @@ describe(__filename + "#", function () {
 
     expect(t.toString()).to.be("hello ");
     c.set("content", t2);
-    // t.runner.update();
+    t.runloop.runNow();
     expect(t.toString()).to.be("hello my name is ");
     c2.set("content", t3);
     c3.set("name", "bob");
-    // t.runner.update();
+    t.runloop.runNow();
     expect(t.toString()).to.be("hello my name is bob");
     c.set("content", t3);
-    // t.runner.update();
+    t.runloop.runNow();
     expect(t.toString()).to.be("hello bob");
   });
 
@@ -101,7 +101,7 @@ describe(__filename + "#", function () {
 
     expect(t.toString()).to.be("hello bob!")
     c.set("condition", false);
-    // t.runner.update();
+    t.runloop.runNow();
     expect(t.toString()).to.be("hello !");
   });
 

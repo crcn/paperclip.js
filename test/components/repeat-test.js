@@ -22,7 +22,7 @@ describe(__filename + "#", function () {
     var v = tpl.view({numbers:[0,1,2,3]});
     expect(stringifyView(v)).to.be("0123");
     v.scope.set("numbers", [4,5,6,7]);
-    // v.runner.update();
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("4567");
   });
 
@@ -31,7 +31,7 @@ describe(__filename + "#", function () {
     var v = tpl.view({numbers: new BindableCollection([0,1,2,3])});
     expect(stringifyView(v)).to.be("0123");
     v.scope.set("numbers", new BindableCollection([4,5,6,7]));
-    // v.runner.update();
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("4567");
   });
 
@@ -42,10 +42,10 @@ describe(__filename + "#", function () {
     var v = tpl.view({numbers: src});
     expect(stringifyView(v)).to.be("0123");
     src.splice(0, 1, 4);
-    // v.runner.update();
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("4123");
     src.splice(1, 2, 5, 6, 7);
-    // v.runner.update();
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("45673");
   });
 
@@ -87,7 +87,7 @@ describe(__filename + "#", function () {
     var v = tpl.view({numbers:[0,1,2,3]});
     expect(stringifyView(v)).to.be("<ul><li>0</li><li>1</li><li>2</li><li>3</li></ul>");
     v.scope.set("numbers", [4,5,6,7]);
-    // v.runner.update();
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("<ul><li>4</li><li>5</li><li>6</li><li>7</li></ul>");
   });
 
@@ -96,7 +96,7 @@ describe(__filename + "#", function () {
     var v = tpl.view({numbers:[0,1,2,3]})
     expect(stringifyView(v)).to.be("<ul><li>0</li><li>1</li><li>2</li><li>3</li></ul>");
     v.scope.set("numbers", [4,5,6,7]);
-    // v.runner.update();
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("<ul><li>4</li><li>5</li><li>6</li><li>7</li></ul>");
   });
 });

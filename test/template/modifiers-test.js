@@ -60,7 +60,7 @@ describe(__filename + "#", function () {
     var v = pc.template("{{a|uppercase()}}").view(c);
     expect(stringifyView(v)).to.be("A");
     c.set("a", "b");
-    // v.runner.update();
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("B");
   })
 

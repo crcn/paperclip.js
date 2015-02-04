@@ -21,7 +21,7 @@ describe(__filename + "#", function () {
     c.set('enable', false);
 
     // TODO - check raf here
-    // v.runner.update();
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("<input disabled=\"disabled\">");
   });
 });

@@ -65,7 +65,7 @@ describe(__filename + "#", function () {
     context.a = "b";
     context.a2.b2 = "c";
 
-    // v.runner.update();
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("b\u00A0c");
 
   });
@@ -76,7 +76,7 @@ describe(__filename + "#", function () {
     var v = t.view(c);
     expect(stringifyView(v)).to.be("1");
     c.context.a = 2;
-    // v.runner.update();
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("2");
   });
 });

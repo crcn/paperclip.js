@@ -59,7 +59,6 @@
     "bindable-collection": "0.0.2",
     "bindable-object": "0.0.x",
     "document-section": "^0.2.6",
-    "frame-runner": "0.0.x",
     "he": "~0.4.1",
     "nofactor": "0.0.x",
     "optimist": "0.4.x",
