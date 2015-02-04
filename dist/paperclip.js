@@ -5531,7 +5531,7 @@ protoclass(RunLoop, {
       // check for anymore animations - need to run
       // them in order
       if (this._animationQueue.length) {
-        this.update();
+        this.runNow();
       }
     }
   }
@@ -6433,9 +6433,9 @@ module.exports = protoclass(BlockBinding, {
   update: function () {
     var v = String(this.currentValue == null ? "" : this.currentValue);
     if (this.nodeFactory.name !== "dom") {
-      this.node.replaceText(this.currentValue, true);
+      this.node.replaceText(v, true);
     } else {
-      this.node.nodeValue = String(this.currentValue);
+      this.node.nodeValue = String(v);
     }
   },
   unbind: function () {
