@@ -11,6 +11,8 @@ var tpl = paperclip.template("abba")
 
 describe(__filename + "#", function () {
 
+  return;
+  
   function ObjectScope (context) {
     this.context  = context;
     this._getters = {};

@@ -42,7 +42,7 @@ describe(__filename + "#", function () {
 
   it("can data-bind to a checkbox", function (next) {
     var t = pc.template("<input type='checkbox' checked={{ <~>checked }} />", pc),
-    c = new pc.scopeClass({name:"abba"});
+    c = new BindableObject({name:"abba"});
     c.set("this", c);
 
     var b = t.view(c);
@@ -63,7 +63,7 @@ describe(__filename + "#", function () {
 
   it("can data-bind to a ref path", function (next) {
     var t = pc.template("<input type='text' value={{ <~>a.b.c.d.e }} />", pc),
-    c = new pc.scopeClass();
+    c = new BindableObject();
     c.set("this", c);
 
     var b = t.view(c);

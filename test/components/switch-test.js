@@ -92,18 +92,18 @@ describe(__filename + "#", function () {
 
 
     expect(stringifyView(v)).to.be("a ");
-    v.scope.set("a", true);
+    v.set("a", true);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("a b");
-    v.scope.set("a", false);
-    v.scope.set("b", true);
+    v.set("a", false);
+    v.set("b", true);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("a c");
-    v.scope.set("b", false);
-    v.scope.set("c", true);
+    v.set("b", false);
+    v.set("c", true);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("a d");
-    v.scope.set("a", true);
+    v.set("a", true);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("a b");
   });
@@ -131,18 +131,18 @@ describe(__filename + "#", function () {
     , pc).view({});
 
     expect(stringifyView(v)).to.be("a ");
-    v.scope.set("a", true);
+    v.set("a", true);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("a b4");
-    v.scope.set("a2", true);
+    v.set("a2", true);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("a b2");
-    v.scope.set("a2", false);
-    v.scope.set("a3", true);
+    v.set("a2", false);
+    v.set("a3", true);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("a b3");
-    v.scope.set("a", false);
-    v.scope.set("b", true);
+    v.set("a", false);
+    v.set("b", true);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("a c");
   });

@@ -38,10 +38,10 @@ describe(__filename + "#", function () {
     , pc).view({show:true});
 
     expect(stringifyView(v)).to.be("hello world");
-    v.scope.set("show", false);
+    v.set("show", false);
     // v.runner.update();
     expect(stringifyView(v)).to.be("hello ");
-    v.scope.set("show", true);
+    v.set("show", true);
     // v.runner.update();
     expect(stringifyView(v)).to.be("hello world");
   });
@@ -53,10 +53,10 @@ describe(__filename + "#", function () {
       "</show>" 
     , pc).view({show:1});
     expect(stringifyView(v)).to.be("a");
-    v.scope.set("show", 2);
+    v.set("show", 2);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("a");
-    v.scope.set("show", 3);
+    v.set("show", 3);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("a");
   });
@@ -75,10 +75,10 @@ describe(__filename + "#", function () {
       "hello <span show.when={{show}}>world</span>"
     , pc).view({show:true});
     expect(stringifyView(v)).to.be("hello <span>world</span>");
-    v.scope.set("show", false);
+    v.set("show", false);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("hello <span></span>");
-    v.scope.set("show", true);
+    v.set("show", true);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("hello <span>world</span>");
   });

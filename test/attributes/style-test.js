@@ -32,7 +32,7 @@ describe(__filename + "#", function () {
       "<div style={{{'font-weight':fontWeight,'text-decoration':'none'}}}></div>"
     , pc).view({fontWeight:'bold'});
     expect(stringifyView(v).replace(/:\s/g,":").replace(/;\s/g,";")).to.be('<div style="text-decoration:none;font-weight:bold;"></div>');
-    v.scope.set("fontWeight", "normal");
+    v.set("fontWeight", "normal");
     v.runloop.runNow();
     expect(stringifyView(v)).to.be('<div style="text-decoration:none;font-weight:normal;"></div>');
   });

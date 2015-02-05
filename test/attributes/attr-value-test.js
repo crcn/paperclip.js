@@ -44,8 +44,8 @@ describe(__filename + "#", function () {
       "<div class='a {{b}} {{c}} d' id='abc'>abb</div>"
     ).view({b:"e",c:"f"});
 
-    v.scope.set("b", "g");
-    v.scope.set("c", "h");
+    v.set("b", "g");
+    v.set("c", "h");
 
     // bypass rAF
     v.runloop.runNow();
@@ -64,10 +64,10 @@ describe(__filename + "#", function () {
   it("removes an attribute value if undefined", function () {
     var v = pc.template("<div class='{{a}}' />").view({});
     expect(stringifyView(v)).to.be("<div></div>");
-    v.scope.set("a", "b");
+    v.set("a", "b");
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("<div class=\"b\"></div>");
-    v.scope.set("a", void 0);
+    v.set("a", void 0);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("<div></div>");
     v.dispose();

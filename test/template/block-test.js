@@ -19,7 +19,7 @@ describe(__filename + "#", function () {
   it("doesn't show undefined", function () {
     var tpl = pc.template("{{a}}"),
     v = tpl.view({a:1});
-    v.scope.set("a", void 0);
+    v.set("a", void 0);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be('');
   });
@@ -27,10 +27,10 @@ describe(__filename + "#", function () {
   it("can render a bound block", function () {
     var tpl = pc.template("{{a}} + {{b}} is {{a+b}}"), v;
     expect((v = tpl.view({ a: 1, b: 2 })).toString()).to.be('1 + 2 is 3');
-    v.scope.set("a", 2);
+    v.set("a", 2);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be('2 + 2 is 4');
-    v.scope.set("b", 3);
+    v.set("b", 3);
     v.runloop.runNow();
     expect(stringifyView(v)).to.be('2 + 3 is 5');
   });

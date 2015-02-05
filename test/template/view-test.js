@@ -31,10 +31,11 @@ describe(__filename + "#", function () {
   });
 
 
-  it("syncs changes from the view context back to a vanilla object", function () {
+  // shouldn't happen anymore. Use different accessor.
+  xit("syncs changes from the view context back to a vanilla object", function () {
     var ctx;
     var v = template("{{name}}").view(ctx = {name:"a"});
-    v.scope.set("name", "b");
+    v.set("name", "b");
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("b");
     expect(ctx.name).to.be("b");
