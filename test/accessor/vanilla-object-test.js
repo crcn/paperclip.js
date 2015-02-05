@@ -32,7 +32,7 @@ describe(__filename + "#", function () {
       /**
        */
 
-      cast: function (object) { return object; },
+      castObject: function (object) { return object; },
 
       /**
        */
