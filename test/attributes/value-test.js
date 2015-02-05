@@ -144,4 +144,16 @@ describe(__filename + "#", function () {
       }, process.browser ? 600 : 10);
     });
   });
+
+  it("shows an error if the value is not a reference", function () {
+    var err;
+    try {
+      var t = pc.template("<input type='text' value={{ name }} />", pc),
+      v     = t.view({name:"a"});
+    } catch (e) {
+      err = e;
+    }
+
+    expect(err.message).to.contain("must be a reference");
+  });
 });
