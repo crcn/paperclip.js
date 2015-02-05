@@ -94,17 +94,35 @@ Creates a new template
   - `components` - component class hash map
   - `attributes` - attrbitues class hash map
   - `modifiers` - modifiers class hash map
+  - `accessor` - accessor of the context
 
 ```javascript
 var pc = require("paperclip");
 var template = pc.template("hello {{name}}!");
 ```
 
-#### template.view(context).render()
+#### template.view(context)
 
-`context` - Object, or [BindableObject](https://github.com/mojo-js/bindable-object.js)
+`context` - the context of the view
 
-binds the template to a context, and returns a document fragment
+creates a new view which can be rendered & added to the DOM
+
+#### DocumentFragment view.render()
+
+renders the view, and returns a document fragment
+
+#### view.set(key, value)
+
+sets a property on the context & updates the DOM
+
+#### view.setProperties(properties)
+
+sets multiple properties on the context & updates the DOM
+
+#### view.get(key)
+
+returns a property on the context
+
 
 ```javascript
 var pc = require("paperclip");
