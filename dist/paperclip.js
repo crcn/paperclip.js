@@ -943,7 +943,6 @@ module.exports = BaseComponent.extend({
     source        = this.attributes.each,
     accessor      = this.view.accessor;
 
-    if (!name) throw new Error("'as' must exist for repeat block");
 
     if (!source) source = [];
 
@@ -962,15 +961,18 @@ module.exports = BaseComponent.extend({
 
       var properties, model = source[i];
 
-
+      if (name) {
         var properties = { index: i };
         properties[name] = model;
+      } else {
+        properties = model;
+      }
 
       if (i < this._children.length) {
         var c = this._children[i];
 
         // model is different? rebind. Otherwise ignore
-        if (c.context[name] !== model) {
+        if (c.context === model || c.context[name] !== model) {
           c.bind(properties);
         }
       } else {
