@@ -41,17 +41,6 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 - [MarionetteJS](https://github.com/mojo-js/marionette-paperclip)
 - [AngularJS](https://github.com/mojo-js/ng-paperclip)
 
-### Roadmap
-
-- handlebars adapter
-- jade adapter
-- textmate code highlighting
-- canvas rendering engine
-- [string template translator](https://github.com/mojo-js/paperclip.js/issues/150)
-- angularjs support
-- native Object.observe adapter for modern browsers
-- famo.us rendering engine
-
 ### Examples
 
 - [updating 1000 items](http://requirebin.com/?gist=425cdb646205bb819477)
@@ -83,69 +72,72 @@ Paperclip templates can also be compiled straight to javascript. Simply run:
 
 to compile templates into JavaScript.
 
-## API
-
 #### template template(source, options)
 
-Creates a new template
+Creates a new template.
 
-- `source` - source of the template
-- `options`
-  - `components` - component class hash map
-  - `attributes` - attrbitues class hash map
-  - `modifiers` - modifiers class hash map
-  - `accessor` - accessor of the context
+- `options` - options for the template
+  - `components` - component classes
+  - `attributes` - attribute helpers
+  - `modifiers`  - property modifiers
+  - `accessor`   - property accessor for the view context
 
 ```javascript
 var pc = require("paperclip");
 var template = pc.template("hello {{name}}!");
 ```
 
-#### template.view(context)
+#### view template.view([context])
 
-`context` - the context of the view
+Creates a new view which controls a cloned document fragment provided by the template. 
 
-creates a new view which can be rendered & added to the DOM
+- `context` - Can be anything. A backbone model, ember model, vanilla object. Be
+sure to specify the `template accessor` if this is other than plain-old object.
+
+#### view.render()
+
+Returns the cloned document fragment which can be added to the DOM.
 
 ```javascript
 var pc = require("paperclip");
 var template = pc.template("hello {{name}}!");
-var view = template.view({ name: "Bull Murray" });
+var view = template.view({ name: "Bill Murray" });
 document.body.appendChild(view.render()); // will show "hello Bill Murray"
 ```
 
-#### DocumentFragment view.render()
-
-renders the view, and returns a document fragment
-
 #### view.set(key, value)
 
-sets a property on the context & updates the DOM
-
-
-```javascript
-var view = pc.template("hello {{name}}").view({ name: "Oprah" });
-document.body.appendChild(view.render());
-view.set("name", "Gandalf"); // will show hello Gandalf
-
-```
+Sets a property on the context of the view & updates the DOM.
 
 #### view.setProperties(properties)
 
-sets multiple properties on the context & updates the DOM
+Sets multiple properties on the view & updates the DOM.
 
-#### view.get(key)
+#### view.context
 
-returns a property on the context
+The context that the view is currently bound to. This can be anything.
 
+```javascript
+var tpl = paperclip.template("hello {{name}}!");
+var view = tpl.view({ name: "Will Smith" });
+document.body.appendChild(view.render());  // will show "hello Will Smith"
 
-#### paperclip.Component
+// triggered whenever name has changed
+view.context.bind("name", function (name) {
+  console.log("name has changed!");
+});
 
-component base class
+// only updates the elements bound to name
+view.context.set("name", "Oprah Winfrey");  // will show "hello Oprah Winfrey"
+```
 
-#### paperclip.Attribute
+#### view.remove()
 
-attribute base class
+Removes the views from the DOM.
+
+#### String paperclip.parse(source)
+
+Translates a template into JavaScript.
 
 ## Block Syntax
 
