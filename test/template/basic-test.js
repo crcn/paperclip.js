@@ -76,5 +76,13 @@ describe(__filename + "#", function () {
     var tpl = pc.template("foo &amp;amp; bar");
     expect(tpl.view().toString()).to.be("foo &amp; bar")
   });
+
+  it("has all the right defaults", function () {
+    var tpl = pc.template("foo &amp;amp; bar", {});
+    expect(tpl.components.show).not.to.be(void 0);
+    expect(tpl.attributes.onclick).not.to.be(void 0);
+    expect(tpl.modifiers.uppercase).not.to.be(void 0);
+    expect(tpl.scopeClass).not.to.be(void 0);
+  });
   
 });
