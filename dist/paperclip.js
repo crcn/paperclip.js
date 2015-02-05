@@ -114,7 +114,9 @@ module.exports = BaseAccessor.extend(BindableObjectAccessor, {
   }
 });
 },{"./base":1,"bindable-collection":78,"bindable-object":79}],3:[function(require,module,exports){
-module.exports = {
+var BaseAccessor = require("./base");
+
+module.exports = BaseAccessor.extend({
 
   /**
    */
@@ -134,7 +136,7 @@ module.exports = {
   /**
    */
 
-  cast: function (object) { return object; },
+  castObject: function (object) { return object; },
 
   /**
    */
@@ -233,14 +235,14 @@ module.exports = {
    * 
    */
 
-  deserializeCollection: function (collection) {
+  normalizeCollection: function (collection) {
     return collection;
   },
 
   /**
    */
 
-  deserializeObject: function (object) {
+  normalizeObject: function (object) {
     return object;
   },
 
@@ -252,8 +254,8 @@ module.exports = {
       this._watchers[i].apply();
     }
   }
-}
-},{}],4:[function(require,module,exports){
+});
+},{"./base":1}],4:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
