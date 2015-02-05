@@ -82,7 +82,7 @@ describe(__filename + "#", function () {
     expect(tpl.components.show).not.to.be(void 0);
     expect(tpl.attributes.onclick).not.to.be(void 0);
     expect(tpl.modifiers.uppercase).not.to.be(void 0);
-    expect(tpl.accessor).not.to.be(void 0);
+    expect(tpl.accessorClass).not.to.be(void 0);
   });
   
 });
