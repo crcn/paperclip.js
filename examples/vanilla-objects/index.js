@@ -39,7 +39,7 @@ var accessor = {
    */
 
   get: function (object, path) {
-    
+
     var pt = path.join("."), getter;
     if (!(getter = this._getters[pt])) {
       getter = this._getters[pt] = new Function("return this." +pt);
@@ -82,7 +82,6 @@ var accessor = {
     
     var self = this;
     var watcher = {
-      currentValue: this.get(object, path),
       context: object,
       apply: function () {
         var newValue = self.get(object, path);
@@ -96,7 +95,9 @@ var accessor = {
     this._watchers.push(watcher);
     
     return {
-      now: function(){},
+      now: function(){
+        watcher.apply();
+      },
       dispose: function () {
         var i = self._watchers.indexOf(watcher);
         if (~i) self._watchers.splice(i, 1);
@@ -143,8 +144,8 @@ var accessor = {
 var pcTpl = 
 "<ul>" +
     "<li><input type='text' value={{<~>count}} /></li>" +
-    "<repeat each={{repeat(count)}} as='number'>" +
-      "<li>{{number}}<input type='text' value={{number}} /></li>" +
+    "<repeat each={{dots}} as='dot'>" +
+      "<li>{{dot.i}}<input type='text' value={{<~>dot.i}}  /></li>" +
     "</repeat>" +
 "</ul>";
 
@@ -153,7 +154,7 @@ pc.accessor = accessor;
 var tpl = window.pcTpl = pc.template(pcTpl, pc);
 
 var context = {
-  dots: _.range(500).map(function (i) {
+  dots: _.range(10).map(function (i) {
     return {
       i: i
     }

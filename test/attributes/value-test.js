@@ -156,4 +156,18 @@ describe(__filename + "#", function () {
 
     expect(err.message).to.contain("must be a reference");
   });
+
+  it("can handle 0s", function () {
+    var t = pc.template("<input type='text' value={{ <~>value }} />", pc),
+      v     = t.view({value:0});
+
+    expect(v.section.node.value).to.be("0");
+  });
+
+  it("can handle false", function () {
+    var t = pc.template("<input type='text' value={{ <~>value }} />", pc),
+      v     = t.view({value:false});
+
+    expect(v.section.node.value).to.be("false");
+  });
 });
