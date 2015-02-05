@@ -1,0 +1,23 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'start' ]
+2 info using npm@2.4.1
+3 info using node@v0.10.36
+4 verbose stack Error: missing script: start
+4 verbose stack     at run (/usr/local/lib/node_modules/npm/lib/run-script.js:138:19)
+4 verbose stack     at /usr/local/lib/node_modules/npm/lib/run-script.js:81:5
+4 verbose stack     at /usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:51:40
+4 verbose stack     at final (/usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:349:17)
+4 verbose stack     at then (/usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:126:33)
+4 verbose stack     at /usr/local/lib/node_modules/npm/node_modules/read-package-json/read-json.js:266:40
+4 verbose stack     at evalmachine.<anonymous>:272:14
+4 verbose stack     at /usr/local/lib/node_modules/npm/node_modules/graceful-fs/graceful-fs.js:102:5
+4 verbose stack     at Object.oncomplete (evalmachine.<anonymous>:108:15)
+5 verbose cwd /Users/craig/Developer/Public/paperclip.js
+6 error Darwin 14.1.0
+7 error argv "node" "/usr/local/bin/npm" "start"
+8 error node v0.10.36
+9 error npm  v2.4.1
+10 error missing script: start
+11 error If you need help, you may report this error at:
+11 error     <http://github.com/npm/npm/issues>
+12 verbose exit [ 1, true ]

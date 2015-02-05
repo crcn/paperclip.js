@@ -68,7 +68,7 @@ module.exports = BaseAccessor.extend(BindableObjectAccessor, {
 
     var fnPath = path.pop(),
     ctxPath    = path.length ? path : void 0;
-    
+
     // TODO - check for ctxPath undefined
     var ctx = ctxPath ? context.get(ctxPath) : context;
     if (!ctx) return;
@@ -86,6 +86,12 @@ module.exports = BaseAccessor.extend(BindableObjectAccessor, {
       dispose: function(){}
     }
   },
+
+  /**
+   * TODO - deserialize is improper. Maybe use something like
+   * normalize, toArray
+   */
+
   deserializeCollection: function (collection) {
     return collection.source || collection;
   },
@@ -549,6 +555,7 @@ BaseAttribute.extend(ValueAttribute, {
 
     var self = this;
 
+    // TODO - move this to another attribute helper (more optimal)
     if (/^(text|password|email)$/.test(this.node.getAttribute("type"))) {
       this._autocompleteCheckInterval = setInterval(function () {
         self._onInput();
@@ -573,6 +580,10 @@ BaseAttribute.extend(ValueAttribute, {
 
     var model = this.model = this.currentValue;
 
+    if (!model || !model.__isReference) {
+      throw new Error("input value must be a reference. Make sure you have <~> defined");
+    }
+
     if (this._modelBindings) this._modelBindings.dispose();
     if (!model) return;
 
@@ -580,7 +591,7 @@ BaseAttribute.extend(ValueAttribute, {
 
     this._modelBindings = this.view.watch(model.path, function (value) {
       self._elementValue(self._parseValue(value));
-    }).now();
+    }).trigger();
   },
 
 
@@ -613,7 +624,6 @@ BaseAttribute.extend(ValueAttribute, {
     var value = this._parseValue(this._elementValue());
 
     if (!this.model) return;
-
 
 
     if (String(this.model.value()) == String(value))  return;
@@ -656,7 +666,8 @@ BaseAttribute.extend(ValueAttribute, {
       } else {
         this.node.checked = value;
       }
-    } else if(value != this._elementValue()) {
+    } else if(String(value) !== this._elementValue()) {
+
 
       if (isInput) {
         this.node.value = value;
@@ -5695,7 +5706,7 @@ function boundScript (script) {
 
       if (!refs.length) return {
         dispose: function () {},
-        now: now
+        trigger: now
       };
 
       if (refs.length === 1) {
@@ -5716,7 +5727,7 @@ function boundScript (script) {
 
       return {
         dispose: dispose,
-        now: function () {
+        trigger: function () {
           now();
           return this;
         }
@@ -5777,7 +5788,7 @@ function bufferedScript (values, view) {
       }
 
       return {
-        now: now,
+        trigger: now,
         dispose: function ()  {
           for (var i = bindings.length; i--;) bindings[i].dispose();
         }
@@ -5793,7 +5804,7 @@ function staticScript (value, view) {
   return {
     bind: function (view, listener) {
       return {
-        now: function () {
+        trigger: function () {
           listener(value);
           return this;
         },
@@ -6311,7 +6322,8 @@ protoclass(View, {
    */
 
   call: function (path, params) {
-    return this.accessor.call(this.context, path, params);
+    var has = this.accessor.get(this.context, path);
+    return has ? this.accessor.call(this.context, path, params) : this.parent ? this.parent.call(path, params) : void 0;
   },
 
   /**
@@ -6791,7 +6803,7 @@ module.exports = protoclass(AttributesBinding, {
     // TODO: remove now()
     this.bindings.push(v.bind(this.view, function (nv, ov) {
       self.attributes.set(k, nv);
-    }).now());
+    }).trigger());
   },
   unbind: function () {
     if (!this.bindings) return;
@@ -7834,6 +7846,13 @@ function watchSimple (bindable, property, fn) {
     },
 
     /**
+     */
+
+    trigger: function () {
+      return this.now()
+    },
+
+    /**
      * disposes the binding
      * @method dispose
      */
@@ -8006,6 +8025,9 @@ function watchChain (bindable, hasComputed, chain, fn) {
       fn.call(self, values);
       return self;
     },
+    trigger: function () {
+      return this.now()
+    },
     dispose: dispose,
     pause: function () {
       self.dispose();
@@ -8074,6 +8096,9 @@ function watchMultiple (bindable, chains, fn) {
       setValues();
       onChange();
       return self;
+    },
+    trigger: function () {
+      return this.now()
     },
     dispose: function () {
       for (var i = bindings.length; i--;) {
@@ -10449,12 +10474,347 @@ BindableObject.extend(ScopedBindableObject, {
 
 module.exports = ScopedBindableObject;
 },{"bindable-object":111}],111:[function(require,module,exports){
-module.exports=require(78)
+arguments[4][78][0].apply(exports,arguments)
 },{"./watchProperty":113,"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable-object/lib/index.js":78,"fast-event-emitter":114,"protoclass":115,"toarray":116}],112:[function(require,module,exports){
 module.exports=require(79)
 },{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable-object/lib/transform.js":79,"toarray":116}],113:[function(require,module,exports){
-module.exports=require(80)
-},{"./transform":112,"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable-object/lib/watchProperty.js":80}],114:[function(require,module,exports){
+"use strict";
+
+var transform   = require("./transform");
+
+function extend (to, from) {
+  for (var key in from) {
+    to[key] = from[key];
+  }
+  return to;
+}
+
+
+function watchSimple (bindable, property, fn) {
+
+  bindable.emit("watching", [property]);
+
+  var listener = bindable.on("change:" + property, function () {
+    fn.apply(self, arguments);
+  }), self;
+
+  self = {
+
+    /** 
+     * the target bindable object
+     * @property target
+     * @type {BindableObject}
+     */
+
+    target: bindable,
+
+    /**
+     * triggers the binding listener
+     * @method now
+     */
+
+    now: function () {
+      fn.call(self, bindable.get(property));
+      return self;
+    },
+
+    /**
+     * disposes the binding
+     * @method dispose
+     */
+
+    dispose: function () {
+      listener.dispose();
+    },
+
+    /**
+     */
+
+    pause: function () {
+      self.dispose();
+      self.now = function () { return this; };
+    },
+
+    /**
+     */
+
+    resume: function () {
+      self.pause();
+      extend(self, watchSimple(bindable, property, fn));
+      return self;
+    }
+  };
+
+  return self;
+}
+
+/*
+ * bindable.bind("a.b.c.d.e", fn);
+ */
+
+
+function watchChain (bindable, hasComputed, chain, fn) {
+
+  var listeners = [], values = hasComputed ? [] : undefined, self;
+
+
+  var onChange = function () {
+    dispose();
+    listeners = [];
+    values = hasComputed ? [] : void 0;
+    bind(bindable, chain);
+    self.now();
+  };
+
+  /*
+  if (hasComputed && process.browser) {
+    onChange = debounce(bindable, onChange);
+  }*/
+
+  function runComputed (eachChain, pushValues) {
+    return function (item) {
+      if (!item) return;
+
+        // wrap around bindable object as a helper
+        if (!item.__isBindable) {
+          item = new module.exports.BindableObject(item);
+        }
+
+        bind(item, eachChain, pushValues);
+    };
+  }
+
+  function bind (target, chain, pushValues) {
+
+    var currentChain = [], subValue, currentProperty, i, j, n, computed, hadComputed, pv, cv = target;
+
+    // need to run through all variations of the property chain incase it changes
+    // in the bindable.object. For instance:
+    // target.bind("a.b.c", fn); 
+    // triggers on
+    // target.set("a", obj);
+    // target.set("a.b", obj);
+    // target.set("a.b.c", obj);
+
+    // does it have @each in there? could be something like
+    // target.bind("friends.@each.name", function (names) { })
+    if (hasComputed) {
+
+      i = 0;
+      n = chain.length;
+
+      for (; i < n; i++) {
+
+        currentChain.push(chain[i]);
+        currentProperty = chain[i];
+
+        target.emit("watching", currentChain);
+
+        // check for @ at the beginning
+        computed = (currentProperty.charCodeAt(0) === 64);
+
+        if (computed) {
+          hadComputed = true;
+          // remove @ - can't be used to fetch the propertyy
+          currentChain[i] = currentProperty = currentChain[i].substr(1);
+        }
+        
+        pv = cv;
+        if (cv) cv = cv[currentProperty];
+
+        if (computed && cv) {
+
+
+          // used in cases where the collection might change that would affect 
+          // this binding. length for instance on the collection...
+          if (cv.compute) {
+            for (j = cv.compute.length; j--;) {
+              bind(target, [cv.compute[j]], false);
+            }
+          }
+
+          // the sub chain for each of the items from the loop
+          var eachChain = chain.slice(i + 1);
+
+          // call the function, looping through items
+          cv.call(pv, runComputed(eachChain, pushValues));
+          break;
+        } else if (cv && cv.__isBindable && i !== n - 1) {
+          bind(cv, chain.slice(i + 1), false);
+          cv = cv.__context;
+        }
+
+        listeners.push(target.on("change:" +  currentChain.join("."), onChange));
+
+      } 
+
+      if (!hadComputed && pushValues !== false) {
+        values.push(cv);
+      }
+
+    } else {
+      i = 0;
+      n = chain.length;
+
+      for (; i < n; i++) {
+        currentProperty = chain[i];
+        currentChain.push(currentProperty);
+
+        target.emit("watching", currentChain);
+
+        if (cv) cv = cv[currentProperty];
+
+        // pass the watch onto the bindable object, but also listen 
+        // on the current target for any
+        if (cv && cv.__isBindable && i !== n - 1) {
+          bind(cv, chain.slice(i + 1), false);
+        }
+
+        listeners.push(target.on("change:" + currentChain.join("."), onChange));
+      }
+
+      if (pushValues !== false) values = cv;
+    }
+  }
+
+  function dispose () {
+    if (!listeners) return;
+    for (var i = listeners.length; i--;) {
+      listeners[i].dispose();
+    }
+    listeners = [];
+  }
+
+  self = {
+    target: bindable,
+    now: function () {
+      fn.call(self, values);
+      return self;
+    },
+    dispose: dispose,
+    pause: function () {
+      self.dispose();
+      self.now = function () { return this; };
+    },
+    resume: function () {
+      self.pause();
+      extend(self, watchChain(bindable, hasComputed, chain, fn));
+      return self;
+    }
+  };
+
+  bind(bindable, chain);
+
+  return self;
+}
+
+/**
+ */
+
+function watchMultiple (bindable, chains, fn) { 
+
+  var values  = new Array(chains.length),
+  oldValues   = new Array(chains.length),
+  bindings    = new Array(chains.length),
+  fn2         = fn,
+  _pause      = false,
+  _hasChanged = false,
+  self;
+
+  bindings.push(bindable.on("willSetProperties", function () {
+    _pause      = true;
+    _hasChanged = false;
+  }));
+
+  bindings.push(bindable.on("didSetProperties", function () {
+    _pause = false;
+    if (_hasChanged) onChange();
+  }));
+
+  function onChange () {
+    _hasChanged = true;
+    if (_pause) return;
+    fn2.apply(this, values.concat(oldValues));
+  }
+
+  function setValues () {
+    oldValues = values.concat();
+    values    = chains.map(function (property) { 
+      return bindable.get(property); 
+    });
+  }
+
+
+  chains.forEach(function (chain, i) {
+    bindings[i] = bindable.bind(chain, function (value, oldValue) {
+      values[i]    = value;
+      oldValues[i] = oldValue;
+      onChange();
+    });
+  });
+
+  self = {
+    target: bindable,
+    now: function () {
+      setValues();
+      onChange();
+      return self;
+    },
+    dispose: function () {
+      for (var i = bindings.length; i--;) {
+        bindings[i].dispose();
+      }
+      bindings = [];
+    },
+    pause: function () {
+      self.dispose();
+      self.now = function () { return self; };
+    },
+    resume: function () {
+      self.pause();
+      extend(self, watchMultiple(bindable, chains, fn));
+      return self;
+    }
+  };
+  return self;
+}
+
+/**
+ */
+
+function watchProperty (bindable, property, fn) {
+
+  if (typeof fn === "object") {
+    fn = transform(bindable, property, fn);
+  }
+
+  // TODO - check if is an array
+  var chain;
+
+  if (typeof property === "string") {
+    if (~property.indexOf(",")) {
+      return watchMultiple(bindable, property.split(/[,\s]+/), fn);
+    } else if (~property.indexOf(".")) {
+      chain = property.split(".");
+    } else {
+      chain = [property];
+    }
+  } else {
+    chain = property;
+  }
+
+  // collection.bind("length")
+  if (chain.length === 1) {
+    return watchSimple(bindable, property, fn);
+
+  // person.bind("city.zip")
+  } else {
+    return watchChain(bindable, ~property.indexOf("@"), chain, fn);
+  }
+}
+
+module.exports = watchProperty;
+},{"./transform":112}],114:[function(require,module,exports){
 module.exports=require(81)
 },{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable-object/node_modules/fast-event-emitter/lib/index.js":81,"protoclass":115}],115:[function(require,module,exports){
 module.exports=require(109)
