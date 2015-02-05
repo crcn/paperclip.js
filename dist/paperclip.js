@@ -5,7 +5,6 @@ var protoclass = require("protoclass");
  */
 
 function BaseAccessor () {
-  this.context = context;
 }
 
 /**
