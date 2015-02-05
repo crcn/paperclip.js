@@ -107,6 +107,13 @@ var template = pc.template("hello {{name}}!");
 
 creates a new view which can be rendered & added to the DOM
 
+```javascript
+var pc = require("paperclip");
+var template = pc.template("hello {{name}}!");
+var view = template.view({ name: "Bull Murray" });
+document.body.appendChild(view.render()); // will show "hello Bill Murray"
+```
+
 #### DocumentFragment view.render()
 
 renders the view, and returns a document fragment
@@ -114,6 +121,14 @@ renders the view, and returns a document fragment
 #### view.set(key, value)
 
 sets a property on the context & updates the DOM
+
+
+```javascript
+var view = pc.template("hello {{name}}").view({ name: "Oprah" });
+document.body.appendChild(view.render());
+view.set("name", "Gandalf"); // will show hello Gandalf
+
+```
 
 #### view.setProperties(properties)
 
@@ -123,13 +138,6 @@ sets multiple properties on the context & updates the DOM
 
 returns a property on the context
 
-
-```javascript
-var pc = require("paperclip");
-var template = pc.template("hello {{name}}!");
-var view = template.view({ name: "Bull Murray" });
-document.body.appendChild(view.render()); // will show "hello Bill Murray"
-```
 
 #### paperclip.Component
 
