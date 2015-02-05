@@ -16,7 +16,16 @@ module.exports = protoclass(BaseAccessor, {
   accessible: function (context) {
     // override me
   },
-  cast: function (context) {
+  castObject: function (context) {
+    // override me
+  },
+  castCollection: function (context) {
+    // override me
+  },
+  normalizeObject: function (context) {
+    // override me
+  },
+  normalizeCollection: function (context) {
     // override me
   },
   get: function (context, path) {
@@ -53,7 +62,12 @@ module.exports = BaseAccessor.extend(BindableObjectAccessor, {
   accessible: function (context) {
     return context && context.__isBindableObject;
   },
-  cast: function (context) {
+  castObject: function (context) {
+    if (context.__isBindable) return context;
+    if (context.toString() === "[object Array]") return new BindableCollection(context);
+    return new BindableOject(context);
+  },
+  castCollection: function (context) {
     if (context.__isBindable) return context;
     if (context.toString() === "[object Array]") return new BindableCollection(context);
     return new BindableOject(context);
@@ -92,10 +106,10 @@ module.exports = BaseAccessor.extend(BindableObjectAccessor, {
    * normalize, toArray
    */
 
-  deserializeCollection: function (collection) {
+  normalizeCollection: function (collection) {
     return collection.source || collection;
   },
-  deserializeObject: function (object) {
+  normalizeObject: function (object) {
     return object.toJSON();
   }
 });
@@ -797,7 +811,7 @@ module.exports = BaseComponent.extend({
       self.view.runloop.deferOnce(self);
     });
 
-    source = accessor.deserializeCollection(source);
+    source = accessor.normalizeCollection(source);
 
 
     if (!this._children) this._children = [];
@@ -6355,7 +6369,7 @@ protoclass(View, {
     if (this.context) this.unbind();
     if (!context) context = {};
 
-    this.context = this.accessor.cast(context);
+    this.context = this.accessor.castObject(context);
 
     for (var i = 0, n = this.bindings.length; i < n; i++) {
       this.bindings[i].bind();
