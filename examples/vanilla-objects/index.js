@@ -95,7 +95,7 @@ var accessor = {
     this._watchers.push(watcher);
     
     return {
-      now: function(){
+      trigger: function(){
         watcher.apply();
       },
       dispose: function () {
