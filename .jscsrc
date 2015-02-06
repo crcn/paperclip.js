@@ -11,6 +11,7 @@
     "disallowKeywords": ["with"],
     "disallowSpacesInsideObjectBrackets": null,
     "disallowImplicitTypeConversion": ["string"],
+    "requireCurlyBraces": [],
 
     "safeContextKeyword": "_this",
 
