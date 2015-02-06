@@ -41,7 +41,7 @@ test-karma:
 lint: jshint jscs
 	
 jshint:
-	./node_modules/.bin/jshint ./lib;
+	./node_modules/.bin/jshint -c ./.jshint ./lib;
 
 jscs:
 	./node_modules/.bin/jscs ./lib;

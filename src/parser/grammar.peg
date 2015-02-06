@@ -1,4 +1,6 @@
 {
+/*jshint laxcomma:false */
+
   var DoctypeExpression        = require("./ast/doctype"),
   RootNodeExpression           = require("./ast/rootNode"),
   TextNodeExpression           = require("./ast/textNode"),
@@ -82,7 +84,7 @@ DocType
     }
 
 ChildNodes
-  = children:(ElementNode/TextNode/BlockBinding/CommentNode)* { return new ArrayExpression(new ParametersExpression(trimTextExpressions(children))) }
+  = children:(ElementNode/TextNode/BlockBinding/CommentNode)* { return new ArrayExpression(new ParametersExpression(trimTextExpressions(children))); }
 
 
 CommentNode
@@ -104,12 +106,12 @@ ElementNode
 
 TextNode
   = value:TextCharacter+ {
-      return new TextNodeExpression(trimNewLineChars(value.join("")))
+      return new TextNodeExpression(trimNewLineChars(value.join("")));
     }
 
 TextCharacter
   = !("<"/"{{") SourceCharacter {
-      return text()
+      return text();
     }
 
 StartTag
@@ -155,7 +157,7 @@ Attribute
       return {
         name: name,
         value: new LiteralExpression(true)
-      }
+      };
     }
 
 AttributeValues
@@ -192,7 +194,7 @@ SingleScript
   = _ scriptName:ReferenceName _ "}}" {
       var hash = {};
       hash[scriptName] = new ScriptExpression(new LiteralExpression(true));
-      return new HashExpression(hash)
+      return new HashExpression(hash);
     }
   / scripts:Scripts _ "}}" {
       return scripts;
@@ -233,7 +235,7 @@ Parameters
   = "(" params:InnerParameters ")" {
       return params;
     }
-  / "()" { []; }
+  / "()" { return []; }
 
 InnerParameters
   = param1:Expression rest:("," Expression)* {
@@ -274,7 +276,7 @@ Modifier
     return {
       name: name,
       parameters: parameters || []
-    }
+    };
   }
 
 ObjectReference
@@ -310,7 +312,7 @@ Boolean
       return {
         type: "boolean",
         value: value === "true"
-      }
+      };
     }
 
 Undefined
@@ -332,7 +334,7 @@ FunctionCall
 
 Reference
   = bindingType:("^"/"~>"/"<~>"/"~"/"<~")? _ reference:ReferenceName path:("." ReferenceName)* _ {
-      path = [reference].concat(path.map(function (p) { return p[1] }));
+      path = [reference].concat(path.map(function (p) { return p[1]; }));
       return new ReferenceExpression(path, bindingType);
     }
 
@@ -347,7 +349,7 @@ Hash
 HashValues
   = values:HashValuesArray {
       var s = {};
-      for (i = 0, n = values.length; i < n; i++) {
+      for (var i = 0, n = values.length; i < n; i++) {
         s[values[i].key] = values[i].value;
       }
       return s;
@@ -366,7 +368,7 @@ HashValue
       return {
         key: key,
         value: value || new LiteralExpression(void 0)
-      }
+      };
     }
 
 HashKey
