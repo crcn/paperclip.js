@@ -1,0 +1,6045 @@
+Searching 80 files for "function (\w+)\s{" (case sensitive)
+
+0 matches across 0 files
+
+
+Searching 80 files for "function (\w+)\s{" (case sensitive, whole word)
+
+0 matches across 0 files
+
+
+Searching 80 files for "function (\w+)\s{" (regex, case sensitive)
+
+Missing } in quantified repetition.  The error occurred while parsing the regular expression fragment: 'n (\w+)\s{>>>HERE>>>'. in regular expression function (\w+)\s{
+
+0 matches across 0 files
+
+
+Searching 80 files for "function (\w+)\s{" (regex, case sensitive)
+
+Missing } in quantified repetition.  The error occurred while parsing the regular expression fragment: 'n (\w+)\s{>>>HERE>>>'. in regular expression function (\w+)\s{
+
+0 matches across 0 files
+
+
+Searching 80 files for "function" (regex, case sensitive)
+
+/Users/craig/Developer/Public/paperclip.js/lib/accessors/base.js:
+    4   */
+    5  
+    6: function BaseAccessor () {
+    7  }
+    8  
+    .
+   12  module.exports = protoclass(BaseAccessor, {
+   13    __isScope: true,
+   14:   accessible: function (context) {
+   15      // override me
+   16    },
+   17:   castObject: function (context) {
+   18      // override me
+   19    },
+   20:   castCollection: function (context) {
+   21      // override me
+   22    },
+   23:   normalizeObject: function (context) {
+   24      // override me
+   25    },
+   26:   normalizeCollection: function (context) {
+   27      // override me
+   28    },
+   29:   get: function (context, path) {
+   30      // override me
+   31    },
+   32:   set: function (context, path, value) {
+   33      // override me
+   34    },
+   35:   call: function (context, ctxPath, fnPath, params) {
+   36      // override me
+   37    },
+   38:   watchProperty: function (context, path, listener) {
+   39      // override me
+   40    },
+   41:   watchEvent: function (context, operation, listener) {
+   42      // override me
+   43    },
+   44:   dispose: function () {
+   45      
+   46    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/accessors/bindableObject.js:
+    3  BindableCollection = require("bindable-collection");
+    4  
+    5: function BindableObjectAccessor () {
+    6  
+    7  }
+    8  
+    9  module.exports = BaseAccessor.extend(BindableObjectAccessor, {
+   10:   accessible: function (context) {
+   11      return context && context.__isBindableObject;
+   12    },
+   13:   castObject: function (context) {
+   14      if (context.__isBindable) return context;
+   15      if (context.toString() === "[object Array]") return new BindableCollection(context);
+   16      return new BindableOject(context);
+   17    },
+   18:   castCollection: function (context) {
+   19      if (context.__isBindable) return context;
+   20      if (context.toString() === "[object Array]") return new BindableCollection(context);
+   21      return new BindableOject(context);
+   22    },
+   23:   get: function (context, path) {
+   24      return context.get(path);
+   25    },
+   26:   set: function (context, path, value) {
+   27      return context.set(path, value);
+   28    },
+   29:   call: function (context, path, params) {
+   30  
+   31      var fnPath = path.pop(),
+   ..
+   38      if (fn) return fn.apply(ctx, params);
+   39    },
+   40:   watchProperty: function (context, path, listener) {
+   41      return context.watch(path, listener);
+   42    },
+   43:   watchEvent: function (context, event, value) {
+   44      if (event === "change" && context.__isBindableCollection) {
+   45        return context.on(event, value);
+   46      }
+   47      return {
+   48:       dispose: function(){}
+   49      }
+   50    },
+   ..
+   55     */
+   56  
+   57:   normalizeCollection: function (collection) {
+   58      return collection.source || collection;
+   59    },
+   60:   normalizeObject: function (object) {
+   61      return object.toJSON();
+   62    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/accessors/pojo.js:
+   21     */
+   22  
+   23:   castObject: function (object) { return object; },
+   24  
+   25    /**
+   26     */
+   27  
+   28:   call: function (context, path, params) {
+   29  
+   30      var fnName = path.pop(),
+   ..
+   38     */
+   39  
+   40:   get: function (object, path) {
+   41  
+   42      var pt = path.join("."), getter;
+   ..
+   56     */
+   57  
+   58:   set: function (object, path, value) {
+   59      var pt = path.join("."), setter;
+   60      if (!(setter = this._setters[pt])) {
+   ..
+   78     */
+   79  
+   80:   watchProperty: function (object, path, listener) {
+   81      
+   82      var self = this;
+   83      var watcher = {
+   84        context: object,
+   85:       apply: function () {
+   86          var newValue = self.get(object, path);
+   87:         if (newValue === this.currentValue && typeof newValue !== "function") return;
+   88          var oldValue = this.currentValue;
+   89          this.currentValue = newValue;
+   ..
+   95      
+   96      return {
+   97:       trigger: function(){
+   98          watcher.apply();
+   99        },
+  100:       dispose: function () {
+  101          var i = self._watchers.indexOf(watcher);
+  102          if (~i) self._watchers.splice(i, 1);
+  ...
+  108     */
+  109  
+  110:   watchEvent: function (object, event, listener) {
+  111      // do nothing
+  112      return {
+  113:       dispose: function(){}
+  114      }
+  115    },
+  ...
+  120     */
+  121  
+  122:   normalizeCollection: function (collection) {
+  123      return collection;
+  124    },
+  ...
+  127     */
+  128  
+  129:   normalizeObject: function (object) {
+  130      return object;
+  131    },
+  ...
+  134     */
+  135  
+  136:   apply: function () {
+  137      for (var i = 0, n = this._watchers.length; i < n; i++) {
+  138        this._watchers[i].apply();
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/base.js:
+    5   */
+    6  
+    7: function Attribute (options) {
+    8  
+    9    this.view          = options.view;
+   ..
+   26     */
+   27  
+   28:   initialize: function () {
+   29    },
+   30  
+   ..
+   32     */
+   33  
+   34:   bind: function () {
+   35    },
+   36  
+   ..
+   38     */
+   39  
+   40:   unbind: function () {
+   41    }
+   42  })
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/class.js:
+    9     */
+   10  
+   11:   update: function () {
+   12  
+   13  
+   ..
+   49  
+   50  
+   51: module.exports.test = function (value) {
+   52    return typeof value === "object" && !value.buffered;
+   53  }
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/easeIn.js:
+    5  
+    6  module.exports = BaseAttribue.extend({
+    7:   initialize: function () {
+    8      this.view.transitions.push(this);
+    9    },
+   10:   enter: function () {
+   11      var v = this.value;
+   12      if (v.evaluate) {
+   13        v = v.evaluate(this.view);
+   14:       v(this.node, function(){})
+   15      }
+   16    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/easeOut.js:
+    5  
+    6  module.exports = BaseAttribue.extend({
+    7:   initialize: function () {
+    8      this.view.transitions.push(this);
+    9    },
+   10:   exit: function (complete) {
+   11      var v = this.value;
+   12      if (v.evaluate) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/enable.js:
+    5  
+    6  module.exports = ScriptAttribute.extend({
+    7:   update: function () {
+    8      if (this.currentValue) {
+    9        this.node.removeAttribute("disabled");
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/event.js:
+    6   */
+    7  
+    8: function EventAttribute (options) {
+    9    this._onEvent = _bind(this._onEvent, this);
+   10    Base.call(this, options);
+   ..
+   22     */
+   23  
+   24:   initialize: function () {
+   25      // convert onEvent to event
+   26      var event = this.event || (this.event = this.key.toLowerCase().replace(/^on/, ""));
+   ..
+   31     */
+   32  
+   33:   bind: function () {
+   34      Base.prototype.bind.call(this);
+   35      this.bound = true;
+   ..
+   39     */
+   40  
+   41:   _onEvent: function (event) {
+   42      if (!this.bound) return;
+   43      event.preventDefault();
+   ..
+   49     */
+   50     
+   51:   unbind: function () {
+   52      this.bound = false;
+   53    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/focus.js:
+    9     */
+   10     
+   11:   update: function () {
+   12      if (!this.currentValue) return;
+   13      if (this.node.focus) {
+   ..
+   16        // focus after being on screen. Need to break out
+   17        // of animation, so setTimeout is the best option
+   18:       setTimeout(function(){ 
+   19          self.node.focus(); 
+   20        }, 1);
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/keyCodedEvent.js:
+   19     */
+   20     
+   21:   _onEvent: function (event) {
+   22  
+   23      if (!~this.keyCodes.indexOf(event.keyCode)) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/script.js:
+    9     */
+   10  
+   11:   bind: function () {
+   12      BaseAttribute.prototype.bind.call(this)
+   13      var self = this;
+   14  
+   15:     this._binding = this.value.bind(this.view, function (nv) {
+   16        if (nv == self.currentValue) return;
+   17        self.currentValue = nv;
+   ..
+   26     */
+   27  
+   28:   update: function () {
+   29  
+   30    },
+   ..
+   33     */
+   34  
+   35:   unbind: function () {
+   36      this._binding.dispose();
+   37    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/show.js:
+   10     */
+   11  
+   12:   initialize: function () {
+   13      this._displayStyle = this.node.style.display;
+   14    },
+   ..
+   17     */
+   18  
+   19:   update: function () {
+   20  
+   21      var value = this.currentValue;
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/style.js:
+    9     */
+   10     
+   11:   bind: function () {
+   12      this._currentStyles = {};
+   13      ScriptAttribute.prototype.bind.call(this);
+   ..
+   17     */
+   18  
+   19:   update: function () {
+   20  
+   21      var styles = this.currentValue;
+   ..
+   44   */
+   45  
+   46: module.exports.test = function (value) {
+   47    return typeof value === "object" && !value.buffered;
+   48  }
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/value.js:
+    5   */
+    6  
+    7: function ValueAttribute (options) {
+    8    this._onInput = _bind(this._onInput, this);
+    9    BaseAttribute.call(this, options);
+   ..
+   23     */
+   24  
+   25:   initialize: function () {
+   26      var self = this;
+   27:     this._events.forEach(function (event) {
+   28        self.node.addEventListener(event, self._onInput);
+   29      });
+   ..
+   33     */
+   34  
+   35:   bind: function () {
+   36      BaseAttribute.prototype.bind.call(this);
+   37  
+   ..
+   40      // TODO - move this to another attribute helper (more optimal)
+   41      if (/^(text|password|email)$/.test(this.node.getAttribute("type"))) {
+   42:       this._autocompleteCheckInterval = setInterval(function () {
+   43          self._onInput();
+   44        }, process.browser ? 500 : 10);
+   ..
+   49     */
+   50  
+   51:   unbind: function () {
+   52      BaseAttribute.prototype.unbind.call(this);
+   53      clearInterval(this._autocompleteCheckInterval);
+   ..
+   59     */
+   60  
+   61:   update: function () {
+   62  
+   63      var model = this.model = this.currentValue;
+   ..
+   72      var self = this;
+   73  
+   74:     this._modelBindings = this.view.watch(model.path, function (value) {
+   75        self._elementValue(self._parseValue(value));
+   76      }).trigger();
+   ..
+   78  
+   79  
+   80:   _parseValue: function (value) {
+   81      if (value == null || value === "") return void 0;
+   82      return value;
+   ..
+   87     */
+   88  
+   89:   test: function (attrValue) {
+   90      return attrValue.length === 1;
+   91    },
+   ..
+   94     */
+   95  
+   96:   _onInput: function (event) {
+   97  
+   98      clearInterval(this._autocompleteCheckInterval);
+   ..
+  117     */
+  118  
+  119:   _elementValue: function (value) {
+  120  
+  121      var isCheckbox    = /checkbox/.test(this.node.type),
+  ...
+  164   */
+  165  
+  166: ValueAttribute.test = function (value) {
+  167    return typeof value === "object" && !value.buffered;
+  168  }
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/base.js:
+    5   */
+    6  
+    7: function Component (options) {
+    8    
+    9    this.attributes    = options.attributes;
+   ..
+   27     */
+   28  
+   29:   initialize: function () {
+   30      // override me - this is where the DOM elements should be added to the
+   31      // section
+   ..
+   35     */
+   36  
+   37:   bind: function () {
+   38      this._changeListener = this.attributes.on("change", _bind(this.didChange, this));
+   39      this.update();
+   ..
+   43     */
+   44  
+   45:   didChange: function () {
+   46      this.view.runloop.deferOnce(this);
+   47    },
+   ..
+   50     */
+   51  
+   52:   unbind: function () {
+   53      if (this._changeListener) this._changeListener.dispose();
+   54    },
+   ..
+   57     */
+   58  
+   59:   update: function () {
+   60      // apply DOM changes here
+   61    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/repeat.js:
+    9   */
+   10  
+   11: function RepeatComponent (options) {
+   12    BaseComponent.call(this, options);
+   13  }
+   ..
+   23    // TODO - unbind here
+   24  
+   25:   update: function () {
+   26  
+   27      if (this._updateListener) this._updateListener.dispose();
+   ..
+   35  
+   36      // note - this should get triggered on rAF
+   37:     this._updateListener = accessor.watchEvent(source, "change", function () {
+   38        self.view.runloop.deferOnce(self);
+   39      });
+   ..
+   77  
+   78      // TODO - easeOutSync?
+   79:     this._children.splice(i).forEach(function (child) {
+   80        child.dispose();
+   81      });
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/show.js:
+    6   */
+    7  
+    8: function ShowComponent (options) {
+    9    BaseComponent.call(this, options);
+   10  }
+   ..
+   18     */
+   19  
+   20:   update: function () {
+   21  
+   22      var show = !!this.attributes.when;
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/stack.js:
+    6   */
+    7  
+    8: function StackComponent (options) {
+    9    BaseComponent.call(this, options);
+   10  
+   ..
+   12  
+   13    // TODO - this is a bit fugly
+   14:   this.childTemplates = this.childTemplate.vnode.children.map(function (vnode) {
+   15      return self.childTemplate.child(vnode);
+   16    });
+   ..
+   25     */
+   26  
+   27:   update: function () {
+   28  
+   29      var currentTpl, show = this.attributes.state;
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/switch.js:
+    7   */
+    8  
+    9: function SwitchComponent (options) {
+   10    BaseComponent.call(this, options);
+   11  
+   ..
+   13  
+   14    // TODO - this is a bit fugly
+   15:   this.childTemplates = this.childTemplate.vnode.children.map(function (vnode) {
+   16      return self.childTemplate.child(vnode);
+   17    });
+   ..
+   26     */
+   27  
+   28:   bind: function () {
+   29      BaseComponent.prototype.bind.call(this);
+   30  
+   ..
+   41     */
+   42  
+   43:   unbind: function () {
+   44      for (var i = this.bindings.length; i--;) {
+   45        this.bindings[i].dispose();
+   ..
+   50     */
+   51  
+   52:   update: function () {
+   53  
+   54      for (var i = 0, n = this.childTemplates.length; i < n; i++) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/unsafe.js:
+    6   */
+    7  
+    8: function EscapeComponent (options) {
+    9    BaseComponent.call(this, options);
+   10  }
+   ..
+   18     */
+   19  
+   20:   update: function () {
+   21  
+   22      var value = this.attributes.html;
+
+/Users/craig/Developer/Public/paperclip.js/lib/defaults.js:
+   83  
+   84    modifiers: {
+   85:     uppercase: function (value) {
+   86        return String(value).toUpperCase();
+   87      },
+   88:     lowercase: function (value) {
+   89        return String(value).toLowerCase();
+   90      },
+   91:     titlecase: function (value) {
+   92        var str;
+   93  
+   ..
+   95        return str.substr(0, 1).toUpperCase() + str.substr(1);
+   96      },
+   97:     json: function (value, count, delimiter) {
+   98        return JSON.stringify.apply(JSON, arguments);
+   99      },
+  100:     isNaN: function (value) {
+  101        return isNaN(value);
+  102      },
+
+/Users/craig/Developer/Public/paperclip.js/lib/index.js:
+   70  
+   71    // no conflict mode. Release paperclip from global scope.
+   72:   window.paperclip.noConflict = function () {
+   73      delete window.paperclip;
+   74      return paperclip;
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/array.js:
+    5   */
+    6  
+    7: function ArrayExpression (expressions) {
+    8    this.expressions = expressions || new ParametersExpression();
+    9    BaseExpression.apply(this, arguments);
+   ..
+   23     */
+   24     
+   25:   toJavaScript: function () {
+   26      return "[" + this.expressions.toJavaScript() + "]";
+   27    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/assignment.js:
+    4   */
+    5   
+    6: function AssignmentExpression (reference, value) {
+    7    BaseExpression.apply(this, arguments);
+    8    this.reference = reference;
+    .
+   23     */
+   24     
+   25:   toJavaScript: function () {
+   26  
+   27:     var path = this.reference.path.map(function(p) { return "'"+p+"'"; }).join(", ");
+   28  
+   29      return "this.set([" + path + "], " + this.value.toJavaScript() + ")";
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/base.js:
+    1  var protoclass = require("protoclass");
+    2  
+    3: function BaseExpression () {
+    4    this._children = [];
+    5    this._addChildren(Array.prototype.slice.call(arguments, 0));
+    .
+   16     */
+   17  
+   18:   _addChildren: function (children) {
+   19      for (var i = children.length; i--;) {
+   20        var child = children[i];
+   ..
+   33     */
+   34  
+   35:   filterAllChildren: function (filter) {
+   36      var filtered = [];
+   37  
+   38:     this.traverseChildren(function (child) {
+   39        if(filter(child)) {
+   40          filtered.push(child);
+   ..
+   48     */
+   49  
+   50:   traverseChildren: function (fn) {
+   51  
+   52      fn(this);
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/blockBinding.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function BlockBindingExpression (scripts, contentTemplate, childBlock) {
+    4    this.scripts    = scripts;
+    5    this.contentTemplate = contentTemplate;
+    .
+   10  BaseExpression.extend(BlockBindingExpression, {
+   11    type: "blockBinding",
+   12:   toJavaScript: function () {
+   13  
+   14      var buffer = "block("+ this.scripts.value.value.toJavaScript() +", " + (this.contentTemplate ? this.contentTemplate.toJavaScript() : "void 0");
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/call.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function CallExpression (reference, parameters) {
+    4    this.reference  = reference;
+    5    this.parameters = parameters;
+    .
+    9  BaseExpression.extend(CallExpression, {
+   10    type: "call",
+   11:   toJavaScript: function () {
+   12  
+   13      var path = this.reference.path.concat();
+   ..
+   15      var buffer = "this.call(";
+   16  
+   17:     buffer += "[" + path.map(function (name) {
+   18        return "\"" + name + "\"";
+   19      }).join(",") + "]"
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/commentNode.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function CommentNodeExpression (value) {
+    4    this.value = value;
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(CommentNodeExpression, {
+    9    type: "commentNode",
+   10:   toJavaScript: function () {
+   11      return "comment(\"" + this.value.replace(/["]/g, "\\\"") + "\")"
+   12    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/doctype.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function DoctypeExpression (value) {
+    4    this.value = value;
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(DoctypeExpression, {
+    9    type: "doctype",
+   10:   toJavaScript: function () {
+   11      return "text('<!DOCTYPE " + this.value + ">')"
+   12    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/elementNode.js:
+    2  ArrayExpression    = require("./array");
+    3  
+    4: function ElementNodeExpression (nodeName, attributes, childNodes) {
+    5    this.name       = nodeName;
+    6    this.attributes = attributes;
+    .
+   11  BaseExpression.extend(ElementNodeExpression, {
+   12    type: "elementNode",
+   13:   toJavaScript: function () {
+   14      return "element(\"" + this.name + "\", " + this.attributes.toJavaScript() + ", " + this.childNodes.toJavaScript() + ")";
+   15    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/group.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function GroupExpression (expression) {
+    4    this.expression = expression;
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(GroupExpression, {
+    9    type: "call",
+   10:   toJavaScript: function () {
+   11      return "(" + this.expression.toJavaScript() + ")";
+   12    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/hash.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function HashExpression (values) {
+    4    this.value = values;
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(HashExpression, {
+    9    type: "hash",
+   10:   toJavaScript: function () {
+   11  
+   12      var items = [];
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/literal.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function LiteralExpression (value) {
+    4    this.value = value;
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(LiteralExpression, {
+    9    type: "literal",
+   10:   toJavaScript: function () {
+   11      return String(this.value);
+   12    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/modifier.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function ModifierExpression (name, parameters) {
+    4    this.name  = name;
+    5    this.parameters = parameters;
+    .
+    9  BaseExpression.extend(ModifierExpression, {
+   10    type: "modifier",
+   11:   toJavaScript: function () {
+   12  
+   13      var buffer = "modifiers." + this.name + ".call(this" 
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/not.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function NotExpression (operator, expression) {
+    4    this.operator = operator;
+    5    this.expression = expression;
+    .
+    9  BaseExpression.extend(NotExpression, {
+   10    type: "!",
+   11:   toJavaScript: function () {
+   12      return this.operator + this.expression.toJavaScript();
+   13    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/operator.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function OperatorExpression (operator, left, right) {
+    4    this.operator = operator;
+    5    this.left     = left;
+    .
+   10  BaseExpression.extend(OperatorExpression, {
+   11    type: "operator",
+   12:   toJavaScript: function () {
+   13      return this.left.toJavaScript() + this.operator + this.right.toJavaScript();
+   14    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/parameters.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function ParametersExpression (expressions) {
+    4    this.expressions = expressions || [];
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(ParametersExpression, {
+    9    type: "parameters",
+   10:   toJavaScript: function () {
+   11:     return this.expressions.map(function (expression) {
+   12        return expression.toJavaScript();
+   13      }).join(", ");
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/reference.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function ReferenceExpression (path, bindingType) {
+    4    this.path       = path;
+    5    this.bindingType = bindingType;
+    .
+   12  BaseExpression.extend(ReferenceExpression, {
+   13    type: "reference",
+   14:   toJavaScript: function () {
+   15  
+   16      if (!this._isBoundTo)
+   ..
+   20  
+   21  
+   22:     var path = this.path.map(function(p) { return "'"+p+"'"; }).join(', ');
+   23  
+   24      if (this._isBoundTo) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/rootNode.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function RootExpression (children) {
+    4    this.childNodes = children;
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(RootExpression, {
+    9    type: "rootNode",
+   10:   toJavaScript: function () {
+   11  
+   12:     var buffer = "(function (fragment, block, element, text, comment, parser, modifiers) { ";
+   13  
+   14      var element;
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/script.js:
+    2  uniq               = require("../../utils/uniq");
+    3  
+    4: function ScriptExpression (value) {
+    5    this.value = value;
+    6    BaseExpression.apply(this, arguments);
+    .
+    9  BaseExpression.extend(ScriptExpression, {
+   10    type: "script",
+   11:   toJavaScript: function () {
+   12  
+   13:     var refs = this.filterAllChildren(function (child) {
+   14        return child.type === "reference";
+   15:     }).filter(function (reference) {
+   16        return !reference.unbound && reference.path;
+   17:     }).map(function (reference) {
+   18        return reference.path;
+   19      });
+   20  
+   21      // remove duplicate references
+   22:     refs = uniq(refs.map(function (ref) {
+   23        return ref.join(".")
+   24:     })).map(function (ref) {
+   25        return ref.split(".");
+   26      });
+   ..
+   29      var buffer = "{";
+   30  
+   31:     buffer += "run: function () { return " + this.value.toJavaScript() + "; }";
+   32  
+   33      buffer += ", refs: " + JSON.stringify(refs)
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/string.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function StringExpression (value) {
+    4    this.value = value;
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(StringExpression, {
+    9    type: "string",
+   10:   toJavaScript: function () {
+   11      return "\"" + this.value.replace(/"/g, "\\\"") + "\"";
+   12    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/ternaryCondition.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function TernaryConditionExpression (condition, tExpression, fExpression) {
+    4    this.condition = condition;
+    5    this.tExpression = tExpression;
+    .
+   10  BaseExpression.extend(TernaryConditionExpression, {
+   11    type: "ternaryCondition",
+   12:   toJavaScript: function () {
+   13      return this.condition.toJavaScript() + "?" + this.tExpression.toJavaScript() + ":" + this.fExpression.toJavaScript();
+   14    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/textNode.js:
+    2  he                 = require("he");
+    3  
+    4: function TextNodeExpression (value) {
+    5    this.value = he.decode(value);
+    6  
+    .
+   14  BaseExpression.extend(TextNodeExpression, {
+   15    type: "textNode",
+   16:   toJavaScript: function () {
+   17      return "text(\"" + this.value.replace(/["]/g, "\\\"") + "\")";
+   18    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/index.js:
+   11     */
+   12  
+   13:   parse: parse = function (html) {
+   14      return '"use strict";' + "module.exports = " + parser.parse(html).toJavaScript();
+   15    },
+   ..
+   18     */
+   19  
+   20:   compile: function (nameOrContent) {
+   21      var content;
+   22  
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/parser.js:
+    1: module.exports = (function() {
+    2    /*
+    3     * Generated by PEG.js 0.8.0.
+    .
+    6     */
+    7  
+    8:   function peg$subclass(child, parent) {
+    9:     function ctor() { this.constructor = child; }
+   10      ctor.prototype = parent.prototype;
+   11      child.prototype = new ctor();
+   12    }
+   13  
+   14:   function SyntaxError(message, expected, found, offset, line, column) {
+   15      this.message  = message;
+   16      this.expected = expected;
+   ..
+   25    peg$subclass(SyntaxError, Error);
+   26  
+   27:   function parse(input) {
+   28      var options = arguments.length > 1 ? arguments[1] : {},
+   29  
+   ..
+   33          peg$startRuleFunction  = peg$parseStart,
+   34  
+   35:         peg$c0 = function(children) { return new RootNodeExpression(children); },
+   36          peg$c1 = peg$FAILED,
+   37          peg$c2 = "<!DOCTYPE",
+   ..
+   42          peg$c7 = ">",
+   43          peg$c8 = { type: "literal", value: ">", description: "\">\"" },
+   44:         peg$c9 = function(info) {
+   45                return new DocTypeExpression(info.join(""));
+   46              },
+   47:         peg$c10 = function(children) { return new ArrayExpression(new ParametersExpression(trimTextExpressions(children))) },
+   48          peg$c11 = "<!--",
+   49          peg$c12 = { type: "literal", value: "<!--", description: "\"<!--\"" },
+   ..
+   51          peg$c14 = "-->",
+   52          peg$c15 = { type: "literal", value: "-->", description: "\"-->\"" },
+   53:         peg$c16 = function(v) { return v; },
+   54:         peg$c17 = function(value) {
+   55              return new CommentNodeExpression(trimEnds(value.join("")));
+   56            },
+   57:         peg$c18 = function(startTag, children, endTag) {
+   58  
+   59              if (startTag.name != endTag.name) {
+   ..
+   63              return new ElementNodeExpression(startTag.name, startTag.attributes, children);
+   64            },
+   65:         peg$c19 = function(value) {
+   66                return new TextNodeExpression(trimNewLineChars(value.join("")))
+   67              },
+   ..
+   70          peg$c22 = "{{",
+   71          peg$c23 = { type: "literal", value: "{{", description: "\"{{\"" },
+   72:         peg$c24 = function() {
+   73                return text()
+   74              },
+   75:         peg$c25 = function(info) { return info; },
+   76          peg$c26 = "/>",
+   77          peg$c27 = { type: "literal", value: "/>", description: "\"/>\"" },
+   78:         peg$c28 = function(info) { return new ElementNodeExpression(info.name, info.attributes); },
+   79:         peg$c29 = function(name, attributes) {
+   80  
+   81                var attrs = {};
+   ..
+   93          peg$c30 = "</",
+   94          peg$c31 = { type: "literal", value: "</", description: "\"</\"" },
+   95:         peg$c32 = function(name) {
+   96                return {
+   97                  name: name
+   ..
+  100          peg$c33 = /^[a-zA-Z0-9:_.\-]/,
+  101          peg$c34 = { type: "class", value: "[a-zA-Z0-9:_.\\-]", description: "[a-zA-Z0-9:_.\\-]" },
+  102:         peg$c35 = function(word) { return word.join(""); },
+  103          peg$c36 = "=",
+  104          peg$c37 = { type: "literal", value: "=", description: "\"=\"" },
+  105:         peg$c38 = function(name, values) {
+  106                return {
+  107                  name: name,
+  ...
+  109                };
+  110              },
+  111:         peg$c39 = function(name) {
+  112                return {
+  113                  name: name,
+  ...
+  119          peg$c42 = /^[^"]/,
+  120          peg$c43 = { type: "class", value: "[^\"]", description: "[^\"]" },
+  121:         peg$c44 = function() { return new StringExpression(trimNewLineChars(text())); },
+  122:         peg$c45 = function(values) { return attrValues(values); },
+  123          peg$c46 = "'",
+  124          peg$c47 = { type: "literal", value: "'", description: "\"'\"" },
+  125          peg$c48 = /^[^']/,
+  126          peg$c49 = { type: "class", value: "[^']", description: "[^']" },
+  127:         peg$c50 = function(binding) { return attrValues([binding]); },
+  128          peg$c51 = "{{#",
+  129          peg$c52 = { type: "literal", value: "{{#", description: "\"{{#\"" },
+  130:         peg$c53 = function(blockBinding) { return blockBinding; },
+  131:         peg$c54 = function(scripts, fragment, child) {
+  132                return new BlockBindingExpression(scripts, fragment, child);
+  133              },
+  134          peg$c55 = "{{/",
+  135          peg$c56 = { type: "literal", value: "{{/", description: "\"{{/\"" },
+  136:         peg$c57 = function(blockBinding) { return new RootNodeExpression(blockBinding); },
+  137          peg$c58 = "{{/}}",
+  138          peg$c59 = { type: "literal", value: "{{/}}", description: "\"{{/}}\"" },
+  139:         peg$c60 = function() { return void 0; },
+  140          peg$c61 = "}}",
+  141          peg$c62 = { type: "literal", value: "}}", description: "\"}}\"" },
+  142:         peg$c63 = function(scripts) {
+  143                return new BlockBindingExpression(scripts);
+  144              },
+  145:         peg$c64 = function(scripts) {
+  146                return scripts;
+  147              },
+  148:         peg$c65 = function(scriptName) {
+  149                var hash = {};
+  150                hash[scriptName] = new ScriptExpression(new LiteralExpression(true));
+  151                return new HashExpression(hash)
+  152              },
+  153:         peg$c66 = function(scripts) {
+  154                for (var k in scripts) {
+  155                  scripts[k] = new ScriptExpression(scripts[k]);
+  ...
+  159          peg$c67 = ",",
+  160          peg$c68 = { type: "literal", value: ",", description: "\",\"" },
+  161:         peg$c69 = function(value, ascripts) {
+  162  
+  163                var scripts = {
+  ...
+  176          peg$c72 = ":",
+  177          peg$c73 = { type: "literal", value: ":", description: "\":\"" },
+  178:         peg$c74 = function(condition, left, right) {
+  179                return new TernaryConditionExpression(condition, left, right);
+  180              },
+  ...
+  183          peg$c77 = ")",
+  184          peg$c78 = { type: "literal", value: ")", description: "\")\"" },
+  185:         peg$c79 = function(params) {
+  186                return params;
+  187              },
+  188          peg$c80 = "()",
+  189          peg$c81 = { type: "literal", value: "()", description: "\"()\"" },
+  190:         peg$c82 = function() { []; },
+  191:         peg$c83 = function(param1, rest) {
+  192:               return [param1].concat(rest.map(function (v) {
+  193                  return v[1];
+  194                }));
+  195              },
+  196:         peg$c84 = function(left, right) {
+  197                return new AssignmentExpression(left, right);
+  198              },
+  ...
+  227          peg$c113 = "/",
+  228          peg$c114 = { type: "literal", value: "/", description: "\"/\"" },
+  229:         peg$c115 = function(left, operator, right) {
+  230                return new OperatorExpression(operator, left, right);
+  231              },
+  232:         peg$c116 = function(value) { return value; },
+  233:         peg$c117 = function(expression, modifiers) {
+  234  
+  235                for (var i = 0, n = modifiers.length; i < n; i++) {
+  ...
+  242          peg$c119 = { type: "literal", value: "|", description: "\"|\"" },
+  243          peg$c120 = null,
+  244:         peg$c121 = function(name, parameters) {
+  245              return {
+  246                name: name,
+  ...
+  248              }
+  249            },
+  250:         peg$c122 = function(context) { return context; },
+  251          peg$c123 = "!",
+  252          peg$c124 = { type: "literal", value: "!", description: "\"!\"" },
+  253:         peg$c125 = function(not, value) {
+  254                return new NotExpression(not, value);
+  255              },
+  256          peg$c126 = /^[0-9]/,
+  257          peg$c127 = { type: "class", value: "[0-9]", description: "[0-9]" },
+  258:         peg$c128 = function(value) {
+  259                return new LiteralExpression(parseFloat(text()));
+  260              },
+  261          peg$c129 = ".",
+  262          peg$c130 = { type: "literal", value: ".", description: "\".\"" },
+  263:         peg$c131 = function(group) { return new GroupExpression(group); },
+  264:         peg$c132 = function(expression) {
+  265                return new LiteralExpression(expression.value);
+  266              },
+  ...
+  269          peg$c135 = "false",
+  270          peg$c136 = { type: "literal", value: "false", description: "\"false\"" },
+  271:         peg$c137 = function(value) {
+  272                return {
+  273                  type: "boolean",
+  ...
+  277          peg$c138 = "undefined",
+  278          peg$c139 = { type: "literal", value: "undefined", description: "\"undefined\"" },
+  279:         peg$c140 = function() { return { type: "undefined", value: void 0 }; },
+  280          peg$c141 = "NaN",
+  281          peg$c142 = { type: "literal", value: "NaN", description: "\"NaN\"" },
+  282:         peg$c143 = function() { return { type: "nan", value: NaN }; },
+  283          peg$c144 = "Infinity",
+  284          peg$c145 = { type: "literal", value: "Infinity", description: "\"Infinity\"" },
+  285:         peg$c146 = function() { return { type: "infinity", value: Infinity }; },
+  286          peg$c147 = "null",
+  287          peg$c148 = { type: "literal", value: "null", description: "\"null\"" },
+  288          peg$c149 = "NULL",
+  289          peg$c150 = { type: "literal", value: "NULL", description: "\"NULL\"" },
+  290:         peg$c151 = function() { return { type: "null", value: null }; },
+  291:         peg$c152 = function(reference, parameters) {
+  292                return new CallExpression(reference, new ParametersExpression(parameters));
+  293              },
+  ...
+  302          peg$c161 = "<~",
+  303          peg$c162 = { type: "literal", value: "<~", description: "\"<~\"" },
+  304:         peg$c163 = function(bindingType, reference, path) {
+  305:               path = [reference].concat(path.map(function (p) { return p[1] }));
+  306                return new ReferenceExpression(path, bindingType);
+  307              },
+  308          peg$c164 = /^[a-zA-Z_$0-9]/,
+  309          peg$c165 = { type: "class", value: "[a-zA-Z_$0-9]", description: "[a-zA-Z_$0-9]" },
+  310:         peg$c166 = function(name) { return text(); },
+  311          peg$c167 = "{",
+  312          peg$c168 = { type: "literal", value: "{", description: "\"{\"" },
+  313          peg$c169 = "}",
+  314          peg$c170 = { type: "literal", value: "}", description: "\"}\"" },
+  315:         peg$c171 = function(values) {
+  316                return new HashExpression(values);
+  317              },
+  318:         peg$c172 = function(values) {
+  319                var s = {};
+  320                for (i = 0, n = values.length; i < n; i++) {
+  ...
+  323                return s;
+  324              },
+  325:         peg$c173 = function(firstValue, additionalValues) {
+  326                return [
+  327                  firstValue
+  328                ].concat(additionalValues.length ? additionalValues[0][1] : []);
+  329              },
+  330:         peg$c174 = function(key, value) {
+  331                return {
+  332                  key: key,
+  ...
+  334                }
+  335              },
+  336:         peg$c175 = function(key) { return key.value; },
+  337:         peg$c176 = function(key) { return key; },
+  338          peg$c177 = { type: "other", description: "string" },
+  339:         peg$c178 = function(chars) {
+  340                return new StringExpression(chars.join(""));
+  341              },
+  342          peg$c179 = "\\",
+  343          peg$c180 = { type: "literal", value: "\\", description: "\"\\\\\"" },
+  344:         peg$c181 = function() { return text(); },
+  345          peg$c182 = "\\\"",
+  346          peg$c183 = { type: "literal", value: "\\\"", description: "\"\\\\\\\"\"" },
+  ...
+  350          peg$c187 = /^[a-zA-Z]/,
+  351          peg$c188 = { type: "class", value: "[a-zA-Z]", description: "[a-zA-Z]" },
+  352:         peg$c189 = function(chars) { return chars.join(""); },
+  353          peg$c190 = /^[ \n\r\t]/,
+  354          peg$c191 = { type: "class", value: "[ \\n\\r\\t]", description: "[ \\n\\r\\t]" },
+  ...
+  374      }
+  375  
+  376:     function text() {
+  377        return input.substring(peg$reportedPos, peg$currPos);
+  378      }
+  379  
+  380:     function offset() {
+  381        return peg$reportedPos;
+  382      }
+  383  
+  384:     function line() {
+  385        return peg$computePosDetails(peg$reportedPos).line;
+  386      }
+  387  
+  388:     function column() {
+  389        return peg$computePosDetails(peg$reportedPos).column;
+  390      }
+  391  
+  392:     function expected(description) {
+  393        throw peg$buildException(
+  394          null,
+  ...
+  398      }
+  399  
+  400:     function error(message) {
+  401        throw peg$buildException(message, null, peg$reportedPos);
+  402      }
+  403  
+  404:     function peg$computePosDetails(pos) {
+  405:       function advance(details, startPos, endPos) {
+  406          var p, ch;
+  407  
+  ...
+  435      }
+  436  
+  437:     function peg$fail(expected) {
+  438        if (peg$currPos < peg$maxFailPos) { return; }
+  439  
+  ...
+  446      }
+  447  
+  448:     function peg$buildException(message, expected, pos) {
+  449:       function cleanupExpected(expected) {
+  450          var i = 1;
+  451  
+  452:         expected.sort(function(a, b) {
+  453            if (a.description < b.description) {
+  454              return -1;
+  ...
+  469        }
+  470  
+  471:       function buildMessage(expected, found) {
+  472:         function stringEscape(s) {
+  473:           function hex(ch) { return ch.charCodeAt(0).toString(16).toUpperCase(); }
+  474  
+  475            return s
+  ...
+  481              .replace(/\f/g,   '\\f')
+  482              .replace(/\r/g,   '\\r')
+  483:             .replace(/[\x00-\x07\x0B\x0E\x0F]/g, function(ch) { return '\\x0' + hex(ch); })
+  484:             .replace(/[\x10-\x1F\x80-\xFF]/g,    function(ch) { return '\\x'  + hex(ch); })
+  485:             .replace(/[\u0180-\u0FFF]/g,         function(ch) { return '\\u0' + hex(ch); })
+  486:             .replace(/[\u1080-\uFFFF]/g,         function(ch) { return '\\u'  + hex(ch); });
+  487          }
+  488  
+  ...
+  522      }
+  523  
+  524:     function peg$parseStart() {
+  525        var s0;
+  526  
+  ...
+  530      }
+  531  
+  532:     function peg$parseTemplate() {
+  533        var s0, s1;
+  534  
+  ...
+  544      }
+  545  
+  546:     function peg$parseDocType() {
+  547        var s0, s1, s2, s3, s4, s5;
+  548  
+  ...
+  618      }
+  619  
+  620:     function peg$parseChildNodes() {
+  621        var s0, s1, s2;
+  622  
+  ...
+  655      }
+  656  
+  657:     function peg$parseCommentNode() {
+  658        var s0, s1, s2, s3, s4, s5, s6;
+  659  
+  ...
+  780      }
+  781  
+  782:     function peg$parseElementNode() {
+  783        var s0, s1, s2, s3;
+  784  
+  ...
+  812      }
+  813  
+  814:     function peg$parseTextNode() {
+  815        var s0, s1, s2;
+  816  
+  ...
+  835      }
+  836  
+  837:     function peg$parseTextCharacter() {
+  838        var s0, s1, s2;
+  839  
+  ...
+  882      }
+  883  
+  884:     function peg$parseStartTag() {
+  885        var s0, s1, s2, s3, s4, s5;
+  886  
+  ...
+  935      }
+  936  
+  937:     function peg$parseStartEndTag() {
+  938        var s0, s1, s2, s3, s4, s5;
+  939  
+  ...
+  988      }
+  989  
+  990:     function peg$parseTagInfo() {
+  991        var s0, s1, s2, s3, s4;
+  992  
+  ...
+ 1028      }
+ 1029  
+ 1030:     function peg$parseEndTag() {
+ 1031        var s0, s1, s2, s3;
+ 1032  
+ ....
+ 1069      }
+ 1070  
+ 1071:     function peg$parseTagName() {
+ 1072        var s0, s1, s2, s3;
+ 1073  
+ ....
+ 1113      }
+ 1114  
+ 1115:     function peg$parseAttribute() {
+ 1116        var s0, s1, s2, s3, s4, s5;
+ 1117  
+ ....
+ 1169      }
+ 1170  
+ 1171:     function peg$parseAttributeValues() {
+ 1172        var s0, s1, s2, s3, s4, s5, s6, s7;
+ 1173  
+ ....
+ 1617      }
+ 1618  
+ 1619:     function peg$parseBlockBinding() {
+ 1620        var s0, s1, s2;
+ 1621  
+ ....
+ 1649      }
+ 1650  
+ 1651:     function peg$parseStartBlockBinding() {
+ 1652        var s0, s1, s2, s3, s4, s5;
+ 1653  
+ ....
+ 1690      }
+ 1691  
+ 1692:     function peg$parseChildBlockBinding() {
+ 1693        var s0, s1, s2;
+ 1694  
+ ....
+ 1743      }
+ 1744  
+ 1745:     function peg$parseTextBinding() {
+ 1746        var s0, s1, s2, s3, s4, s5;
+ 1747  
+ ....
+ 1796      }
+ 1797  
+ 1798:     function peg$parseAttrTextBinding() {
+ 1799        var s0, s1, s2, s3, s4, s5;
+ 1800  
+ ....
+ 1849      }
+ 1850  
+ 1851:     function peg$parseSingleScript() {
+ 1852        var s0, s1, s2, s3, s4;
+ 1853  
+ ....
+ 1920      }
+ 1921  
+ 1922:     function peg$parseScripts() {
+ 1923        var s0, s1, s2, s3, s4, s5, s6, s7;
+ 1924  
+ ....
+ 2009      }
+ 2010  
+ 2011:     function peg$parseTernaryConditional() {
+ 2012        var s0, s1, s2, s3, s4, s5;
+ 2013  
+ ....
+ 2065      }
+ 2066  
+ 2067:     function peg$parseParameters() {
+ 2068        var s0, s1, s2, s3;
+ 2069  
+ ....
+ 2121      }
+ 2122  
+ 2123:     function peg$parseInnerParameters() {
+ 2124        var s0, s1, s2, s3, s4, s5;
+ 2125  
+ ....
+ 2189      }
+ 2190  
+ 2191:     function peg$parseAssignment() {
+ 2192        var s0, s1, s2, s3;
+ 2193  
+ ....
+ 2227      }
+ 2228  
+ 2229:     function peg$parseOperation() {
+ 2230        var s0, s1, s2, s3;
+ 2231  
+ ....
+ 2409      }
+ 2410  
+ 2411:     function peg$parseOperatable() {
+ 2412        var s0, s1, s2, s3;
+ 2413  
+ ....
+ 2438      }
+ 2439  
+ 2440:     function peg$parseModifiers() {
+ 2441        var s0, s1, s2, s3;
+ 2442  
+ ....
+ 2472      }
+ 2473  
+ 2474:     function peg$parseModifier() {
+ 2475        var s0, s1, s2, s3, s4, s5;
+ 2476  
+ ....
+ 2522      }
+ 2523  
+ 2524:     function peg$parseObjectReference() {
+ 2525        var s0, s1, s2, s3;
+ 2526  
+ ....
+ 2551      }
+ 2552  
+ 2553:     function peg$parseNot() {
+ 2554        var s0, s1, s2;
+ 2555  
+ ....
+ 2598      }
+ 2599  
+ 2600:     function peg$parseObject() {
+ 2601        var s0;
+ 2602  
+ ....
+ 2618      }
+ 2619  
+ 2620:     function peg$parseNumber() {
+ 2621        var s0, s1, s2, s3, s4, s5;
+ 2622  
+ ....
+ 2696      }
+ 2697  
+ 2698:     function peg$parseDecimalNumber() {
+ 2699        var s0, s1, s2, s3;
+ 2700  
+ ....
+ 2745      }
+ 2746  
+ 2747:     function peg$parseGroup() {
+ 2748        var s0, s1, s2, s3;
+ 2749  
+ ....
+ 2786      }
+ 2787  
+ 2788:     function peg$parseReserved() {
+ 2789        var s0, s1;
+ 2790  
+ ....
+ 2812      }
+ 2813  
+ 2814:     function peg$parseBoolean() {
+ 2815        var s0, s1;
+ 2816  
+ ....
+ 2841      }
+ 2842  
+ 2843:     function peg$parseUndefined() {
+ 2844        var s0, s1;
+ 2845  
+ ....
+ 2861      }
+ 2862  
+ 2863:     function peg$parseNaN() {
+ 2864        var s0, s1;
+ 2865  
+ ....
+ 2881      }
+ 2882  
+ 2883:     function peg$parseInfinity() {
+ 2884        var s0, s1;
+ 2885  
+ ....
+ 2901      }
+ 2902  
+ 2903:     function peg$parseNull() {
+ 2904        var s0, s1;
+ 2905  
+ ....
+ 2930      }
+ 2931  
+ 2932:     function peg$parseFunctionCall() {
+ 2933        var s0, s1, s2;
+ 2934  
+ ....
+ 2953      }
+ 2954  
+ 2955:     function peg$parseReference() {
+ 2956        var s0, s1, s2, s3, s4, s5, s6, s7;
+ 2957  
+ ....
+ 3084      }
+ 3085  
+ 3086:     function peg$parseReferenceName() {
+ 3087        var s0, s1, s2;
+ 3088  
+ ....
+ 3119      }
+ 3120  
+ 3121:     function peg$parseHash() {
+ 3122        var s0, s1, s2, s3, s4, s5;
+ 3123  
+ ....
+ 3175      }
+ 3176  
+ 3177:     function peg$parseHashValues() {
+ 3178        var s0, s1;
+ 3179  
+ ....
+ 3189      }
+ 3190  
+ 3191:     function peg$parseHashValuesArray() {
+ 3192        var s0, s1, s2, s3, s4, s5;
+ 3193  
+ ....
+ 3257      }
+ 3258  
+ 3259:     function peg$parseHashValue() {
+ 3260        var s0, s1, s2, s3, s4, s5;
+ 3261  
+ ....
+ 3307      }
+ 3308  
+ 3309:     function peg$parseHashKey() {
+ 3310        var s0, s1;
+ 3311  
+ ....
+ 3330      }
+ 3331  
+ 3332:     function peg$parseStringLiteral() {
+ 3333        var s0, s1, s2, s3;
+ 3334  
+ ....
+ 3423      }
+ 3424  
+ 3425:     function peg$parseDoubleStringCharacter() {
+ 3426        var s0, s1, s2;
+ 3427  
+ ....
+ 3479      }
+ 3480  
+ 3481:     function peg$parseSingleStringCharacter() {
+ 3482        var s0, s1, s2;
+ 3483  
+ ....
+ 3535      }
+ 3536  
+ 3537:     function peg$parseSourceCharacter() {
+ 3538        var s0;
+ 3539  
+ ....
+ 3549      }
+ 3550  
+ 3551:     function peg$parseWord() {
+ 3552        var s0, s1, s2;
+ 3553  
+ ....
+ 3584      }
+ 3585  
+ 3586:     function peg$parse_() {
+ 3587        var s0, s1;
+ 3588  
+ ....
+ 3609      }
+ 3610  
+ 3611:     function peg$parse_nl() {
+ 3612        var s0, s1;
+ 3613  
+ ....
+ 3657        GroupExpression              = require("./ast/group");
+ 3658  
+ 3659:       function trimWhitespace (ws) {
+ 3660          return trimNewLineChars(ws).replace(/(^\s+)|(\s+$)/, "");
+ 3661        }
+ 3662  
+ 3663:       function trimEnds (ws) {
+ 3664          return ws.replace(/(^\s+)|(\s+$)/, "").replace(/[\r\n]/g,"\\n");
+ 3665        }
+ 3666  
+ 3667:       function trimNewLineChars (ws) {
+ 3668          return ws.replace(/[ \r\n\t]+/g, " ");
+ 3669        }
+ 3670  
+ 3671:       function trimmedText () {
+ 3672          return trimWhitespace(text());
+ 3673        }
+ 3674  
+ 3675:       function singleOrArrayExpression (values) {
+ 3676          return values.length === 1 ? values[0] : new ArrayExpression(new ParametersExpression(values));
+ 3677        }
+ 3678  
+ 3679:       function attrValues (values) {
+ 3680  
+ 3681:         values = values.filter(function (v) {
+ 3682            return!/^[\n\t\r]+$/.test(v.value);
+ 3683          });
+ ....
+ 3687        }
+ 3688  
+ 3689:       function trimTextExpressions (expressions) {
+ 3690  
+ 3691:         function _trim (exprs) {
+ 3692            var expr, i;
+ 3693            for (i = exprs.length; i--;) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/register.js:
+    3  
+    4  
+    5: require.extensions[".pc"] = function (module, filename) {
+    6  
+    7    var paper, watching, compiled;
+    8  
+    9:   function compileOnce () {
+   10      if (compiled) return;
+   11      compiled = true;
+   ..
+   13    }
+   14  
+   15:   function compile () {
+   16      paper = parser.compile(fs.readFileSync(filename, "utf8"));
+   17    }
+   18  
+   19:   function watch () {
+   20      if (watching) return;
+   21      watching = true;
+   ..
+   23    }
+   24  
+   25:   module.exports = function () {
+   26      compileOnce();
+   27      watch();
+
+/Users/craig/Developer/Public/paperclip.js/lib/runloop.js:
+    7  
+    8  if (process.browser) {
+    9:   var defaultTick = function (next) {
+   10      rAF(next);
+   11    }
+   12  } else {
+   13:   var defaultTick = function (next) {
+   14      next();
+   15    }
+   ..
+   19   */
+   20  
+   21: function RunLoop (options) {
+   22    this._animationQueue = [];
+   23    this.tick = options.tick || defaultTick;
+   ..
+   34     */
+   35  
+   36:   deferOnce: function (context) {
+   37  
+   38      if (context.__running) return;
+   ..
+   48  
+   49      // run the animation frame, and callback all the animatable objects
+   50:     this.tick(function () {
+   51        self.runNow();
+   52        self._requestingFrame = false;
+   ..
+   57     */
+   58  
+   59:   runNow: function () {
+   60      if (!this._requestingFrame) return;
+   61      var queue = this._animationQueue;
+
+/Users/craig/Developer/Public/paperclip.js/lib/script/index.js:
+    6   */
+    7  
+    8: function boundScript(script) {
+    9  
+   10    var run = script.run, refs = script.refs;
+   ..
+   12    return {
+   13      refs: refs,
+   14:     evaluate: function (view) {
+   15        return run.call(view);
+   16      },
+   17:     bind: function (view, listener) {
+   18  
+   19        var currentValue,
+   20        locked = false;
+   21  
+   22:       function now () {
+   23          if (locked) return this;
+   24          locked = true;
+   ..
+   32  
+   33        if (!refs.length) return {
+   34:         dispose: function () {},
+   35          trigger: now
+   36        };
+   ..
+   47          }
+   48  
+   49:         dispose = function () {
+   50            for (var i = bindings.length; i--;) bindings[i].dispose();
+   51          }
+   ..
+   54        return {
+   55          dispose: dispose,
+   56:         trigger: function () {
+   57            now();
+   58            return this;
+   ..
+   68   */
+   69  
+   70: function bufferedScript (values, view) {
+   71  
+   72:   var scripts = values.filter(function (value) {
+   73      return typeof value !== "string";
+   74:   }).map(function (script) {
+   75      return script;
+   76    });
+   77  
+   78:   function evaluate (view) {
+   79:     return values.map(function (script) {
+   80  
+   81        if (typeof script === "string") {
+   ..
+   90    return {
+   91      buffered: true,
+   92:     evaluate: function (view) { 
+   93        return evaluate(view); 
+   94      },
+   95:     bind: function (view, listener) {
+   96  
+   97        var bindings = [];
+   98  
+   99:       function now () {
+  100          listener(evaluate(view));
+  101          return this;
+  ...
+  116        return {
+  117          trigger: now,
+  118:         dispose: function ()  {
+  119            for (var i = bindings.length; i--;) bindings[i].dispose();
+  120          }
+  ...
+  127   */
+  128  
+  129: function staticScript (value, view) {
+  130    return {
+  131:     bind: function (view, listener) {
+  132        return {
+  133:         trigger: function () {
+  134            listener(value);
+  135            return this;
+  136          },
+  137:         dispose: function () {
+  138  
+  139          }
+  ...
+  146   */
+  147  
+  148: module.exports = function (value) {
+  149  
+  150    if (typeof value !== "object") return staticScript(value);
+  151    if (value.length) {
+  152      if (value.length === 1) return boundScript(value[0].value);
+  153:     return bufferedScript(value.map(function (v) {
+  154        if (typeof v === "object") return v.value;
+  155        return v;
+
+/Users/craig/Developer/Public/paperclip.js/lib/section/fragment.js:
+    6   */
+    7  
+    8: function FragmentSection (nodeFactory, start, end) {
+    9    DocumentSection.call(this, nodeFactory, start, end);
+   10  }
+   ..
+   18     */
+   19  
+   20:   rootNode: function () {
+   21      return this.start.parentNode;
+   22    },
+   ..
+   25     */
+   26  
+   27:   createMarker: function () {
+   28      return new Marker(this.nodeFactory, utils.getNodePath(this.start), utils.getNodePath(this.end));
+   29    },
+   ..
+   32     */
+   33  
+   34:   clone: function () {
+   35      var clone = DocumentSection.prototype.clone.call(this);
+   36      return new FragmentSection(this.nodeFactory, clone.start, clone.end);
+   ..
+   41   */
+   42  
+   43: function Marker (nodeFactory, startPath, endPath) {
+   44    this.nodeFactory = nodeFactory;
+   45    this.startPath   = startPath;
+   ..
+   55     */
+   56  
+   57:   getSection: function (rootNode) {
+   58  
+   59      var start = utils.getNodeByPath(rootNode, this.startPath),
+
+/Users/craig/Developer/Public/paperclip.js/lib/section/node.js:
+    6   */
+    7  
+    8: function NodeSection (nodeFactory, node, _rnode) {
+    9    this.node = node;
+   10    this.nodeFactory = nodeFactory;
+   ..
+   19     */
+   20  
+   21:   rootNode: function () {
+   22      return this.node;
+   23    },
+   ..
+   26     */
+   27  
+   28:   createMarker: function () {
+   29      return new Marker(this.nodeFactory, utils.getNodePath(this.node));
+   30    },
+   ..
+   33     */
+   34  
+   35:   appendChild: function (child) {
+   36      this.node.appendChild(child);
+   37    },
+   ..
+   40     */
+   41  
+   42:   hide: function () {
+   43      if (this._repl || !this.node.parentNode) return;
+   44      var oldNode = this.node;
+   ..
+   52     */
+   53  
+   54:   show: function () {
+   55      if (this._repl && this._repl.parentNode) {
+   56        this._repl.parentNode.insertBefore(this.node, this._repl);
+   ..
+   63     */
+   64  
+   65:   removeAll: function () {
+   66  
+   67      // TODO - check node type for this
+   ..
+   72     */
+   73  
+   74:   render: function () {
+   75      return this.node;
+   76    },
+   ..
+   79     */
+   80  
+   81:   remove: function () {
+   82      if (this.node.parentNode) this.node.parentNode.removeChild(this.node);
+   83    },
+   ..
+   86     */
+   87  
+   88:   clone: function () {
+   89      return new NodeSection(this.nodeFactory, this.node.cloneNode(true));
+   90    }
+   ..
+   94   */
+   95  
+   96: function Marker (nodeFactory, nodePath) {
+   97    this.nodePath    = nodePath;
+   98    this.nodeFactory = nodeFactory;
+   ..
+  107     */
+  108  
+  109:   getSection: function (rootNode) {
+  110      var start = utils.getNodeByPath(rootNode, this.nodePath);
+  111      return new NodeSection(this.nodeFactory, start);
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/component.js:
+    6   */
+    7  
+    8: function TemplateComponent (options) {
+    9    BaseComponent.call(this, options);
+   10  }
+   ..
+   18     */
+   19  
+   20:   initialize: function () {
+   21      this.attributes.on("change", this._onAttrsChange = _bind(this._onAttrsChange, this));
+   22    },
+   ..
+   25     */
+   26  
+   27:   bind: function () {
+   28      this._bindings = [];
+   29  
+   ..
+   47     */
+   48  
+   49:   unbind: function () {
+   50      if (this.childView) this.childView.unbind();
+   51    },
+   ..
+   54     */
+   55     
+   56:   _onAttrsChange: function (key, value) {
+   57      if (this.childView) this.childView.set(key, value);
+   58    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/index.js:
+   26  }
+   27  
+   28: function Template (script, options) {
+   29  
+   30    this.options         = options;
+   ..
+   38    this.nodeFactory     = options.nodeFactory   || nofactor.default;
+   39  
+   40:   if (typeof script === "function") {
+   41      this.vnode = script(
+   42        FragmentNode.create,
+   ..
+   65     */
+   66  
+   67:   initialize: function () {
+   68      this.hydrators = [];
+   69  
+   ..
+   90     */
+   91  
+   92:   createComponentClass: function (contextClass) {
+   93      return TemplateComponent.extend({
+   94        template     : this,
+   ..
+  103     */
+  104  
+  105:   child: function (vnode, options) {
+  106      return new Template(vnode, extend(options, {}, this.options));
+  107    },
+  ...
+  112     */
+  113  
+  114:   view: function (context, options) {
+  115  
+  116      var clonedSection;
+  ...
+  145   */
+  146  
+  147: module.exports = function (source, options) {
+  148  
+  149    var script, tos = typeof source, options;
+  ...
+  151    if (tos === "string") {
+  152      script = parser.compile(source);
+  153:   } else if (tos === "function") {
+  154      script = source;
+  155    } else {
+  156:     throw new Error("source must either be type 'string' or 'function'");
+  157    }
+  158  
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/view/index.js:
+   16   */
+   17  
+   18: function View (template, pool, section, hydrators) {
+   19  
+   20    // todo - check if node child length is > 1. If so, then
+   ..
+   45     */
+   46  
+   47:   setOptions: function (options) {
+   48      this.parent = options.parent;
+   49    },
+   ..
+   52     */
+   53  
+   54:   get: function (path) {
+   55      var v = this.accessor.get(this.context, path);
+   56      return v != null ? v : this.parent ? this.parent.get(path) : void 0;
+   ..
+   60     */
+   61  
+   62:   set: function (path, value) {
+   63      return this.accessor.set(this.context, path, value);
+   64    },
+   ..
+   67     */
+   68  
+   69:   reference: function (path, settable) {
+   70      return new Reference(this, path, settable);
+   71    },
+   ..
+   74     */
+   75  
+   76:   call: function (path, params) {
+   77      var has = this.accessor.get(this.context, path);
+   78      return has ? this.accessor.call(this.context, path, params) : this.parent ? this.parent.call(path, params) : void 0;
+   ..
+   82     */
+   83  
+   84:   setProperties: function (properties) {
+   85      for (var key in properties) this.set(key, properties[key]);
+   86    },
+   ..
+   89     */
+   90  
+   91:   watch: function (path, listener) {
+   92      return this.accessor.watchProperty(this.context, path, listener);
+   93    },
+   ..
+   96     */
+   97  
+   98:   watchEvent: function (object, event, listener) {
+   99      return this.accessor.watchEvent(object, event, listener);
+  100    },
+  ...
+  103     */
+  104  
+  105:   bind: function (context) {
+  106  
+  107      if (this.context) this.unbind();
+  ...
+  118     */
+  119  
+  120:   unbind: function () {
+  121      for (var i = this.bindings.length; i--;) {
+  122        this.bindings[i].unbind();
+  ...
+  127     */
+  128  
+  129:   render: function () {
+  130      if (!this.context) this.bind({});
+  131      this.transitions.enter();
+  ...
+  136     */
+  137  
+  138:   remove: function () {
+  139      this.section.remove();
+  140      return this;
+  ...
+  146     */
+  147  
+  148:   dispose: function () {
+  149      if (this.transitions.exit(this._dispose)) return;
+  150      this._dispose();
+  ...
+  155     */
+  156  
+  157:   _dispose: function () {
+  158      this.unbind();
+  159      this.section.remove();
+  ...
+  164     */
+  165  
+  166:   toString: function () {
+  167      var node = this.render();
+  168  
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/view/reference.js:
+    4   */
+    5  
+    6: function Reference (view, path, settable) {
+    7    this.view     = view;
+    8    this.path     = path;
+    .
+   23     */
+   24  
+   25:   value: function (value) {
+   26      if (!arguments.length) return this.view.get(this.path);
+   27      if (this.settable) this.view.set(this.path, value);
+   ..
+   31     */
+   32     
+   33:   toString: function () {
+   34      return this.view.get(this.path);
+   35    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/view/transitions.js:
+    5   */
+    6  
+    7: function Transitions () {
+    8    this._enter = [];
+    9    this._exit  = [];
+   ..
+   18     */
+   19  
+   20:   push: function (transition) {
+   21      if (transition.enter) this._enter.push(transition);
+   22      if (transition.exit) this._exit.push(transition);
+   ..
+   26     */
+   27  
+   28:   enter: function () {
+   29      if (!this._enter.length) return false;
+   30      for (var i = 0, n = this._enter.length; i < n; i++) {
+   ..
+   36     */
+   37  
+   38:   exit: function (complete) {
+   39      if (!this._exit.length) return false;
+   40      var self = this;
+   41:     process.nextTick(function () {
+   42:       async.each(self._exit, function (transition, next) {
+   43          transition.exit(next);
+   44        }, complete);
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/block/binding.js:
+    6   */
+    7  
+    8: function BlockBinding (node, script, view) {
+    9    this.view   = view;
+   10    this.nodeFactory = view.template.nodeFactory;
+   ..
+   22     */
+   23  
+   24:   bind: function () {
+   25      var self = this;
+   26  
+   27      // TODO - needs to update on rAF
+   28:     this.binding = this.script.bind(this.view, function (value, oldValue) {
+   29        if (value === self.currentValue) return;
+   30        self.currentValue = value;
+   ..
+   39     */
+   40  
+   41:   didChange: function () {
+   42      this.view.runloop.deferOnce(this);
+   43    },
+   ..
+   46     */
+   47  
+   48:   update: function () {
+   49      var v = String(this.currentValue == null ? "" : this.currentValue);
+   50      if (this.nodeFactory.name !== "dom") {
+   ..
+   58     */
+   59     
+   60:   unbind: function () {
+   61      if (this.binding) {
+   62        this.binding.dispose();
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/block/hydrator.js:
+    6   */
+    7  
+    8: function BlockHydrator (node, script, bindingClass) {
+    9    this.node   = node;
+   10    this.script = script;
+   ..
+   20     */
+   21  
+   22:   initialize: function () {
+   23      this.nodePath = utils.getNodePath(this.node);
+   24    },
+   ..
+   27     */
+   28     
+   29:   hydrate: function (view) {
+   30      var clonedNode = utils.getNodeByPath(view.rootNode, this.nodePath);
+   31      view.bindings.push(new this.bindingClass(clonedNode, this.script, view));
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/block/index.js:
+    9   */
+   10  
+   11: function Block (scriptSource) {
+   12    this.script  = script(scriptSource);
+   13  }
+   ..
+   21     */
+   22  
+   23:   initialize: function (template) {
+   24      var node = template.nodeFactory.createTextNode("");
+   25      var bindingClass = this.script.refs.length ? Binding : Unbound;
+   ..
+   32   */
+   33  
+   34: module.exports.create = function (script) {
+   35    return new Block(script);
+   36  }
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/block/unbound.js:
+    5   */
+    6  
+    7: function UnboundBlockBinding (node, script, view) {
+    8    this.view   = view;
+    9    this.nodeFactory = view.template.nodeFactory;
+   ..
+   20     */
+   21  
+   22:   bind: function () {
+   23      var self = this;
+   24      var value = this.script.evaluate(this.view);
+   ..
+   38     */
+   39     
+   40:   unbind: function () { }
+   41  });
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/comment/index.js:
+    4   */
+    5  
+    6: function Comment (value) {
+    7    this.value    = value;
+    8  }
+    .
+   16     */
+   17  
+   18:   initialize: function (template) {
+   19      return template.nodeFactory.createComment(this.value);
+   20    }
+   ..
+   24   */
+   25   
+   26: module.exports.create = function (value) {
+   27    return new Comment(value);
+   28  } 
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/element/attributeHydrator.js:
+    7   */
+    8  
+    9: function AttributeHydrator (attrClass, key, value, node) {
+   10    this.node      = node;
+   11    this.key       = key;
+   ..
+   22     */
+   23  
+   24:   initialize: function () {
+   25      this.nodePath = utils.getNodePath(this.node);
+   26    },
+   ..
+   29     */
+   30     
+   31:   hydrate: function (view) {
+   32  
+   33      var attribute = new this.attrClass({
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/element/attributesBinding.js:
+    2  utils          = require("../../../utils");
+    3  
+    4: function AttributesBinding (attributes, rawAttributes, component, view) {
+    5    this.attributes    = attributes;
+    6    this.rawAttributes = rawAttributes;
+    .
+   10  
+   11  module.exports = protoclass(AttributesBinding, {
+   12:   bind: function () {
+   13      this.bindings = [];
+   14      for (var k in this.rawAttributes) {
+   ..
+   21      }
+   22    },
+   23:   _bindAttr: function (k, v) {
+   24      var self = this;
+   25  
+   26      // TODO: remove now()
+   27:     this.bindings.push(v.bind(this.view, function (nv, ov) {
+   28        self.attributes.set(k, nv);
+   29      }).trigger());
+   30    },
+   31:   unbind: function () {
+   32      if (!this.bindings) return;
+   33      for (var i = this.bindings.length; i--;) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/element/componentHydrator.js:
+    7   */
+    8  
+    9: function ComponentHydrator (name, attributes, childTemplate, section, componentClass) {
+   10    this.name           = name;
+   11    this.attributes     = attributes;
+   ..
+   24     */
+   25  
+   26:   initialize: function () {
+   27      this.sectionMarker = this.section.createMarker();
+   28    },
+   ..
+   31     */
+   32  
+   33:   hydrate: function (view) {
+   34      this.childTemplate.accessor = view.accessor;
+   35      
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/element/index.js:
+   13   */
+   14  
+   15: function Element (name, attributes, children) {
+   16    this.name       = name;
+   17    this.attributes = attributes;
+   ..
+   27     */
+   28  
+   29:   initialize: function (template) {
+   30  
+   31      var componentClass = template.components[this.name];
+   ..
+   49        /*
+   50          return {
+   51:           createNode: function () {
+   52              return section.render();
+   53            }
+   ..
+  118  
+  119        return {
+  120:         createNode: function () {
+  121            
+  122            var element = document.createElement()
+  ...
+  143  
+  144  
+  145: module.exports.create = function (name, attributes, children) {
+  146  
+  147    var setter = new BindableObject({a:{}});
+  ...
+  152  
+  153    // NOTE - a bit sloppy here, but we're hijacking the bindable object
+  154:   // setter functionality so we can properly get attrs for stuff like repeat.each
+  155    for (var k in attributes) {
+  156      var v = attributes[k];
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/element/valueAttribute.js:
+    9     */
+   10     
+   11:   update: function () {
+   12      if (this.currentValue == null) return this.node.removeAttribute(this.key);
+   13      this.node.setAttribute(this.key, this.currentValue);
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/fragment/index.js:
+    4   */
+    5  
+    6: function Fragment (children) {
+    7    this.children = children;
+    8  }
+    .
+   16     */
+   17  
+   18:   initialize: function (template) {
+   19      if (this.children.length === 1) return this.children[0].initialize(template);
+   20:     return template.nodeFactory.createFragment(this.children.map(function (child) {
+   21        return child.initialize(template);
+   22      }));
+   ..
+   27   */
+   28  
+   29: module.exports.create = function (children) {
+   30    return new Fragment(children);
+   31  } 
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/text/index.js:
+    4   */
+    5  
+    6: function Text (value) {
+    7    this.value = value;
+    8  }
+    .
+   16     */
+   17  
+   18:   initialize: function (template) {
+   19  
+   20      // blank text nodes are NOT allowed. Chrome has an issue rendering
+   ..
+   31   */
+   32  
+   33: module.exports.create = function (value) {
+   34    return new Text(value);
+   35  }
+
+/Users/craig/Developer/Public/paperclip.js/lib/transform.js:
+    4  module.exports = {
+    5    extension: "pc",
+    6:   transform: function (content, filepath) {
+    7      return parser.parse(content);
+    8    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/async.js:
+    4     */
+    5     
+    6:   each: function (items, each, complete) {
+    7      var total = items.length,
+    8      completed = 0;
+    9:     items.forEach(function (item) {
+   10        var called = false;
+   11:       each(item, function () {
+   12          if (called) throw new Error("callback called twice");
+   13          called = true;
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/bind.js:
+    1: module.exports = function (callback, context) {
+    2    // TODO - DO ME
+    3    // if (callback.bind) return callback.bind.apply(void 0, [context].concat(Array.prototype.slice.call(arguments, 2)));
+    4:   return function () {
+    5      return callback.apply(context, arguments);
+    6    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/extend.js:
+    1: module.exports = function (to) {
+    2    if (!to) to = {};
+    3    var froms = Array.prototype.slice.call(arguments, 1);
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/index.js:
+    2  
+    3  module.exports = {
+    4:   getNodePath: function (node) {
+    5      var path = [], p = node.parentNode, c = node;
+    6      while (p) {
+    .
+   14      return path;
+   15    },
+   16:   getNodeByPath: function (node, path) {
+   17      var c = node;
+   18      for (var i = 0, n = path.length; i < n; i++) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/singleNodeSection.js:
+    1: module.exports = function (node) {
+    2    return {
+    3      node: node,
+    4:     render: function () {
+    5        return node;
+    6      },
+    7:     remove: function () {
+    8        node.parentNode.removeChild(node);
+    9      },
+   10:     appendChild: function (childNode) {
+   11        node.appendChild(childNode);
+   12      }
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/stringifyNode.js:
+    1: function _stringifyNode (node) {
+    2  
+    3    var buffer = "";
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/syncBindableObjectChanges.js:
+    1: module.exports = function (to, from) {
+    2:   from.on("change", function (key, value) {
+    3      to[key] = value;
+    4    });
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/uniq.js:
+    1: module.exports = function (ary) {
+    2    var occurences = {}, clone = ary.concat();
+    3  
+
+466 matches across 77 files
+
+
+Searching 80 files for "function\s" (regex, case sensitive)
+
+/Users/craig/Developer/Public/paperclip.js/lib/accessors/base.js:
+    4   */
+    5  
+    6: function BaseAccessor () {
+    7  }
+    8  
+    .
+   12  module.exports = protoclass(BaseAccessor, {
+   13    __isScope: true,
+   14:   accessible: function (context) {
+   15      // override me
+   16    },
+   17:   castObject: function (context) {
+   18      // override me
+   19    },
+   20:   castCollection: function (context) {
+   21      // override me
+   22    },
+   23:   normalizeObject: function (context) {
+   24      // override me
+   25    },
+   26:   normalizeCollection: function (context) {
+   27      // override me
+   28    },
+   29:   get: function (context, path) {
+   30      // override me
+   31    },
+   32:   set: function (context, path, value) {
+   33      // override me
+   34    },
+   35:   call: function (context, ctxPath, fnPath, params) {
+   36      // override me
+   37    },
+   38:   watchProperty: function (context, path, listener) {
+   39      // override me
+   40    },
+   41:   watchEvent: function (context, operation, listener) {
+   42      // override me
+   43    },
+   44:   dispose: function () {
+   45      
+   46    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/accessors/bindableObject.js:
+    3  BindableCollection = require("bindable-collection");
+    4  
+    5: function BindableObjectAccessor () {
+    6  
+    7  }
+    8  
+    9  module.exports = BaseAccessor.extend(BindableObjectAccessor, {
+   10:   accessible: function (context) {
+   11      return context && context.__isBindableObject;
+   12    },
+   13:   castObject: function (context) {
+   14      if (context.__isBindable) return context;
+   15      if (context.toString() === "[object Array]") return new BindableCollection(context);
+   16      return new BindableOject(context);
+   17    },
+   18:   castCollection: function (context) {
+   19      if (context.__isBindable) return context;
+   20      if (context.toString() === "[object Array]") return new BindableCollection(context);
+   21      return new BindableOject(context);
+   22    },
+   23:   get: function (context, path) {
+   24      return context.get(path);
+   25    },
+   26:   set: function (context, path, value) {
+   27      return context.set(path, value);
+   28    },
+   29:   call: function (context, path, params) {
+   30  
+   31      var fnPath = path.pop(),
+   ..
+   38      if (fn) return fn.apply(ctx, params);
+   39    },
+   40:   watchProperty: function (context, path, listener) {
+   41      return context.watch(path, listener);
+   42    },
+   43:   watchEvent: function (context, event, value) {
+   44      if (event === "change" && context.__isBindableCollection) {
+   45        return context.on(event, value);
+   ..
+   55     */
+   56  
+   57:   normalizeCollection: function (collection) {
+   58      return collection.source || collection;
+   59    },
+   60:   normalizeObject: function (object) {
+   61      return object.toJSON();
+   62    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/accessors/pojo.js:
+   21     */
+   22  
+   23:   castObject: function (object) { return object; },
+   24  
+   25    /**
+   26     */
+   27  
+   28:   call: function (context, path, params) {
+   29  
+   30      var fnName = path.pop(),
+   ..
+   38     */
+   39  
+   40:   get: function (object, path) {
+   41  
+   42      var pt = path.join("."), getter;
+   ..
+   56     */
+   57  
+   58:   set: function (object, path, value) {
+   59      var pt = path.join("."), setter;
+   60      if (!(setter = this._setters[pt])) {
+   ..
+   78     */
+   79  
+   80:   watchProperty: function (object, path, listener) {
+   81      
+   82      var self = this;
+   83      var watcher = {
+   84        context: object,
+   85:       apply: function () {
+   86          var newValue = self.get(object, path);
+   87          if (newValue === this.currentValue && typeof newValue !== "function") return;
+   ..
+   98          watcher.apply();
+   99        },
+  100:       dispose: function () {
+  101          var i = self._watchers.indexOf(watcher);
+  102          if (~i) self._watchers.splice(i, 1);
+  ...
+  108     */
+  109  
+  110:   watchEvent: function (object, event, listener) {
+  111      // do nothing
+  112      return {
+  ...
+  120     */
+  121  
+  122:   normalizeCollection: function (collection) {
+  123      return collection;
+  124    },
+  ...
+  127     */
+  128  
+  129:   normalizeObject: function (object) {
+  130      return object;
+  131    },
+  ...
+  134     */
+  135  
+  136:   apply: function () {
+  137      for (var i = 0, n = this._watchers.length; i < n; i++) {
+  138        this._watchers[i].apply();
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/base.js:
+    5   */
+    6  
+    7: function Attribute (options) {
+    8  
+    9    this.view          = options.view;
+   ..
+   26     */
+   27  
+   28:   initialize: function () {
+   29    },
+   30  
+   ..
+   32     */
+   33  
+   34:   bind: function () {
+   35    },
+   36  
+   ..
+   38     */
+   39  
+   40:   unbind: function () {
+   41    }
+   42  })
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/class.js:
+    9     */
+   10  
+   11:   update: function () {
+   12  
+   13  
+   ..
+   49  
+   50  
+   51: module.exports.test = function (value) {
+   52    return typeof value === "object" && !value.buffered;
+   53  }
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/easeIn.js:
+    5  
+    6  module.exports = BaseAttribue.extend({
+    7:   initialize: function () {
+    8      this.view.transitions.push(this);
+    9    },
+   10:   enter: function () {
+   11      var v = this.value;
+   12      if (v.evaluate) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/easeOut.js:
+    5  
+    6  module.exports = BaseAttribue.extend({
+    7:   initialize: function () {
+    8      this.view.transitions.push(this);
+    9    },
+   10:   exit: function (complete) {
+   11      var v = this.value;
+   12      if (v.evaluate) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/enable.js:
+    5  
+    6  module.exports = ScriptAttribute.extend({
+    7:   update: function () {
+    8      if (this.currentValue) {
+    9        this.node.removeAttribute("disabled");
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/event.js:
+    6   */
+    7  
+    8: function EventAttribute (options) {
+    9    this._onEvent = _bind(this._onEvent, this);
+   10    Base.call(this, options);
+   ..
+   22     */
+   23  
+   24:   initialize: function () {
+   25      // convert onEvent to event
+   26      var event = this.event || (this.event = this.key.toLowerCase().replace(/^on/, ""));
+   ..
+   31     */
+   32  
+   33:   bind: function () {
+   34      Base.prototype.bind.call(this);
+   35      this.bound = true;
+   ..
+   39     */
+   40  
+   41:   _onEvent: function (event) {
+   42      if (!this.bound) return;
+   43      event.preventDefault();
+   ..
+   49     */
+   50     
+   51:   unbind: function () {
+   52      this.bound = false;
+   53    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/focus.js:
+    9     */
+   10     
+   11:   update: function () {
+   12      if (!this.currentValue) return;
+   13      if (this.node.focus) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/keyCodedEvent.js:
+   19     */
+   20     
+   21:   _onEvent: function (event) {
+   22  
+   23      if (!~this.keyCodes.indexOf(event.keyCode)) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/script.js:
+    9     */
+   10  
+   11:   bind: function () {
+   12      BaseAttribute.prototype.bind.call(this)
+   13      var self = this;
+   14  
+   15:     this._binding = this.value.bind(this.view, function (nv) {
+   16        if (nv == self.currentValue) return;
+   17        self.currentValue = nv;
+   ..
+   26     */
+   27  
+   28:   update: function () {
+   29  
+   30    },
+   ..
+   33     */
+   34  
+   35:   unbind: function () {
+   36      this._binding.dispose();
+   37    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/show.js:
+   10     */
+   11  
+   12:   initialize: function () {
+   13      this._displayStyle = this.node.style.display;
+   14    },
+   ..
+   17     */
+   18  
+   19:   update: function () {
+   20  
+   21      var value = this.currentValue;
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/style.js:
+    9     */
+   10     
+   11:   bind: function () {
+   12      this._currentStyles = {};
+   13      ScriptAttribute.prototype.bind.call(this);
+   ..
+   17     */
+   18  
+   19:   update: function () {
+   20  
+   21      var styles = this.currentValue;
+   ..
+   44   */
+   45  
+   46: module.exports.test = function (value) {
+   47    return typeof value === "object" && !value.buffered;
+   48  }
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/value.js:
+    5   */
+    6  
+    7: function ValueAttribute (options) {
+    8    this._onInput = _bind(this._onInput, this);
+    9    BaseAttribute.call(this, options);
+   ..
+   23     */
+   24  
+   25:   initialize: function () {
+   26      var self = this;
+   27:     this._events.forEach(function (event) {
+   28        self.node.addEventListener(event, self._onInput);
+   29      });
+   ..
+   33     */
+   34  
+   35:   bind: function () {
+   36      BaseAttribute.prototype.bind.call(this);
+   37  
+   ..
+   40      // TODO - move this to another attribute helper (more optimal)
+   41      if (/^(text|password|email)$/.test(this.node.getAttribute("type"))) {
+   42:       this._autocompleteCheckInterval = setInterval(function () {
+   43          self._onInput();
+   44        }, process.browser ? 500 : 10);
+   ..
+   49     */
+   50  
+   51:   unbind: function () {
+   52      BaseAttribute.prototype.unbind.call(this);
+   53      clearInterval(this._autocompleteCheckInterval);
+   ..
+   59     */
+   60  
+   61:   update: function () {
+   62  
+   63      var model = this.model = this.currentValue;
+   ..
+   72      var self = this;
+   73  
+   74:     this._modelBindings = this.view.watch(model.path, function (value) {
+   75        self._elementValue(self._parseValue(value));
+   76      }).trigger();
+   ..
+   78  
+   79  
+   80:   _parseValue: function (value) {
+   81      if (value == null || value === "") return void 0;
+   82      return value;
+   ..
+   87     */
+   88  
+   89:   test: function (attrValue) {
+   90      return attrValue.length === 1;
+   91    },
+   ..
+   94     */
+   95  
+   96:   _onInput: function (event) {
+   97  
+   98      clearInterval(this._autocompleteCheckInterval);
+   ..
+  117     */
+  118  
+  119:   _elementValue: function (value) {
+  120  
+  121      var isCheckbox    = /checkbox/.test(this.node.type),
+  ...
+  164   */
+  165  
+  166: ValueAttribute.test = function (value) {
+  167    return typeof value === "object" && !value.buffered;
+  168  }
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/base.js:
+    5   */
+    6  
+    7: function Component (options) {
+    8    
+    9    this.attributes    = options.attributes;
+   ..
+   27     */
+   28  
+   29:   initialize: function () {
+   30      // override me - this is where the DOM elements should be added to the
+   31      // section
+   ..
+   35     */
+   36  
+   37:   bind: function () {
+   38      this._changeListener = this.attributes.on("change", _bind(this.didChange, this));
+   39      this.update();
+   ..
+   43     */
+   44  
+   45:   didChange: function () {
+   46      this.view.runloop.deferOnce(this);
+   47    },
+   ..
+   50     */
+   51  
+   52:   unbind: function () {
+   53      if (this._changeListener) this._changeListener.dispose();
+   54    },
+   ..
+   57     */
+   58  
+   59:   update: function () {
+   60      // apply DOM changes here
+   61    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/repeat.js:
+    9   */
+   10  
+   11: function RepeatComponent (options) {
+   12    BaseComponent.call(this, options);
+   13  }
+   ..
+   23    // TODO - unbind here
+   24  
+   25:   update: function () {
+   26  
+   27      if (this._updateListener) this._updateListener.dispose();
+   ..
+   35  
+   36      // note - this should get triggered on rAF
+   37:     this._updateListener = accessor.watchEvent(source, "change", function () {
+   38        self.view.runloop.deferOnce(self);
+   39      });
+   ..
+   77  
+   78      // TODO - easeOutSync?
+   79:     this._children.splice(i).forEach(function (child) {
+   80        child.dispose();
+   81      });
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/show.js:
+    6   */
+    7  
+    8: function ShowComponent (options) {
+    9    BaseComponent.call(this, options);
+   10  }
+   ..
+   18     */
+   19  
+   20:   update: function () {
+   21  
+   22      var show = !!this.attributes.when;
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/stack.js:
+    6   */
+    7  
+    8: function StackComponent (options) {
+    9    BaseComponent.call(this, options);
+   10  
+   ..
+   12  
+   13    // TODO - this is a bit fugly
+   14:   this.childTemplates = this.childTemplate.vnode.children.map(function (vnode) {
+   15      return self.childTemplate.child(vnode);
+   16    });
+   ..
+   25     */
+   26  
+   27:   update: function () {
+   28  
+   29      var currentTpl, show = this.attributes.state;
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/switch.js:
+    7   */
+    8  
+    9: function SwitchComponent (options) {
+   10    BaseComponent.call(this, options);
+   11  
+   ..
+   13  
+   14    // TODO - this is a bit fugly
+   15:   this.childTemplates = this.childTemplate.vnode.children.map(function (vnode) {
+   16      return self.childTemplate.child(vnode);
+   17    });
+   ..
+   26     */
+   27  
+   28:   bind: function () {
+   29      BaseComponent.prototype.bind.call(this);
+   30  
+   ..
+   41     */
+   42  
+   43:   unbind: function () {
+   44      for (var i = this.bindings.length; i--;) {
+   45        this.bindings[i].dispose();
+   ..
+   50     */
+   51  
+   52:   update: function () {
+   53  
+   54      for (var i = 0, n = this.childTemplates.length; i < n; i++) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/unsafe.js:
+    6   */
+    7  
+    8: function EscapeComponent (options) {
+    9    BaseComponent.call(this, options);
+   10  }
+   ..
+   18     */
+   19  
+   20:   update: function () {
+   21  
+   22      var value = this.attributes.html;
+
+/Users/craig/Developer/Public/paperclip.js/lib/defaults.js:
+   83  
+   84    modifiers: {
+   85:     uppercase: function (value) {
+   86        return String(value).toUpperCase();
+   87      },
+   88:     lowercase: function (value) {
+   89        return String(value).toLowerCase();
+   90      },
+   91:     titlecase: function (value) {
+   92        var str;
+   93  
+   ..
+   95        return str.substr(0, 1).toUpperCase() + str.substr(1);
+   96      },
+   97:     json: function (value, count, delimiter) {
+   98        return JSON.stringify.apply(JSON, arguments);
+   99      },
+  100:     isNaN: function (value) {
+  101        return isNaN(value);
+  102      },
+
+/Users/craig/Developer/Public/paperclip.js/lib/index.js:
+   70  
+   71    // no conflict mode. Release paperclip from global scope.
+   72:   window.paperclip.noConflict = function () {
+   73      delete window.paperclip;
+   74      return paperclip;
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/array.js:
+    5   */
+    6  
+    7: function ArrayExpression (expressions) {
+    8    this.expressions = expressions || new ParametersExpression();
+    9    BaseExpression.apply(this, arguments);
+   ..
+   23     */
+   24     
+   25:   toJavaScript: function () {
+   26      return "[" + this.expressions.toJavaScript() + "]";
+   27    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/assignment.js:
+    4   */
+    5   
+    6: function AssignmentExpression (reference, value) {
+    7    BaseExpression.apply(this, arguments);
+    8    this.reference = reference;
+    .
+   23     */
+   24     
+   25:   toJavaScript: function () {
+   26  
+   27      var path = this.reference.path.map(function(p) { return "'"+p+"'"; }).join(", ");
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/base.js:
+    1  var protoclass = require("protoclass");
+    2  
+    3: function BaseExpression () {
+    4    this._children = [];
+    5    this._addChildren(Array.prototype.slice.call(arguments, 0));
+    .
+   16     */
+   17  
+   18:   _addChildren: function (children) {
+   19      for (var i = children.length; i--;) {
+   20        var child = children[i];
+   ..
+   33     */
+   34  
+   35:   filterAllChildren: function (filter) {
+   36      var filtered = [];
+   37  
+   38:     this.traverseChildren(function (child) {
+   39        if(filter(child)) {
+   40          filtered.push(child);
+   ..
+   48     */
+   49  
+   50:   traverseChildren: function (fn) {
+   51  
+   52      fn(this);
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/blockBinding.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function BlockBindingExpression (scripts, contentTemplate, childBlock) {
+    4    this.scripts    = scripts;
+    5    this.contentTemplate = contentTemplate;
+    .
+   10  BaseExpression.extend(BlockBindingExpression, {
+   11    type: "blockBinding",
+   12:   toJavaScript: function () {
+   13  
+   14      var buffer = "block("+ this.scripts.value.value.toJavaScript() +", " + (this.contentTemplate ? this.contentTemplate.toJavaScript() : "void 0");
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/call.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function CallExpression (reference, parameters) {
+    4    this.reference  = reference;
+    5    this.parameters = parameters;
+    .
+    9  BaseExpression.extend(CallExpression, {
+   10    type: "call",
+   11:   toJavaScript: function () {
+   12  
+   13      var path = this.reference.path.concat();
+   ..
+   15      var buffer = "this.call(";
+   16  
+   17:     buffer += "[" + path.map(function (name) {
+   18        return "\"" + name + "\"";
+   19      }).join(",") + "]"
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/commentNode.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function CommentNodeExpression (value) {
+    4    this.value = value;
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(CommentNodeExpression, {
+    9    type: "commentNode",
+   10:   toJavaScript: function () {
+   11      return "comment(\"" + this.value.replace(/["]/g, "\\\"") + "\")"
+   12    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/doctype.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function DoctypeExpression (value) {
+    4    this.value = value;
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(DoctypeExpression, {
+    9    type: "doctype",
+   10:   toJavaScript: function () {
+   11      return "text('<!DOCTYPE " + this.value + ">')"
+   12    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/elementNode.js:
+    2  ArrayExpression    = require("./array");
+    3  
+    4: function ElementNodeExpression (nodeName, attributes, childNodes) {
+    5    this.name       = nodeName;
+    6    this.attributes = attributes;
+    .
+   11  BaseExpression.extend(ElementNodeExpression, {
+   12    type: "elementNode",
+   13:   toJavaScript: function () {
+   14      return "element(\"" + this.name + "\", " + this.attributes.toJavaScript() + ", " + this.childNodes.toJavaScript() + ")";
+   15    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/group.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function GroupExpression (expression) {
+    4    this.expression = expression;
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(GroupExpression, {
+    9    type: "call",
+   10:   toJavaScript: function () {
+   11      return "(" + this.expression.toJavaScript() + ")";
+   12    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/hash.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function HashExpression (values) {
+    4    this.value = values;
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(HashExpression, {
+    9    type: "hash",
+   10:   toJavaScript: function () {
+   11  
+   12      var items = [];
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/literal.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function LiteralExpression (value) {
+    4    this.value = value;
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(LiteralExpression, {
+    9    type: "literal",
+   10:   toJavaScript: function () {
+   11      return String(this.value);
+   12    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/modifier.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function ModifierExpression (name, parameters) {
+    4    this.name  = name;
+    5    this.parameters = parameters;
+    .
+    9  BaseExpression.extend(ModifierExpression, {
+   10    type: "modifier",
+   11:   toJavaScript: function () {
+   12  
+   13      var buffer = "modifiers." + this.name + ".call(this" 
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/not.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function NotExpression (operator, expression) {
+    4    this.operator = operator;
+    5    this.expression = expression;
+    .
+    9  BaseExpression.extend(NotExpression, {
+   10    type: "!",
+   11:   toJavaScript: function () {
+   12      return this.operator + this.expression.toJavaScript();
+   13    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/operator.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function OperatorExpression (operator, left, right) {
+    4    this.operator = operator;
+    5    this.left     = left;
+    .
+   10  BaseExpression.extend(OperatorExpression, {
+   11    type: "operator",
+   12:   toJavaScript: function () {
+   13      return this.left.toJavaScript() + this.operator + this.right.toJavaScript();
+   14    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/parameters.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function ParametersExpression (expressions) {
+    4    this.expressions = expressions || [];
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(ParametersExpression, {
+    9    type: "parameters",
+   10:   toJavaScript: function () {
+   11:     return this.expressions.map(function (expression) {
+   12        return expression.toJavaScript();
+   13      }).join(", ");
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/reference.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function ReferenceExpression (path, bindingType) {
+    4    this.path       = path;
+    5    this.bindingType = bindingType;
+    .
+   12  BaseExpression.extend(ReferenceExpression, {
+   13    type: "reference",
+   14:   toJavaScript: function () {
+   15  
+   16      if (!this._isBoundTo)
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/rootNode.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function RootExpression (children) {
+    4    this.childNodes = children;
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(RootExpression, {
+    9    type: "rootNode",
+   10:   toJavaScript: function () {
+   11  
+   12:     var buffer = "(function (fragment, block, element, text, comment, parser, modifiers) { ";
+   13  
+   14      var element;
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/script.js:
+    2  uniq               = require("../../utils/uniq");
+    3  
+    4: function ScriptExpression (value) {
+    5    this.value = value;
+    6    BaseExpression.apply(this, arguments);
+    .
+    9  BaseExpression.extend(ScriptExpression, {
+   10    type: "script",
+   11:   toJavaScript: function () {
+   12  
+   13:     var refs = this.filterAllChildren(function (child) {
+   14        return child.type === "reference";
+   15:     }).filter(function (reference) {
+   16        return !reference.unbound && reference.path;
+   17:     }).map(function (reference) {
+   18        return reference.path;
+   19      });
+   20  
+   21      // remove duplicate references
+   22:     refs = uniq(refs.map(function (ref) {
+   23        return ref.join(".")
+   24:     })).map(function (ref) {
+   25        return ref.split(".");
+   26      });
+   ..
+   29      var buffer = "{";
+   30  
+   31:     buffer += "run: function () { return " + this.value.toJavaScript() + "; }";
+   32  
+   33      buffer += ", refs: " + JSON.stringify(refs)
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/string.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function StringExpression (value) {
+    4    this.value = value;
+    5    BaseExpression.apply(this, arguments);
+    .
+    8  BaseExpression.extend(StringExpression, {
+    9    type: "string",
+   10:   toJavaScript: function () {
+   11      return "\"" + this.value.replace(/"/g, "\\\"") + "\"";
+   12    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/ternaryCondition.js:
+    1  var BaseExpression = require("./base");
+    2  
+    3: function TernaryConditionExpression (condition, tExpression, fExpression) {
+    4    this.condition = condition;
+    5    this.tExpression = tExpression;
+    .
+   10  BaseExpression.extend(TernaryConditionExpression, {
+   11    type: "ternaryCondition",
+   12:   toJavaScript: function () {
+   13      return this.condition.toJavaScript() + "?" + this.tExpression.toJavaScript() + ":" + this.fExpression.toJavaScript();
+   14    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/textNode.js:
+    2  he                 = require("he");
+    3  
+    4: function TextNodeExpression (value) {
+    5    this.value = he.decode(value);
+    6  
+    .
+   14  BaseExpression.extend(TextNodeExpression, {
+   15    type: "textNode",
+   16:   toJavaScript: function () {
+   17      return "text(\"" + this.value.replace(/["]/g, "\\\"") + "\")";
+   18    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/index.js:
+   11     */
+   12  
+   13:   parse: parse = function (html) {
+   14      return '"use strict";' + "module.exports = " + parser.parse(html).toJavaScript();
+   15    },
+   ..
+   18     */
+   19  
+   20:   compile: function (nameOrContent) {
+   21      var content;
+   22  
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/parser.js:
+    6     */
+    7  
+    8:   function peg$subclass(child, parent) {
+    9:     function ctor() { this.constructor = child; }
+   10      ctor.prototype = parent.prototype;
+   11      child.prototype = new ctor();
+   12    }
+   13  
+   14:   function SyntaxError(message, expected, found, offset, line, column) {
+   15      this.message  = message;
+   16      this.expected = expected;
+   ..
+   25    peg$subclass(SyntaxError, Error);
+   26  
+   27:   function parse(input) {
+   28      var options = arguments.length > 1 ? arguments[1] : {},
+   29  
+   ..
+  190          peg$c82 = function() { []; },
+  191          peg$c83 = function(param1, rest) {
+  192:               return [param1].concat(rest.map(function (v) {
+  193                  return v[1];
+  194                }));
+  ...
+  303          peg$c162 = { type: "literal", value: "<~", description: "\"<~\"" },
+  304          peg$c163 = function(bindingType, reference, path) {
+  305:               path = [reference].concat(path.map(function (p) { return p[1] }));
+  306                return new ReferenceExpression(path, bindingType);
+  307              },
+  ...
+  374      }
+  375  
+  376:     function text() {
+  377        return input.substring(peg$reportedPos, peg$currPos);
+  378      }
+  379  
+  380:     function offset() {
+  381        return peg$reportedPos;
+  382      }
+  383  
+  384:     function line() {
+  385        return peg$computePosDetails(peg$reportedPos).line;
+  386      }
+  387  
+  388:     function column() {
+  389        return peg$computePosDetails(peg$reportedPos).column;
+  390      }
+  391  
+  392:     function expected(description) {
+  393        throw peg$buildException(
+  394          null,
+  ...
+  398      }
+  399  
+  400:     function error(message) {
+  401        throw peg$buildException(message, null, peg$reportedPos);
+  402      }
+  403  
+  404:     function peg$computePosDetails(pos) {
+  405:       function advance(details, startPos, endPos) {
+  406          var p, ch;
+  407  
+  ...
+  435      }
+  436  
+  437:     function peg$fail(expected) {
+  438        if (peg$currPos < peg$maxFailPos) { return; }
+  439  
+  ...
+  446      }
+  447  
+  448:     function peg$buildException(message, expected, pos) {
+  449:       function cleanupExpected(expected) {
+  450          var i = 1;
+  451  
+  ...
+  469        }
+  470  
+  471:       function buildMessage(expected, found) {
+  472:         function stringEscape(s) {
+  473:           function hex(ch) { return ch.charCodeAt(0).toString(16).toUpperCase(); }
+  474  
+  475            return s
+  ...
+  522      }
+  523  
+  524:     function peg$parseStart() {
+  525        var s0;
+  526  
+  ...
+  530      }
+  531  
+  532:     function peg$parseTemplate() {
+  533        var s0, s1;
+  534  
+  ...
+  544      }
+  545  
+  546:     function peg$parseDocType() {
+  547        var s0, s1, s2, s3, s4, s5;
+  548  
+  ...
+  618      }
+  619  
+  620:     function peg$parseChildNodes() {
+  621        var s0, s1, s2;
+  622  
+  ...
+  655      }
+  656  
+  657:     function peg$parseCommentNode() {
+  658        var s0, s1, s2, s3, s4, s5, s6;
+  659  
+  ...
+  780      }
+  781  
+  782:     function peg$parseElementNode() {
+  783        var s0, s1, s2, s3;
+  784  
+  ...
+  812      }
+  813  
+  814:     function peg$parseTextNode() {
+  815        var s0, s1, s2;
+  816  
+  ...
+  835      }
+  836  
+  837:     function peg$parseTextCharacter() {
+  838        var s0, s1, s2;
+  839  
+  ...
+  882      }
+  883  
+  884:     function peg$parseStartTag() {
+  885        var s0, s1, s2, s3, s4, s5;
+  886  
+  ...
+  935      }
+  936  
+  937:     function peg$parseStartEndTag() {
+  938        var s0, s1, s2, s3, s4, s5;
+  939  
+  ...
+  988      }
+  989  
+  990:     function peg$parseTagInfo() {
+  991        var s0, s1, s2, s3, s4;
+  992  
+  ...
+ 1028      }
+ 1029  
+ 1030:     function peg$parseEndTag() {
+ 1031        var s0, s1, s2, s3;
+ 1032  
+ ....
+ 1069      }
+ 1070  
+ 1071:     function peg$parseTagName() {
+ 1072        var s0, s1, s2, s3;
+ 1073  
+ ....
+ 1113      }
+ 1114  
+ 1115:     function peg$parseAttribute() {
+ 1116        var s0, s1, s2, s3, s4, s5;
+ 1117  
+ ....
+ 1169      }
+ 1170  
+ 1171:     function peg$parseAttributeValues() {
+ 1172        var s0, s1, s2, s3, s4, s5, s6, s7;
+ 1173  
+ ....
+ 1617      }
+ 1618  
+ 1619:     function peg$parseBlockBinding() {
+ 1620        var s0, s1, s2;
+ 1621  
+ ....
+ 1649      }
+ 1650  
+ 1651:     function peg$parseStartBlockBinding() {
+ 1652        var s0, s1, s2, s3, s4, s5;
+ 1653  
+ ....
+ 1690      }
+ 1691  
+ 1692:     function peg$parseChildBlockBinding() {
+ 1693        var s0, s1, s2;
+ 1694  
+ ....
+ 1743      }
+ 1744  
+ 1745:     function peg$parseTextBinding() {
+ 1746        var s0, s1, s2, s3, s4, s5;
+ 1747  
+ ....
+ 1796      }
+ 1797  
+ 1798:     function peg$parseAttrTextBinding() {
+ 1799        var s0, s1, s2, s3, s4, s5;
+ 1800  
+ ....
+ 1849      }
+ 1850  
+ 1851:     function peg$parseSingleScript() {
+ 1852        var s0, s1, s2, s3, s4;
+ 1853  
+ ....
+ 1920      }
+ 1921  
+ 1922:     function peg$parseScripts() {
+ 1923        var s0, s1, s2, s3, s4, s5, s6, s7;
+ 1924  
+ ....
+ 2009      }
+ 2010  
+ 2011:     function peg$parseTernaryConditional() {
+ 2012        var s0, s1, s2, s3, s4, s5;
+ 2013  
+ ....
+ 2065      }
+ 2066  
+ 2067:     function peg$parseParameters() {
+ 2068        var s0, s1, s2, s3;
+ 2069  
+ ....
+ 2121      }
+ 2122  
+ 2123:     function peg$parseInnerParameters() {
+ 2124        var s0, s1, s2, s3, s4, s5;
+ 2125  
+ ....
+ 2189      }
+ 2190  
+ 2191:     function peg$parseAssignment() {
+ 2192        var s0, s1, s2, s3;
+ 2193  
+ ....
+ 2227      }
+ 2228  
+ 2229:     function peg$parseOperation() {
+ 2230        var s0, s1, s2, s3;
+ 2231  
+ ....
+ 2409      }
+ 2410  
+ 2411:     function peg$parseOperatable() {
+ 2412        var s0, s1, s2, s3;
+ 2413  
+ ....
+ 2438      }
+ 2439  
+ 2440:     function peg$parseModifiers() {
+ 2441        var s0, s1, s2, s3;
+ 2442  
+ ....
+ 2472      }
+ 2473  
+ 2474:     function peg$parseModifier() {
+ 2475        var s0, s1, s2, s3, s4, s5;
+ 2476  
+ ....
+ 2522      }
+ 2523  
+ 2524:     function peg$parseObjectReference() {
+ 2525        var s0, s1, s2, s3;
+ 2526  
+ ....
+ 2551      }
+ 2552  
+ 2553:     function peg$parseNot() {
+ 2554        var s0, s1, s2;
+ 2555  
+ ....
+ 2598      }
+ 2599  
+ 2600:     function peg$parseObject() {
+ 2601        var s0;
+ 2602  
+ ....
+ 2618      }
+ 2619  
+ 2620:     function peg$parseNumber() {
+ 2621        var s0, s1, s2, s3, s4, s5;
+ 2622  
+ ....
+ 2696      }
+ 2697  
+ 2698:     function peg$parseDecimalNumber() {
+ 2699        var s0, s1, s2, s3;
+ 2700  
+ ....
+ 2745      }
+ 2746  
+ 2747:     function peg$parseGroup() {
+ 2748        var s0, s1, s2, s3;
+ 2749  
+ ....
+ 2786      }
+ 2787  
+ 2788:     function peg$parseReserved() {
+ 2789        var s0, s1;
+ 2790  
+ ....
+ 2812      }
+ 2813  
+ 2814:     function peg$parseBoolean() {
+ 2815        var s0, s1;
+ 2816  
+ ....
+ 2841      }
+ 2842  
+ 2843:     function peg$parseUndefined() {
+ 2844        var s0, s1;
+ 2845  
+ ....
+ 2861      }
+ 2862  
+ 2863:     function peg$parseNaN() {
+ 2864        var s0, s1;
+ 2865  
+ ....
+ 2881      }
+ 2882  
+ 2883:     function peg$parseInfinity() {
+ 2884        var s0, s1;
+ 2885  
+ ....
+ 2901      }
+ 2902  
+ 2903:     function peg$parseNull() {
+ 2904        var s0, s1;
+ 2905  
+ ....
+ 2930      }
+ 2931  
+ 2932:     function peg$parseFunctionCall() {
+ 2933        var s0, s1, s2;
+ 2934  
+ ....
+ 2953      }
+ 2954  
+ 2955:     function peg$parseReference() {
+ 2956        var s0, s1, s2, s3, s4, s5, s6, s7;
+ 2957  
+ ....
+ 3084      }
+ 3085  
+ 3086:     function peg$parseReferenceName() {
+ 3087        var s0, s1, s2;
+ 3088  
+ ....
+ 3119      }
+ 3120  
+ 3121:     function peg$parseHash() {
+ 3122        var s0, s1, s2, s3, s4, s5;
+ 3123  
+ ....
+ 3175      }
+ 3176  
+ 3177:     function peg$parseHashValues() {
+ 3178        var s0, s1;
+ 3179  
+ ....
+ 3189      }
+ 3190  
+ 3191:     function peg$parseHashValuesArray() {
+ 3192        var s0, s1, s2, s3, s4, s5;
+ 3193  
+ ....
+ 3257      }
+ 3258  
+ 3259:     function peg$parseHashValue() {
+ 3260        var s0, s1, s2, s3, s4, s5;
+ 3261  
+ ....
+ 3307      }
+ 3308  
+ 3309:     function peg$parseHashKey() {
+ 3310        var s0, s1;
+ 3311  
+ ....
+ 3330      }
+ 3331  
+ 3332:     function peg$parseStringLiteral() {
+ 3333        var s0, s1, s2, s3;
+ 3334  
+ ....
+ 3423      }
+ 3424  
+ 3425:     function peg$parseDoubleStringCharacter() {
+ 3426        var s0, s1, s2;
+ 3427  
+ ....
+ 3479      }
+ 3480  
+ 3481:     function peg$parseSingleStringCharacter() {
+ 3482        var s0, s1, s2;
+ 3483  
+ ....
+ 3535      }
+ 3536  
+ 3537:     function peg$parseSourceCharacter() {
+ 3538        var s0;
+ 3539  
+ ....
+ 3549      }
+ 3550  
+ 3551:     function peg$parseWord() {
+ 3552        var s0, s1, s2;
+ 3553  
+ ....
+ 3584      }
+ 3585  
+ 3586:     function peg$parse_() {
+ 3587        var s0, s1;
+ 3588  
+ ....
+ 3609      }
+ 3610  
+ 3611:     function peg$parse_nl() {
+ 3612        var s0, s1;
+ 3613  
+ ....
+ 3657        GroupExpression              = require("./ast/group");
+ 3658  
+ 3659:       function trimWhitespace (ws) {
+ 3660          return trimNewLineChars(ws).replace(/(^\s+)|(\s+$)/, "");
+ 3661        }
+ 3662  
+ 3663:       function trimEnds (ws) {
+ 3664          return ws.replace(/(^\s+)|(\s+$)/, "").replace(/[\r\n]/g,"\\n");
+ 3665        }
+ 3666  
+ 3667:       function trimNewLineChars (ws) {
+ 3668          return ws.replace(/[ \r\n\t]+/g, " ");
+ 3669        }
+ 3670  
+ 3671:       function trimmedText () {
+ 3672          return trimWhitespace(text());
+ 3673        }
+ 3674  
+ 3675:       function singleOrArrayExpression (values) {
+ 3676          return values.length === 1 ? values[0] : new ArrayExpression(new ParametersExpression(values));
+ 3677        }
+ 3678  
+ 3679:       function attrValues (values) {
+ 3680  
+ 3681:         values = values.filter(function (v) {
+ 3682            return!/^[\n\t\r]+$/.test(v.value);
+ 3683          });
+ ....
+ 3687        }
+ 3688  
+ 3689:       function trimTextExpressions (expressions) {
+ 3690  
+ 3691:         function _trim (exprs) {
+ 3692            var expr, i;
+ 3693            for (i = exprs.length; i--;) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/register.js:
+    3  
+    4  
+    5: require.extensions[".pc"] = function (module, filename) {
+    6  
+    7    var paper, watching, compiled;
+    8  
+    9:   function compileOnce () {
+   10      if (compiled) return;
+   11      compiled = true;
+   ..
+   13    }
+   14  
+   15:   function compile () {
+   16      paper = parser.compile(fs.readFileSync(filename, "utf8"));
+   17    }
+   18  
+   19:   function watch () {
+   20      if (watching) return;
+   21      watching = true;
+   ..
+   23    }
+   24  
+   25:   module.exports = function () {
+   26      compileOnce();
+   27      watch();
+
+/Users/craig/Developer/Public/paperclip.js/lib/runloop.js:
+    7  
+    8  if (process.browser) {
+    9:   var defaultTick = function (next) {
+   10      rAF(next);
+   11    }
+   12  } else {
+   13:   var defaultTick = function (next) {
+   14      next();
+   15    }
+   ..
+   19   */
+   20  
+   21: function RunLoop (options) {
+   22    this._animationQueue = [];
+   23    this.tick = options.tick || defaultTick;
+   ..
+   34     */
+   35  
+   36:   deferOnce: function (context) {
+   37  
+   38      if (context.__running) return;
+   ..
+   48  
+   49      // run the animation frame, and callback all the animatable objects
+   50:     this.tick(function () {
+   51        self.runNow();
+   52        self._requestingFrame = false;
+   ..
+   57     */
+   58  
+   59:   runNow: function () {
+   60      if (!this._requestingFrame) return;
+   61      var queue = this._animationQueue;
+
+/Users/craig/Developer/Public/paperclip.js/lib/script/index.js:
+    6   */
+    7  
+    8: function boundScript(script) {
+    9  
+   10    var run = script.run, refs = script.refs;
+   ..
+   12    return {
+   13      refs: refs,
+   14:     evaluate: function (view) {
+   15        return run.call(view);
+   16      },
+   17:     bind: function (view, listener) {
+   18  
+   19        var currentValue,
+   20        locked = false;
+   21  
+   22:       function now () {
+   23          if (locked) return this;
+   24          locked = true;
+   ..
+   32  
+   33        if (!refs.length) return {
+   34:         dispose: function () {},
+   35          trigger: now
+   36        };
+   ..
+   47          }
+   48  
+   49:         dispose = function () {
+   50            for (var i = bindings.length; i--;) bindings[i].dispose();
+   51          }
+   ..
+   54        return {
+   55          dispose: dispose,
+   56:         trigger: function () {
+   57            now();
+   58            return this;
+   ..
+   68   */
+   69  
+   70: function bufferedScript (values, view) {
+   71  
+   72:   var scripts = values.filter(function (value) {
+   73      return typeof value !== "string";
+   74:   }).map(function (script) {
+   75      return script;
+   76    });
+   77  
+   78:   function evaluate (view) {
+   79:     return values.map(function (script) {
+   80  
+   81        if (typeof script === "string") {
+   ..
+   90    return {
+   91      buffered: true,
+   92:     evaluate: function (view) { 
+   93        return evaluate(view); 
+   94      },
+   95:     bind: function (view, listener) {
+   96  
+   97        var bindings = [];
+   98  
+   99:       function now () {
+  100          listener(evaluate(view));
+  101          return this;
+  ...
+  116        return {
+  117          trigger: now,
+  118:         dispose: function ()  {
+  119            for (var i = bindings.length; i--;) bindings[i].dispose();
+  120          }
+  ...
+  127   */
+  128  
+  129: function staticScript (value, view) {
+  130    return {
+  131:     bind: function (view, listener) {
+  132        return {
+  133:         trigger: function () {
+  134            listener(value);
+  135            return this;
+  136          },
+  137:         dispose: function () {
+  138  
+  139          }
+  ...
+  146   */
+  147  
+  148: module.exports = function (value) {
+  149  
+  150    if (typeof value !== "object") return staticScript(value);
+  151    if (value.length) {
+  152      if (value.length === 1) return boundScript(value[0].value);
+  153:     return bufferedScript(value.map(function (v) {
+  154        if (typeof v === "object") return v.value;
+  155        return v;
+
+/Users/craig/Developer/Public/paperclip.js/lib/section/fragment.js:
+    6   */
+    7  
+    8: function FragmentSection (nodeFactory, start, end) {
+    9    DocumentSection.call(this, nodeFactory, start, end);
+   10  }
+   ..
+   18     */
+   19  
+   20:   rootNode: function () {
+   21      return this.start.parentNode;
+   22    },
+   ..
+   25     */
+   26  
+   27:   createMarker: function () {
+   28      return new Marker(this.nodeFactory, utils.getNodePath(this.start), utils.getNodePath(this.end));
+   29    },
+   ..
+   32     */
+   33  
+   34:   clone: function () {
+   35      var clone = DocumentSection.prototype.clone.call(this);
+   36      return new FragmentSection(this.nodeFactory, clone.start, clone.end);
+   ..
+   41   */
+   42  
+   43: function Marker (nodeFactory, startPath, endPath) {
+   44    this.nodeFactory = nodeFactory;
+   45    this.startPath   = startPath;
+   ..
+   55     */
+   56  
+   57:   getSection: function (rootNode) {
+   58  
+   59      var start = utils.getNodeByPath(rootNode, this.startPath),
+
+/Users/craig/Developer/Public/paperclip.js/lib/section/node.js:
+    6   */
+    7  
+    8: function NodeSection (nodeFactory, node, _rnode) {
+    9    this.node = node;
+   10    this.nodeFactory = nodeFactory;
+   ..
+   19     */
+   20  
+   21:   rootNode: function () {
+   22      return this.node;
+   23    },
+   ..
+   26     */
+   27  
+   28:   createMarker: function () {
+   29      return new Marker(this.nodeFactory, utils.getNodePath(this.node));
+   30    },
+   ..
+   33     */
+   34  
+   35:   appendChild: function (child) {
+   36      this.node.appendChild(child);
+   37    },
+   ..
+   40     */
+   41  
+   42:   hide: function () {
+   43      if (this._repl || !this.node.parentNode) return;
+   44      var oldNode = this.node;
+   ..
+   52     */
+   53  
+   54:   show: function () {
+   55      if (this._repl && this._repl.parentNode) {
+   56        this._repl.parentNode.insertBefore(this.node, this._repl);
+   ..
+   63     */
+   64  
+   65:   removeAll: function () {
+   66  
+   67      // TODO - check node type for this
+   ..
+   72     */
+   73  
+   74:   render: function () {
+   75      return this.node;
+   76    },
+   ..
+   79     */
+   80  
+   81:   remove: function () {
+   82      if (this.node.parentNode) this.node.parentNode.removeChild(this.node);
+   83    },
+   ..
+   86     */
+   87  
+   88:   clone: function () {
+   89      return new NodeSection(this.nodeFactory, this.node.cloneNode(true));
+   90    }
+   ..
+   94   */
+   95  
+   96: function Marker (nodeFactory, nodePath) {
+   97    this.nodePath    = nodePath;
+   98    this.nodeFactory = nodeFactory;
+   ..
+  107     */
+  108  
+  109:   getSection: function (rootNode) {
+  110      var start = utils.getNodeByPath(rootNode, this.nodePath);
+  111      return new NodeSection(this.nodeFactory, start);
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/component.js:
+    6   */
+    7  
+    8: function TemplateComponent (options) {
+    9    BaseComponent.call(this, options);
+   10  }
+   ..
+   18     */
+   19  
+   20:   initialize: function () {
+   21      this.attributes.on("change", this._onAttrsChange = _bind(this._onAttrsChange, this));
+   22    },
+   ..
+   25     */
+   26  
+   27:   bind: function () {
+   28      this._bindings = [];
+   29  
+   ..
+   47     */
+   48  
+   49:   unbind: function () {
+   50      if (this.childView) this.childView.unbind();
+   51    },
+   ..
+   54     */
+   55     
+   56:   _onAttrsChange: function (key, value) {
+   57      if (this.childView) this.childView.set(key, value);
+   58    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/index.js:
+   26  }
+   27  
+   28: function Template (script, options) {
+   29  
+   30    this.options         = options;
+   ..
+   65     */
+   66  
+   67:   initialize: function () {
+   68      this.hydrators = [];
+   69  
+   ..
+   90     */
+   91  
+   92:   createComponentClass: function (contextClass) {
+   93      return TemplateComponent.extend({
+   94        template     : this,
+   ..
+  103     */
+  104  
+  105:   child: function (vnode, options) {
+  106      return new Template(vnode, extend(options, {}, this.options));
+  107    },
+  ...
+  112     */
+  113  
+  114:   view: function (context, options) {
+  115  
+  116      var clonedSection;
+  ...
+  145   */
+  146  
+  147: module.exports = function (source, options) {
+  148  
+  149    var script, tos = typeof source, options;
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/view/index.js:
+   16   */
+   17  
+   18: function View (template, pool, section, hydrators) {
+   19  
+   20    // todo - check if node child length is > 1. If so, then
+   ..
+   45     */
+   46  
+   47:   setOptions: function (options) {
+   48      this.parent = options.parent;
+   49    },
+   ..
+   52     */
+   53  
+   54:   get: function (path) {
+   55      var v = this.accessor.get(this.context, path);
+   56      return v != null ? v : this.parent ? this.parent.get(path) : void 0;
+   ..
+   60     */
+   61  
+   62:   set: function (path, value) {
+   63      return this.accessor.set(this.context, path, value);
+   64    },
+   ..
+   67     */
+   68  
+   69:   reference: function (path, settable) {
+   70      return new Reference(this, path, settable);
+   71    },
+   ..
+   74     */
+   75  
+   76:   call: function (path, params) {
+   77      var has = this.accessor.get(this.context, path);
+   78      return has ? this.accessor.call(this.context, path, params) : this.parent ? this.parent.call(path, params) : void 0;
+   ..
+   82     */
+   83  
+   84:   setProperties: function (properties) {
+   85      for (var key in properties) this.set(key, properties[key]);
+   86    },
+   ..
+   89     */
+   90  
+   91:   watch: function (path, listener) {
+   92      return this.accessor.watchProperty(this.context, path, listener);
+   93    },
+   ..
+   96     */
+   97  
+   98:   watchEvent: function (object, event, listener) {
+   99      return this.accessor.watchEvent(object, event, listener);
+  100    },
+  ...
+  103     */
+  104  
+  105:   bind: function (context) {
+  106  
+  107      if (this.context) this.unbind();
+  ...
+  118     */
+  119  
+  120:   unbind: function () {
+  121      for (var i = this.bindings.length; i--;) {
+  122        this.bindings[i].unbind();
+  ...
+  127     */
+  128  
+  129:   render: function () {
+  130      if (!this.context) this.bind({});
+  131      this.transitions.enter();
+  ...
+  136     */
+  137  
+  138:   remove: function () {
+  139      this.section.remove();
+  140      return this;
+  ...
+  146     */
+  147  
+  148:   dispose: function () {
+  149      if (this.transitions.exit(this._dispose)) return;
+  150      this._dispose();
+  ...
+  155     */
+  156  
+  157:   _dispose: function () {
+  158      this.unbind();
+  159      this.section.remove();
+  ...
+  164     */
+  165  
+  166:   toString: function () {
+  167      var node = this.render();
+  168  
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/view/reference.js:
+    4   */
+    5  
+    6: function Reference (view, path, settable) {
+    7    this.view     = view;
+    8    this.path     = path;
+    .
+   23     */
+   24  
+   25:   value: function (value) {
+   26      if (!arguments.length) return this.view.get(this.path);
+   27      if (this.settable) this.view.set(this.path, value);
+   ..
+   31     */
+   32     
+   33:   toString: function () {
+   34      return this.view.get(this.path);
+   35    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/view/transitions.js:
+    5   */
+    6  
+    7: function Transitions () {
+    8    this._enter = [];
+    9    this._exit  = [];
+   ..
+   18     */
+   19  
+   20:   push: function (transition) {
+   21      if (transition.enter) this._enter.push(transition);
+   22      if (transition.exit) this._exit.push(transition);
+   ..
+   26     */
+   27  
+   28:   enter: function () {
+   29      if (!this._enter.length) return false;
+   30      for (var i = 0, n = this._enter.length; i < n; i++) {
+   ..
+   36     */
+   37  
+   38:   exit: function (complete) {
+   39      if (!this._exit.length) return false;
+   40      var self = this;
+   41:     process.nextTick(function () {
+   42:       async.each(self._exit, function (transition, next) {
+   43          transition.exit(next);
+   44        }, complete);
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/block/binding.js:
+    6   */
+    7  
+    8: function BlockBinding (node, script, view) {
+    9    this.view   = view;
+   10    this.nodeFactory = view.template.nodeFactory;
+   ..
+   22     */
+   23  
+   24:   bind: function () {
+   25      var self = this;
+   26  
+   27      // TODO - needs to update on rAF
+   28:     this.binding = this.script.bind(this.view, function (value, oldValue) {
+   29        if (value === self.currentValue) return;
+   30        self.currentValue = value;
+   ..
+   39     */
+   40  
+   41:   didChange: function () {
+   42      this.view.runloop.deferOnce(this);
+   43    },
+   ..
+   46     */
+   47  
+   48:   update: function () {
+   49      var v = String(this.currentValue == null ? "" : this.currentValue);
+   50      if (this.nodeFactory.name !== "dom") {
+   ..
+   58     */
+   59     
+   60:   unbind: function () {
+   61      if (this.binding) {
+   62        this.binding.dispose();
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/block/hydrator.js:
+    6   */
+    7  
+    8: function BlockHydrator (node, script, bindingClass) {
+    9    this.node   = node;
+   10    this.script = script;
+   ..
+   20     */
+   21  
+   22:   initialize: function () {
+   23      this.nodePath = utils.getNodePath(this.node);
+   24    },
+   ..
+   27     */
+   28     
+   29:   hydrate: function (view) {
+   30      var clonedNode = utils.getNodeByPath(view.rootNode, this.nodePath);
+   31      view.bindings.push(new this.bindingClass(clonedNode, this.script, view));
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/block/index.js:
+    9   */
+   10  
+   11: function Block (scriptSource) {
+   12    this.script  = script(scriptSource);
+   13  }
+   ..
+   21     */
+   22  
+   23:   initialize: function (template) {
+   24      var node = template.nodeFactory.createTextNode("");
+   25      var bindingClass = this.script.refs.length ? Binding : Unbound;
+   ..
+   32   */
+   33  
+   34: module.exports.create = function (script) {
+   35    return new Block(script);
+   36  }
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/block/unbound.js:
+    5   */
+    6  
+    7: function UnboundBlockBinding (node, script, view) {
+    8    this.view   = view;
+    9    this.nodeFactory = view.template.nodeFactory;
+   ..
+   20     */
+   21  
+   22:   bind: function () {
+   23      var self = this;
+   24      var value = this.script.evaluate(this.view);
+   ..
+   38     */
+   39     
+   40:   unbind: function () { }
+   41  });
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/comment/index.js:
+    4   */
+    5  
+    6: function Comment (value) {
+    7    this.value    = value;
+    8  }
+    .
+   16     */
+   17  
+   18:   initialize: function (template) {
+   19      return template.nodeFactory.createComment(this.value);
+   20    }
+   ..
+   24   */
+   25   
+   26: module.exports.create = function (value) {
+   27    return new Comment(value);
+   28  } 
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/element/attributeHydrator.js:
+    7   */
+    8  
+    9: function AttributeHydrator (attrClass, key, value, node) {
+   10    this.node      = node;
+   11    this.key       = key;
+   ..
+   22     */
+   23  
+   24:   initialize: function () {
+   25      this.nodePath = utils.getNodePath(this.node);
+   26    },
+   ..
+   29     */
+   30     
+   31:   hydrate: function (view) {
+   32  
+   33      var attribute = new this.attrClass({
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/element/attributesBinding.js:
+    2  utils          = require("../../../utils");
+    3  
+    4: function AttributesBinding (attributes, rawAttributes, component, view) {
+    5    this.attributes    = attributes;
+    6    this.rawAttributes = rawAttributes;
+    .
+   10  
+   11  module.exports = protoclass(AttributesBinding, {
+   12:   bind: function () {
+   13      this.bindings = [];
+   14      for (var k in this.rawAttributes) {
+   ..
+   21      }
+   22    },
+   23:   _bindAttr: function (k, v) {
+   24      var self = this;
+   25  
+   26      // TODO: remove now()
+   27:     this.bindings.push(v.bind(this.view, function (nv, ov) {
+   28        self.attributes.set(k, nv);
+   29      }).trigger());
+   30    },
+   31:   unbind: function () {
+   32      if (!this.bindings) return;
+   33      for (var i = this.bindings.length; i--;) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/element/componentHydrator.js:
+    7   */
+    8  
+    9: function ComponentHydrator (name, attributes, childTemplate, section, componentClass) {
+   10    this.name           = name;
+   11    this.attributes     = attributes;
+   ..
+   24     */
+   25  
+   26:   initialize: function () {
+   27      this.sectionMarker = this.section.createMarker();
+   28    },
+   ..
+   31     */
+   32  
+   33:   hydrate: function (view) {
+   34      this.childTemplate.accessor = view.accessor;
+   35      
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/element/index.js:
+   13   */
+   14  
+   15: function Element (name, attributes, children) {
+   16    this.name       = name;
+   17    this.attributes = attributes;
+   ..
+   27     */
+   28  
+   29:   initialize: function (template) {
+   30  
+   31      var componentClass = template.components[this.name];
+   ..
+   49        /*
+   50          return {
+   51:           createNode: function () {
+   52              return section.render();
+   53            }
+   ..
+  118  
+  119        return {
+  120:         createNode: function () {
+  121            
+  122            var element = document.createElement()
+  ...
+  143  
+  144  
+  145: module.exports.create = function (name, attributes, children) {
+  146  
+  147    var setter = new BindableObject({a:{}});
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/element/valueAttribute.js:
+    9     */
+   10     
+   11:   update: function () {
+   12      if (this.currentValue == null) return this.node.removeAttribute(this.key);
+   13      this.node.setAttribute(this.key, this.currentValue);
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/fragment/index.js:
+    4   */
+    5  
+    6: function Fragment (children) {
+    7    this.children = children;
+    8  }
+    .
+   16     */
+   17  
+   18:   initialize: function (template) {
+   19      if (this.children.length === 1) return this.children[0].initialize(template);
+   20:     return template.nodeFactory.createFragment(this.children.map(function (child) {
+   21        return child.initialize(template);
+   22      }));
+   ..
+   27   */
+   28  
+   29: module.exports.create = function (children) {
+   30    return new Fragment(children);
+   31  } 
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/text/index.js:
+    4   */
+    5  
+    6: function Text (value) {
+    7    this.value = value;
+    8  }
+    .
+   16     */
+   17  
+   18:   initialize: function (template) {
+   19  
+   20      // blank text nodes are NOT allowed. Chrome has an issue rendering
+   ..
+   31   */
+   32  
+   33: module.exports.create = function (value) {
+   34    return new Text(value);
+   35  }
+
+/Users/craig/Developer/Public/paperclip.js/lib/transform.js:
+    4  module.exports = {
+    5    extension: "pc",
+    6:   transform: function (content, filepath) {
+    7      return parser.parse(content);
+    8    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/async.js:
+    4     */
+    5     
+    6:   each: function (items, each, complete) {
+    7      var total = items.length,
+    8      completed = 0;
+    9:     items.forEach(function (item) {
+   10        var called = false;
+   11:       each(item, function () {
+   12          if (called) throw new Error("callback called twice");
+   13          called = true;
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/bind.js:
+    1: module.exports = function (callback, context) {
+    2    // TODO - DO ME
+    3    // if (callback.bind) return callback.bind.apply(void 0, [context].concat(Array.prototype.slice.call(arguments, 2)));
+    4:   return function () {
+    5      return callback.apply(context, arguments);
+    6    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/extend.js:
+    1: module.exports = function (to) {
+    2    if (!to) to = {};
+    3    var froms = Array.prototype.slice.call(arguments, 1);
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/index.js:
+    2  
+    3  module.exports = {
+    4:   getNodePath: function (node) {
+    5      var path = [], p = node.parentNode, c = node;
+    6      while (p) {
+    .
+   14      return path;
+   15    },
+   16:   getNodeByPath: function (node, path) {
+   17      var c = node;
+   18      for (var i = 0, n = path.length; i < n; i++) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/singleNodeSection.js:
+    1: module.exports = function (node) {
+    2    return {
+    3      node: node,
+    4:     render: function () {
+    5        return node;
+    6      },
+    7:     remove: function () {
+    8        node.parentNode.removeChild(node);
+    9      },
+   10:     appendChild: function (childNode) {
+   11        node.appendChild(childNode);
+   12      }
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/stringifyNode.js:
+    1: function _stringifyNode (node) {
+    2  
+    3    var buffer = "";
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/syncBindableObjectChanges.js:
+    1: module.exports = function (to, from) {
+    2:   from.on("change", function (key, value) {
+    3      to[key] = value;
+    4    });
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/uniq.js:
+    1: module.exports = function (ary) {
+    2    var occurences = {}, clone = ary.concat();
+    3  
+
+390 matches across 77 files
+
+
+Searching 80 files for "function\s(" (regex, case sensitive)
+
+Unmatched marking parenthesis ( or \(.  The error occurred while parsing the regular expression fragment: 'unction\s(>>>HERE>>>'. in regular expression function\s(
+
+0 matches across 0 files
+
+
+Searching 80 files for "function\s\(" (regex, case sensitive)
+
+/Users/craig/Developer/Public/paperclip.js/lib/accessors/base.js:
+   12  module.exports = protoclass(BaseAccessor, {
+   13    __isScope: true,
+   14:   accessible: function (context) {
+   15      // override me
+   16    },
+   17:   castObject: function (context) {
+   18      // override me
+   19    },
+   20:   castCollection: function (context) {
+   21      // override me
+   22    },
+   23:   normalizeObject: function (context) {
+   24      // override me
+   25    },
+   26:   normalizeCollection: function (context) {
+   27      // override me
+   28    },
+   29:   get: function (context, path) {
+   30      // override me
+   31    },
+   32:   set: function (context, path, value) {
+   33      // override me
+   34    },
+   35:   call: function (context, ctxPath, fnPath, params) {
+   36      // override me
+   37    },
+   38:   watchProperty: function (context, path, listener) {
+   39      // override me
+   40    },
+   41:   watchEvent: function (context, operation, listener) {
+   42      // override me
+   43    },
+   44:   dispose: function () {
+   45      
+   46    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/accessors/bindableObject.js:
+    8  
+    9  module.exports = BaseAccessor.extend(BindableObjectAccessor, {
+   10:   accessible: function (context) {
+   11      return context && context.__isBindableObject;
+   12    },
+   13:   castObject: function (context) {
+   14      if (context.__isBindable) return context;
+   15      if (context.toString() === "[object Array]") return new BindableCollection(context);
+   16      return new BindableOject(context);
+   17    },
+   18:   castCollection: function (context) {
+   19      if (context.__isBindable) return context;
+   20      if (context.toString() === "[object Array]") return new BindableCollection(context);
+   21      return new BindableOject(context);
+   22    },
+   23:   get: function (context, path) {
+   24      return context.get(path);
+   25    },
+   26:   set: function (context, path, value) {
+   27      return context.set(path, value);
+   28    },
+   29:   call: function (context, path, params) {
+   30  
+   31      var fnPath = path.pop(),
+   ..
+   38      if (fn) return fn.apply(ctx, params);
+   39    },
+   40:   watchProperty: function (context, path, listener) {
+   41      return context.watch(path, listener);
+   42    },
+   43:   watchEvent: function (context, event, value) {
+   44      if (event === "change" && context.__isBindableCollection) {
+   45        return context.on(event, value);
+   ..
+   55     */
+   56  
+   57:   normalizeCollection: function (collection) {
+   58      return collection.source || collection;
+   59    },
+   60:   normalizeObject: function (object) {
+   61      return object.toJSON();
+   62    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/accessors/pojo.js:
+   21     */
+   22  
+   23:   castObject: function (object) { return object; },
+   24  
+   25    /**
+   26     */
+   27  
+   28:   call: function (context, path, params) {
+   29  
+   30      var fnName = path.pop(),
+   ..
+   38     */
+   39  
+   40:   get: function (object, path) {
+   41  
+   42      var pt = path.join("."), getter;
+   ..
+   56     */
+   57  
+   58:   set: function (object, path, value) {
+   59      var pt = path.join("."), setter;
+   60      if (!(setter = this._setters[pt])) {
+   ..
+   78     */
+   79  
+   80:   watchProperty: function (object, path, listener) {
+   81      
+   82      var self = this;
+   83      var watcher = {
+   84        context: object,
+   85:       apply: function () {
+   86          var newValue = self.get(object, path);
+   87          if (newValue === this.currentValue && typeof newValue !== "function") return;
+   ..
+   98          watcher.apply();
+   99        },
+  100:       dispose: function () {
+  101          var i = self._watchers.indexOf(watcher);
+  102          if (~i) self._watchers.splice(i, 1);
+  ...
+  108     */
+  109  
+  110:   watchEvent: function (object, event, listener) {
+  111      // do nothing
+  112      return {
+  ...
+  120     */
+  121  
+  122:   normalizeCollection: function (collection) {
+  123      return collection;
+  124    },
+  ...
+  127     */
+  128  
+  129:   normalizeObject: function (object) {
+  130      return object;
+  131    },
+  ...
+  134     */
+  135  
+  136:   apply: function () {
+  137      for (var i = 0, n = this._watchers.length; i < n; i++) {
+  138        this._watchers[i].apply();
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/base.js:
+   26     */
+   27  
+   28:   initialize: function () {
+   29    },
+   30  
+   ..
+   32     */
+   33  
+   34:   bind: function () {
+   35    },
+   36  
+   ..
+   38     */
+   39  
+   40:   unbind: function () {
+   41    }
+   42  })
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/class.js:
+    9     */
+   10  
+   11:   update: function () {
+   12  
+   13  
+   ..
+   49  
+   50  
+   51: module.exports.test = function (value) {
+   52    return typeof value === "object" && !value.buffered;
+   53  }
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/easeIn.js:
+    5  
+    6  module.exports = BaseAttribue.extend({
+    7:   initialize: function () {
+    8      this.view.transitions.push(this);
+    9    },
+   10:   enter: function () {
+   11      var v = this.value;
+   12      if (v.evaluate) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/easeOut.js:
+    5  
+    6  module.exports = BaseAttribue.extend({
+    7:   initialize: function () {
+    8      this.view.transitions.push(this);
+    9    },
+   10:   exit: function (complete) {
+   11      var v = this.value;
+   12      if (v.evaluate) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/enable.js:
+    5  
+    6  module.exports = ScriptAttribute.extend({
+    7:   update: function () {
+    8      if (this.currentValue) {
+    9        this.node.removeAttribute("disabled");
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/event.js:
+   22     */
+   23  
+   24:   initialize: function () {
+   25      // convert onEvent to event
+   26      var event = this.event || (this.event = this.key.toLowerCase().replace(/^on/, ""));
+   ..
+   31     */
+   32  
+   33:   bind: function () {
+   34      Base.prototype.bind.call(this);
+   35      this.bound = true;
+   ..
+   39     */
+   40  
+   41:   _onEvent: function (event) {
+   42      if (!this.bound) return;
+   43      event.preventDefault();
+   ..
+   49     */
+   50     
+   51:   unbind: function () {
+   52      this.bound = false;
+   53    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/focus.js:
+    9     */
+   10     
+   11:   update: function () {
+   12      if (!this.currentValue) return;
+   13      if (this.node.focus) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/keyCodedEvent.js:
+   19     */
+   20     
+   21:   _onEvent: function (event) {
+   22  
+   23      if (!~this.keyCodes.indexOf(event.keyCode)) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/script.js:
+    9     */
+   10  
+   11:   bind: function () {
+   12      BaseAttribute.prototype.bind.call(this)
+   13      var self = this;
+   14  
+   15:     this._binding = this.value.bind(this.view, function (nv) {
+   16        if (nv == self.currentValue) return;
+   17        self.currentValue = nv;
+   ..
+   26     */
+   27  
+   28:   update: function () {
+   29  
+   30    },
+   ..
+   33     */
+   34  
+   35:   unbind: function () {
+   36      this._binding.dispose();
+   37    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/show.js:
+   10     */
+   11  
+   12:   initialize: function () {
+   13      this._displayStyle = this.node.style.display;
+   14    },
+   ..
+   17     */
+   18  
+   19:   update: function () {
+   20  
+   21      var value = this.currentValue;
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/style.js:
+    9     */
+   10     
+   11:   bind: function () {
+   12      this._currentStyles = {};
+   13      ScriptAttribute.prototype.bind.call(this);
+   ..
+   17     */
+   18  
+   19:   update: function () {
+   20  
+   21      var styles = this.currentValue;
+   ..
+   44   */
+   45  
+   46: module.exports.test = function (value) {
+   47    return typeof value === "object" && !value.buffered;
+   48  }
+
+/Users/craig/Developer/Public/paperclip.js/lib/attributes/value.js:
+   23     */
+   24  
+   25:   initialize: function () {
+   26      var self = this;
+   27:     this._events.forEach(function (event) {
+   28        self.node.addEventListener(event, self._onInput);
+   29      });
+   ..
+   33     */
+   34  
+   35:   bind: function () {
+   36      BaseAttribute.prototype.bind.call(this);
+   37  
+   ..
+   40      // TODO - move this to another attribute helper (more optimal)
+   41      if (/^(text|password|email)$/.test(this.node.getAttribute("type"))) {
+   42:       this._autocompleteCheckInterval = setInterval(function () {
+   43          self._onInput();
+   44        }, process.browser ? 500 : 10);
+   ..
+   49     */
+   50  
+   51:   unbind: function () {
+   52      BaseAttribute.prototype.unbind.call(this);
+   53      clearInterval(this._autocompleteCheckInterval);
+   ..
+   59     */
+   60  
+   61:   update: function () {
+   62  
+   63      var model = this.model = this.currentValue;
+   ..
+   72      var self = this;
+   73  
+   74:     this._modelBindings = this.view.watch(model.path, function (value) {
+   75        self._elementValue(self._parseValue(value));
+   76      }).trigger();
+   ..
+   78  
+   79  
+   80:   _parseValue: function (value) {
+   81      if (value == null || value === "") return void 0;
+   82      return value;
+   ..
+   87     */
+   88  
+   89:   test: function (attrValue) {
+   90      return attrValue.length === 1;
+   91    },
+   ..
+   94     */
+   95  
+   96:   _onInput: function (event) {
+   97  
+   98      clearInterval(this._autocompleteCheckInterval);
+   ..
+  117     */
+  118  
+  119:   _elementValue: function (value) {
+  120  
+  121      var isCheckbox    = /checkbox/.test(this.node.type),
+  ...
+  164   */
+  165  
+  166: ValueAttribute.test = function (value) {
+  167    return typeof value === "object" && !value.buffered;
+  168  }
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/base.js:
+   27     */
+   28  
+   29:   initialize: function () {
+   30      // override me - this is where the DOM elements should be added to the
+   31      // section
+   ..
+   35     */
+   36  
+   37:   bind: function () {
+   38      this._changeListener = this.attributes.on("change", _bind(this.didChange, this));
+   39      this.update();
+   ..
+   43     */
+   44  
+   45:   didChange: function () {
+   46      this.view.runloop.deferOnce(this);
+   47    },
+   ..
+   50     */
+   51  
+   52:   unbind: function () {
+   53      if (this._changeListener) this._changeListener.dispose();
+   54    },
+   ..
+   57     */
+   58  
+   59:   update: function () {
+   60      // apply DOM changes here
+   61    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/repeat.js:
+   23    // TODO - unbind here
+   24  
+   25:   update: function () {
+   26  
+   27      if (this._updateListener) this._updateListener.dispose();
+   ..
+   35  
+   36      // note - this should get triggered on rAF
+   37:     this._updateListener = accessor.watchEvent(source, "change", function () {
+   38        self.view.runloop.deferOnce(self);
+   39      });
+   ..
+   77  
+   78      // TODO - easeOutSync?
+   79:     this._children.splice(i).forEach(function (child) {
+   80        child.dispose();
+   81      });
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/show.js:
+   18     */
+   19  
+   20:   update: function () {
+   21  
+   22      var show = !!this.attributes.when;
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/stack.js:
+   12  
+   13    // TODO - this is a bit fugly
+   14:   this.childTemplates = this.childTemplate.vnode.children.map(function (vnode) {
+   15      return self.childTemplate.child(vnode);
+   16    });
+   ..
+   25     */
+   26  
+   27:   update: function () {
+   28  
+   29      var currentTpl, show = this.attributes.state;
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/switch.js:
+   13  
+   14    // TODO - this is a bit fugly
+   15:   this.childTemplates = this.childTemplate.vnode.children.map(function (vnode) {
+   16      return self.childTemplate.child(vnode);
+   17    });
+   ..
+   26     */
+   27  
+   28:   bind: function () {
+   29      BaseComponent.prototype.bind.call(this);
+   30  
+   ..
+   41     */
+   42  
+   43:   unbind: function () {
+   44      for (var i = this.bindings.length; i--;) {
+   45        this.bindings[i].dispose();
+   ..
+   50     */
+   51  
+   52:   update: function () {
+   53  
+   54      for (var i = 0, n = this.childTemplates.length; i < n; i++) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/components/unsafe.js:
+   18     */
+   19  
+   20:   update: function () {
+   21  
+   22      var value = this.attributes.html;
+
+/Users/craig/Developer/Public/paperclip.js/lib/defaults.js:
+   83  
+   84    modifiers: {
+   85:     uppercase: function (value) {
+   86        return String(value).toUpperCase();
+   87      },
+   88:     lowercase: function (value) {
+   89        return String(value).toLowerCase();
+   90      },
+   91:     titlecase: function (value) {
+   92        var str;
+   93  
+   ..
+   95        return str.substr(0, 1).toUpperCase() + str.substr(1);
+   96      },
+   97:     json: function (value, count, delimiter) {
+   98        return JSON.stringify.apply(JSON, arguments);
+   99      },
+  100:     isNaN: function (value) {
+  101        return isNaN(value);
+  102      },
+
+/Users/craig/Developer/Public/paperclip.js/lib/index.js:
+   70  
+   71    // no conflict mode. Release paperclip from global scope.
+   72:   window.paperclip.noConflict = function () {
+   73      delete window.paperclip;
+   74      return paperclip;
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/array.js:
+   23     */
+   24     
+   25:   toJavaScript: function () {
+   26      return "[" + this.expressions.toJavaScript() + "]";
+   27    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/assignment.js:
+   23     */
+   24     
+   25:   toJavaScript: function () {
+   26  
+   27      var path = this.reference.path.map(function(p) { return "'"+p+"'"; }).join(", ");
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/base.js:
+   16     */
+   17  
+   18:   _addChildren: function (children) {
+   19      for (var i = children.length; i--;) {
+   20        var child = children[i];
+   ..
+   33     */
+   34  
+   35:   filterAllChildren: function (filter) {
+   36      var filtered = [];
+   37  
+   38:     this.traverseChildren(function (child) {
+   39        if(filter(child)) {
+   40          filtered.push(child);
+   ..
+   48     */
+   49  
+   50:   traverseChildren: function (fn) {
+   51  
+   52      fn(this);
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/blockBinding.js:
+   10  BaseExpression.extend(BlockBindingExpression, {
+   11    type: "blockBinding",
+   12:   toJavaScript: function () {
+   13  
+   14      var buffer = "block("+ this.scripts.value.value.toJavaScript() +", " + (this.contentTemplate ? this.contentTemplate.toJavaScript() : "void 0");
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/call.js:
+    9  BaseExpression.extend(CallExpression, {
+   10    type: "call",
+   11:   toJavaScript: function () {
+   12  
+   13      var path = this.reference.path.concat();
+   ..
+   15      var buffer = "this.call(";
+   16  
+   17:     buffer += "[" + path.map(function (name) {
+   18        return "\"" + name + "\"";
+   19      }).join(",") + "]"
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/commentNode.js:
+    8  BaseExpression.extend(CommentNodeExpression, {
+    9    type: "commentNode",
+   10:   toJavaScript: function () {
+   11      return "comment(\"" + this.value.replace(/["]/g, "\\\"") + "\")"
+   12    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/doctype.js:
+    8  BaseExpression.extend(DoctypeExpression, {
+    9    type: "doctype",
+   10:   toJavaScript: function () {
+   11      return "text('<!DOCTYPE " + this.value + ">')"
+   12    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/elementNode.js:
+   11  BaseExpression.extend(ElementNodeExpression, {
+   12    type: "elementNode",
+   13:   toJavaScript: function () {
+   14      return "element(\"" + this.name + "\", " + this.attributes.toJavaScript() + ", " + this.childNodes.toJavaScript() + ")";
+   15    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/group.js:
+    8  BaseExpression.extend(GroupExpression, {
+    9    type: "call",
+   10:   toJavaScript: function () {
+   11      return "(" + this.expression.toJavaScript() + ")";
+   12    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/hash.js:
+    8  BaseExpression.extend(HashExpression, {
+    9    type: "hash",
+   10:   toJavaScript: function () {
+   11  
+   12      var items = [];
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/literal.js:
+    8  BaseExpression.extend(LiteralExpression, {
+    9    type: "literal",
+   10:   toJavaScript: function () {
+   11      return String(this.value);
+   12    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/modifier.js:
+    9  BaseExpression.extend(ModifierExpression, {
+   10    type: "modifier",
+   11:   toJavaScript: function () {
+   12  
+   13      var buffer = "modifiers." + this.name + ".call(this" 
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/not.js:
+    9  BaseExpression.extend(NotExpression, {
+   10    type: "!",
+   11:   toJavaScript: function () {
+   12      return this.operator + this.expression.toJavaScript();
+   13    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/operator.js:
+   10  BaseExpression.extend(OperatorExpression, {
+   11    type: "operator",
+   12:   toJavaScript: function () {
+   13      return this.left.toJavaScript() + this.operator + this.right.toJavaScript();
+   14    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/parameters.js:
+    8  BaseExpression.extend(ParametersExpression, {
+    9    type: "parameters",
+   10:   toJavaScript: function () {
+   11:     return this.expressions.map(function (expression) {
+   12        return expression.toJavaScript();
+   13      }).join(", ");
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/reference.js:
+   12  BaseExpression.extend(ReferenceExpression, {
+   13    type: "reference",
+   14:   toJavaScript: function () {
+   15  
+   16      if (!this._isBoundTo)
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/rootNode.js:
+    8  BaseExpression.extend(RootExpression, {
+    9    type: "rootNode",
+   10:   toJavaScript: function () {
+   11  
+   12:     var buffer = "(function (fragment, block, element, text, comment, parser, modifiers) { ";
+   13  
+   14      var element;
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/script.js:
+    9  BaseExpression.extend(ScriptExpression, {
+   10    type: "script",
+   11:   toJavaScript: function () {
+   12  
+   13:     var refs = this.filterAllChildren(function (child) {
+   14        return child.type === "reference";
+   15:     }).filter(function (reference) {
+   16        return !reference.unbound && reference.path;
+   17:     }).map(function (reference) {
+   18        return reference.path;
+   19      });
+   20  
+   21      // remove duplicate references
+   22:     refs = uniq(refs.map(function (ref) {
+   23        return ref.join(".")
+   24:     })).map(function (ref) {
+   25        return ref.split(".");
+   26      });
+   ..
+   29      var buffer = "{";
+   30  
+   31:     buffer += "run: function () { return " + this.value.toJavaScript() + "; }";
+   32  
+   33      buffer += ", refs: " + JSON.stringify(refs)
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/string.js:
+    8  BaseExpression.extend(StringExpression, {
+    9    type: "string",
+   10:   toJavaScript: function () {
+   11      return "\"" + this.value.replace(/"/g, "\\\"") + "\"";
+   12    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/ternaryCondition.js:
+   10  BaseExpression.extend(TernaryConditionExpression, {
+   11    type: "ternaryCondition",
+   12:   toJavaScript: function () {
+   13      return this.condition.toJavaScript() + "?" + this.tExpression.toJavaScript() + ":" + this.fExpression.toJavaScript();
+   14    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/ast/textNode.js:
+   14  BaseExpression.extend(TextNodeExpression, {
+   15    type: "textNode",
+   16:   toJavaScript: function () {
+   17      return "text(\"" + this.value.replace(/["]/g, "\\\"") + "\")";
+   18    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/index.js:
+   11     */
+   12  
+   13:   parse: parse = function (html) {
+   14      return '"use strict";' + "module.exports = " + parser.parse(html).toJavaScript();
+   15    },
+   ..
+   18     */
+   19  
+   20:   compile: function (nameOrContent) {
+   21      var content;
+   22  
+
+/Users/craig/Developer/Public/paperclip.js/lib/parser/parser.js:
+  190          peg$c82 = function() { []; },
+  191          peg$c83 = function(param1, rest) {
+  192:               return [param1].concat(rest.map(function (v) {
+  193                  return v[1];
+  194                }));
+  ...
+  303          peg$c162 = { type: "literal", value: "<~", description: "\"<~\"" },
+  304          peg$c163 = function(bindingType, reference, path) {
+  305:               path = [reference].concat(path.map(function (p) { return p[1] }));
+  306                return new ReferenceExpression(path, bindingType);
+  307              },
+  ...
+ 3679        function attrValues (values) {
+ 3680  
+ 3681:         values = values.filter(function (v) {
+ 3682            return!/^[\n\t\r]+$/.test(v.value);
+ 3683          });
+
+/Users/craig/Developer/Public/paperclip.js/lib/register.js:
+    3  
+    4  
+    5: require.extensions[".pc"] = function (module, filename) {
+    6  
+    7    var paper, watching, compiled;
+    .
+   23    }
+   24  
+   25:   module.exports = function () {
+   26      compileOnce();
+   27      watch();
+
+/Users/craig/Developer/Public/paperclip.js/lib/runloop.js:
+    7  
+    8  if (process.browser) {
+    9:   var defaultTick = function (next) {
+   10      rAF(next);
+   11    }
+   12  } else {
+   13:   var defaultTick = function (next) {
+   14      next();
+   15    }
+   ..
+   34     */
+   35  
+   36:   deferOnce: function (context) {
+   37  
+   38      if (context.__running) return;
+   ..
+   48  
+   49      // run the animation frame, and callback all the animatable objects
+   50:     this.tick(function () {
+   51        self.runNow();
+   52        self._requestingFrame = false;
+   ..
+   57     */
+   58  
+   59:   runNow: function () {
+   60      if (!this._requestingFrame) return;
+   61      var queue = this._animationQueue;
+
+/Users/craig/Developer/Public/paperclip.js/lib/script/index.js:
+   12    return {
+   13      refs: refs,
+   14:     evaluate: function (view) {
+   15        return run.call(view);
+   16      },
+   17:     bind: function (view, listener) {
+   18  
+   19        var currentValue,
+   ..
+   32  
+   33        if (!refs.length) return {
+   34:         dispose: function () {},
+   35          trigger: now
+   36        };
+   ..
+   47          }
+   48  
+   49:         dispose = function () {
+   50            for (var i = bindings.length; i--;) bindings[i].dispose();
+   51          }
+   ..
+   54        return {
+   55          dispose: dispose,
+   56:         trigger: function () {
+   57            now();
+   58            return this;
+   ..
+   70  function bufferedScript (values, view) {
+   71  
+   72:   var scripts = values.filter(function (value) {
+   73      return typeof value !== "string";
+   74:   }).map(function (script) {
+   75      return script;
+   76    });
+   77  
+   78    function evaluate (view) {
+   79:     return values.map(function (script) {
+   80  
+   81        if (typeof script === "string") {
+   ..
+   90    return {
+   91      buffered: true,
+   92:     evaluate: function (view) { 
+   93        return evaluate(view); 
+   94      },
+   95:     bind: function (view, listener) {
+   96  
+   97        var bindings = [];
+   ..
+  116        return {
+  117          trigger: now,
+  118:         dispose: function ()  {
+  119            for (var i = bindings.length; i--;) bindings[i].dispose();
+  120          }
+  ...
+  129  function staticScript (value, view) {
+  130    return {
+  131:     bind: function (view, listener) {
+  132        return {
+  133:         trigger: function () {
+  134            listener(value);
+  135            return this;
+  136          },
+  137:         dispose: function () {
+  138  
+  139          }
+  ...
+  146   */
+  147  
+  148: module.exports = function (value) {
+  149  
+  150    if (typeof value !== "object") return staticScript(value);
+  151    if (value.length) {
+  152      if (value.length === 1) return boundScript(value[0].value);
+  153:     return bufferedScript(value.map(function (v) {
+  154        if (typeof v === "object") return v.value;
+  155        return v;
+
+/Users/craig/Developer/Public/paperclip.js/lib/section/fragment.js:
+   18     */
+   19  
+   20:   rootNode: function () {
+   21      return this.start.parentNode;
+   22    },
+   ..
+   25     */
+   26  
+   27:   createMarker: function () {
+   28      return new Marker(this.nodeFactory, utils.getNodePath(this.start), utils.getNodePath(this.end));
+   29    },
+   ..
+   32     */
+   33  
+   34:   clone: function () {
+   35      var clone = DocumentSection.prototype.clone.call(this);
+   36      return new FragmentSection(this.nodeFactory, clone.start, clone.end);
+   ..
+   55     */
+   56  
+   57:   getSection: function (rootNode) {
+   58  
+   59      var start = utils.getNodeByPath(rootNode, this.startPath),
+
+/Users/craig/Developer/Public/paperclip.js/lib/section/node.js:
+   19     */
+   20  
+   21:   rootNode: function () {
+   22      return this.node;
+   23    },
+   ..
+   26     */
+   27  
+   28:   createMarker: function () {
+   29      return new Marker(this.nodeFactory, utils.getNodePath(this.node));
+   30    },
+   ..
+   33     */
+   34  
+   35:   appendChild: function (child) {
+   36      this.node.appendChild(child);
+   37    },
+   ..
+   40     */
+   41  
+   42:   hide: function () {
+   43      if (this._repl || !this.node.parentNode) return;
+   44      var oldNode = this.node;
+   ..
+   52     */
+   53  
+   54:   show: function () {
+   55      if (this._repl && this._repl.parentNode) {
+   56        this._repl.parentNode.insertBefore(this.node, this._repl);
+   ..
+   63     */
+   64  
+   65:   removeAll: function () {
+   66  
+   67      // TODO - check node type for this
+   ..
+   72     */
+   73  
+   74:   render: function () {
+   75      return this.node;
+   76    },
+   ..
+   79     */
+   80  
+   81:   remove: function () {
+   82      if (this.node.parentNode) this.node.parentNode.removeChild(this.node);
+   83    },
+   ..
+   86     */
+   87  
+   88:   clone: function () {
+   89      return new NodeSection(this.nodeFactory, this.node.cloneNode(true));
+   90    }
+   ..
+  107     */
+  108  
+  109:   getSection: function (rootNode) {
+  110      var start = utils.getNodeByPath(rootNode, this.nodePath);
+  111      return new NodeSection(this.nodeFactory, start);
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/component.js:
+   18     */
+   19  
+   20:   initialize: function () {
+   21      this.attributes.on("change", this._onAttrsChange = _bind(this._onAttrsChange, this));
+   22    },
+   ..
+   25     */
+   26  
+   27:   bind: function () {
+   28      this._bindings = [];
+   29  
+   ..
+   47     */
+   48  
+   49:   unbind: function () {
+   50      if (this.childView) this.childView.unbind();
+   51    },
+   ..
+   54     */
+   55     
+   56:   _onAttrsChange: function (key, value) {
+   57      if (this.childView) this.childView.set(key, value);
+   58    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/index.js:
+   65     */
+   66  
+   67:   initialize: function () {
+   68      this.hydrators = [];
+   69  
+   ..
+   90     */
+   91  
+   92:   createComponentClass: function (contextClass) {
+   93      return TemplateComponent.extend({
+   94        template     : this,
+   ..
+  103     */
+  104  
+  105:   child: function (vnode, options) {
+  106      return new Template(vnode, extend(options, {}, this.options));
+  107    },
+  ...
+  112     */
+  113  
+  114:   view: function (context, options) {
+  115  
+  116      var clonedSection;
+  ...
+  145   */
+  146  
+  147: module.exports = function (source, options) {
+  148  
+  149    var script, tos = typeof source, options;
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/view/index.js:
+   45     */
+   46  
+   47:   setOptions: function (options) {
+   48      this.parent = options.parent;
+   49    },
+   ..
+   52     */
+   53  
+   54:   get: function (path) {
+   55      var v = this.accessor.get(this.context, path);
+   56      return v != null ? v : this.parent ? this.parent.get(path) : void 0;
+   ..
+   60     */
+   61  
+   62:   set: function (path, value) {
+   63      return this.accessor.set(this.context, path, value);
+   64    },
+   ..
+   67     */
+   68  
+   69:   reference: function (path, settable) {
+   70      return new Reference(this, path, settable);
+   71    },
+   ..
+   74     */
+   75  
+   76:   call: function (path, params) {
+   77      var has = this.accessor.get(this.context, path);
+   78      return has ? this.accessor.call(this.context, path, params) : this.parent ? this.parent.call(path, params) : void 0;
+   ..
+   82     */
+   83  
+   84:   setProperties: function (properties) {
+   85      for (var key in properties) this.set(key, properties[key]);
+   86    },
+   ..
+   89     */
+   90  
+   91:   watch: function (path, listener) {
+   92      return this.accessor.watchProperty(this.context, path, listener);
+   93    },
+   ..
+   96     */
+   97  
+   98:   watchEvent: function (object, event, listener) {
+   99      return this.accessor.watchEvent(object, event, listener);
+  100    },
+  ...
+  103     */
+  104  
+  105:   bind: function (context) {
+  106  
+  107      if (this.context) this.unbind();
+  ...
+  118     */
+  119  
+  120:   unbind: function () {
+  121      for (var i = this.bindings.length; i--;) {
+  122        this.bindings[i].unbind();
+  ...
+  127     */
+  128  
+  129:   render: function () {
+  130      if (!this.context) this.bind({});
+  131      this.transitions.enter();
+  ...
+  136     */
+  137  
+  138:   remove: function () {
+  139      this.section.remove();
+  140      return this;
+  ...
+  146     */
+  147  
+  148:   dispose: function () {
+  149      if (this.transitions.exit(this._dispose)) return;
+  150      this._dispose();
+  ...
+  155     */
+  156  
+  157:   _dispose: function () {
+  158      this.unbind();
+  159      this.section.remove();
+  ...
+  164     */
+  165  
+  166:   toString: function () {
+  167      var node = this.render();
+  168  
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/view/reference.js:
+   23     */
+   24  
+   25:   value: function (value) {
+   26      if (!arguments.length) return this.view.get(this.path);
+   27      if (this.settable) this.view.set(this.path, value);
+   ..
+   31     */
+   32     
+   33:   toString: function () {
+   34      return this.view.get(this.path);
+   35    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/view/transitions.js:
+   18     */
+   19  
+   20:   push: function (transition) {
+   21      if (transition.enter) this._enter.push(transition);
+   22      if (transition.exit) this._exit.push(transition);
+   ..
+   26     */
+   27  
+   28:   enter: function () {
+   29      if (!this._enter.length) return false;
+   30      for (var i = 0, n = this._enter.length; i < n; i++) {
+   ..
+   36     */
+   37  
+   38:   exit: function (complete) {
+   39      if (!this._exit.length) return false;
+   40      var self = this;
+   41:     process.nextTick(function () {
+   42:       async.each(self._exit, function (transition, next) {
+   43          transition.exit(next);
+   44        }, complete);
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/block/binding.js:
+   22     */
+   23  
+   24:   bind: function () {
+   25      var self = this;
+   26  
+   27      // TODO - needs to update on rAF
+   28:     this.binding = this.script.bind(this.view, function (value, oldValue) {
+   29        if (value === self.currentValue) return;
+   30        self.currentValue = value;
+   ..
+   39     */
+   40  
+   41:   didChange: function () {
+   42      this.view.runloop.deferOnce(this);
+   43    },
+   ..
+   46     */
+   47  
+   48:   update: function () {
+   49      var v = String(this.currentValue == null ? "" : this.currentValue);
+   50      if (this.nodeFactory.name !== "dom") {
+   ..
+   58     */
+   59     
+   60:   unbind: function () {
+   61      if (this.binding) {
+   62        this.binding.dispose();
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/block/hydrator.js:
+   20     */
+   21  
+   22:   initialize: function () {
+   23      this.nodePath = utils.getNodePath(this.node);
+   24    },
+   ..
+   27     */
+   28     
+   29:   hydrate: function (view) {
+   30      var clonedNode = utils.getNodeByPath(view.rootNode, this.nodePath);
+   31      view.bindings.push(new this.bindingClass(clonedNode, this.script, view));
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/block/index.js:
+   21     */
+   22  
+   23:   initialize: function (template) {
+   24      var node = template.nodeFactory.createTextNode("");
+   25      var bindingClass = this.script.refs.length ? Binding : Unbound;
+   ..
+   32   */
+   33  
+   34: module.exports.create = function (script) {
+   35    return new Block(script);
+   36  }
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/block/unbound.js:
+   20     */
+   21  
+   22:   bind: function () {
+   23      var self = this;
+   24      var value = this.script.evaluate(this.view);
+   ..
+   38     */
+   39     
+   40:   unbind: function () { }
+   41  });
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/comment/index.js:
+   16     */
+   17  
+   18:   initialize: function (template) {
+   19      return template.nodeFactory.createComment(this.value);
+   20    }
+   ..
+   24   */
+   25   
+   26: module.exports.create = function (value) {
+   27    return new Comment(value);
+   28  } 
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/element/attributeHydrator.js:
+   22     */
+   23  
+   24:   initialize: function () {
+   25      this.nodePath = utils.getNodePath(this.node);
+   26    },
+   ..
+   29     */
+   30     
+   31:   hydrate: function (view) {
+   32  
+   33      var attribute = new this.attrClass({
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/element/attributesBinding.js:
+   10  
+   11  module.exports = protoclass(AttributesBinding, {
+   12:   bind: function () {
+   13      this.bindings = [];
+   14      for (var k in this.rawAttributes) {
+   ..
+   21      }
+   22    },
+   23:   _bindAttr: function (k, v) {
+   24      var self = this;
+   25  
+   26      // TODO: remove now()
+   27:     this.bindings.push(v.bind(this.view, function (nv, ov) {
+   28        self.attributes.set(k, nv);
+   29      }).trigger());
+   30    },
+   31:   unbind: function () {
+   32      if (!this.bindings) return;
+   33      for (var i = this.bindings.length; i--;) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/element/componentHydrator.js:
+   24     */
+   25  
+   26:   initialize: function () {
+   27      this.sectionMarker = this.section.createMarker();
+   28    },
+   ..
+   31     */
+   32  
+   33:   hydrate: function (view) {
+   34      this.childTemplate.accessor = view.accessor;
+   35      
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/element/index.js:
+   27     */
+   28  
+   29:   initialize: function (template) {
+   30  
+   31      var componentClass = template.components[this.name];
+   ..
+   49        /*
+   50          return {
+   51:           createNode: function () {
+   52              return section.render();
+   53            }
+   ..
+  118  
+  119        return {
+  120:         createNode: function () {
+  121            
+  122            var element = document.createElement()
+  ...
+  143  
+  144  
+  145: module.exports.create = function (name, attributes, children) {
+  146  
+  147    var setter = new BindableObject({a:{}});
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/element/valueAttribute.js:
+    9     */
+   10     
+   11:   update: function () {
+   12      if (this.currentValue == null) return this.node.removeAttribute(this.key);
+   13      this.node.setAttribute(this.key, this.currentValue);
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/fragment/index.js:
+   16     */
+   17  
+   18:   initialize: function (template) {
+   19      if (this.children.length === 1) return this.children[0].initialize(template);
+   20:     return template.nodeFactory.createFragment(this.children.map(function (child) {
+   21        return child.initialize(template);
+   22      }));
+   ..
+   27   */
+   28  
+   29: module.exports.create = function (children) {
+   30    return new Fragment(children);
+   31  } 
+
+/Users/craig/Developer/Public/paperclip.js/lib/template/vnode/text/index.js:
+   16     */
+   17  
+   18:   initialize: function (template) {
+   19  
+   20      // blank text nodes are NOT allowed. Chrome has an issue rendering
+   ..
+   31   */
+   32  
+   33: module.exports.create = function (value) {
+   34    return new Text(value);
+   35  }
+
+/Users/craig/Developer/Public/paperclip.js/lib/transform.js:
+    4  module.exports = {
+    5    extension: "pc",
+    6:   transform: function (content, filepath) {
+    7      return parser.parse(content);
+    8    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/async.js:
+    4     */
+    5     
+    6:   each: function (items, each, complete) {
+    7      var total = items.length,
+    8      completed = 0;
+    9:     items.forEach(function (item) {
+   10        var called = false;
+   11:       each(item, function () {
+   12          if (called) throw new Error("callback called twice");
+   13          called = true;
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/bind.js:
+    1: module.exports = function (callback, context) {
+    2    // TODO - DO ME
+    3    // if (callback.bind) return callback.bind.apply(void 0, [context].concat(Array.prototype.slice.call(arguments, 2)));
+    4:   return function () {
+    5      return callback.apply(context, arguments);
+    6    }
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/extend.js:
+    1: module.exports = function (to) {
+    2    if (!to) to = {};
+    3    var froms = Array.prototype.slice.call(arguments, 1);
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/index.js:
+    2  
+    3  module.exports = {
+    4:   getNodePath: function (node) {
+    5      var path = [], p = node.parentNode, c = node;
+    6      while (p) {
+    .
+   14      return path;
+   15    },
+   16:   getNodeByPath: function (node, path) {
+   17      var c = node;
+   18      for (var i = 0, n = path.length; i < n; i++) {
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/singleNodeSection.js:
+    1: module.exports = function (node) {
+    2    return {
+    3      node: node,
+    4:     render: function () {
+    5        return node;
+    6      },
+    7:     remove: function () {
+    8        node.parentNode.removeChild(node);
+    9      },
+   10:     appendChild: function (childNode) {
+   11        node.appendChild(childNode);
+   12      }
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/syncBindableObjectChanges.js:
+    1: module.exports = function (to, from) {
+    2:   from.on("change", function (key, value) {
+    3      to[key] = value;
+    4    });
+
+/Users/craig/Developer/Public/paperclip.js/lib/utils/uniq.js:
+    1: module.exports = function (ary) {
+    2    var occurences = {}, clone = ary.concat();
+    3  
+
+244 matches across 76 files
