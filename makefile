@@ -37,3 +37,12 @@ test-coveralls:
 test-karma:
 	./node_modules/karma/bin/karma start
 
+
+lint: jshint jscs
+	
+jshint:
+	./node_modules/.bin/jshint ./lib;
+
+jscs:
+	./node_modules/.bin/jscs ./lib;
+
