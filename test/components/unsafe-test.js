@@ -84,6 +84,8 @@ describe(__filename + "#", function () {
     c2.content = t3;
     c3.name = "bob";
     t.accessor.apply();
+    t3.accessor.apply();
+    t2.accessor.apply();
     t.runloop.runNow();
     expect(t.toString()).to.be("hello my name is bob");
     c.content = t3;
