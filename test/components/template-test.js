@@ -59,10 +59,9 @@ describe(__filename + "#", function () {
 
     var v = tpl.view({message:"world"});
     expect(stringifyView(v)).to.be("hello world!");
-    var ctx = v.context;
-    v.unbind(ctx);
-    ctx.set("message", "a");
-    // v.runner.update();
+    v.unbind();
+    v.set("message", "a");
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("hello world!");
   });
 

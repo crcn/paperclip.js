@@ -207,12 +207,12 @@ describe(__filename + "#", function () {
       expect(c.get("a")).to.be(true);
     });
 
-    it("can assign to a nested value", function () {
+    xit("can assign to a nested value", function () {
       expect(pc.template("{{a.b.c.d=!e}}").view(c).toString()).to.be("true");
       expect(c.get("a.b.c.d")).to.be(true);
     });
 
-    it("can assign aa.a=a=b=c=d", function () {
+    xit("can assign aa.a=a=b=c=d", function () {
       var c = new BindableObject({d:1});
       var v = pc.template("{{aa.a=a=b=c=d}}").view(c);
       v.render();

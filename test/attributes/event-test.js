@@ -1,7 +1,8 @@
 var pc   = require("../.."),
 expect   = require("expect.js"),
 BindableObject = require("bindable-object"),
-nofactor = require("nofactor"),
+nodeFactory = require("nofactor/lib/dom"),
+defaultNodeFactory = require("nofactor"),
 paperclip = require("../../lib"),
 stringifyView = require("../utils/stringifyView"),
 template = paperclip.template;
@@ -9,12 +10,12 @@ template = paperclip.template;
 describe(__filename + "#", function () {
 
   before(function () {
-    paperclip.nodeFactory = nofactor.dom;
+    paperclip.nodeFactory = nodeFactory;
   });
 
 
   after(function () {
-    paperclip.nodeFactory = nofactor.default;
+    paperclip.nodeFactory = defaultNodeFactory;
   });
 
 

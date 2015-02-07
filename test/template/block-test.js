@@ -1,6 +1,5 @@
 var expect = require("expect.js"),
 pc         = require("../.."),
-BindableObject = require("bindable-object"),
 stringifyView = require("../utils/stringifyView");
 
 describe(__filename + "#", function () {
@@ -20,6 +19,7 @@ describe(__filename + "#", function () {
     var tpl = pc.template("{{a}}"),
     v = tpl.view({a:1});
     v.set("a", void 0);
+    v.accessor.apply();
     v.runloop.runNow();
     expect(stringifyView(v)).to.be('');
   });
@@ -56,20 +56,22 @@ describe(__filename + "#", function () {
 
   it("can be re-bound", function () {
 
-    var c = new BindableObject({
+    var c = {
       name: "a"
-    });
+    }
 
     var v = pc.template("hello {{name}}").view(c);
 
     expect(stringifyView(v)).to.be("hello a");
     v.unbind();
-    c.set("name", "b");
+    c.name = "b";
+    v.accessor.apply();
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("hello a");
     v.bind(c);
     expect(stringifyView(v)).to.be("hello b");
-    c.set("name", "c");
+    c.name = "c";
+    v.accessor.apply();
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("hello c");
   });

@@ -4,7 +4,7 @@ var protoclass = require("protoclass");
 /**
  */
 
-function BaseAccessor () {
+function BaseAccessor() {
 }
 
 /**
@@ -12,107 +12,43 @@ function BaseAccessor () {
 
 module.exports = protoclass(BaseAccessor, {
   __isScope: true,
-  accessible: function (context) {
+  accessible: function(context) {
     // override me
   },
-  castObject: function (context) {
+  castObject: function(context) {
     // override me
   },
-  castCollection: function (context) {
+  castCollection: function(context) {
     // override me
   },
-  normalizeObject: function (context) {
+  normalizeObject: function(context) {
     // override me
   },
-  normalizeCollection: function (context) {
+  normalizeCollection: function(context) {
     // override me
   },
-  get: function (context, path) {
+  get: function(context, path) {
     // override me
   },
-  set: function (context, path, value) {
+  set: function(context, path, value) {
     // override me
   },
-  call: function (context, ctxPath, fnPath, params) {
+  call: function(context, ctxPath, fnPath, params) {
     // override me
   },
-  watchProperty: function (context, path, listener) {
+  watchProperty: function(context, path, listener) {
     // override me
   },
-  watchEvent: function (context, operation, listener) {
+  watchEvent: function(context, operation, listener) {
     // override me
   },
-  dispose: function () {
+  dispose: function() {
     
   }
 });
 
 
-},{"protoclass":111}],2:[function(require,module,exports){
-var BaseAccessor   = require("./base"),
-BindableOject      = require("bindable-object"),
-BindableCollection = require("bindable-collection");
-
-function BindableObjectAccessor () {
-
-}
-
-module.exports = BaseAccessor.extend(BindableObjectAccessor, {
-  accessible: function (context) {
-    return context && context.__isBindableObject;
-  },
-  castObject: function (context) {
-    if (context.__isBindable) return context;
-    if (context.toString() === "[object Array]") return new BindableCollection(context);
-    return new BindableOject(context);
-  },
-  castCollection: function (context) {
-    if (context.__isBindable) return context;
-    if (context.toString() === "[object Array]") return new BindableCollection(context);
-    return new BindableOject(context);
-  },
-  get: function (context, path) {
-    return context.get(path);
-  },
-  set: function (context, path, value) {
-    return context.set(path, value);
-  },
-  call: function (context, path, params) {
-
-    var fnPath = path.pop(),
-    ctxPath    = path.length ? path : void 0;
-
-    // TODO - check for ctxPath undefined
-    var ctx = ctxPath ? context.get(ctxPath) : context;
-    if (!ctx) return;
-    var fn = ctx[fnPath];
-    if (fn) return fn.apply(ctx, params);
-  },
-  watchProperty: function (context, path, listener) {
-    return context.watch(path, listener);
-  },
-  watchEvent: function (context, event, value) {
-    if (event === "change" && context.__isBindableCollection) {
-      return context.on(event, value);
-    }
-    return {
-      dispose: function(){}
-    }
-  },
-
-  /**
-   * TODO - deserialize is improper. Maybe use something like
-   * normalize, toArray
-   */
-
-  normalizeCollection: function (collection) {
-    return collection.source || collection;
-  },
-  normalizeObject: function (object) {
-    return object.toJSON();
-  }
-});
-},{"./base":1,"bindable-collection":79,"bindable-object":80}],3:[function(require,module,exports){
+},{"protoclass":89}],2:[function(require,module,exports){
 var BaseAccessor = require("./base");
 
 module.exports = BaseAccessor.extend({
@@ -135,24 +71,26 @@ module.exports = BaseAccessor.extend({
   /**
    */
 
-  castObject: function (object) { return object; },
+  castObject: function(object) { return object; },
 
   /**
    */
 
-  call: function (context, path, params) {
+  call: function(object, path, params) {
 
     var fnName = path.pop(),
-    fnCtx      = path.length ? this.get(object, path) : context;
+    fnCtx      = path.length ? this.get(object, path) : object;
 
     if (!fnCtx) return;
-    return fnCtx[fnName].call(fnCtx, params);
+    return fnCtx[fnName].apply(fnCtx, params);
   },
 
   /**
    */
 
-  get: function (object, path) {
+  get: function(object, path) {
+
+    if (typeof path === "string") path = [path];
 
     var pt = path.join("."), getter;
     if (!(getter = this._getters[pt])) {
@@ -170,7 +108,10 @@ module.exports = BaseAccessor.extend({
   /**
    */
 
-  set: function (object, path, value) {
+  set: function(object, path, value) {
+
+    if (typeof path === "string") path = [path];
+
     var pt = path.join("."), setter;
     if (!(setter = this._setters[pt])) {
       setter = this._setters[pt] = new Function("value", "return this." +pt+"=value");
@@ -192,41 +133,77 @@ module.exports = BaseAccessor.extend({
   /**
    */
 
-  watchProperty: function (object, path, listener) {
-    
+  watchProperty: function(object, path, listener) {
     var self = this;
-    var watcher = {
-      context: object,
-      apply: function () {
-        var newValue = self.get(object, path);
-        if (newValue === this.currentValue && typeof newValue !== "function") return;
-        var oldValue = this.currentValue;
-        this.currentValue = newValue;
-        listener(newValue, this.currentValue);
-      }
-    };
-    
-    this._watchers.push(watcher);
-    
-    return {
-      trigger: function(){
-        watcher.apply();
-      },
-      dispose: function () {
-        var i = self._watchers.indexOf(watcher);
-        if (~i) self._watchers.splice(i, 1);
-      }
-    }
+
+    // assign a value to bypass the first trigger. 
+    var currentValue, firstCall = true;
+    return this._addWatcher(function () {
+      var newValue = self.get(object, path);
+      if (!firstCall && newValue === currentValue && typeof newValue !== "function") return;
+      firstCall = true;
+      var oldValue = currentValue;
+      currentValue = newValue;
+      listener(newValue, currentValue);
+    });
   },
 
   /**
    */
 
-  watchEvent: function (object, event, listener) {
-    // do nothing
-    return {
-      dispose: function(){}
+  _addWatcher: function (applyChanges) {
+
+    var self = this;
+
+    var watcher = {
+      apply: applyChanges,
+      trigger: applyChanges,
+      dispose: function () {
+        var i = self._watchers.indexOf(watcher);
+        if (~i) self._watchers.splice(i, 1);
+      }
+    };
+
+    this._watchers.push(watcher);
+
+    return watcher;
+  },
+
+  /**
+   */
+
+  watchEvent: function(object, event, listener) {
+
+    if (Object.prototype.toString.call(object) === "[object Array]" && event === "change") {
+      return this._watchArrayChangeEvent(object, listener);
     }
+
+    return {
+      dispose: function(){ }
+    };
+  },
+
+  /**
+   */
+
+  _watchArrayChangeEvent: function (object, listener) {
+    var copy = object.concat();
+    return this._addWatcher(function () {
+
+      var hasChanged = object.length !== copy.length;
+
+      if (!hasChanged) {
+        for (var i = 0, n = copy.length; i < n; i++) {
+          hasChanged = (copy[i] !== object[i]);
+          if(hasChanged) break;
+        }
+      }
+
+      if (hasChanged) {
+        copy = object.concat();
+        listener();
+      }
+    });
   },
 
   /**
@@ -234,34 +211,34 @@ module.exports = BaseAccessor.extend({
    * 
    */
 
-  normalizeCollection: function (collection) {
+  normalizeCollection: function(collection) {
     return collection;
   },
 
   /**
    */
 
-  normalizeObject: function (object) {
+  normalizeObject: function(object) {
     return object;
   },
 
   /**
    */
 
-  apply: function () {
+  apply: function() {
     for (var i = 0, n = this._watchers.length; i < n; i++) {
       this._watchers[i].apply();
     }
   }
 });
-},{"./base":1}],4:[function(require,module,exports){
+},{"./base":1}],3:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
  * attribute binding
  */
 
-function Attribute (options) {
+function Attribute(options) {
 
   this.view          = options.view;
   this.node          = options.node;
@@ -282,22 +259,22 @@ module.exports = protoclass(Attribute, {
   /**
    */
 
-  initialize: function () {
+  initialize: function() {
   },
 
   /**
    */
 
-  bind: function () {
+  bind: function() {
   },
 
   /**
    */
 
-  unbind: function () {
+  unbind: function() {
   }
-})
-},{"protoclass":111}],5:[function(require,module,exports){
+});
+},{"protoclass":89}],4:[function(require,module,exports){
 var ScriptAttribute = require("./script");
 
 /**
@@ -308,7 +285,7 @@ module.exports = ScriptAttribute.extend({
   /**
    */
 
-  update: function () {
+  update: function() {
 
 
     var classes = this.currentValue;
@@ -348,11 +325,11 @@ module.exports = ScriptAttribute.extend({
 });
 
 
-module.exports.test = function (value) {
+module.exports.test = function(value) {
   return typeof value === "object" && !value.buffered;
-}
+};
 
-},{"./script":15}],6:[function(require,module,exports){
+},{"./script":14}],5:[function(require,module,exports){
 var KeyCodedEventAttribute = require("./keyCodedEvent");
 
 /**
@@ -362,35 +339,35 @@ module.exports = KeyCodedEventAttribute.extend({
   keyCodes: [8]
 });
 
-},{"./keyCodedEvent":14}],7:[function(require,module,exports){
+},{"./keyCodedEvent":13}],6:[function(require,module,exports){
 var BaseAttribue = require("./base");
 
 /**
  */
 
 module.exports = BaseAttribue.extend({
-  initialize: function () {
+  initialize: function() {
     this.view.transitions.push(this);
   },
-  enter: function () {
+  enter: function() {
     var v = this.value;
     if (v.evaluate) {
       v = v.evaluate(this.view);
-      v(this.node, function(){})
+      v(this.node, function(){});
     }
   }
 });
-},{"./base":4}],8:[function(require,module,exports){
+},{"./base":3}],7:[function(require,module,exports){
 var BaseAttribue = require("./base");
 
 /**
  */
 
 module.exports = BaseAttribue.extend({
-  initialize: function () {
+  initialize: function() {
     this.view.transitions.push(this);
   },
-  exit: function (complete) {
+  exit: function(complete) {
     var v = this.value;
     if (v.evaluate) {
       v = v.evaluate(this.view);
@@ -399,14 +376,14 @@ module.exports = BaseAttribue.extend({
     complete();
   }
 });
-},{"./base":4}],9:[function(require,module,exports){
-ScriptAttribute = require("./script");
+},{"./base":3}],8:[function(require,module,exports){
+var ScriptAttribute = require("./script");
 
 /**
  */
 
 module.exports = ScriptAttribute.extend({
-  update: function () {
+  update: function() {
     if (this.currentValue) {
       this.node.removeAttribute("disabled");
     } else {
@@ -414,7 +391,7 @@ module.exports = ScriptAttribute.extend({
     }
   }
 });
-},{"./script":15}],10:[function(require,module,exports){
+},{"./script":14}],9:[function(require,module,exports){
 var KeyCodedEventAttribute = require("./keyCodedEvent");
 
 /**
@@ -424,7 +401,7 @@ module.exports = KeyCodedEventAttribute.extend({
   keyCodes: [13]
 });
 
-},{"./keyCodedEvent":14}],11:[function(require,module,exports){
+},{"./keyCodedEvent":13}],10:[function(require,module,exports){
 var KeyCodedEventAttribute = require("./keyCodedEvent");
 
 /**
@@ -434,7 +411,7 @@ module.exports = KeyCodedEventAttribute.extend({
   keyCodes: [27]
 });
 
-},{"./keyCodedEvent":14}],12:[function(require,module,exports){
+},{"./keyCodedEvent":13}],11:[function(require,module,exports){
 var protoclass = require("protoclass"),
 _bind          = require("../utils/bind"),
 Base           = require("./base");
@@ -442,7 +419,7 @@ Base           = require("./base");
 /**
  */
 
-function EventAttribute (options) {
+function EventAttribute(options) {
   this._onEvent = _bind(this._onEvent, this);
   Base.call(this, options);
 
@@ -458,7 +435,7 @@ Base.extend(EventAttribute, {
   /**
    */
 
-  initialize: function () {
+  initialize: function() {
     // convert onEvent to event
     var event = this.event || (this.event = this.key.toLowerCase().replace(/^on/, ""));
     this.node.addEventListener(event, this._onEvent);
@@ -467,7 +444,7 @@ Base.extend(EventAttribute, {
   /**
    */
 
-  bind: function () {
+  bind: function() {
     Base.prototype.bind.call(this);
     this.bound = true;
   },
@@ -475,7 +452,7 @@ Base.extend(EventAttribute, {
   /**
    */
 
-  _onEvent: function (event) {
+  _onEvent: function(event) {
     if (!this.bound) return;
     event.preventDefault();
     this.view.set("event", event);
@@ -485,14 +462,14 @@ Base.extend(EventAttribute, {
   /**
    */
    
-  unbind: function () {
+  unbind: function() {
     this.bound = false;
   }
 });
 
 module.exports = EventAttribute;
-},{"../utils/bind":73,"./base":4,"protoclass":111}],13:[function(require,module,exports){
-ScriptAttribute = require("./script");
+},{"../utils/bind":72,"./base":3,"protoclass":89}],12:[function(require,module,exports){
+var ScriptAttribute = require("./script");
 
 /**
  */
@@ -502,7 +479,7 @@ module.exports = ScriptAttribute.extend({
   /**
    */
    
-  update: function () {
+  update: function() {
     if (!this.currentValue) return;
     if (this.node.focus) {
       var self = this;
@@ -516,7 +493,7 @@ module.exports = ScriptAttribute.extend({
   }
 });
 
-},{"./script":15}],14:[function(require,module,exports){
+},{"./script":14}],13:[function(require,module,exports){
 var EventDataBinding = require("./event");
 
 /**
@@ -537,7 +514,7 @@ module.exports = EventDataBinding.extend({
   /**
    */
    
-  _onEvent: function (event) {
+  _onEvent: function(event) {
 
     if (!~this.keyCodes.indexOf(event.keyCode)) {
       return;
@@ -547,7 +524,7 @@ module.exports = EventDataBinding.extend({
   }
 });
 
-},{"./event":12}],15:[function(require,module,exports){
+},{"./event":11}],14:[function(require,module,exports){
 var BaseAttribute = require("./base");
 
 /**
@@ -558,12 +535,12 @@ module.exports = BaseAttribute.extend({
   /**
    */
 
-  bind: function () {
-    BaseAttribute.prototype.bind.call(this)
+  bind: function() {
+    BaseAttribute.prototype.bind.call(this);
     var self = this;
 
-    this._binding = this.value.bind(this.view, function (nv) {
-      if (nv == self.currentValue) return;
+    this._binding = this.value.bind(this.view, function(nv) {
+      if (nv === self.currentValue) return;
       self.currentValue = nv;
       self.view.runloop.deferOnce(self);
     });
@@ -575,18 +552,18 @@ module.exports = BaseAttribute.extend({
   /**
    */
 
-  update: function () {
+  update: function() {
 
   },
 
   /**
    */
 
-  unbind: function () {
+  unbind: function() {
     this._binding.dispose();
   }
 });
-},{"./base":4}],16:[function(require,module,exports){
+},{"./base":3}],15:[function(require,module,exports){
 var ScriptAttribute = require("./script");
 
 /**
@@ -598,27 +575,28 @@ module.exports = ScriptAttribute.extend({
   /**
    */
 
-  initialize: function () {
+  initialize: function() {
     this._displayStyle = this.node.style.display;
   },
 
   /**
    */
 
-  update: function () {
+  update: function() {
 
     var value = this.currentValue;
 
     var state = value ? this._displayStyle : "none";
 
     if (this.node.__isNode) {
-      this.node.style.setProperties({ display: state })
+      this.node.style.setProperties({ display: state });
     } else {
       this.node.style.display = state;
     }
   }
 });
-},{"./script":15}],17:[function(require,module,exports){
+
+},{"./script":14}],16:[function(require,module,exports){
 var ScriptAttribute = require("./script");
 
 /**
@@ -629,7 +607,7 @@ module.exports = ScriptAttribute.extend({
   /**
    */
    
-  bind: function () {
+  bind: function() {
     this._currentStyles = {};
     ScriptAttribute.prototype.bind.call(this);
   },
@@ -637,7 +615,7 @@ module.exports = ScriptAttribute.extend({
   /**
    */
 
-  update: function () {
+  update: function() {
 
     var styles = this.currentValue;
 
@@ -664,12 +642,12 @@ module.exports = ScriptAttribute.extend({
 /**
  */
 
-module.exports.test = function (value) {
+module.exports.test = function(value) {
   return typeof value === "object" && !value.buffered;
-}
+};
 
 
-},{"./script":15}],18:[function(require,module,exports){
+},{"./script":14}],17:[function(require,module,exports){
 (function (process){
 var BaseAttribute = require("./script"),
 _bind = require("../utils/bind");
@@ -677,7 +655,7 @@ _bind = require("../utils/bind");
 /**
  */
 
-function ValueAttribute (options) {
+function ValueAttribute(options) {
   this._onInput = _bind(this._onInput, this);
   BaseAttribute.call(this, options);
 }
@@ -695,9 +673,9 @@ BaseAttribute.extend(ValueAttribute, {
   /**
    */
 
-  initialize: function () {
+  initialize: function() {
     var self = this;
-    this._events.forEach(function (event) {
+    this._events.forEach(function(event) {
       self.node.addEventListener(event, self._onInput);
     });
   },
@@ -705,14 +683,14 @@ BaseAttribute.extend(ValueAttribute, {
   /**
    */
 
-  bind: function () {
+  bind: function() {
     BaseAttribute.prototype.bind.call(this);
 
     var self = this;
 
     // TODO - move this to another attribute helper (more optimal)
     if (/^(text|password|email)$/.test(this.node.getAttribute("type"))) {
-      this._autocompleteCheckInterval = setInterval(function () {
+      this._autocompleteCheckInterval = setInterval(function() {
         self._onInput();
       }, process.browser ? 500 : 10);
     }
@@ -721,7 +699,7 @@ BaseAttribute.extend(ValueAttribute, {
   /**
    */
 
-  unbind: function () {
+  unbind: function() {
     BaseAttribute.prototype.unbind.call(this);
     clearInterval(this._autocompleteCheckInterval);
 
@@ -731,9 +709,10 @@ BaseAttribute.extend(ValueAttribute, {
   /**
    */
 
-  update: function () {
+  update: function() {
 
     var model = this.model = this.currentValue;
+
 
     if (!model || !model.__isReference) {
       throw new Error("input value must be a reference. Make sure you have <~> defined");
@@ -744,13 +723,13 @@ BaseAttribute.extend(ValueAttribute, {
 
     var self = this;
 
-    this._modelBindings = this.view.watch(model.path, function (value) {
+    this._modelBindings = this.view.watch(model.path, function(value) {
       self._elementValue(self._parseValue(value));
     }).trigger();
   },
 
 
-  _parseValue: function (value) {
+  _parseValue: function(value) {
     if (value == null || value === "") return void 0;
     return value;
   },
@@ -759,14 +738,14 @@ BaseAttribute.extend(ValueAttribute, {
   /**
    */
 
-  test: function (attrValue) {
+  test: function(attrValue) {
     return attrValue.length === 1;
   },
 
   /**
    */
 
-  _onInput: function (event) {
+  _onInput: function(event) {
 
     clearInterval(this._autocompleteCheckInterval);
 
@@ -789,7 +768,7 @@ BaseAttribute.extend(ValueAttribute, {
   /**
    */
 
-  _elementValue: function (value) {
+  _elementValue: function(value) {
 
     var isCheckbox    = /checkbox/.test(this.node.type),
     isRadio           = /radio/.test(this.node.type),
@@ -836,25 +815,24 @@ BaseAttribute.extend(ValueAttribute, {
 /**
  */
 
-ValueAttribute.test = function (value) {
+ValueAttribute.test = function(value) {
   return typeof value === "object" && !value.buffered;
-}
+};
 
 /**
  */
 
 module.exports = ValueAttribute;
 
-
 }).call(this,require('_process'))
-},{"../utils/bind":73,"./script":15,"_process":86}],19:[function(require,module,exports){
+},{"../utils/bind":72,"./script":14,"_process":84}],18:[function(require,module,exports){
 var protoclass = require("protoclass"),
 _bind          = require("../utils/bind");
 
 /**
  */
 
-function Component (options) {
+function Component(options) {
   
   this.attributes    = options.attributes;
   this.childTemplate = options.childTemplate;
@@ -876,7 +854,7 @@ module.exports = protoclass(Component, {
   /**
    */
 
-  initialize: function () {
+  initialize: function() {
     // override me - this is where the DOM elements should be added to the
     // section
   },
@@ -884,7 +862,7 @@ module.exports = protoclass(Component, {
   /**
    */
 
-  bind: function () {
+  bind: function() {
     this._changeListener = this.attributes.on("change", _bind(this.didChange, this));
     this.update();
   },
@@ -892,36 +870,32 @@ module.exports = protoclass(Component, {
   /**
    */
 
-  didChange: function () {
+  didChange: function() {
     this.view.runloop.deferOnce(this);
   },
 
   /**
    */
 
-  unbind: function () {
+  unbind: function() {
     if (this._changeListener) this._changeListener.dispose();
   },
 
   /**
    */
 
-  update: function () {
+  update: function() {
     // apply DOM changes here
   }
 });
-},{"../utils/bind":73,"protoclass":111}],20:[function(require,module,exports){
-var BaseComponent  = require("./base"),
-BindableCollection = require("bindable-collection"),
-BindableObject     = require("bindable-object"),
-ScopedBindableObject = require("scoped-bindable-object");
-
+},{"../utils/bind":72,"protoclass":89}],19:[function(require,module,exports){
+var BaseComponent  = require("./base");
 /**
  * TODO: alloc property
  * TODO: chunk property
  */
 
-function RepeatComponent (options) {
+function RepeatComponent(options) {
   BaseComponent.call(this, options);
 }
 
@@ -935,7 +909,7 @@ module.exports = BaseComponent.extend({
 
   // TODO - unbind here
 
-  update: function () {
+  update: function() {
 
     if (this._updateListener) this._updateListener.dispose();
 
@@ -947,7 +921,7 @@ module.exports = BaseComponent.extend({
     if (!source) source = [];
 
     // note - this should get triggered on rAF
-    this._updateListener = accessor.watchEvent(source, "change", function () {
+    this._updateListener = accessor.watchEvent(source, "change", function() {
       self.view.runloop.deferOnce(self);
     });
 
@@ -962,7 +936,7 @@ module.exports = BaseComponent.extend({
       var properties, model = source[i];
 
       if (name) {
-        var properties = { index: i };
+        properties = { index: i };
         properties[name] = model;
       } else {
         properties = model;
@@ -978,7 +952,6 @@ module.exports = BaseComponent.extend({
       } else {
 
         // cannot be this - must be default scope
-        // new ScopedBindableObject(properties, this.scope)
         var child = this.childTemplate.view(properties, { 
           parent: this.view
         });
@@ -987,22 +960,19 @@ module.exports = BaseComponent.extend({
       }
     }
 
-
     // TODO - easeOutSync?
-    this._children.splice(i).forEach(function (child) {
+    this._children.splice(i).forEach(function(child) {
       child.dispose();
     });
   }
 });
-},{"./base":19,"bindable-collection":79,"bindable-object":80,"scoped-bindable-object":112}],21:[function(require,module,exports){
-var BaseComponent  = require("./base"),
-BindableCollection = require("bindable-collection"),
-BindableObject     = require("bindable-object");
+},{"./base":18}],20:[function(require,module,exports){
+var BaseComponent  = require("./base");
 
 /**
  */
 
-function ShowComponent (options) {
+function ShowComponent(options) {
   BaseComponent.call(this, options);
 }
 
@@ -1014,7 +984,7 @@ module.exports = BaseComponent.extend(ShowComponent, {
   /**
    */
 
-  update: function () {
+  update: function() {
 
     var show = !!this.attributes.when;
 
@@ -1032,21 +1002,19 @@ module.exports = BaseComponent.extend(ShowComponent, {
     }
   }
 });
-},{"./base":19,"bindable-collection":79,"bindable-object":80}],22:[function(require,module,exports){
-var BaseComponent  = require("./base"),
-BindableCollection = require("bindable-collection"),
-BindableObject     = require("bindable-object");
+},{"./base":18}],21:[function(require,module,exports){
+var BaseComponent  = require("./base");
 
 /**
  */
 
-function StackComponent (options) {
+function StackComponent(options) {
   BaseComponent.call(this, options);
 
   var self = this;
 
   // TODO - this is a bit fugly
-  this.childTemplates = this.childTemplate.vnode.children.map(function (vnode) {
+  this.childTemplates = this.childTemplate.vnode.children.map(function(vnode) {
     return self.childTemplate.child(vnode);
   });
 }
@@ -1059,7 +1027,7 @@ module.exports = BaseComponent.extend(StackComponent, {
   /**
    */
 
-  update: function () {
+  update: function() {
 
     var currentTpl, show = this.attributes.state;
 
@@ -1087,22 +1055,20 @@ module.exports = BaseComponent.extend(StackComponent, {
     this.section.appendChild(this.currentView.render());
   }
 });
-},{"./base":19,"bindable-collection":79,"bindable-object":80}],23:[function(require,module,exports){
+},{"./base":18}],22:[function(require,module,exports){
 var BaseComponent  = require("./base"),
-BindableCollection = require("bindable-collection"),
-BindableObject     = require("bindable-object"),
 _bind              = require("../utils/bind");
 
 /**
  */
 
-function SwitchComponent (options) {
+function SwitchComponent(options) {
   BaseComponent.call(this, options);
 
   var self = this;
 
   // TODO - this is a bit fugly
-  this.childTemplates = this.childTemplate.vnode.children.map(function (vnode) {
+  this.childTemplates = this.childTemplate.vnode.children.map(function(vnode) {
     return self.childTemplate.child(vnode);
   });
 }
@@ -1115,7 +1081,7 @@ module.exports = BaseComponent.extend(SwitchComponent, {
   /**
    */
 
-  bind: function () {
+  bind: function() {
     BaseComponent.prototype.bind.call(this);
 
     this.bindings = [];
@@ -1130,7 +1096,7 @@ module.exports = BaseComponent.extend(SwitchComponent, {
   /**
    */
 
-  unbind: function () {
+  unbind: function() {
     for (var i = this.bindings.length; i--;) {
       this.bindings[i].dispose();
     }
@@ -1139,10 +1105,12 @@ module.exports = BaseComponent.extend(SwitchComponent, {
   /**
    */
 
-  update: function () {
+  update: function() {
+
+    var child;
 
     for (var i = 0, n = this.childTemplates.length; i < n; i++) {
-      var child = this.childTemplates[i];
+      child = this.childTemplates[i];
       var when = child.vnode.attributes.when;
 
       if (!when || when.evaluate(this.view)) {
@@ -1177,15 +1145,13 @@ module.exports = BaseComponent.extend(SwitchComponent, {
     this.section.appendChild(this._view.render());
   }
 });
-},{"../utils/bind":73,"./base":19,"bindable-collection":79,"bindable-object":80}],24:[function(require,module,exports){
-var BaseComponent  = require("./base"),
-BindableCollection = require("bindable-collection"),
-BindableObject     = require("bindable-object");
+},{"../utils/bind":72,"./base":18}],23:[function(require,module,exports){
+var BaseComponent  = require("./base");
 
 /**
  */
 
-function EscapeComponent (options) {
+function EscapeComponent(options) {
   BaseComponent.call(this, options);
 }
 
@@ -1197,7 +1163,7 @@ module.exports = BaseComponent.extend(EscapeComponent, {
   /**
    */
 
-  update: function () {
+  update: function() {
 
     var value = this.attributes.html;
 
@@ -1239,11 +1205,11 @@ module.exports = BaseComponent.extend(EscapeComponent, {
     return this.section.replaceChildNodes(node);
   }
 });
-},{"./base":19,"bindable-collection":79,"bindable-object":80}],25:[function(require,module,exports){
+},{"./base":18}],24:[function(require,module,exports){
 (function (process){
 // var frameRunner = require("frame-runner");
 var Runloop            = require("./runloop"),
-BindableObjectAccessor = require("./accessors/bindableObject");
+POJOAccessor           = require("./accessors/pojo");
 
 module.exports = {
 
@@ -1252,7 +1218,7 @@ module.exports = {
    * to hook into paperclip.
    */
 
-  accessorClass: BindableObjectAccessor,
+  accessorClass: POJOAccessor,
 
   /**
    */
@@ -1325,29 +1291,29 @@ module.exports = {
    */
 
   modifiers: {
-    uppercase: function (value) {
+    uppercase: function(value) {
       return String(value).toUpperCase();
     },
-    lowercase: function (value) {
+    lowercase: function(value) {
       return String(value).toLowerCase();
     },
-    titlecase: function (value) {
+    titlecase: function(value) {
       var str;
 
       str = String(value);
       return str.substr(0, 1).toUpperCase() + str.substr(1);
     },
-    json: function (value, count, delimiter) {
+    json: function(value, count, delimiter) {
       return JSON.stringify.apply(JSON, arguments);
     },
-    isNaN: function (value) {
+    isNaN: function(value) {
       return isNaN(value);
     },
     round: Math.round
   }
 };
 }).call(this,require('_process'))
-},{"./accessors/bindableObject":2,"./accessors/pojo":3,"./attributes/class":5,"./attributes/delete":6,"./attributes/easeIn":7,"./attributes/easeOut":8,"./attributes/enable":9,"./attributes/enter":10,"./attributes/escape":11,"./attributes/event":12,"./attributes/focus":13,"./attributes/show":16,"./attributes/style":17,"./attributes/value":18,"./components/repeat":20,"./components/show":21,"./components/stack":22,"./components/switch":23,"./components/unsafe":24,"./runloop":51,"_process":86}],26:[function(require,module,exports){
+},{"./accessors/pojo":2,"./attributes/class":4,"./attributes/delete":5,"./attributes/easeIn":6,"./attributes/easeOut":7,"./attributes/enable":8,"./attributes/enter":9,"./attributes/escape":10,"./attributes/event":11,"./attributes/focus":12,"./attributes/show":15,"./attributes/style":16,"./attributes/value":17,"./components/repeat":19,"./components/show":20,"./components/stack":21,"./components/switch":22,"./components/unsafe":23,"./runloop":50,"_process":84}],25:[function(require,module,exports){
 (function (process){
 var nofactor    = require("nofactor"),
 parser          = require("./parser"),
@@ -1374,7 +1340,7 @@ var paperclip = module.exports = {
   /**
    */
 
-  nodeFactory: nofactor.default,
+  nodeFactory: nofactor,
 
   /**
    * web component base class
@@ -1420,20 +1386,20 @@ if (typeof window !== "undefined") {
   window.paperclip = paperclip;
 
   // no conflict mode. Release paperclip from global scope.
-  window.paperclip.noConflict = function () {
+  window.paperclip.noConflict = function() {
     delete window.paperclip;
     return paperclip;
-  }
+  };
 }
 }).call(this,require('_process'))
-},{"./attributes/base":4,"./components/base":19,"./defaults":25,"./parser":48,"./register":50,"./template":56,"_process":86,"nofactor":92}],27:[function(require,module,exports){
+},{"./attributes/base":3,"./components/base":18,"./defaults":24,"./parser":47,"./register":49,"./template":55,"_process":84,"nofactor":88}],26:[function(require,module,exports){
 var BaseExpression   = require("./base"),
 ParametersExpression = require("./parameters");
 
 /**
  */
 
-function ArrayExpression (expressions) {
+function ArrayExpression(expressions) {
   this.expressions = expressions || new ParametersExpression();
   BaseExpression.apply(this, arguments);
 }
@@ -1451,19 +1417,20 @@ BaseExpression.extend(ArrayExpression, {
   /**
    */
    
-  toJavaScript: function () {
+  toJavaScript: function() {
     return "[" + this.expressions.toJavaScript() + "]";
   }
 });
 
 module.exports = ArrayExpression;
-},{"./base":29,"./parameters":41}],28:[function(require,module,exports){
+
+},{"./base":28,"./parameters":40}],27:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 /**
  */
  
-function AssignmentExpression (reference, value) {
+function AssignmentExpression(reference, value) {
   BaseExpression.apply(this, arguments);
   this.reference = reference;
   this.value     = value;
@@ -1482,19 +1449,20 @@ BaseExpression.extend(AssignmentExpression, {
   /**
    */
    
-  toJavaScript: function () {
+  toJavaScript: function() {
 
-    var path = this.reference.path.map(function(p) { return "'"+p+"'"; }).join(', ');
+    var path = this.reference.path.map(function(p) { return "'"+p+"'"; }).join(", ");
 
     return "this.set([" + path + "], " + this.value.toJavaScript() + ")";
   }
 });
 
 module.exports = AssignmentExpression;
-},{"./base":29}],29:[function(require,module,exports){
+
+},{"./base":28}],28:[function(require,module,exports){
 var protoclass = require("protoclass");
 
-function BaseExpression () {
+function BaseExpression() {
   this._children = [];
   this._addChildren(Array.prototype.slice.call(arguments, 0));
 }
@@ -1509,7 +1477,7 @@ protoclass(BaseExpression, {
   /**
    */
 
-  _addChildren: function (children) {
+  _addChildren: function(children) {
     for (var i = children.length; i--;) {
       var child = children[i];
       if (!child) continue;
@@ -1526,10 +1494,10 @@ protoclass(BaseExpression, {
   /**
    */
 
-  filterAllChildren: function (filter) {
+  filterAllChildren: function(filter) {
     var filtered = [];
 
-    this.traverseChildren(function (child) {
+    this.traverseChildren(function(child) {
       if(filter(child)) {
         filtered.push(child);
       }
@@ -1541,7 +1509,7 @@ protoclass(BaseExpression, {
   /**
    */
 
-  traverseChildren: function (fn) {
+  traverseChildren: function(fn) {
 
     fn(this);
 
@@ -1553,10 +1521,11 @@ protoclass(BaseExpression, {
 });
 
 module.exports = BaseExpression;
-},{"protoclass":111}],30:[function(require,module,exports){
+
+},{"protoclass":89}],29:[function(require,module,exports){
 var BaseExpression = require("./base");
 
-function BlockBindingExpression (scripts, contentTemplate, childBlock) {
+function BlockBindingExpression(scripts, contentTemplate, childBlock) {
   this.scripts    = scripts;
   this.contentTemplate = contentTemplate;
   this.childBlock = childBlock;
@@ -1565,7 +1534,7 @@ function BlockBindingExpression (scripts, contentTemplate, childBlock) {
 
 BaseExpression.extend(BlockBindingExpression, {
   type: "blockBinding",
-  toJavaScript: function () {
+  toJavaScript: function() {
 
     var buffer = "block("+ this.scripts.value.value.toJavaScript() +", " + (this.contentTemplate ? this.contentTemplate.toJavaScript() : "void 0");
 
@@ -1578,10 +1547,11 @@ BaseExpression.extend(BlockBindingExpression, {
 });
 
 module.exports = BlockBindingExpression;
-},{"./base":29}],31:[function(require,module,exports){
+
+},{"./base":28}],30:[function(require,module,exports){
 var BaseExpression = require("./base");
 
-function CallExpression (reference, parameters) {
+function CallExpression(reference, parameters) {
   this.reference  = reference;
   this.parameters = parameters;
   BaseExpression.apply(this, arguments);
@@ -1589,60 +1559,63 @@ function CallExpression (reference, parameters) {
 
 BaseExpression.extend(CallExpression, {
   type: "call",
-  toJavaScript: function () {
+  toJavaScript: function() {
 
     var path = this.reference.path.concat();
 
     var buffer = "this.call(";
 
-    buffer += "[" + path.map(function (name) {
+    buffer += "[" + path.map(function(name) {
       return "\"" + name + "\"";
-    }).join(",") + "]"
+    }).join(",") + "]";
 
-    buffer += ", [" + this.parameters.toJavaScript() + "]"
+    buffer += ", [" + this.parameters.toJavaScript() + "]";
 
-    return buffer + ")"
+    return buffer + ")";
   }
 });
 
 module.exports = CallExpression;
-},{"./base":29}],32:[function(require,module,exports){
+
+},{"./base":28}],31:[function(require,module,exports){
 var BaseExpression = require("./base");
 
-function CommentNodeExpression (value) {
+function CommentNodeExpression(value) {
   this.value = value;
   BaseExpression.apply(this, arguments);
 }
 
 BaseExpression.extend(CommentNodeExpression, {
   type: "commentNode",
-  toJavaScript: function () {
-    return "comment(\"" + this.value.replace(/["]/g, "\\\"") + "\")"
+  toJavaScript: function() {
+    return "comment(\"" + this.value.replace(/["]/g, "\\\"") + "\")";
   }
 });
 
 module.exports = CommentNodeExpression;
-},{"./base":29}],33:[function(require,module,exports){
+
+},{"./base":28}],32:[function(require,module,exports){
 var BaseExpression = require("./base");
 
-function DoctypeExpression (value) {
+function DoctypeExpression(value) {
   this.value = value;
   BaseExpression.apply(this, arguments);
 }
 
 BaseExpression.extend(DoctypeExpression, {
   type: "doctype",
-  toJavaScript: function () {
-    return "text('<!DOCTYPE " + this.value + ">')"
+  toJavaScript: function() {
+    return "text('<!DOCTYPE " + this.value + ">')";
   }
 });
 
 module.exports = DoctypeExpression;
-},{"./base":29}],34:[function(require,module,exports){
+
+},{"./base":28}],33:[function(require,module,exports){
 var BaseExpression = require("./base"),
 ArrayExpression    = require("./array");
 
-function ElementNodeExpression (nodeName, attributes, childNodes) {
+function ElementNodeExpression(nodeName, attributes, childNodes) {
   this.name       = nodeName;
   this.attributes = attributes;
   this.childNodes = childNodes || new ArrayExpression();
@@ -1651,39 +1624,39 @@ function ElementNodeExpression (nodeName, attributes, childNodes) {
 
 BaseExpression.extend(ElementNodeExpression, {
   type: "elementNode",
-  toJavaScript: function () {
+  toJavaScript: function() {
     return "element(\"" + this.name + "\", " + this.attributes.toJavaScript() + ", " + this.childNodes.toJavaScript() + ")";
   }
 });
 
 module.exports = ElementNodeExpression;
-},{"./array":27,"./base":29}],35:[function(require,module,exports){
+},{"./array":26,"./base":28}],34:[function(require,module,exports){
 var BaseExpression = require("./base");
 
-function GroupExpression (expression) {
+function GroupExpression(expression) {
   this.expression = expression;
   BaseExpression.apply(this, arguments);
 }
 
 BaseExpression.extend(GroupExpression, {
   type: "call",
-  toJavaScript: function () {
+  toJavaScript: function() {
     return "(" + this.expression.toJavaScript() + ")";
   }
 });
 
 module.exports = GroupExpression;
-},{"./base":29}],36:[function(require,module,exports){
+},{"./base":28}],35:[function(require,module,exports){
 var BaseExpression = require("./base");
 
-function HashExpression (values) {
+function HashExpression(values) {
   this.value = values;
   BaseExpression.apply(this, arguments);
 }
 
 BaseExpression.extend(HashExpression, {
   type: "hash",
-  toJavaScript: function () {
+  toJavaScript: function() {
 
     var items = [];
 
@@ -1697,26 +1670,26 @@ BaseExpression.extend(HashExpression, {
 });
 
 module.exports = HashExpression;
-},{"./base":29}],37:[function(require,module,exports){
+},{"./base":28}],36:[function(require,module,exports){
 var BaseExpression = require("./base");
 
-function LiteralExpression (value) {
+function LiteralExpression(value) {
   this.value = value;
   BaseExpression.apply(this, arguments);
 }
 
 BaseExpression.extend(LiteralExpression, {
   type: "literal",
-  toJavaScript: function () {
+  toJavaScript: function() {
     return String(this.value);
   }
 });
 
 module.exports = LiteralExpression;
-},{"./base":29}],38:[function(require,module,exports){
+},{"./base":28}],37:[function(require,module,exports){
 var BaseExpression = require("./base");
 
-function ModifierExpression (name, parameters) {
+function ModifierExpression(name, parameters) {
   this.name  = name;
   this.parameters = parameters;
   BaseExpression.apply(this, arguments);
@@ -1724,9 +1697,9 @@ function ModifierExpression (name, parameters) {
 
 BaseExpression.extend(ModifierExpression, {
   type: "modifier",
-  toJavaScript: function () {
+  toJavaScript: function() {
 
-    var buffer = "modifiers." + this.name + ".call(this" 
+    var buffer = "modifiers." + this.name + ".call(this";
 
     var params = this.parameters.toJavaScript();
 
@@ -1734,17 +1707,17 @@ BaseExpression.extend(ModifierExpression, {
       buffer += ", " + params;
     }
     
-  
     return buffer + ")";
 
   }
 });
 
 module.exports = ModifierExpression;
-},{"./base":29}],39:[function(require,module,exports){
+
+},{"./base":28}],38:[function(require,module,exports){
 var BaseExpression = require("./base");
 
-function NotExpression (operator, expression) {
+function NotExpression(operator, expression) {
   this.operator = operator;
   this.expression = expression;
   BaseExpression.apply(this, arguments);
@@ -1752,16 +1725,16 @@ function NotExpression (operator, expression) {
 
 BaseExpression.extend(NotExpression, {
   type: "!",
-  toJavaScript: function () {
+  toJavaScript: function() {
     return this.operator + this.expression.toJavaScript();
   }
 });
 
 module.exports = NotExpression;
-},{"./base":29}],40:[function(require,module,exports){
+},{"./base":28}],39:[function(require,module,exports){
 var BaseExpression = require("./base");
 
-function OperatorExpression (operator, left, right) {
+function OperatorExpression(operator, left, right) {
   this.operator = operator;
   this.left     = left;
   this.right    = right;
@@ -1770,34 +1743,34 @@ function OperatorExpression (operator, left, right) {
 
 BaseExpression.extend(OperatorExpression, {
   type: "operator",
-  toJavaScript: function () {
+  toJavaScript: function() {
     return this.left.toJavaScript() + this.operator + this.right.toJavaScript();
   }
 });
 
 module.exports = OperatorExpression;
-},{"./base":29}],41:[function(require,module,exports){
+},{"./base":28}],40:[function(require,module,exports){
 var BaseExpression = require("./base");
 
-function ParametersExpression (expressions) {
+function ParametersExpression(expressions) {
   this.expressions = expressions || [];
   BaseExpression.apply(this, arguments);
 }
 
 BaseExpression.extend(ParametersExpression, {
   type: "parameters",
-  toJavaScript: function () {
-    return this.expressions.map(function (expression) {
+  toJavaScript: function() {
+    return this.expressions.map(function(expression) {
       return expression.toJavaScript();
     }).join(", ");
   }
 });
 
 module.exports = ParametersExpression;
-},{"./base":29}],42:[function(require,module,exports){
+},{"./base":28}],41:[function(require,module,exports){
 var BaseExpression = require("./base");
 
-function ReferenceExpression (path, bindingType) {
+function ReferenceExpression(path, bindingType) {
   this.path       = path;
   this.bindingType = bindingType;
   this.fast = bindingType === "^";
@@ -1808,7 +1781,7 @@ function ReferenceExpression (path, bindingType) {
 
 BaseExpression.extend(ReferenceExpression, {
   type: "reference",
-  toJavaScript: function () {
+  toJavaScript: function() {
 
     if (!this._isBoundTo)
     if (this.fast) {
@@ -1827,19 +1800,19 @@ BaseExpression.extend(ReferenceExpression, {
 });
 
 module.exports = ReferenceExpression;
-},{"./base":29}],43:[function(require,module,exports){
+},{"./base":28}],42:[function(require,module,exports){
 var BaseExpression = require("./base");
 
-function RootExpression (children) {
+function RootExpression(children) {
   this.childNodes = children;
   BaseExpression.apply(this, arguments);
 }
 
 BaseExpression.extend(RootExpression, {
   type: "rootNode",
-  toJavaScript: function () {
+  toJavaScript: function() {
 
-    var buffer = "(function (fragment, block, element, text, comment, parser, modifiers) { ";
+    var buffer = "(function(fragment, block, element, text, comment, parser, modifiers) { ";
 
     var element;
 
@@ -1855,71 +1828,73 @@ BaseExpression.extend(RootExpression, {
       element = this.childNodes.toJavaScript();
     }
 
-    return buffer + "return " + element + "; })"
+    return buffer + "return " + element + "; })";
   }
 });
 
 module.exports = RootExpression;
-},{"./base":29}],44:[function(require,module,exports){
+
+},{"./base":28}],43:[function(require,module,exports){
 var BaseExpression = require("./base"),
 uniq               = require("../../utils/uniq");
 
-function ScriptExpression (value) {
+function ScriptExpression(value) {
   this.value = value;
   BaseExpression.apply(this, arguments);
 }
 
 BaseExpression.extend(ScriptExpression, {
   type: "script",
-  toJavaScript: function () {
+  toJavaScript: function() {
 
-    var refs = this.filterAllChildren(function (child) {
+    var refs = this.filterAllChildren(function(child) {
       return child.type === "reference";
-    }).filter(function (reference) {
+    }).filter(function(reference) {
       return !reference.unbound && reference.path;
-    }).map(function (reference) {
+    }).map(function(reference) {
       return reference.path;
     });
 
     // remove duplicate references
-    refs = uniq(refs.map(function (ref) {
-      return ref.join(".")
-    })).map(function (ref) {
+    refs = uniq(refs.map(function(ref) {
+      return ref.join(".");
+    })).map(function(ref) {
       return ref.split(".");
     });
 
 
     var buffer = "{";
 
-    buffer += "run: function () { return " + this.value.toJavaScript() + "; }";
+    buffer += "run: function() { return " + this.value.toJavaScript() + "; }";
 
-    buffer += ", refs: " + JSON.stringify(refs)
+    buffer += ", refs: " + JSON.stringify(refs);
 
     return buffer + "}";
   }
 });
 
 module.exports = ScriptExpression;
-},{"../../utils/uniq":78,"./base":29}],45:[function(require,module,exports){
+
+},{"../../utils/uniq":77,"./base":28}],44:[function(require,module,exports){
 var BaseExpression = require("./base");
 
-function StringExpression (value) {
+function StringExpression(value) {
   this.value = value;
   BaseExpression.apply(this, arguments);
 }
 
 BaseExpression.extend(StringExpression, {
   type: "string",
-  toJavaScript: function () {
+  toJavaScript: function() {
     return "\"" + this.value.replace(/"/g, "\\\"") + "\"";
   }
 });
 
 module.exports = StringExpression;
-},{"./base":29}],46:[function(require,module,exports){
+},{"./base":28}],45:[function(require,module,exports){
 var BaseExpression = require("./base");
 
-function TernaryConditionExpression (condition, tExpression, fExpression) {
+function TernaryConditionExpression(condition, tExpression, fExpression) {
   this.condition = condition;
   this.tExpression = tExpression;
   this.fExpression = fExpression;
@@ -1928,17 +1903,17 @@ function TernaryConditionExpression (condition, tExpression, fExpression) {
 
 BaseExpression.extend(TernaryConditionExpression, {
   type: "ternaryCondition",
-  toJavaScript: function () {
+  toJavaScript: function() {
     return this.condition.toJavaScript() + "?" + this.tExpression.toJavaScript() + ":" + this.fExpression.toJavaScript();
   }
 });
 
 module.exports = TernaryConditionExpression;
-},{"./base":29}],47:[function(require,module,exports){
+},{"./base":28}],46:[function(require,module,exports){
 var BaseExpression = require("./base"),
 he                 = require("he");
 
-function TextNodeExpression (value) {
+function TextNodeExpression(value) {
   this.value = he.decode(value);
 
   // FIXME:
@@ -1950,14 +1925,14 @@ function TextNodeExpression (value) {
 
 BaseExpression.extend(TextNodeExpression, {
   type: "textNode",
-  toJavaScript: function () {
+  toJavaScript: function() {
     return "text(\"" + this.value.replace(/["]/g, "\\\"") + "\")";
   }
 });
 
 module.exports = TextNodeExpression;
 
-},{"./base":29,"he":88}],48:[function(require,module,exports){
+},{"./base":28,"he":86}],47:[function(require,module,exports){
 var parser = require("./parser");
 
 var scripts = {}, parse;
@@ -1970,27 +1945,18 @@ module.exports = {
   /**
    */
 
-  parse: parse = function (html) {
+  parse: parse = function(html) {
     return '"use strict";' + "module.exports = " + parser.parse(html).toJavaScript();
   },
 
   /**
    */
 
-  compile: function (nameOrContent) {
+  compile: function(nameOrContent) {
     var content;
-
 
     if (scripts[nameOrContent]) {
       return scripts[nameOrContent];
-    }
-
-    try {
-      if (typeof $ !== "undefined") {
-        content = $("script[data-template-name='" + nameOrContent + "']").html();
-      }
-    } catch (e) {
-
     }
 
     if (!content) {
@@ -1999,11 +1965,11 @@ module.exports = {
 
     var source = '"use strict";return '+parser.parse(content).toJavaScript();
 
-    return scripts[nameOrContent] = new Function(source)();
+    return (scripts[nameOrContent] = new Function(source)());
   }
-}
+};
 
-},{"./parser":49}],49:[function(require,module,exports){
+},{"./parser":48}],48:[function(require,module,exports){
 module.exports = (function() {
   /*
    * Generated by PEG.js 0.8.0.
@@ -2050,7 +2016,7 @@ module.exports = (function() {
         peg$c9 = function(info) {
               return new DocTypeExpression(info.join(""));
             },
-        peg$c10 = function(children) { return new ArrayExpression(new ParametersExpression(trimTextExpressions(children))) },
+        peg$c10 = function(children) { return new ArrayExpression(new ParametersExpression(trimTextExpressions(children))); },
         peg$c11 = "<!--",
         peg$c12 = { type: "literal", value: "<!--", description: "\"<!--\"" },
         peg$c13 = void 0,
@@ -2069,14 +2035,14 @@ module.exports = (function() {
             return new ElementNodeExpression(startTag.name, startTag.attributes, children);
           },
         peg$c19 = function(value) {
-              return new TextNodeExpression(trimNewLineChars(value.join("")))
+              return new TextNodeExpression(trimNewLineChars(value.join("")));
             },
         peg$c20 = "<",
         peg$c21 = { type: "literal", value: "<", description: "\"<\"" },
         peg$c22 = "{{",
         peg$c23 = { type: "literal", value: "{{", description: "\"{{\"" },
         peg$c24 = function() {
-              return text()
+              return text();
             },
         peg$c25 = function(info) { return info; },
         peg$c26 = "/>",
@@ -2118,7 +2084,7 @@ module.exports = (function() {
               return {
                 name: name,
                 value: new LiteralExpression(true)
-              }
+              };
             },
         peg$c40 = "\"",
         peg$c41 = { type: "literal", value: "\"", description: "\"\\\"\"" },
@@ -2154,7 +2120,7 @@ module.exports = (function() {
         peg$c65 = function(scriptName) {
               var hash = {};
               hash[scriptName] = new ScriptExpression(new LiteralExpression(true));
-              return new HashExpression(hash)
+              return new HashExpression(hash);
             },
         peg$c66 = function(scripts) {
               for (var k in scripts) {
@@ -2193,7 +2159,7 @@ module.exports = (function() {
             },
         peg$c80 = "()",
         peg$c81 = { type: "literal", value: "()", description: "\"()\"" },
-        peg$c82 = function() { []; },
+        peg$c82 = function() { return []; },
         peg$c83 = function(param1, rest) {
               return [param1].concat(rest.map(function (v) {
                 return v[1];
@@ -2251,7 +2217,7 @@ module.exports = (function() {
             return {
               name: name,
               parameters: parameters || []
-            }
+            };
           },
         peg$c122 = function(context) { return context; },
         peg$c123 = "!",
@@ -2278,7 +2244,7 @@ module.exports = (function() {
               return {
                 type: "boolean",
                 value: value === "true"
-              }
+              };
             },
         peg$c138 = "undefined",
         peg$c139 = { type: "literal", value: "undefined", description: "\"undefined\"" },
@@ -2308,7 +2274,7 @@ module.exports = (function() {
         peg$c161 = "<~",
         peg$c162 = { type: "literal", value: "<~", description: "\"<~\"" },
         peg$c163 = function(bindingType, reference, path) {
-              path = [reference].concat(path.map(function (p) { return p[1] }));
+              path = [reference].concat(path.map(function (p) { return p[1]; }));
               return new ReferenceExpression(path, bindingType);
             },
         peg$c164 = /^[a-zA-Z_$0-9]/,
@@ -2323,7 +2289,7 @@ module.exports = (function() {
             },
         peg$c172 = function(values) {
               var s = {};
-              for (i = 0, n = values.length; i < n; i++) {
+              for (var i = 0, n = values.length; i < n; i++) {
                 s[values[i].key] = values[i].value;
               }
               return s;
@@ -2337,7 +2303,7 @@ module.exports = (function() {
               return {
                 key: key,
                 value: value || new LiteralExpression(void 0)
-              }
+              };
             },
         peg$c175 = function(key) { return key.value; },
         peg$c176 = function(key) { return key; },
@@ -5640,6 +5606,8 @@ module.exports = (function() {
     }
 
 
+    /*jshint laxcomma:false */
+
       var DoctypeExpression        = require("./ast/doctype"),
       RootNodeExpression           = require("./ast/rootNode"),
       TextNodeExpression           = require("./ast/textNode"),
@@ -5662,27 +5630,27 @@ module.exports = (function() {
       ParametersExpression         = require("./ast/parameters"),
       GroupExpression              = require("./ast/group");
 
-      function trimWhitespace (ws) {
+      function trimWhitespace(ws) {
         return trimNewLineChars(ws).replace(/(^\s+)|(\s+$)/, "");
       }
 
-      function trimEnds (ws) {
+      function trimEnds(ws) {
         return ws.replace(/(^\s+)|(\s+$)/, "").replace(/[\r\n]/g,"\\n");
       }
 
-      function trimNewLineChars (ws) {
+      function trimNewLineChars(ws) {
         return ws.replace(/[ \r\n\t]+/g, " ");
       }
 
-      function trimmedText () {
+      function trimmedText() {
         return trimWhitespace(text());
       }
 
-      function singleOrArrayExpression (values) {
+      function singleOrArrayExpression(values) {
         return values.length === 1 ? values[0] : new ArrayExpression(new ParametersExpression(values));
       }
 
-      function attrValues (values) {
+      function attrValues(values) {
 
         values = values.filter(function (v) {
           return!/^[\n\t\r]+$/.test(v.value);
@@ -5692,9 +5660,9 @@ module.exports = (function() {
         return v;
       }
 
-      function trimTextExpressions (expressions) {
+      function trimTextExpressions(expressions) {
 
-        function _trim (exprs) {
+        function _trim(exprs) {
           var expr, i;
           for (i = exprs.length; i--;) {
             expr = exprs[i];
@@ -5730,38 +5698,39 @@ module.exports = (function() {
   };
 })();
 
-},{"./ast/array":27,"./ast/assignment":28,"./ast/blockBinding":30,"./ast/call":31,"./ast/commentNode":32,"./ast/doctype":33,"./ast/elementNode":34,"./ast/group":35,"./ast/hash":36,"./ast/literal":37,"./ast/modifier":38,"./ast/not":39,"./ast/operator":40,"./ast/parameters":41,"./ast/reference":42,"./ast/rootNode":43,"./ast/script":44,"./ast/string":45,"./ast/ternaryCondition":46,"./ast/textNode":47}],50:[function(require,module,exports){
+},{"./ast/array":26,"./ast/assignment":27,"./ast/blockBinding":29,"./ast/call":30,"./ast/commentNode":31,"./ast/doctype":32,"./ast/elementNode":33,"./ast/group":34,"./ast/hash":35,"./ast/literal":36,"./ast/modifier":37,"./ast/not":38,"./ast/operator":39,"./ast/parameters":40,"./ast/reference":41,"./ast/rootNode":42,"./ast/script":43,"./ast/string":44,"./ast/ternaryCondition":45,"./ast/textNode":46}],49:[function(require,module,exports){
 var parser = require("./parser"),
 fs         = require("fs");
 
 
-require.extensions[".pc"] = function (module, filename) {
+require.extensions[".pc"] = function(module, filename) {
 
   var paper, watching, compiled;
 
-  function compileOnce () {
+  function compileOnce() {
     if (compiled) return;
     compiled = true;
     compile();
   }
 
-  function compile () {
+  function compile() {
     paper = parser.compile(fs.readFileSync(filename, "utf8"));
   }
 
-  function watch () {
+  function watch() {
     if (watching) return;
     watching = true;
-    fs.watchFile(filename, { persistent: true, interval: 500 }, compile)
+    fs.watchFile(filename, { persistent: true, interval: 500 }, compile);
   }
 
-  module.exports = function () {
+  module.exports = function() {
     compileOnce();
     watch();
     return paper.apply(this, arguments);
-  }
+  };
 };
-},{"./parser":48,"fs":85}],51:[function(require,module,exports){
+
+},{"./parser":47,"fs":83}],50:[function(require,module,exports){
 (function (process,global){
 var protoclass = require("protoclass");
 
@@ -5771,19 +5740,19 @@ var rAF = (global.requestAnimationFrame     ||
           process.nextTick).bind(global);
 
 if (process.browser) {
-  var defaultTick = function (next) {
+  var defaultTick = function(next) {
     rAF(next);
-  }
+  };
 } else {
-  var defaultTick = function (next) {
+  var defaultTick = function(next) {
     next();
-  }
+  };
 }
 
 /**
  */
 
-function RunLoop (options) {
+function RunLoop(options) {
   this._animationQueue = [];
   this.tick = options.tick || defaultTick;
 }
@@ -5798,7 +5767,7 @@ protoclass(RunLoop, {
    * @param {Object} animatable object. Must have `update()`
    */
 
-  deferOnce: function (context) {
+  deferOnce: function(context) {
 
     if (context.__running) return;
     context.__running = true;
@@ -5812,7 +5781,7 @@ protoclass(RunLoop, {
     var self = this;
 
     // run the animation frame, and callback all the animatable objects
-    this.tick(function () {
+    this.tick(function() {
       self.runNow();
       self._requestingFrame = false;
     });
@@ -5821,7 +5790,7 @@ protoclass(RunLoop, {
   /**
    */
 
-  runNow: function () {
+  runNow: function() {
     if (!this._requestingFrame) return;
     var queue = this._animationQueue;
     this._animationQueue = [];
@@ -5844,7 +5813,7 @@ protoclass(RunLoop, {
 
 module.exports = RunLoop;
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":86,"protoclass":111}],52:[function(require,module,exports){
+},{"_process":84,"protoclass":89}],51:[function(require,module,exports){
 
 
 // TODO: refactor me
@@ -5852,21 +5821,21 @@ module.exports = RunLoop;
 /**
  */
 
-function boundScript (script) {
+function boundScript(script) {
 
   var run = script.run, refs = script.refs;
 
   return {
     refs: refs,
-    evaluate: function (view) {
+    evaluate: function(view) {
       return run.call(view);
     },
-    bind: function (view, listener) {
+    bind: function(view, listener) {
 
       var currentValue,
       locked = false;
 
-      function now () {
+      function now() {
         if (locked) return this;
         locked = true;
         var oldValue = currentValue;
@@ -5878,12 +5847,12 @@ function boundScript (script) {
       var dispose;
 
       if (!refs.length) return {
-        dispose: function () {},
+        dispose: function() {},
         trigger: now
       };
 
       if (refs.length === 1) {
-        var dispose = view.watch(refs[0], now).dispose;
+        dispose = view.watch(refs[0], now).dispose;
       } else {
 
         var bindings = [];
@@ -5893,37 +5862,37 @@ function boundScript (script) {
           bindings.push(view.watch(refs[i], now));
         }
 
-        dispose = function () {
+        dispose = function() {
           for (var i = bindings.length; i--;) bindings[i].dispose();
-        }
+        };
       }
 
       return {
         dispose: dispose,
-        trigger: function () {
+        trigger: function() {
           now();
           return this;
         }
-      }
+      };
     }
   };
-};
+}
 
 
 /**
  * scripts combined with strings. defined within attributes usually
  */
 
-function bufferedScript (values, view) {
+function bufferedScript(values, view) {
 
-  var scripts = values.filter(function (value) {
+  var scripts = values.filter(function(value) {
     return typeof value !== "string";
-  }).map(function (script) {
+  }).map(function(script) {
     return script;
   });
 
-  function evaluate (view) {
-    return values.map(function (script) {
+  function evaluate(view) {
+    return values.map(function(script) {
 
       if (typeof script === "string") {
         return script;
@@ -5936,14 +5905,14 @@ function bufferedScript (values, view) {
 
   return {
     buffered: true,
-    evaluate: function (view) { 
+    evaluate: function(view) { 
       return evaluate(view); 
     },
-    bind: function (view, listener) {
+    bind: function(view, listener) {
 
       var bindings = [];
 
-      function now () {
+      function now() {
         listener(evaluate(view));
         return this;
       }
@@ -5962,50 +5931,51 @@ function bufferedScript (values, view) {
 
       return {
         trigger: now,
-        dispose: function ()  {
+        dispose: function() {
           for (var i = bindings.length; i--;) bindings[i].dispose();
         }
-      }
+      };
     }
-  }
+  };
 }
 
 /**
  */
 
-function staticScript (value, view) {
+function staticScript(value, view) {
   return {
-    bind: function (view, listener) {
+    bind: function(view, listener) {
       return {
-        trigger: function () {
+        trigger: function() {
           listener(value);
           return this;
         },
-        dispose: function () {
+        dispose: function() {
 
         }
-      }
+      };
     }
-  }
+  };
 }
 
 /**
  */
 
-module.exports = function (value) {
+module.exports = function(value) {
 
   if (typeof value !== "object") return staticScript(value);
   if (value.length) {
     if (value.length === 1) return boundScript(value[0].value);
-    return bufferedScript(value.map(function (v) {
+    return bufferedScript(value.map(function(v) {
       if (typeof v === "object") return v.value;
       return v;
     }));
   } else {
     return boundScript(value);
   }
-}
-},{}],53:[function(require,module,exports){
+};
+
+},{}],52:[function(require,module,exports){
 var DocumentSection = require("document-section").Section,
 protoclass          = require("protoclass"),
 utils               = require("../utils");
@@ -6013,7 +5983,7 @@ utils               = require("../utils");
 /**
  */
 
-function FragmentSection (nodeFactory, start, end) {
+function FragmentSection(nodeFactory, start, end) {
   DocumentSection.call(this, nodeFactory, start, end);
 }
 
@@ -6025,21 +5995,21 @@ DocumentSection.extend(FragmentSection, {
   /**
    */
 
-  rootNode: function () {
+  rootNode: function() {
     return this.start.parentNode;
   },
 
   /**
    */
 
-  createMarker: function () {
+  createMarker: function() {
     return new Marker(this.nodeFactory, utils.getNodePath(this.start), utils.getNodePath(this.end));
   },
 
   /**
    */
 
-  clone: function () {
+  clone: function() {
     var clone = DocumentSection.prototype.clone.call(this);
     return new FragmentSection(this.nodeFactory, clone.start, clone.end);
   }
@@ -6048,7 +6018,7 @@ DocumentSection.extend(FragmentSection, {
 /**
  */
 
-function Marker (nodeFactory, startPath, endPath) {
+function Marker(nodeFactory, startPath, endPath) {
   this.nodeFactory = nodeFactory;
   this.startPath   = startPath;
   this.endPath     = endPath;
@@ -6062,7 +6032,7 @@ protoclass(Marker, {
   /**
    */
 
-  getSection: function (rootNode) {
+  getSection: function(rootNode) {
 
     var start = utils.getNodeByPath(rootNode, this.startPath),
     end       = utils.getNodeByPath(rootNode, this.endPath);
@@ -6074,7 +6044,7 @@ protoclass(Marker, {
 module.exports = FragmentSection;
 
 
-},{"../utils":75,"document-section":87,"protoclass":111}],54:[function(require,module,exports){
+},{"../utils":74,"document-section":85,"protoclass":89}],53:[function(require,module,exports){
 var DocumentSection = require("document-section").Section,
 protoclass          = require("protoclass"),
 utils               = require("../utils");
@@ -6082,7 +6052,7 @@ utils               = require("../utils");
 /**
  */
 
-function NodeSection (nodeFactory, node, _rnode) {
+function NodeSection(nodeFactory, node, _rnode) {
   this.node = node;
   this.nodeFactory = nodeFactory;
 }
@@ -6095,28 +6065,28 @@ protoclass(NodeSection, {
   /**
    */
 
-  rootNode: function () {
+  rootNode: function() {
     return this.node;
   },
 
   /**
    */
 
-  createMarker: function () {
+  createMarker: function() {
     return new Marker(this.nodeFactory, utils.getNodePath(this.node));
   },
 
   /**
    */
 
-  appendChild: function (child) {
+  appendChild: function(child) {
     this.node.appendChild(child);
   },
 
   /**
    */
 
-  hide: function () {
+  hide: function() {
     if (this._repl || !this.node.parentNode) return;
     var oldNode = this.node;
     this._repl = this.nodeFactory.createTextNode("");
@@ -6128,7 +6098,7 @@ protoclass(NodeSection, {
   /**
    */
 
-  show: function () {
+  show: function() {
     if (this._repl && this._repl.parentNode) {
       this._repl.parentNode.insertBefore(this.node, this._repl);
       this._repl.parentNode.removeChild(this._repl);
@@ -6139,7 +6109,7 @@ protoclass(NodeSection, {
   /**
    */
 
-  removeAll: function () {
+  removeAll: function() {
 
     // TODO - check node type for this
     this.node.innerHTML = "";
@@ -6148,21 +6118,21 @@ protoclass(NodeSection, {
   /**
    */
 
-  render: function () {
+  render: function() {
     return this.node;
   },
 
   /**
    */
 
-  remove: function () {
+  remove: function() {
     if (this.node.parentNode) this.node.parentNode.removeChild(this.node);
   },
 
   /**
    */
 
-  clone: function () {
+  clone: function() {
     return new NodeSection(this.nodeFactory, this.node.cloneNode(true));
   }
 });
@@ -6170,7 +6140,7 @@ protoclass(NodeSection, {
 /**
  */
 
-function Marker (nodeFactory, nodePath) {
+function Marker(nodeFactory, nodePath) {
   this.nodePath    = nodePath;
   this.nodeFactory = nodeFactory;
 }
@@ -6183,7 +6153,7 @@ protoclass(Marker, {
   /**
    */
 
-  getSection: function (rootNode) {
+  getSection: function(rootNode) {
     var start = utils.getNodeByPath(rootNode, this.nodePath);
     return new NodeSection(this.nodeFactory, start);
   }
@@ -6192,15 +6162,14 @@ protoclass(Marker, {
 module.exports = NodeSection;
 
 
-},{"../utils":75,"document-section":87,"protoclass":111}],55:[function(require,module,exports){
+},{"../utils":74,"document-section":85,"protoclass":89}],54:[function(require,module,exports){
 var BaseComponent    = require("../components/base"),
-_bind                = require("../utils/bind"),
-ScopedBindableObject = require("scoped-bindable-object");
+_bind                = require("../utils/bind");
 
 /**
  */
 
-function TemplateComponent (options) {
+function TemplateComponent(options) {
   BaseComponent.call(this, options);
 }
 
@@ -6212,14 +6181,14 @@ module.exports = BaseComponent.extend(TemplateComponent, {
   /**
    */
 
-  initialize: function () {
+  initialize: function() {
     this.attributes.on("change", this._onAttrsChange = _bind(this._onAttrsChange, this));
   },
 
   /**
    */
 
-  bind: function () {
+  bind: function() {
     this._bindings = [];
 
     this.childContext = new this.contextClass(this.attributes.toJSON());
@@ -6241,18 +6210,18 @@ module.exports = BaseComponent.extend(TemplateComponent, {
   /**
    */
 
-  unbind: function () {
+  unbind: function() {
     if (this.childView) this.childView.unbind();
   },
 
   /**
    */
    
-  _onAttrsChange: function (key, value) {
+  _onAttrsChange: function(key, value) {
     if (this.childView) this.childView.set(key, value);
   }
 });
-},{"../components/base":19,"../utils/bind":73,"scoped-bindable-object":112}],56:[function(require,module,exports){
+},{"../components/base":18,"../utils/bind":72}],55:[function(require,module,exports){
 (function (process){
 var protoclass    = require("protoclass"),
 nofactor          = require("nofactor"),
@@ -6278,20 +6247,20 @@ var isIE = false;
 // check for all versions of IE - IE doesn't properly support 
 // element.cloneNode(true), so we can't use that optimization.
 if (process.browser) {
-  isIE = !!(~navigator.userAgent.toLowerCase().indexOf("msie") || ~navigator.userAgent.toLowerCase().indexOf("trident"))
+  isIE = !!(~navigator.userAgent.toLowerCase().indexOf("msie") || ~navigator.userAgent.toLowerCase().indexOf("trident"));
 }
 
-function Template (script, options) {
+function Template(script, options) {
 
   this.options         = options;
-  this.accessor        = options.accessor    
+  this.accessor        = options.accessor; 
   this.useCloneNode    = !isIE;
   this.accessorClass   = options.accessorClass || defaults.accessorClass;
   this.components      = options.components    || defaults.components;
   this.modifiers       = options.modifiers     || defaults.modifiers;
   this.attributes      = options.attributes    || defaults.attributes;
   this.runloop         = options.runloop       || defaults.runloop;
-  this.nodeFactory     = options.nodeFactory   || nofactor.default;
+  this.nodeFactory     = options.nodeFactory   || nofactor;
 
   if (typeof script === "function") {
     this.vnode = script(
@@ -6302,7 +6271,7 @@ function Template (script, options) {
       CommentNode.create,
       void 0,
       this.modifiers
-    )
+    );
   } else {
     this.vnode = script;
   }
@@ -6320,7 +6289,7 @@ module.exports = protoclass(Template, {
   /**
    */
 
-  initialize: function () {
+  initialize: function() {
     this.hydrators = [];
 
     // first build the cloneable DOM node
@@ -6345,7 +6314,7 @@ module.exports = protoclass(Template, {
   /**
    */
 
-  createComponentClass: function (contextClass) {
+  createComponentClass: function(contextClass) {
     return TemplateComponent.extend({
       template     : this,
       contextClass : contextClass || Object
@@ -6358,7 +6327,7 @@ module.exports = protoclass(Template, {
    * context of a different template. Used in components.
    */
 
-  child: function (vnode, options) {
+  child: function(vnode, options) {
     return new Template(vnode, extend(options, {}, this.options));
   },
 
@@ -6367,7 +6336,7 @@ module.exports = protoclass(Template, {
    * from the template to a context (or view scope). 
    */
 
-  view: function (context, options) {
+  view: function(context, options) {
 
     var clonedSection;
 
@@ -6400,9 +6369,9 @@ module.exports = protoclass(Template, {
 /**
  */
 
-module.exports = function (source, options) {
+module.exports = function(source, options) {
 
-  var script, tos = typeof source, options;
+  var script, tos = typeof source;
 
   if (tos === "string") {
     script = parser.compile(source);
@@ -6418,11 +6387,11 @@ module.exports = function (source, options) {
    */
 
   return new Template(script, options || defaults);
-}
+};
+
 }).call(this,require('_process'))
-},{"../defaults":25,"../parser":48,"../section/fragment":53,"../section/node":54,"../utils/extend":74,"./component":55,"./view":57,"./vnode/block":62,"./vnode/comment":64,"./vnode/element":68,"./vnode/fragment":70,"./vnode/text":71,"_process":86,"nofactor":92,"protoclass":111}],57:[function(require,module,exports){
+},{"../defaults":24,"../parser":47,"../section/fragment":52,"../section/node":53,"../utils/extend":73,"./component":54,"./view":56,"./vnode/block":61,"./vnode/comment":63,"./vnode/element":67,"./vnode/fragment":69,"./vnode/text":70,"_process":84,"nofactor":88,"protoclass":89}],56:[function(require,module,exports){
 var protoclass = require("protoclass"),
-BindableObject = require("bindable-object"),
 Transitions    = require("./transitions"),
 _bind          = require("../../utils/bind"),
 _stringifyNode = require("../../utils/stringifyNode"),
@@ -6438,7 +6407,7 @@ Reference      = require("./reference");
  * to the section
  */
 
-function View (template, pool, section, hydrators) {
+function View(template, pool, section, hydrators) {
 
   // todo - check if node child length is > 1. If so, then
   // create a section, otherwise don't.
@@ -6467,14 +6436,14 @@ protoclass(View, {
   /**
    */
 
-  setOptions: function (options) {
+  setOptions: function(options) {
     this.parent = options.parent;
   },
 
   /**
    */
 
-  get: function (path) {
+  get: function(path) {
     var v = this.accessor.get(this.context, path);
     return v != null ? v : this.parent ? this.parent.get(path) : void 0;
   },
@@ -6482,21 +6451,21 @@ protoclass(View, {
   /**
    */
 
-  set: function (path, value) {
+  set: function(path, value) {
     return this.accessor.set(this.context, path, value);
   },
 
   /**
    */
 
-  reference: function (path, settable) {
+  reference: function(path, settable) {
     return new Reference(this, path, settable);
   },
 
   /**
    */
 
-  call: function (path, params) {
+  call: function(path, params) {
     var has = this.accessor.get(this.context, path);
     return has ? this.accessor.call(this.context, path, params) : this.parent ? this.parent.call(path, params) : void 0;
   },
@@ -6504,28 +6473,28 @@ protoclass(View, {
   /**
    */
 
-  setProperties: function (properties) {
+  setProperties: function(properties) {
     for (var key in properties) this.set(key, properties[key]);
   },
 
   /**
    */
 
-  watch: function (path, listener) {
+  watch: function(path, listener) {
     return this.accessor.watchProperty(this.context, path, listener);
   },
 
   /**
    */
 
-  watchEvent: function (object, event, listener) {
+  watchEvent: function(object, event, listener) {
     return this.accessor.watchEvent(object, event, listener);
   },
 
   /**
    */
 
-  bind: function (context) {
+  bind: function(context) {
 
     if (this.context) this.unbind();
     if (!context) context = {};
@@ -6540,7 +6509,7 @@ protoclass(View, {
   /**
    */
 
-  unbind: function () {
+  unbind: function() {
     for (var i = this.bindings.length; i--;) {
       this.bindings[i].unbind();
     }
@@ -6549,7 +6518,7 @@ protoclass(View, {
   /**ch
    */
 
-  render: function () {
+  render: function() {
     if (!this.context) this.bind({});
     this.transitions.enter();
     return this.section.render();
@@ -6558,7 +6527,7 @@ protoclass(View, {
   /**
    */
 
-  remove: function () {
+  remove: function() {
     this.section.remove();
     return this;
   },
@@ -6568,7 +6537,7 @@ protoclass(View, {
    * view cannot be used anymore.
    */
 
-  dispose: function () {
+  dispose: function() {
     if (this.transitions.exit(this._dispose)) return;
     this._dispose();
     return this;
@@ -6577,7 +6546,7 @@ protoclass(View, {
   /**
    */
 
-  _dispose: function () {
+  _dispose: function() {
     this.unbind();
     this.section.remove();
     this._pool.push(this);
@@ -6586,7 +6555,7 @@ protoclass(View, {
   /**
    */
 
-  toString: function () {
+  toString: function() {
     var node = this.render();
 
     if (this.template.nodeFactory.name === "dom") {
@@ -6600,13 +6569,13 @@ protoclass(View, {
 
 
 module.exports = View;
-},{"../../utils/bind":73,"../../utils/stringifyNode":77,"./reference":58,"./transitions":59,"bindable-object":80,"protoclass":111}],58:[function(require,module,exports){
+},{"../../utils/bind":72,"../../utils/stringifyNode":76,"./reference":57,"./transitions":58,"protoclass":89}],57:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
  */
 
-function Reference (view, path, settable) {
+function Reference(view, path, settable) {
   this.view     = view;
   this.path     = path;
   this.settable = settable !== false;
@@ -6625,7 +6594,7 @@ protoclass(Reference, {
   /**
    */
 
-  value: function (value) {
+  value: function(value) {
     if (!arguments.length) return this.view.get(this.path);
     if (this.settable) this.view.set(this.path, value);
   },
@@ -6633,7 +6602,7 @@ protoclass(Reference, {
   /**
    */
    
-  toString: function () {
+  toString: function() {
     return this.view.get(this.path);
   }
 });
@@ -6641,7 +6610,7 @@ protoclass(Reference, {
 
 module.exports = Reference;
 
-},{"protoclass":111}],59:[function(require,module,exports){
+},{"protoclass":89}],58:[function(require,module,exports){
 (function (process){
 var protoclass = require("protoclass"),
 async          = require("../../utils/async");
@@ -6649,7 +6618,7 @@ async          = require("../../utils/async");
 /**
  */
 
-function Transitions () {
+function Transitions() {
   this._enter = [];
   this._exit  = [];
 }
@@ -6662,7 +6631,7 @@ module.exports = protoclass(Transitions, {
   /**
    */
 
-  push: function (transition) {
+  push: function(transition) {
     if (transition.enter) this._enter.push(transition);
     if (transition.exit) this._exit.push(transition);
   },
@@ -6670,7 +6639,7 @@ module.exports = protoclass(Transitions, {
   /**
    */
 
-  enter: function () {
+  enter: function() {
     if (!this._enter.length) return false;
     for (var i = 0, n = this._enter.length; i < n; i++) {
       this._enter[i].enter();
@@ -6680,11 +6649,11 @@ module.exports = protoclass(Transitions, {
   /**
    */
 
-  exit: function (complete) {
+  exit: function(complete) {
     if (!this._exit.length) return false;
     var self = this;
-    process.nextTick(function () {
-      async.each(self._exit, function (transition, next) {
+    process.nextTick(function() {
+      async.each(self._exit, function(transition, next) {
         transition.exit(next);
       }, complete);
     });
@@ -6693,7 +6662,7 @@ module.exports = protoclass(Transitions, {
   }
 });
 }).call(this,require('_process'))
-},{"../../utils/async":72,"_process":86,"protoclass":111}],60:[function(require,module,exports){
+},{"../../utils/async":71,"_process":84,"protoclass":89}],59:[function(require,module,exports){
 var protoclass = require("protoclass"),
 utils          = require("../../../utils"),
 _bind          = require("../../../utils/bind");
@@ -6701,7 +6670,7 @@ _bind          = require("../../../utils/bind");
 /**
  */
 
-function BlockBinding (node, script, view) {
+function BlockBinding(node, script, view) {
   this.view   = view;
   this.nodeFactory = view.template.nodeFactory;
   this.script = script;
@@ -6717,11 +6686,11 @@ module.exports = protoclass(BlockBinding, {
   /**
    */
 
-  bind: function () {
+  bind: function() {
     var self = this;
 
     // TODO - needs to update on rAF
-    this.binding = this.script.bind(this.view, function (value, oldValue) {
+    this.binding = this.script.bind(this.view, function(value, oldValue) {
       if (value === self.currentValue) return;
       self.currentValue = value;
       self.didChange();
@@ -6734,14 +6703,14 @@ module.exports = protoclass(BlockBinding, {
   /**
    */
 
-  didChange: function () {
+  didChange: function() {
     this.view.runloop.deferOnce(this);
   },
 
   /**
    */
 
-  update: function () {
+  update: function() {
     var v = String(this.currentValue == null ? "" : this.currentValue);
     if (this.nodeFactory.name !== "dom") {
       this.node.replaceText(v, true);
@@ -6753,14 +6722,14 @@ module.exports = protoclass(BlockBinding, {
   /**
    */
    
-  unbind: function () {
+  unbind: function() {
     if (this.binding) {
       this.binding.dispose();
       this.binding = void 0;
     }
   }
 });
-},{"../../../utils":75,"../../../utils/bind":73,"protoclass":111}],61:[function(require,module,exports){
+},{"../../../utils":74,"../../../utils/bind":72,"protoclass":89}],60:[function(require,module,exports){
 var protoclass = require("protoclass"),
 utils          = require("../../../utils"),
 Binding        = require("./binding");
@@ -6768,7 +6737,7 @@ Binding        = require("./binding");
 /**
  */
 
-function BlockHydrator (node, script, bindingClass) {
+function BlockHydrator(node, script, bindingClass) {
   this.node   = node;
   this.script = script;
   this.bindingClass = bindingClass;
@@ -6782,19 +6751,19 @@ module.exports = protoclass(BlockHydrator, {
   /**
    */
 
-  initialize: function () {
+  initialize: function() {
     this.nodePath = utils.getNodePath(this.node);
   },
 
   /**
    */
    
-  hydrate: function (view) {
+  hydrate: function(view) {
     var clonedNode = utils.getNodeByPath(view.rootNode, this.nodePath);
     view.bindings.push(new this.bindingClass(clonedNode, this.script, view));
   }
 });
-},{"../../../utils":75,"./binding":60,"protoclass":111}],62:[function(require,module,exports){
+},{"../../../utils":74,"./binding":59,"protoclass":89}],61:[function(require,module,exports){
 var protoclass = require("protoclass"),
 utils          = require("../../../utils"),
 script         = require("../../../script"),
@@ -6805,7 +6774,7 @@ Unbound        = require("./unbound");
 /**
  */
 
-function Block (scriptSource) {
+function Block(scriptSource) {
   this.script  = script(scriptSource);
 }
 
@@ -6817,7 +6786,7 @@ module.exports = protoclass(Block, {
   /**
    */
 
-  initialize: function (template) {
+  initialize: function(template) {
     var node = template.nodeFactory.createTextNode("");
     var bindingClass = this.script.refs.length ? Binding : Unbound;
     template.hydrators.push(new Hydrator(node, this.script, bindingClass));
@@ -6828,17 +6797,18 @@ module.exports = protoclass(Block, {
 /**
  */
 
-module.exports.create = function (script) {
+module.exports.create = function(script) {
   return new Block(script);
-}
-},{"../../../script":52,"../../../utils":75,"./binding":60,"./hydrator":61,"./unbound":63,"protoclass":111}],63:[function(require,module,exports){
+};
+
+},{"../../../script":51,"../../../utils":74,"./binding":59,"./hydrator":60,"./unbound":62,"protoclass":89}],62:[function(require,module,exports){
 var protoclass = require("protoclass"),
 utils          = require("../../../utils");
 
 /**
  */
 
-function UnboundBlockBinding (node, script, view) {
+function UnboundBlockBinding(node, script, view) {
   this.view   = view;
   this.nodeFactory = view.template.nodeFactory;
   this.script = script;
@@ -6853,7 +6823,7 @@ module.exports = protoclass(UnboundBlockBinding, {
   /**
    */
 
-  bind: function () {
+  bind: function() {
     var self = this;
     var value = this.script.evaluate(this.view);
     if (this.value === value) return;
@@ -6871,15 +6841,15 @@ module.exports = protoclass(UnboundBlockBinding, {
   /**
    */
    
-  unbind: function () { }
+  unbind: function() { }
 });
-},{"../../../utils":75,"protoclass":111}],64:[function(require,module,exports){
-var protoclass = require("protoclass")
+},{"../../../utils":74,"protoclass":89}],63:[function(require,module,exports){
+var protoclass = require("protoclass");
 
 /**
  */
 
-function Comment (value) {
+function Comment(value) {
   this.value    = value;
 }
 
@@ -6891,7 +6861,7 @@ module.exports = protoclass(Comment, {
   /**
    */
 
-  initialize: function (template) {
+  initialize: function(template) {
     return template.nodeFactory.createComment(this.value);
   }
 });
@@ -6899,19 +6869,19 @@ module.exports = protoclass(Comment, {
 /**
  */
  
-module.exports.create = function (value) {
+module.exports.create = function(value) {
   return new Comment(value);
-} 
-},{"protoclass":111}],65:[function(require,module,exports){
+};
+
+},{"protoclass":89}],64:[function(require,module,exports){
 var protoclass        = require("protoclass"),
 utils                 = require("../../../utils"),
-BindableObject        = require("bindable-object"),
 AttributesBinding     = require("./attributesBinding");
 
 /**
  */
 
-function AttributeHydrator (attrClass, key, value, node) {
+function AttributeHydrator(attrClass, key, value, node) {
   this.node      = node;
   this.key       = key;
   this.value     = value;
@@ -6926,14 +6896,14 @@ module.exports = protoclass(AttributeHydrator, {
   /**
    */
 
-  initialize: function () {
+  initialize: function() {
     this.nodePath = utils.getNodePath(this.node);
   },
 
   /**
    */
    
-  hydrate: function (view) {
+  hydrate: function(view) {
 
     var attribute = new this.attrClass({
 
@@ -6949,11 +6919,11 @@ module.exports = protoclass(AttributeHydrator, {
     view.bindings.push(attribute);
   }
 });
-},{"../../../utils":75,"./attributesBinding":66,"bindable-object":80,"protoclass":111}],66:[function(require,module,exports){
+},{"../../../utils":74,"./attributesBinding":65,"protoclass":89}],65:[function(require,module,exports){
 var protoclass = require("protoclass"),
 utils          = require("../../../utils");
 
-function AttributesBinding (attributes, rawAttributes, component, view) {
+function AttributesBinding(attributes, rawAttributes, component, view) {
   this.attributes    = attributes;
   this.rawAttributes = rawAttributes;
   this.component     = component;
@@ -6961,7 +6931,7 @@ function AttributesBinding (attributes, rawAttributes, component, view) {
 }
 
 module.exports = protoclass(AttributesBinding, {
-  bind: function () {
+  bind: function() {
     this.bindings = [];
     for (var k in this.rawAttributes) {
       var v = this.rawAttributes[k];
@@ -6972,15 +6942,15 @@ module.exports = protoclass(AttributesBinding, {
       }
     }
   },
-  _bindAttr: function (k, v) {
+  _bindAttr: function(k, v) {
     var self = this;
 
     // TODO: remove now()
-    this.bindings.push(v.bind(this.view, function (nv, ov) {
+    this.bindings.push(v.bind(this.view, function(nv, ov) {
       self.attributes.set(k, nv);
     }).trigger());
   },
-  unbind: function () {
+  unbind: function() {
     if (!this.bindings) return;
     for (var i = this.bindings.length; i--;) {
       this.bindings[i].dispose();
@@ -6988,7 +6958,7 @@ module.exports = protoclass(AttributesBinding, {
     this.bindings = [];
   }
 });
-},{"../../../utils":75,"protoclass":111}],67:[function(require,module,exports){
+},{"../../../utils":74,"protoclass":89}],66:[function(require,module,exports){
 var protoclass        = require("protoclass"),
 utils                 = require("../../../utils"),
 BindableObject        = require("bindable-object"),
@@ -6997,7 +6967,7 @@ AttributesBinding     = require("./attributesBinding");
 /**
  */
 
-function ComponentHydrator (name, attributes, childTemplate, section, componentClass) {
+function ComponentHydrator(name, attributes, childTemplate, section, componentClass) {
   this.name           = name;
   this.attributes     = attributes;
   this.childTemplate  = childTemplate;
@@ -7014,14 +6984,14 @@ module.exports = protoclass(ComponentHydrator, {
   /**
    */
 
-  initialize: function () {
+  initialize: function() {
     this.sectionMarker = this.section.createMarker();
   },
 
   /**
    */
 
-  hydrate: function (view) {
+  hydrate: function(view) {
     this.childTemplate.accessor = view.accessor;
     
     var clonedSection = this.sectionMarker.getSection(view.rootNode);
@@ -7043,7 +7013,7 @@ module.exports = protoclass(ComponentHydrator, {
     if (component.bind) view.bindings.push(component);
   }
 });
-},{"../../../utils":75,"./attributesBinding":66,"bindable-object":80,"protoclass":111}],68:[function(require,module,exports){
+},{"../../../utils":74,"./attributesBinding":65,"bindable-object":78,"protoclass":89}],67:[function(require,module,exports){
 var protoclass        = require("protoclass"),
 FragmentSection       = require("../../../section/fragment"),
 NodeSection           = require("../../../section/node"),
@@ -7058,7 +7028,7 @@ ValueAttribute        = require("./valueAttribute");
 /**
  */
 
-function Element (name, attributes, children) {
+function Element(name, attributes, children) {
   this.name       = name;
   this.attributes = attributes;
   this.children   = children;
@@ -7072,7 +7042,7 @@ module.exports = protoclass(Element, {
   /**
    */
 
-  initialize: function (template) {
+  initialize: function(template) {
 
     var componentClass = template.components[this.name];
 
@@ -7094,7 +7064,7 @@ module.exports = protoclass(Element, {
 
       /*
         return {
-          createNode: function () {
+          createNode: function() {
             return section.render();
           }
         }
@@ -7163,7 +7133,7 @@ module.exports = protoclass(Element, {
       TODO: throw node creation in another object
 
       return {
-        createNode: function () {
+        createNode: function() {
           
           var element = document.createElement()
           // no component class with the attrs? append the children
@@ -7175,7 +7145,7 @@ module.exports = protoclass(Element, {
     */
 
 
-    for (var k in vanillaAttrs) {
+    for (k in vanillaAttrs) {
       element.setAttribute(k, vanillaAttrs[k]);
     }
 
@@ -7188,7 +7158,7 @@ module.exports = protoclass(Element, {
 });
 
 
-module.exports.create = function (name, attributes, children) {
+module.exports.create = function(name, attributes, children) {
 
   var setter = new BindableObject({a:{}});
 
@@ -7209,8 +7179,9 @@ module.exports.create = function (name, attributes, children) {
 
   // TODO - check for registered components, 
   return new Element(name, setter.a, new Fragment(children));
-} 
-},{"../../../script":52,"../../../section/fragment":53,"../../../section/node":54,"../../../utils":75,"../fragment":70,"./attributeHydrator":65,"./componentHydrator":67,"./valueAttribute":69,"bindable-object":80,"protoclass":111}],69:[function(require,module,exports){
+};
+
+},{"../../../script":51,"../../../section/fragment":52,"../../../section/node":53,"../../../utils":74,"../fragment":69,"./attributeHydrator":64,"./componentHydrator":66,"./valueAttribute":68,"bindable-object":78,"protoclass":89}],68:[function(require,module,exports){
 var ScriptAttribute = require("../../../attributes/script");
 
 /**
@@ -7221,18 +7192,19 @@ module.exports = ScriptAttribute.extend({
   /**
    */
    
-  update: function () {
+  update: function() {
     if (this.currentValue == null) return this.node.removeAttribute(this.key);
     this.node.setAttribute(this.key, this.currentValue);
   }
 });
-},{"../../../attributes/script":15}],70:[function(require,module,exports){
-var protoclass = require("protoclass")
+
+},{"../../../attributes/script":14}],69:[function(require,module,exports){
+var protoclass = require("protoclass");
 
 /**
  */
 
-function Fragment (children) {
+function Fragment(children) {
   this.children = children;
 }
 
@@ -7244,9 +7216,9 @@ module.exports = protoclass(Fragment, {
   /**
    */
 
-  initialize: function (template) {
+  initialize: function(template) {
     if (this.children.length === 1) return this.children[0].initialize(template);
-    return template.nodeFactory.createFragment(this.children.map(function (child) {
+    return template.nodeFactory.createFragment(this.children.map(function(child) {
       return child.initialize(template);
     }));
   }
@@ -7255,16 +7227,17 @@ module.exports = protoclass(Fragment, {
 /**
  */
 
-module.exports.create = function (children) {
+module.exports.create = function(children) {
   return new Fragment(children);
-} 
-},{"protoclass":111}],71:[function(require,module,exports){
-var protoclass = require("protoclass")
+};
+
+},{"protoclass":89}],70:[function(require,module,exports){
+var protoclass = require("protoclass");
 
 /**
  */
 
-function Text (value) {
+function Text(value) {
   this.value = value;
 }
 
@@ -7276,13 +7249,13 @@ module.exports = protoclass(Text, {
   /**
    */
 
-  initialize: function (template) {
+  initialize: function(template) {
 
     // blank text nodes are NOT allowed. Chrome has an issue rendering
     // blank text nodes - way, WAY slower if this isn't here!
     if (/^\s+$/.test(this.value)) {
       return template.nodeFactory.createTextNode("\u00A0");
-    };
+    }
 
     return template.nodeFactory.createTextNode(this.value);
   }
@@ -7291,39 +7264,41 @@ module.exports = protoclass(Text, {
 /**
  */
 
-module.exports.create = function (value) {
+module.exports.create = function(value) {
   return new Text(value);
-}
-},{"protoclass":111}],72:[function(require,module,exports){
+};
+
+},{"protoclass":89}],71:[function(require,module,exports){
 module.exports = {
 
   /**
    */
    
-  each: function (items, each, complete) {
+  each: function(items, each, complete) {
     var total = items.length,
     completed = 0;
-    items.forEach(function (item) {
+    items.forEach(function(item) {
       var called = false;
-      each(item, function () {
+      each(item, function() {
         if (called) throw new Error("callback called twice");
         called = true;
         if (++completed === total && complete) complete();
       });
     });
   }
-}
-},{}],73:[function(require,module,exports){
-module.exports = function (callback, context) {
+};
+
+},{}],72:[function(require,module,exports){
+module.exports = function(callback, context) {
   // TODO - DO ME
   // if (callback.bind) return callback.bind.apply(void 0, [context].concat(Array.prototype.slice.call(arguments, 2)));
-  return function () {
+  return function() {
     return callback.apply(context, arguments);
-  }
-}
+  };
+};
 
-},{}],74:[function(require,module,exports){
-module.exports = function (to) {
+},{}],73:[function(require,module,exports){
+module.exports = function(to) {
   if (!to) to = {};
   var froms = Array.prototype.slice.call(arguments, 1);
   for (var i = 0, n = froms.length; i < n; i++) {
@@ -7333,12 +7308,12 @@ module.exports = function (to) {
     }
   }
   return to;
-}
-},{}],75:[function(require,module,exports){
+};
+},{}],74:[function(require,module,exports){
 var createDocumentSection = require("document-section");
 
 module.exports = {
-  getNodePath: function (node) {
+  getNodePath: function(node) {
     var path = [], p = node.parentNode, c = node;
     while (p) {
 
@@ -7350,7 +7325,7 @@ module.exports = {
 
     return path;
   },
-  getNodeByPath: function (node, path) {
+  getNodeByPath: function(node, path) {
     var c = node;
     for (var i = 0, n = path.length; i < n; i++) {
       c = c.childNodes[path[i]];
@@ -7358,24 +7333,26 @@ module.exports = {
     return c;
   },
   createSingleSection: require("./singleNodeSection")
-}
-},{"./singleNodeSection":76,"document-section":87}],76:[function(require,module,exports){
-module.exports = function (node) {
+};
+
+},{"./singleNodeSection":75,"document-section":85}],75:[function(require,module,exports){
+module.exports = function(node) {
   return {
     node: node,
-    render: function () {
+    render: function() {
       return node;
     },
-    remove: function () {
+    remove: function() {
       node.parentNode.removeChild(node);
     },
-    appendChild: function (childNode) {
+    appendChild: function(childNode) {
       node.appendChild(childNode);
     }
-  }
-}
-},{}],77:[function(require,module,exports){
-function _stringifyNode (node) {
+  };
+};
+
+},{}],76:[function(require,module,exports){
+function _stringifyNode(node) {
 
   var buffer = "";
 
@@ -7391,14 +7368,15 @@ function _stringifyNode (node) {
 
   if (node.nodeType === 8) {
     buffer = "<!--" + buffer + "-->";
-  };
+  }
 
   return buffer;
 }
 
 module.exports = _stringifyNode;
-},{}],78:[function(require,module,exports){
-module.exports = function (ary) {
+
+},{}],77:[function(require,module,exports){
+module.exports = function(ary) {
   var occurences = {}, clone = ary.concat();
 
   for (var i = clone.length; i--;) {
@@ -7411,259 +7389,8 @@ module.exports = function (ary) {
   }
 
   return clone;
-}
-},{}],79:[function(require,module,exports){
-"use strict";
-
-var BindableObject = require("bindable-object");
-
-/** 
- * @module mojo
- * @submodule mojo-core
- */
-
-/**
- * @class BindableCollection
- * @extends BindableObject
- */
-
-/**
- * Emitted when an item is inserted
- * @event insert
- * @param {Object} item inserted
- */
-
-
-/**
- * Emitted when an item is removed
- * @event remove
- * @param {Object} item removed
- */
-
-/**
- * Emitted when items are replaced
- * @event replace
- * @param {Array} newItems
- * @param {Array} oldItems
- */
-
-
-
-function BindableCollection (source) {
-  BindableObject.call(this, this);
-  this.source = source || [];
-  this._updateInfo();
-  var self = this;
-  this.bind("source", function (source) {
-    self._onSourceChange(source);
-  });
-}
-
-/**
- */
-
-BindableObject.extend(BindableCollection, {
-
-  /**
-   */
-
-  __isBindableCollection: true,
-
-  /**
-   */
-
-  _onSourceChange: function (source) {
-    if (!source) this.source = [];
-    this._updateInfo();
-    // this.emit("update", { insert: source, remove: this._currentSource })
-    this.emit("reset", this._currentSource = source);
-  },
-  
-  /**
-   * Resets the collection. Same as `source(value)`.
-   */
-
-  reset: function (source) {
-    return this.set("source", source);
-  },
-
-  /**
-   * Returns the index of a value
-   * @method indexOf
-   * @param {Object} object to get index of
-   * @returns {Number} index or -1 (not found)
-   */
-
-  indexOf: function (item) {
-    return this.source.indexOf(item);
-  },
-
-  /**
-   * filters the collection
-   * @method filter
-   * @returns {Array} array of filtered items
-   */
-
-  filter: function (fn) {
-    return this.source.filter(fn);
-  },
-
-  /**
-   * Returns an object at the given index
-   * @method at
-   * @returns {Object} Object at specific index
-   */
-
-  at: function (index) {
-    return this.source[index];
-  },
-
-  /**
-   * forEach item
-   * @method each
-   * @param {Function} fn function to call for each item
-   */
-
-  each: BindableObject.computed(["length"], function (fn) {
-    this.source.forEach(fn);
-  }),
-
-  /**
-   */
-
-  map: function (fn) {
-    return this.source.map(fn);
-  },
-
-  /**
-   */
-
-  join: function (sep) {
-    return this.source.join(sep);
-  },
-
-  /**
-   */
-
-  slice: function () {
-    return this.source.slice.apply(this.source, arguments);
-  },
-
-  /**
-   * Pushes an item onto the collection
-   * @method push
-   * @param {Object} item
-   */
-
-  push: function () {
-    var items = Array.prototype.slice.call(arguments);
-    this.source.push.apply(this.source, items);
-    this._updateInfo();
-
-    // DEPRECATED
-    this.emit("insert", items[0], this.length - 1);
-    this.emit("update", { insert: items, index: this.length - 1});
-  },
-
-  /**
-   * Unshifts an item onto the collection
-   * @method unshift
-   * @param {Object} item
-   */
-
-  unshift: function () {
-
-    var items = Array.prototype.slice.call(arguments);
-    this.source.unshift.apply(this.source, items);
-    this._updateInfo();
-
-    // DEPRECATED
-    this.emit("insert", items[0], 0);
-    this.emit("update", { insert: items });
-  },
-
-  /**
-   * Removes N Number of items
-   * @method splice
-   * @param {Number} index start index
-   * @param {Number} count number of items to remove
-   */
-
-  splice: function (index, count) {
-    var newItems = Array.prototype.slice.call(arguments, 2),
-    oldItems     = this.source.splice.apply(this.source, arguments);
-
-    this._updateInfo();
-
-    // DEPRECATED
-    this.emit("replace", newItems, oldItems, index);
-    this.emit("update", { insert: newItems, remove: oldItems });
-  },
-
-  /**
-   * Removes an item from the collection
-   * @method remove
-   * @param {Object} item item to remove
-   */
-
-  remove: function (item) {
-    var i = this.indexOf(item);
-    if (!~i) return false;
-    this.source.splice(i, 1);
-    this._updateInfo();
-
-    this.emit("remove", item, i);
-    this.emit("update", { remove: [item] });
-    return item;
-  },
-
-  /**
-   * Removes an item from the end
-   * @method pop
-   * @returns {Object} removed item
-   */
-
-  pop: function () {
-    if (!this.source.length) return;
-    return this.remove(this.source[this.source.length - 1]);
-  },
-
-  /**
-   * Removes an item from the beginning
-   * @method shift
-   * @returns {Object} removed item
-   */
-
-  shift: function () {
-    if (!this.source.length) return;
-    return this.remove(this.source[0]);
-  },
-
-  /*
-   */
-
-  toJSON: function () {
-    return this.source.map(function (item) {
-      return item && item.toJSON ? item.toJSON() : item;
-    });
-  },
-
-  /*
-   */
-
-  _updateInfo: function () {
-    this.setProperties({
-      first  : this.source.length ? this.source[0] : void 0,
-      length : this.source.length,
-      empty  : !this.source.length,
-      last   : this.source.length ? this.source[this.source.length - 1] : void 0
-    });
-  }
-});
-
-module.exports = BindableCollection;
-
-},{"bindable-object":80}],80:[function(require,module,exports){
+};
+},{}],78:[function(require,module,exports){
 "use strict";
 
 var EventEmitter    = require("fast-event-emitter"),
@@ -7852,7 +7579,7 @@ BindableObject.computed = function (properties, fn) {
 
 module.exports = BindableObject;
 
-},{"./watchProperty":82,"fast-event-emitter":83,"protoclass":111,"toarray":84}],81:[function(require,module,exports){
+},{"./watchProperty":80,"fast-event-emitter":81,"protoclass":89,"toarray":82}],79:[function(require,module,exports){
 "use strict";
 
 var toarray = require("toarray");
@@ -7993,7 +7720,7 @@ function transform (bindable, fromProperty, options) {
 }
 
 module.exports = transform;
-},{"toarray":84}],82:[function(require,module,exports){
+},{"toarray":82}],80:[function(require,module,exports){
 "use strict";
 
 var transform   = require("./transform");
@@ -8343,7 +8070,7 @@ function watchProperty (bindable, property, fn) {
 }
 
 module.exports = watchProperty;
-},{"./transform":81}],83:[function(require,module,exports){
+},{"./transform":79}],81:[function(require,module,exports){
 "use strict";
 var protoclass = require("protoclass");
 
@@ -8508,57 +8235,50 @@ EventEmitter.prototype.removeAllListeners = function (event) {
 
 module.exports = EventEmitter;
 
-},{"protoclass":111}],84:[function(require,module,exports){
+},{"protoclass":89}],82:[function(require,module,exports){
 module.exports = function(item) {
   if(item === undefined)  return [];
   return Object.prototype.toString.call(item) === "[object Array]" ? item : [item];
 }
-},{}],85:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 
-},{}],86:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
+var queue = [];
+var draining = false;
 
-process.nextTick = (function () {
-    var canSetImmediate = typeof window !== 'undefined'
-    && window.setImmediate;
-    var canPost = typeof window !== 'undefined'
-    && window.postMessage && window.addEventListener
-    ;
-
-    if (canSetImmediate) {
-        return function (f) { return window.setImmediate(f) };
+function drainQueue() {
+    if (draining) {
+        return;
     }
-
-    if (canPost) {
-        var queue = [];
-        window.addEventListener('message', function (ev) {
-            var source = ev.source;
-            if ((source === window || source === null) && ev.data === 'process-tick') {
-                ev.stopPropagation();
-                if (queue.length > 0) {
-                    var fn = queue.shift();
-                    fn();
-                }
-            }
-        }, true);
-
-        return function nextTick(fn) {
-            queue.push(fn);
-            window.postMessage('process-tick', '*');
-        };
+    draining = true;
+    var currentQueue;
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        var i = -1;
+        while (++i < len) {
+            currentQueue[i]();
+        }
+        len = queue.length;
     }
-
-    return function nextTick(fn) {
-        setTimeout(fn, 0);
-    };
-})();
+    draining = false;
+}
+process.nextTick = function (fun) {
+    queue.push(fun);
+    if (!draining) {
+        setTimeout(drainQueue, 0);
+    }
+};
 
 process.title = 'browser';
 process.browser = true;
 process.env = {};
 process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
 
 function noop() {}
 
@@ -8572,15 +8292,16 @@ process.emit = noop;
 
 process.binding = function (name) {
     throw new Error('process.binding is not supported');
-}
+};
 
 // TODO(shtylman)
 process.cwd = function () { return '/' };
 process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
+process.umask = function() { return 0; };
 
-},{}],87:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 var protoclass = require("protoclass"),
 nofactor       = require("nofactor");
 
@@ -8828,7 +8549,7 @@ module.exports = function (nodeFactory, start, end)  {
 }
 
 module.exports.Section = Section;
-},{"nofactor":92,"protoclass":111}],88:[function(require,module,exports){
+},{"nofactor":88,"protoclass":89}],86:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.4.1 by @mathias | MIT license */
 ;(function(root) {
@@ -9157,7 +8878,7 @@ module.exports.Section = Section;
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],89:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 
@@ -9223,120 +8944,7 @@ protoclass(BaseFactory, {
 
 module.exports = BaseFactory;
 
-},{"protoclass":111}],90:[function(require,module,exports){
-var BaseFactory = require("./base"),
-factories       = require("factories");
-
-/**
- * @module
- * @submodule mojo-core
- */
-
-/**
-
-### Example
-
-```javascript
-var nofactor = require("nofactor");
-
-// use string factory
-customNodeFactory = nofactor.custom(nofactor.string);
-
-// register BR void element
-customNodeFactory.registerElement("br", nofactor.string.Element.extend({
-	toString: function () {
-		return "<" + this.name + ">";
-	}
-}));
-// <br>
-console.log(customNodeFactory.createElement("br").toString());
-```
-
- @class CustomNodeFactory
- @extends BaseNodeFactory
- @constructor
- @param {BaseNodeFactory} nodeFactory the main node factory to call
-*/
-
-
-function CustomFactory (mainFactory, elements) {
-	BaseFactory.call(this);
-	this._mainFactory = mainFactory;
-
-	if (!mainFactory) {
-		throw new Error("main factory must be provided. User string, or dom");
-	}
-
-	this._factories = {
-		element: {}
-	}
-
-	if (elements) {
-		for (var name in elements) {
-			this.registerElement(name, elements[name]);
-		}
-	}
-}
-
-
-BaseFactory.extend(CustomFactory, {
-
-	/**
-	 * Registers a new element class
-	 * @method registerElement
-	 * @param {String} name name of the element
-	 * @param {Class} The element class
-	 */
-
-	registerElement: function (name, factory) {
-		this._factories.element[name] = factories.factory.create(factory);
-		return this;
-	},
-
-	/*
-	 */
-
-	createElement: function (name) {
-		var factory = this._factories.element[name];
-		if (factory) return factory.create(name);
-		return this._mainFactory.createElement(name);
-	},
-
-
-	/*
-	 */
-
-	createComment: function (text) {
-		return this._mainFactory.createComment(text);
-	},
-
-	/*
-	 */
-
-	createTextNode: function (text) {
-		return this._mainFactory.createTextNode(text);
-	},
-
-	/*
-	 */
-
-	createFragment: function () {
-		return this._mainFactory.createFragment.apply(this._mainFactory, arguments);
-	},
-
-	/**
-	 */
-
-	parseHtml: function (source) {
-		return this._mainFactory.parseHtml(source);
-	}
-});
-
-module.exports = function (mainFactory, elements) {
-	return new CustomFactory(mainFactory, elements);
-};
-
-},{"./base":89,"factories":108}],91:[function(require,module,exports){
+},{"protoclass":89}],88:[function(require,module,exports){
 var Base = require("./base");
 
 /**
@@ -9407,1017 +9015,7 @@ Base.extend(DomFactory, {
 });
 
 module.exports = new DomFactory();
-},{"./base":89}],92:[function(require,module,exports){
-module.exports = {
-  string  : require("./string"),
-  dom     : require("./dom"),
-  custom  : require("./custom")
-};
-
-module.exports["default"] = typeof window !== "undefined" ? module.exports.dom : module.exports.custom(module.exports.string, module.exports.string.voidElements);
-
-if (typeof window !== "undefined") {
-  window.nofactor = module.exports;
-}
-},{"./custom":90,"./dom":91,"./string":97}],93:[function(require,module,exports){
-var Text = require("./text");
-
-function Comment () {
-  Comment.superclass.apply(this, arguments);
-}
-
-Text.extend(Comment, {
-
-  /**
-   */
-
-  nodeType: 8,
-
-  /**
-   */
-
-  getInnerHTML: function () {
-    return "<!--" + Comment.__super__.getInnerHTML.call(this) + "-->";
-  },
-
-  /**
-   */
-
-  cloneNode: function () {
-    var clone = new Comment(this.nodeValue);
-    clone._buffer = this._buffer;
-    return clone;
-  }
-});
-
-module.exports = Comment;
-},{"./text":100}],94:[function(require,module,exports){
-var Node = require("./node");
-
-function Container () {
-  this.childNodes = [];
-}
-
-Node.extend(Container, {
-
-  /**
-   */
-
-  appendChild: function (node) {
-
-    if (node.nodeType === 11 && node.childNodes.length) {
-      while (node.childNodes.length) {
-        this.appendChild(node.childNodes[0]);
-      }
-      return;
-    }
-
-    if (node === this) return;
-
-    this._unlink(node);
-    this.childNodes.push(node);
-    this._link(node);
-    this._triggerChange();
-  },
-
-  /**
-   */
-
-  prependChild: function (node) {
-    if (!this.childNodes.length) {
-      this.appendChild(node);
-    } else {
-      this.insertBefore(node, this.childNodes[0]);
-    }
-  },
-
-  /**
-   */
-
-  removeChild: function (child) {
-    var i = this.childNodes.indexOf(child);
-
-    if (!~i) return;
-
-    this.childNodes.splice(i, 1);
-
-    if (child.previousSibling) child.previousSibling.nextSibling = child.nextSibling;
-    if (child.nextSibling)     child.nextSibling.previousSibling = child.previousSibling;
-
-    child.parentNode      = void 0;
-    child.nextSibling     = void 0;
-    child.previousSibling = void 0;
-    this._triggerChange();
-  },
-
-  /**
-   */
-
-  insertBefore: function (newElement, before) {
-
-    if (newElement.nodeType === 11) {
-      var before, node;
-      for (var i = newElement.childNodes.length; i--;) {
-        this.insertBefore(node = newElement.childNodes[i], before);
-        before = node;
-      }
-    }
-
-    if (newElement == before || newElement === this) {
-      return;
-    }
-
-    if (newElement) this._unlink(newElement);
-
-    var index = this.childNodes.indexOf(before)
-
-    if (typeof index === "undefined") return;
-    if (!~index) return;
-    
-    this.childNodes.splice(index, 0, newElement);
-
-    if (newElement) this._link(newElement);
-    this._triggerChange();
-
-  },
-
-  /**
-   */
-
-  _unlink: function (node) {
-    if (node.parentNode) {
-      node.parentNode.removeChild(node);
-    }
-  },
-
-  /**
-   */
-
-  _link: function (node) {
-
-    if (!node.__isNode) {
-      throw new Error("cannot append non-node");
-    }
-
-    node.parentNode = this;
-    var i = this.childNodes.indexOf(node);
-
-    // FFox compatible
-    if (i !== 0)                         node.previousSibling = this.childNodes[i - 1];
-    if (i != this.childNodes.length - 1) node.nextSibling     = this.childNodes[i + 1];
-
-    if (node.previousSibling) node.previousSibling.nextSibling = node;
-    if (node.nextSibling)     node.nextSibling.previousSibling = node;
-  }
-});
-
-module.exports = Container;
-},{"./node":98}],95:[function(require,module,exports){
-var Container = require("./container"),
-Style         = require("./style");
-
-function Element (nodeName) {
-  Element.superclass.call(this);
-
-  this.nodeName    = nodeName.toUpperCase();
-  this._name       = nodeName.toLowerCase();
-  this.attributes  = [];
-  this._attrsByKey = {};
-  this.style       = new Style(this);
-}
-
-Container.extend(Element, {
-
-  /**
-   */
-
-  nodeType: 3,
-
-  /**
-   */
-
-  setAttribute: function (name, value) {
-
-    name = name.toLowerCase();
-
-    // if the name is a
-    if (name === "style") {
-      return this.style.reset(value);
-    }
-
-    if (value == undefined) {
-      return this.removeAttribute(name);
-    }
-
-    var abk,
-    hasChanged;
-
-    if (!(abk = this._attrsByKey[name])) {
-      this.attributes.push(abk = this._attrsByKey[name] = {})
-    }
-
-
-    hasChanged = abk.value != value;
-
-    abk.name  = name;
-    abk.value = value;
-
-    if (hasChanged) this._triggerChange();
-  },
-
-  /**
-   */
-
-  removeAttribute: function (name) {
-
-    var hasChanged;
-
-    for (var i = this.attributes.length; i--;) {
-      var attr = this.attributes[i];
-      if (attr.name == name) {
-        hasChanged = true;
-        this.attributes.splice(i, 1);
-        delete this._attrsByKey[name];
-        break;
-      }
-    }
-
-    if (hasChanged) this._triggerChange();
-  },
-
-  /**
-   */
-
-  getAttribute: function (name) {
-    var abk;
-    if(abk = this._attrsByKey[name]) return abk.value;
-  },
-
-  /**
-   */
-
-  getInnerHTML: function () {
-
-    var buffer = "<" + this._name,
-    attribs    =  "",
-    attrbuff;
-
-    for (var name in this._attrsByKey) {
-
-      var v    = this._attrsByKey[name].value;
-      attrbuff = name;
-
-      if (name != undefined) {
-        attrbuff += "=\"" + v + "\"";
-      }
-
-      attribs += " " + attrbuff;
-    }
-
-    if (this.style.hasStyles()) {
-      attribs += " style=" + "\"" + this.style.toString() + "\"";
-    }
-
-    if (attribs.length) {
-      buffer += attribs;
-    }
-
-
-    return buffer + ">" + this.childNodes.join("") + "</" + this._name + ">"
-  },
-
-  /**
-   */
-
-  cloneNode: function () {
-    var clone = new Element(this.nodeName);
-
-    for (var key in this._attrsByKey) {
-      clone.setAttribute(key, this._attrsByKey[key].value);
-    }
-
-    clone.setAttribute("style", this.style.toString());
-
-    for (var i = 0, n = this.childNodes.length; i < n; i++) {
-      clone.appendChild(this.childNodes[i].cloneNode());
-    }
-
-    clone._buffer = this._buffer;
-
-    return clone;
-  }
-});
-
-module.exports = Element;
-
-},{"./container":94,"./style":99}],96:[function(require,module,exports){
-var Container = require("./container");
-
-function Fragment () {
-  Fragment.superclass.call(this);
-}
-
-Container.extend(Fragment, {
-
-  /**
-   */
-
-  nodeType: 11,
-
-  /**
-   */
-
-  getInnerHTML: function () {
-    return this.childNodes.join("");
-  },
-
-  /**
-   */
-
-  cloneNode: function () {
-    var clone = new Fragment();
-
-    for (var i = 0, n = this.childNodes.length; i < n; i++) {
-      clone.appendChild(this.childNodes[i].cloneNode());
-    }
-
-    clone._buffer = this._buffer;
-
-    return clone;
-  }
-});
-
-module.exports = Fragment;
-},{"./container":94}],97:[function(require,module,exports){
-var Base     = require("../base"),
-Element      = require("./element"),
-Fragment     = require("./fragment"),
-Text         = require("./text"),
-Comment      = require("./comment"),
-Container    = require("./container"),
-voidElements = require("./voidElements");
-
-
-/**
- * @module mojo
- * @submodule mojo-core
- */
-
-/**
-
-@class StringNodeFactory
-@extends BaseNodeFactory
-*/
-
-function StringNodeFactory (context) {
-  this.context = context;
-}
-
-Base.extend(StringNodeFactory, {
-
-  /**
-   */
-
-  name: "string",
-
-  /**
-   */
-
-  createElement: function (name) {
-    return new Element(name);
-  },
-
-  /**
-   */
-
-  createTextNode: function (value, encode) {
-    return new Text(value, encode);
-  },
-
-  /**
-   */
-
-  createComment: function (value) {
-    return new Comment(value);
-  },
-
-  /**
-   */
-
-  createFragment: function (children) {
-
-    if (!children) children = [];
-    var frag = new Fragment(),
-    childrenToArray = Array.prototype.slice.call(children, 0);
-
-    for (var i = 0, n = childrenToArray.length; i < n; i++) {
-      frag.appendChild(childrenToArray[i]);
-    }
-
-    return frag;
-  },
-
-  /**
-   */
-
-  parseHtml: function (buffer) {
-
-    //this should really parse HTML, but too much overhead
-    return this.createTextNode(buffer);
-  }
-});
-
-module.exports           = new StringNodeFactory();
-
-module.exports.Element      = Element;
-module.exports.Fragment     = Fragment;
-module.exports.Text         = Text;
-module.exports.Container    = Container;
-module.exports.voidElements = voidElements;
-},{"../base":89,"./comment":93,"./container":94,"./element":95,"./fragment":96,"./text":100,"./voidElements":101}],98:[function(require,module,exports){
-var protoclass  = require("protoclass");
-
-
-function Node () {
-
-}
-
-protoclass(Node, {
-
-  /**
-   */
-
-  __isNode: true,
-
-  /**
-   */
-
-  toString: function () {
-    // if (this._innerHTML) return this._innerHTML;
-    return this._innerHTML = this.getInnerHTML();
-  },
-
-  /**
-   */
-
-  _triggerChange: function () {
-    if (!this._innerHTML) return;
-    this._innerHTML = void 0;
-    if (this.parentNode) this.parentNode._triggerChange();
-  }
-});
-
-module.exports = Node;
-},{"protoclass":111}],99:[function(require,module,exports){
-var protoclass = require("protoclass");
-
-function Style (element) {
-  this._element = element;
-}
-
-protoclass(Style, {
-
-  /**
-   */
-
-  _hasStyle: false,
-
-
-  /**
-   */
-
-
-  setProperty: function(key, value) {
-
-    var newValue = value === "" || value == void 0 ? void 0 : value;
-
-    if (this[key] === newValue) return;
-
-    this[key] = value;
-
-    this._element._triggerChange();
-  },
-
-  /**
-   */
-
-
-  setProperties: function(properties) {
-    for (var key in properties) {
-      this.setProperty(key, properties[key]);
-    }
-  },
-
-  /**
-   */
-
-  reset: function (styles) {
-
-    var styleParts = styles.split(/;\s*/),
-    hasChanged     = false;
-
-    for (var i = 0, n = styleParts.length; i < n; i++) {
-      var sp = styleParts[i].split(/:\s*/),
-      key    = sp[0],
-      value  = sp[1];
-
-      if (value == void 0 || value == "") {
-        continue;
-      }
-
-      hasChanged = hasChanged || this[key] === value;
-
-      this[key] = value;
-    }
-
-    if (hasChanged) this._element._triggerChange();
-  },
-
-  /**
-   */
-
-  toString: function () {
-    var buffer = "", styles = this.getStyles();
-
-    for (var key in styles) {
-      buffer += key + ":" + styles[key] + ";"
-    }
-
-    return buffer;
-  },
-
-  /**
-   */
-
-  hasStyles: function () {
-    if(this._hasStyle) return true;
-
-    for (var key in this) {
-      if (key.substr(0, 1) !== "_" && this[key] != undefined && this.constructor.prototype[key] == undefined) {
-        return this._hasStyle = true;
-      }
-    }
-
-    return false;
-  },
-
-  /**
-   */
-
-  getStyles: function () {
-    var styles = {};
-    for (var key in this) {
-      var k = this[key];
-      if (key.substr(0, 1) !== "_" && k !== "" && this[key] != void 0 && this.constructor.prototype[key] == undefined) {
-        styles[key] = this[key];
-      }
-    }
-    return styles;
-  }
-});
-
-module.exports = Style;
-
-},{"protoclass":111}],100:[function(require,module,exports){
-var Node = require("./node"),
-he      = require("he");
-
-
-
-function Text (value, encode) {
-  this.replaceText(value, encode);
-}
-
-Node.extend(Text, {
-
-  /**
-   */
-
-  nodeType: 3,
-
-  /**
-   */
-
-  getInnerHTML: function () {
-    return this.nodeValue;
-  },
-
-  /**
-   */
-
-  cloneNode: function () {
-     var clone = new Text(this.nodeValue);
-    clone._buffer = this._buffer;
-    return clone;
-  },
-
-  /**
-   */
-
-  replaceText: function (value, encode) {
-    this.nodeValue = encode ? he.encode(String(value)) : value;
-    this._triggerChange();
-  }
-});
-
-module.exports = Text;
-},{"./node":98,"he":110}],101:[function(require,module,exports){
-var Element = require("./element");
-
-function VoidElement () {
-	Element.apply(this, arguments);
-}
-
-Element.extend(VoidElement, {
-	getInnerHTML: function () {
-		return Element.prototype.getInnerHTML.call(this).replace("></" + this._name + ">", ">");
-	},
-	cloneNode: function () {
-		var clone = new VoidElement(this._name);
-
-    for (var key in this._attrsByKey) {
-      clone.setAttribute(key, this._attrsByKey[key].value);
-    }
-
-    clone.setAttribute("style", this.style.toString());
-
-    clone._buffer = this._buffer;
-
-    return clone;
-	}
-});
-
-/*
-area, base, br, col, command, embed, hr, img, input,
-keygen, link, meta, param, source, track, wbr
-*/
-
-["area", "base", "br", "col", "command", "embed", "hr", "img", "input", "keygen", "link", "meta", "param", "source", "track"].forEach(function (name) {
-	exports[name] = VoidElement;
-});
-},{"./element":95}],102:[function(require,module,exports){
-// Generated by CoffeeScript 1.6.2
-(function() {
-  var AnyFactory, factoryFactory,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  factoryFactory = require("./factory");
-
-  AnyFactory = (function(_super) {
-    __extends(AnyFactory, _super);
-
-    /*
-    */
-
-
-    function AnyFactory(factories) {
-      if (factories == null) {
-        factories = [];
-      }
-      this.factories = factories.map(factoryFactory.create);
-    }
-
-    /*
-    */
-
-
-    AnyFactory.prototype.test = function(data) {
-      return !!this._getFactory(data);
-    };
-
-    /*
-    */
-
-
-    AnyFactory.prototype.push = function(factory) {
-      return this.factories.push(factoryFactory.create(factory));
-    };
-
-    /*
-    */
-
-
-    AnyFactory.prototype.create = function(data) {
-      var _ref;
-
-      return (_ref = this._getFactory(data)) != null ? _ref.create(data) : void 0;
-    };
-
-    /*
-    */
-
-
-    AnyFactory.prototype._getFactory = function(data) {
-      var factory, _i, _len, _ref;
-
-      _ref = this.factories;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        factory = _ref[_i];
-        if (factory.test(data)) {
-          return factory;
-        }
-      }
-    };
-
-    return AnyFactory;
-
-  })(require("./base"));
-
-  module.exports = function(factories) {
-    return new AnyFactory(factories);
-  };
-
-}).call(this);
-
-},{"./base":103,"./factory":105}],103:[function(require,module,exports){
-// Generated by CoffeeScript 1.6.2
-(function() {
-  var BaseFactory;
-
-  BaseFactory = (function() {
-    function BaseFactory() {}
-
-    BaseFactory.prototype.create = function(data) {};
-
-    BaseFactory.prototype.test = function(data) {};
-
-    return BaseFactory;
-
-  })();
-
-  module.exports = BaseFactory;
-
-}).call(this);
-
-},{}],104:[function(require,module,exports){
-// Generated by CoffeeScript 1.6.2
-(function() {
-  var ClassFactory,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  ClassFactory = (function(_super) {
-    __extends(ClassFactory, _super);
-
-    /*
-    */
-
-
-    function ClassFactory(clazz) {
-      this.clazz = clazz;
-    }
-
-    /*
-    */
-
-
-    ClassFactory.prototype.create = function(data) {
-      return new this.clazz(data);
-    };
-
-    /*
-    */
-
-
-    ClassFactory.prototype.test = function(data) {
-      return this.clazz.test(data);
-    };
-
-    return ClassFactory;
-
-  })(require("./base"));
-
-  module.exports = function(clazz) {
-    return new ClassFactory(clazz);
-  };
-
-}).call(this);
-
-},{"./base":103}],105:[function(require,module,exports){
-// Generated by CoffeeScript 1.6.2
-(function() {
-  var ClassFactory, FactoryFactory, FnFactory, factory, type,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  ClassFactory = require("./class");
-
-  type = require("type-component");
-
-  FnFactory = require("./fn");
-
-  FactoryFactory = (function(_super) {
-    __extends(FactoryFactory, _super);
-
-    /*
-    */
-
-
-    function FactoryFactory() {}
-
-    /*
-    */
-
-
-    FactoryFactory.prototype.create = function(data) {
-      var t;
-
-      if (data.create && data.test) {
-        return data;
-      } else if ((t = type(data)) === "function") {
-        if (data.prototype.constructor) {
-          return new ClassFactory(data);
-        } else {
-          return new FnFactory(data);
-        }
-      }
-      return data;
-    };
-
-    return FactoryFactory;
-
-  })(require("./base"));
-
-  factory = new FactoryFactory();
-
-  module.exports = factory;
-
-}).call(this);
-
-},{"./base":103,"./class":104,"./fn":106,"type-component":109}],106:[function(require,module,exports){
-// Generated by CoffeeScript 1.6.2
-(function() {
-  var FnFactory;
-
-  FnFactory = (function() {
-    /*
-    */
-    function FnFactory(fn) {
-      this.fn = fn;
-    }
-
-    /*
-    */
-
-
-    FnFactory.prototype.test = function(data) {
-      return this.fn.test(data);
-    };
-
-    /*
-    */
-
-
-    FnFactory.prototype.create = function(data) {
-      return this.fn(data);
-    };
-
-    return FnFactory;
-
-  })();
-
-  module.exports = function(fn) {
-    return new FnFactory(fn);
-  };
-
-}).call(this);
-
-},{}],107:[function(require,module,exports){
-// Generated by CoffeeScript 1.6.2
-(function() {
-  var GroupFactory, factoryFactory,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-  factoryFactory = require("./factory");
-
-  GroupFactory = (function(_super) {
-    __extends(GroupFactory, _super);
-
-    /*
-    */
-
-
-    function GroupFactory(mandatory, optional, groupClass) {
-      if (mandatory == null) {
-        mandatory = [];
-      }
-      if (optional == null) {
-        optional = [];
-      }
-      this.groupClass = groupClass;
-      this.mandatory = mandatory.map(factoryFactory.create);
-      this.optional = optional.map(factoryFactory.create);
-    }
-
-    /*
-    */
-
-
-    GroupFactory.prototype.test = function(data) {
-      return !!this._getFactories(data, this.mandatory).length;
-    };
-
-    /*
-    */
-
-
-    GroupFactory.prototype.create = function(data) {
-      var factory, items, _i, _j, _len, _len1, _ref, _ref1;
-
-      items = [];
-      _ref = this._getFactories(data, this.mandatory);
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        factory = _ref[_i];
-        items.push(factory.create(data));
-      }
-      _ref1 = this._getFactories(data, this.optional);
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        factory = _ref1[_j];
-        items.push(factory.create(data));
-      }
-      if (items.length === 1) {
-        return items[0];
-      }
-      return new this.groupClass(data, items);
-    };
-
-    /*
-    */
-
-
-    GroupFactory.prototype._getFactories = function(data, collection) {
-      var factories, factory, _i, _len;
-
-      factories = [];
-      for (_i = 0, _len = collection.length; _i < _len; _i++) {
-        factory = collection[_i];
-        if (factory.test(data)) {
-          factories.push(factory);
-        }
-      }
-      return factories;
-    };
-
-    return GroupFactory;
-
-  })(require("./base"));
-
-  module.exports = function(mandatory, optional, groupClass) {
-    return new GroupFactory(mandatory, optional, groupClass);
-  };
-
-}).call(this);
-
-},{"./base":103,"./factory":105}],108:[function(require,module,exports){
-// Generated by CoffeeScript 1.6.2
-(function() {
-  module.exports = {
-    any: require("./any"),
-    "class": require("./class"),
-    factory: require("./factory"),
-    fn: require("./fn"),
-    group: require("./group")
-  };
-
-}).call(this);
-
-},{"./any":102,"./class":104,"./factory":105,"./fn":106,"./group":107}],109:[function(require,module,exports){
-
-/**
- * toString ref.
- */
-
-var toString = Object.prototype.toString;
-
-/**
- * Return the type of `val`.
- *
- * @param {Mixed} val
- * @return {String}
- * @api public
- */
-
-module.exports = function(val){
-  switch (toString.call(val)) {
-    case '[object Function]': return 'function';
-    case '[object Date]': return 'date';
-    case '[object RegExp]': return 'regexp';
-    case '[object Arguments]': return 'arguments';
-    case '[object Array]': return 'array';
-  }
-
-  if (val === null) return 'null';
-  if (val === undefined) return 'undefined';
-  if (val === Object(val)) return 'object';
-
-  return typeof val;
-};
-
-},{}],110:[function(require,module,exports){
-module.exports=require(88)
-},{"/Users/craig/Developer/Public/paperclip.js/node_modules/he/he.js":88}],111:[function(require,module,exports){
+},{"./base":87}],89:[function(require,module,exports){
 function _copy (to, from) {
 
   for (var i = 0, n = from.length; i < n; i++) {
@@ -10493,520 +9091,4 @@ protoclass.setup = function (child) {
 
 
 module.exports = protoclass;
-},{}],112:[function(require,module,exports){
-var BindableObject = require("bindable-object");
-
-/**
- */
-
-function _uniq (values) {
-  var used = {};
-  var ret = [];
-  for (var i = 0, n = values.length; i < n; i++) {
-    var v = values[i];
-    if (used[v]) continue;
-    used[v] = 1;
-    ret.push(v);
-  }
-  return ret;
-}
-
-/**
- */
-
-function _bind (fun, ctx) {
-  var args = Array.prototype.slice.call(arguments, 2);
-  if (fun.bind) return fun.bind.apply(fun, [ctx].concat(args));
-  return function () {
-    return fun.apply(ctx, args.concat(Array.prototype.slice.call(arguments)));
-  }
-}
-
-
-/**
- * Allows you to inherit properties from a parent bindable.
- * @class SubindableObject
- * @extends BindableObject
- */
-
-
-function ScopedBindableObject (properties, parent) {
-  BindableObject.call(this, properties);
-  if (parent) this.parent = parent;
-
-  var proto = this.constructor.prototype;
-
-  var self = this;
-
-  // listen whenever a property 
-  this.on("watching", function (propertyChain) {
-    var key = propertyChain[0];
-    if (!(key in self)) {
-      self.inherit(key);
-    }
-  });
-}
-
-BindableObject.extend(ScopedBindableObject, {
-
-  parent: void 0,
-
-  /*
-   */
-
-  get: function (key) {
-
-    var ret = BindableObject.prototype.get.call(this, key);
-    if(ret != void 0) return ret;
-
-    var bindingKey, i;
-
-    if (typeof key !== "string") {
-      bindingKey = key[0];
-    } else if (~(i = key.indexOf("."))) {
-      bindingKey = key.slice(0, i);
-    } else {
-      bindingKey = key;
-    }
-
-    // inherit from the parent
-    this.inherit(bindingKey);
-
-    // return the inherited value
-    return BindableObject.prototype.get.call(this, key);
-  },
-
-  /*
-   */
-
-  set: function (key, value) {  
-
-    var i;
-
-    // if we're setting to a chained property, inherit the first part
-    // incase it exists - for example:
-    // subView.set("user.name", "blah") 
-    // would need to be inherited before being set
-    if (typeof key === "string" && ~(i = key.indexOf("."))) {
-      var bindingKey = key.slice(0, i);
-      if (this[bindingKey] == undefined) this.inherit(bindingKey);
-    }
-
-    return BindableObject.prototype.set.call(this, key, value);
-  },
-
-  /**
-   * Inherits a property from the parent subindable object
-   * @method inherit
-   * @param {String} path path to inherit.
-   */
-
-  inherit: function (key) {
-
-    // already a prop? Don't inherit (even if undefined)
-    if (key in this) return;
-    this[key] = void 0;
-
-    var parentPropertyBinding,
-    parentBinding,
-    valueBinding,
-    self = this;
-
-    // if the parent ever changes, we'll need to also change the bound value
-    parentBinding = this.bind("parent", function(parent) {
-
-      if (parentPropertyBinding) parentPropertyBinding.dispose();
-      if (!parent) return;
-
-      // inherit the property from the parent here
-      parentPropertyBinding = parent.bind(key, function (v) {
-
-        // if the value is a function, then make sure the context is 
-        // bound to the parent
-        if (typeof v === "function" && !v.__bound) {
-          var org;
-          v = _bind(org = v, parent);
-          v.__bound    = true;
-          v.__original = org;
-        }
-
-        // set the inherited property
-        self.set(key, v);
-      }).now();
-    }).now();
-
-    // now bind to THIS context incase explicitly set
-    valueBinding = this.bind(key, function(value) {
-
-      // if the parent value doesn't match this context's value, then
-      // break inheritance
-      if (self.parent && self.parent[key] === value) {
-        return;
-      }
-
-      // but be sure that the bound value is not an inherited function
-      if (value && value.__bound && value.__original == self.parent[key]) {
-        return
-      }
-
-      // at this point, the parent value, and this context's value do NOT match
-      // so remove all inheritance bindings.
-      valueBinding.dispose();
-
-      if (parentPropertyBinding) parentPropertyBinding.dispose()
-      if (parentBinding) parentBinding.dispose();
-    });
-  }
-
-});
-
-
-module.exports = ScopedBindableObject;
-},{"bindable-object":113}],113:[function(require,module,exports){
-arguments[4][80][0].apply(exports,arguments)
-},{"./watchProperty":115,"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable-object/lib/index.js":80,"fast-event-emitter":116,"protoclass":117,"toarray":118}],114:[function(require,module,exports){
-module.exports=require(81)
-},{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable-object/lib/transform.js":81,"toarray":118}],115:[function(require,module,exports){
-"use strict";
-
-var transform   = require("./transform");
-
-function extend (to, from) {
-  for (var key in from) {
-    to[key] = from[key];
-  }
-  return to;
-}
-
-
-function watchSimple (bindable, property, fn) {
-
-  bindable.emit("watching", [property]);
-
-  var listener = bindable.on("change:" + property, function () {
-    fn.apply(self, arguments);
-  }), self;
-
-  self = {
-
-    /** 
-     * the target bindable object
-     * @property target
-     * @type {BindableObject}
-     */
-
-    target: bindable,
-
-    /**
-     * triggers the binding listener
-     * @method now
-     */
-
-    now: function () {
-      fn.call(self, bindable.get(property));
-      return self;
-    },
-
-    /**
-     * disposes the binding
-     * @method dispose
-     */
-
-    dispose: function () {
-      listener.dispose();
-    },
-
-    /**
-     */
-
-    pause: function () {
-      self.dispose();
-      self.now = function () { return this; };
-    },
-
-    /**
-     */
-
-    resume: function () {
-      self.pause();
-      extend(self, watchSimple(bindable, property, fn));
-      return self;
-    }
-  };
-
-  return self;
-}
-
-/*
- * bindable.bind("a.b.c.d.e", fn);
- */
-
-
-function watchChain (bindable, hasComputed, chain, fn) {
-
-  var listeners = [], values = hasComputed ? [] : undefined, self;
-
-
-  var onChange = function () {
-    dispose();
-    listeners = [];
-    values = hasComputed ? [] : void 0;
-    bind(bindable, chain);
-    self.now();
-  };
-
-  /*
-  if (hasComputed && process.browser) {
-    onChange = debounce(bindable, onChange);
-  }*/
-
-  function runComputed (eachChain, pushValues) {
-    return function (item) {
-      if (!item) return;
-
-        // wrap around bindable object as a helper
-        if (!item.__isBindable) {
-          item = new module.exports.BindableObject(item);
-        }
-
-        bind(item, eachChain, pushValues);
-    };
-  }
-
-  function bind (target, chain, pushValues) {
-
-    var currentChain = [], subValue, currentProperty, i, j, n, computed, hadComputed, pv, cv = target;
-
-    // need to run through all variations of the property chain incase it changes
-    // in the bindable.object. For instance:
-    // target.bind("a.b.c", fn); 
-    // triggers on
-    // target.set("a", obj);
-    // target.set("a.b", obj);
-    // target.set("a.b.c", obj);
-
-    // does it have @each in there? could be something like
-    // target.bind("friends.@each.name", function (names) { })
-    if (hasComputed) {
-
-      i = 0;
-      n = chain.length;
-
-      for (; i < n; i++) {
-
-        currentChain.push(chain[i]);
-        currentProperty = chain[i];
-
-        target.emit("watching", currentChain);
-
-        // check for @ at the beginning
-        computed = (currentProperty.charCodeAt(0) === 64);
-
-        if (computed) {
-          hadComputed = true;
-          // remove @ - can't be used to fetch the propertyy
-          currentChain[i] = currentProperty = currentChain[i].substr(1);
-        }
-        
-        pv = cv;
-        if (cv) cv = cv[currentProperty];
-
-        if (computed && cv) {
-
-
-          // used in cases where the collection might change that would affect 
-          // this binding. length for instance on the collection...
-          if (cv.compute) {
-            for (j = cv.compute.length; j--;) {
-              bind(target, [cv.compute[j]], false);
-            }
-          }
-
-          // the sub chain for each of the items from the loop
-          var eachChain = chain.slice(i + 1);
-
-          // call the function, looping through items
-          cv.call(pv, runComputed(eachChain, pushValues));
-          break;
-        } else if (cv && cv.__isBindable && i !== n - 1) {
-          bind(cv, chain.slice(i + 1), false);
-          cv = cv.__context;
-        }
-
-        listeners.push(target.on("change:" +  currentChain.join("."), onChange));
-
-      } 
-
-      if (!hadComputed && pushValues !== false) {
-        values.push(cv);
-      }
-
-    } else {
-      i = 0;
-      n = chain.length;
-
-      for (; i < n; i++) {
-        currentProperty = chain[i];
-        currentChain.push(currentProperty);
-
-        target.emit("watching", currentChain);
-
-        if (cv) cv = cv[currentProperty];
-
-        // pass the watch onto the bindable object, but also listen 
-        // on the current target for any
-        if (cv && cv.__isBindable && i !== n - 1) {
-          bind(cv, chain.slice(i + 1), false);
-        }
-
-        listeners.push(target.on("change:" + currentChain.join("."), onChange));
-      }
-
-      if (pushValues !== false) values = cv;
-    }
-  }
-
-  function dispose () {
-    if (!listeners) return;
-    for (var i = listeners.length; i--;) {
-      listeners[i].dispose();
-    }
-    listeners = [];
-  }
-
-  self = {
-    target: bindable,
-    now: function () {
-      fn.call(self, values);
-      return self;
-    },
-    dispose: dispose,
-    pause: function () {
-      self.dispose();
-      self.now = function () { return this; };
-    },
-    resume: function () {
-      self.pause();
-      extend(self, watchChain(bindable, hasComputed, chain, fn));
-      return self;
-    }
-  };
-
-  bind(bindable, chain);
-
-  return self;
-}
-
-/**
- */
-
-function watchMultiple (bindable, chains, fn) { 
-
-  var values  = new Array(chains.length),
-  oldValues   = new Array(chains.length),
-  bindings    = new Array(chains.length),
-  fn2         = fn,
-  _pause      = false,
-  _hasChanged = false,
-  self;
-
-  bindings.push(bindable.on("willSetProperties", function () {
-    _pause      = true;
-    _hasChanged = false;
-  }));
-
-  bindings.push(bindable.on("didSetProperties", function () {
-    _pause = false;
-    if (_hasChanged) onChange();
-  }));
-
-  function onChange () {
-    _hasChanged = true;
-    if (_pause) return;
-    fn2.apply(this, values.concat(oldValues));
-  }
-
-  function setValues () {
-    oldValues = values.concat();
-    values    = chains.map(function (property) { 
-      return bindable.get(property); 
-    });
-  }
-
-
-  chains.forEach(function (chain, i) {
-    bindings[i] = bindable.bind(chain, function (value, oldValue) {
-      values[i]    = value;
-      oldValues[i] = oldValue;
-      onChange();
-    });
-  });
-
-  self = {
-    target: bindable,
-    now: function () {
-      setValues();
-      onChange();
-      return self;
-    },
-    dispose: function () {
-      for (var i = bindings.length; i--;) {
-        bindings[i].dispose();
-      }
-      bindings = [];
-    },
-    pause: function () {
-      self.dispose();
-      self.now = function () { return self; };
-    },
-    resume: function () {
-      self.pause();
-      extend(self, watchMultiple(bindable, chains, fn));
-      return self;
-    }
-  };
-  return self;
-}
-
-/**
- */
-
-function watchProperty (bindable, property, fn) {
-
-  if (typeof fn === "object") {
-    fn = transform(bindable, property, fn);
-  }
-
-  // TODO - check if is an array
-  var chain;
-
-  if (typeof property === "string") {
-    if (~property.indexOf(",")) {
-      return watchMultiple(bindable, property.split(/[,\s]+/), fn);
-    } else if (~property.indexOf(".")) {
-      chain = property.split(".");
-    } else {
-      chain = [property];
-    }
-  } else {
-    chain = property;
-  }
-
-  // collection.bind("length")
-  if (chain.length === 1) {
-    return watchSimple(bindable, property, fn);
-
-  // person.bind("city.zip")
-  } else {
-    return watchChain(bindable, ~property.indexOf("@"), chain, fn);
-  }
-}
-
-module.exports = watchProperty;
-},{"./transform":114}],116:[function(require,module,exports){
-module.exports=require(83)
-},{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable-object/node_modules/fast-event-emitter/lib/index.js":83,"protoclass":117}],117:[function(require,module,exports){
-module.exports=require(111)
-},{"/Users/craig/Developer/Public/paperclip.js/node_modules/protoclass/lib/index.js":111}],118:[function(require,module,exports){
-module.exports=require(84)
-},{"/Users/craig/Developer/Public/paperclip.js/node_modules/bindable-object/node_modules/toarray/index.js":84}]},{},[26]);
+},{}]},{},[25]);

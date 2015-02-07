@@ -1,6 +1,5 @@
 var expect         = require("expect.js"),
 paperclip          = require("../../lib"),
-BindableCollection = require("bindable-collection"),
 template           = paperclip.template,
 stringifyView = require("../utils/stringifyView");
 
@@ -26,25 +25,17 @@ describe(__filename + "#", function () {
     expect(stringifyView(v)).to.be("4567");
   });
 
-  it("accepts source as a bindable collection", function () {
-    var tpl = template("<repeat each={{numbers}} as='number'>{{number}}</repeat>", paperclip);
-    var v = tpl.view({numbers: new BindableCollection([0,1,2,3])});
-    expect(stringifyView(v)).to.be("0123");
-    v.set("numbers", new BindableCollection([4,5,6,7]));
-    v.runloop.runNow();
-    expect(stringifyView(v)).to.be("4567");
-  });
-
-
   it("updates the block if the source changes", function () {
     var tpl = template("<repeat each={{numbers}} as='number'>{{number}}</repeat>", paperclip);
-    var src = new BindableCollection([0,1,2,3]);
+    var src = [0,1,2,3];
     var v = tpl.view({numbers: src});
     expect(stringifyView(v)).to.be("0123");
     src.splice(0, 1, 4);
+    v.accessor.apply();
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("4123");
     src.splice(1, 2, 5, 6, 7);
+    v.accessor.apply();
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("45673");
   });

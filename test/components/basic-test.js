@@ -43,6 +43,7 @@ describe(__filename + "#", function () {
 
       var attrs = options.attributes;
 
+
       var count = Number(attrs.count),
       as        = attrs.as || "model";
 
@@ -67,27 +68,30 @@ describe(__filename + "#", function () {
       function render () {
         options.section.removeAll();
         for (var i = 0; i < attrs.count; i++) {
-          var model = new BindableObject();
-          model.set(attrs.as, i);
+          var model = {};
+          model[attrs.as] = i;
           options.section.appendChild(options.childTemplate.view(model).render());
         }
       }
 
+      this.attributes = attrs;
+      this.update = render;
+
       this.bind = function (context) {
-        attrs.on("change", render);
         render();
       }
     }
 
     var tpl = template("<repeat count={{count}} as='number'>{{number}}</repeat>", { components:{repeat:repeatComponent}});
     var v = tpl.view({count:5});
-
     expect(stringifyView(v)).to.be("01234");
     v.set("count", 3);
-    // v.runner.update();
+    v.accessor.apply();
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("012");
     v.set("count", 8);
-    // v.runner.update();
+    v.accessor.apply();
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("01234567");
   });
 

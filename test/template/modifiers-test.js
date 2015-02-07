@@ -53,13 +53,14 @@ describe(__filename + "#", function () {
   });
 
   it("recalls the modifier if a value changes", function () {
-    var c = new BindableObject({
+    var c = {
       a: "a"
-    });
+    }
 
     var v = pc.template("{{a|uppercase()}}").view(c);
     expect(stringifyView(v)).to.be("A");
-    c.set("a", "b");
+    c.a = "b";
+    v.accessor.apply();
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("B");
   })
