@@ -1,7 +1,6 @@
 var pc         = require("../.."),
 expect         = require("expect.js"),
-BindableObject = require("bindable-object"),
-stringifyView = require("../utils/stringifyView");
+stringifyView  = require("../utils/stringifyView");
 
 describe(__filename + "#", function () {
 

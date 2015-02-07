@@ -1,6 +1,5 @@
 var pc   = require("../.."),
 expect   = require("expect.js"),
-BindableObject = require("bindable-object"),
 nodeFactory = require("nofactor/lib/dom"),
 defaultNodeFactory = require("nofactor"),
 paperclip = require("../.."),
