@@ -3,7 +3,7 @@ expect   = require("expect.js"),
 BindableObject = require("bindable-object"),
 nodeFactory = require("nofactor/lib/dom"),
 defaultNodeFactory = require("nofactor"),
-paperclip = require("../../lib"),
+paperclip = require("../.."),
 stringifyView = require("../utils/stringifyView"),
 template = paperclip.template;
 

@@ -2,7 +2,7 @@ var expect     = require("expect.js"),
 template       = require("../../lib/template"),
 parser         = require("../../lib/parser"),
 BindableObject = require("bindable-object"),
-Component      = require("../../lib").Component,
+Component      = require("../..").Component,
 stringifyView = require("../utils/stringifyView")
 
 /*

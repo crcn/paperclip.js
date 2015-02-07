@@ -1,5 +1,5 @@
 var expect     = require("expect.js"),
-pc             = require("../../lib")
+pc             = require("../..")
 template       = pc.template,
 stringifyView = require("../utils/stringifyView");
 

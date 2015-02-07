@@ -4,7 +4,7 @@ NAME=big-list
 TIMEOUT=1000
 
 browser:
-	./node_modules/.bin/browserify ./lib/index.js -o ./dist/paperclip.js
+	./node_modules/.bin/browserify ./lib/browser.js -o ./dist/paperclip.js
 
 min:
 	./node_modules/.bin/uglifyjs ./dist/paperclip.js > ./dist/paperclip.min.js

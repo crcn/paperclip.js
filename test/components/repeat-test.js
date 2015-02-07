@@ -1,5 +1,5 @@
 var expect         = require("expect.js"),
-paperclip          = require("../../lib"),
+paperclip          = require("../.."),
 template           = paperclip.template,
 stringifyView = require("../utils/stringifyView");
 
