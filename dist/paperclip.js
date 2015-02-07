@@ -88,7 +88,7 @@ module.exports = BaseAccessor.extend({
 
   get: function(object, path) {
 
-    if (typeof path === "string") path = [path];
+    if (typeof path === "string") path = path.split(".");
 
     var pt = path.join("."), getter;
     if (!(getter = this._getters[pt])) {
@@ -108,7 +108,8 @@ module.exports = BaseAccessor.extend({
 
   set: function(object, path, value) {
 
-    if (typeof path === "string") path = [path];
+    if (typeof path === "string") path = path.split(".");
+
 
     var ret = _set(object, path, value);
 
