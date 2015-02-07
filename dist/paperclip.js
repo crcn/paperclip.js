@@ -1916,7 +1916,7 @@ function TextNodeExpression(value) {
   } else if (typeof window !== "undefined") {
     var div = document.createElement("div");
     div.innerHTML = value;
-    this.value = value;
+    this.value = div.innerHTML;
   } else {
     this.value = value;
   }

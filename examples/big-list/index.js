@@ -8,7 +8,7 @@ _ = require("lodash");
 
 var pcTpl = 
 "<div repeat.each={{source}} repeat.as='model'>" +
-    "<span>&times;{{'item ' + ~model + ' ' + ~model }}<br /></span>" +
+    "<span>{{'item ' + ~model + ' ' + ~model }}<br /></span>" +
 "</div>";
 
 var tpl = window.pcTpl = pc.template(pcTpl, pc);
