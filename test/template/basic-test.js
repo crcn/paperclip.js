@@ -66,16 +66,19 @@ describe(__filename + "#", function () {
     expect(stringifyView(v)).to.be("a");
   });
 
+  if (!process.browser)
   it("converts HTML entities to real characters", function() {
     var tpl = pc.template("hello &gt;");
     expect(tpl.view().toString()).to.be("hello >")
   });
 
+  if (!process.browser)
   it("doesn't do overzealous HTML entity decoding", function() {
     var tpl = pc.template("foo &amp;amp; bar");
     expect(tpl.view().toString()).to.be("foo &amp; bar")
   });
 
+  if (!process.browser)
   it("has all the right defaults", function () {
     var tpl = pc.template("foo &amp;amp; bar", {});
     expect(tpl.components.show).not.to.be(void 0);

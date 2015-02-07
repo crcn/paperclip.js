@@ -77,7 +77,6 @@ describe(__filename + "#", function () {
     var tpl = pc.template("{{ ctx | fullName() }}");
 
     tpl.modifiers.fullName = function (v) {
-      console.log(this);
       // if (v) this.bindings.push(v.on("change", v.update));
       return [v.get("firstName"), v.get("lastName")].join(" ");
     };

@@ -119,7 +119,7 @@ describe(__filename + "#", function () {
         var ast = parser.parse(fs.readFileSync(__dirname + "/test.pc", "utf8"));
         // console.log(JSON.stringify(ast, null, 2));
       } catch (e) {
-        console.log(e);
+        // console.log(e);
       }
     });
 
