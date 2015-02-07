@@ -58,7 +58,7 @@ describe(__filename + "#", function () {
     }, 10);
   });
 
-  xit("can data-bind to a ref path", function (next) {
+  it("can data-bind to a ref path", function (next) {
     var t = pc.template("<input type='text' value={{ <~>a.b.c.d.e }} />", pc);
 
     var b = t.view({});

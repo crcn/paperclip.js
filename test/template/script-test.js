@@ -207,7 +207,7 @@ describe(__filename + "#", function () {
       expect(c.get("a")).to.be(true);
     });
 
-    xit("can assign to a nested value", function () {
+    it("can assign to a nested value", function () {
       expect(pc.template("{{a.b.c.d=!e}}").view(c).toString()).to.be("true");
       expect(c.get("a.b.c.d")).to.be(true);
     });
