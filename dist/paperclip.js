@@ -50,7 +50,8 @@ module.exports = protoclass(BaseAccessor, {
 
 
 },{"protoclass":82}],2:[function(require,module,exports){
-var BaseAccessor = require("./base");
+var BaseAccessor = require("./base"),
+_set           = require("../utils/set");
 
 module.exports = BaseAccessor.extend({
 
@@ -59,10 +60,6 @@ module.exports = BaseAccessor.extend({
 
   _getters: {},
 
-  /**
-   */
-
-  _setters: {},
 
   /**
    */
@@ -113,18 +110,7 @@ module.exports = BaseAccessor.extend({
 
     if (typeof path === "string") path = [path];
 
-    var pt = path.join("."), setter;
-    if (!(setter = this._setters[pt])) {
-      setter = this._setters[pt] = new Function("value", "return this." +pt+"=value");
-    }
-
-    var ret;
-    // is undefined - fugly, but works for this test.
-    try {
-      ret = setter.call(object, value);
-    } catch (e) {
-      return void 0;
-    }
+    var ret = _set(object, path, value);
 
     this.apply();
 
@@ -232,7 +218,7 @@ module.exports = BaseAccessor.extend({
     }
   }
 });
-},{"./base":1}],3:[function(require,module,exports){
+},{"../utils/set":74,"./base":1}],3:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
@@ -882,7 +868,12 @@ var paperclip = module.exports = {
   /**
    */
 
-  modifiers: defaults.modifiers
+  modifiers: defaults.modifiers,
+
+  /**
+   */
+
+  parse: parser.parse
 };
 
 
@@ -7319,7 +7310,7 @@ module.exports = {
 
 },{"./singleNodeSection":75,"document-section":79}],74:[function(require,module,exports){
 module.exports = function (target, keypath, value) {
-  var keys = keypath.split(".");
+  var keys = typeof keypath === "string" ? keypath.split(".") : keypath;
 
   var ct = target;
 
@@ -7332,6 +7323,7 @@ module.exports = function (target, keypath, value) {
   }
 
   ct[keys[keys.length-1]] = value;
+  return value;
 };
 
 },{}],75:[function(require,module,exports){
