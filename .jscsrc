@@ -13,9 +13,10 @@
     "disallowImplicitTypeConversion": ["string"],
     "requireCurlyBraces": [],
 
-    "safeContextKeyword": "_this",
+    "safeContextKeyword": "self",
 
     "excludeFiles": [
-        "test/data/**"
+        "test/data/**",
+        "./lib/parser/parser.js"
     ]
 }

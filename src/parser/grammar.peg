@@ -1,75 +1,79 @@
 {
 /*jshint laxcomma:false */
 
-  var DoctypeExpression        = require("./ast/doctype"),
-  RootNodeExpression           = require("./ast/rootNode"),
-  TextNodeExpression           = require("./ast/textNode"),
-  CommentNodeExpression        = require("./ast/commentNode"),
-  ElementNodeExpression        = require("./ast/elementNode"),
-  BlockBindingExpression       = require("./ast/blockBinding"),
-  DocTypeExpression            = require("./ast/doctype"),
-  TernaryConditionExpression   = require("./ast/ternaryCondition"),
-  AssignmentExpression         = require("./ast/assignment"),
-  OperatorExpression           = require("./ast/operator"),
-  NotExpression                = require("./ast/not"),
-  LiteralExpression            = require("./ast/literal"),
-  StringExpression             = require("./ast/string"),
-  ReferenceExpression          = require("./ast/reference"),
-  HashExpression               = require("./ast/hash"),
-  ScriptExpression             = require("./ast/script"),
-  CallExpression               = require("./ast/call"),
-  ModifierExpression           = require("./ast/modifier"),
-  ArrayExpression              = require("./ast/array"),
-  ParametersExpression         = require("./ast/parameters"),
-  GroupExpression              = require("./ast/group");
+var DoctypeExpression          = require("./ast/doctype");
+var RootNodeExpression         = require("./ast/rootNode");
+var TextNodeExpression         = require("./ast/textNode");
+var CommentNodeExpression      = require("./ast/commentNode");
+var ElementNodeExpression      = require("./ast/elementNode");
+var BlockBindingExpression     = require("./ast/blockBinding");
+var DocTypeExpression          = require("./ast/doctype");
+var TernaryConditionExpression = require("./ast/ternaryCondition");
+var AssignmentExpression       = require("./ast/assignment");
+var OperatorExpression         = require("./ast/operator");
+var NotExpression              = require("./ast/not");
+var LiteralExpression          = require("./ast/literal");
+var StringExpression           = require("./ast/string");
+var ReferenceExpression        = require("./ast/reference");
+var HashExpression             = require("./ast/hash");
+var ScriptExpression           = require("./ast/script");
+var CallExpression             = require("./ast/call");
+var ModifierExpression         = require("./ast/modifier");
+var ArrayExpression            = require("./ast/array");
+var ParametersExpression       = require("./ast/parameters");
+var GroupExpression            = require("./ast/group");
 
-  function trimWhitespace (ws) {
-    return trimNewLineChars(ws).replace(/(^\s+)|(\s+$)/, "");
+function trimWhitespace(ws) {
+  return trimNewLineChars(ws).replace(/(^\s+)|(\s+$)/, "");
+}
+
+function trimEnds(ws) {
+  return ws.replace(/(^\s+)|(\s+$)/, "").replace(/[\r\n]/g, "\\n");
+}
+
+function trimNewLineChars(ws) {
+  return ws.replace(/[ \r\n\t]+/g, " ");
+}
+
+function trimmedText() {
+  return trimWhitespace(text());
+}
+
+function singleOrArrayExpression(values) {
+  return values.length === 1 ? values[0] : new ArrayExpression(new ParametersExpression(values));
+}
+
+function attrValues(values) {
+
+  values = values.filter(function(v) {
+    return !/^[\n\t\r]+$/.test(v.value);
+  });
+
+  if (values.length === 1 && values[0].type === "string") {
+    return values[0];
+  } else {
+    return new ArrayExpression(new ParametersExpression(values));
   }
+}
 
-  function trimEnds (ws) {
-    return ws.replace(/(^\s+)|(\s+$)/, "").replace(/[\r\n]/g,"\\n");
-  }
+function trimTextExpressions(expressions) {
 
-  function trimNewLineChars (ws) {
-    return ws.replace(/[ \r\n\t]+/g, " ");
-  }
-
-  function trimmedText () {
-    return trimWhitespace(text());
-  }
-
-  function singleOrArrayExpression (values) {
-    return values.length === 1 ? values[0] : new ArrayExpression(new ParametersExpression(values));
-  }
-
-  function attrValues (values) {
-
-    values = values.filter(function (v) {
-      return!/^[\n\t\r]+$/.test(v.value);
-    });
-
-    var v = values.length === 1 && values[0].type === "string" ? values[0] : new ArrayExpression(new ParametersExpression(values));
-    return v;
-  }
-
-  function trimTextExpressions (expressions) {
-
-    function _trim (exprs) {
-      var expr, i;
-      for (i = exprs.length; i--;) {
-        expr = exprs[i];
-        if (expr.type == "textNode" && !/\S/.test(expr.value) && !expr.decoded) {
-          exprs.splice(i, 1);
-        } else {
-          break;
-        }
+  function _trim(exprs) {
+    var expr;
+    for (var i = exprs.length; i--;) {
+      expr = exprs[i];
+      if (expr.type == "textNode" && !/\S/.test(expr.value) && !expr.decoded) {
+        exprs.splice(i, 1);
+      } else {
+        break;
       }
-      return exprs;
     }
-
-    return _trim(_trim(expressions.reverse()).reverse());
+    return exprs;
   }
+
+  return _trim(_trim(expressions.reverse()).reverse());
+}
+
 }
 
 Start
@@ -239,7 +243,7 @@ Parameters
 
 InnerParameters
   = param1:Expression rest:("," Expression)* {
-      return [param1].concat(rest.map(function (v) {
+      return [param1].concat(rest.map(function(v) {
         return v[1];
       }));
     }
@@ -334,7 +338,7 @@ FunctionCall
 
 Reference
   = bindingType:("^"/"~>"/"<~>"/"~"/"<~")? _ reference:ReferenceName path:("." ReferenceName)* _ {
-      path = [reference].concat(path.map(function (p) { return p[1]; }));
+      path = [reference].concat(path.map(function(p) { return p[1]; }));
       return new ReferenceExpression(path, bindingType);
     }
 

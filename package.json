@@ -4,7 +4,7 @@
   "description": "controller logic:",
   "main": "./lib/node.js",
   "scripts": {
-    "test": "make jshint test-coveralls"
+    "test": "make lint test-coveralls"
   },
   "keywords": [
     "template",
