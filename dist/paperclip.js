@@ -6322,7 +6322,14 @@ module.exports = protoclass(Template, {
       clonedSection = this.section.clone();
     }
 
-    var view = this._viewPool.pop() || new View(this, this._viewPool, clonedSection, this.hydrators);
+    var view = this._viewPool.pop();
+
+    if (view) {
+      view.setOptions(options || {});
+    } else {
+      view = new View(this, this._viewPool, clonedSection, this.hydrators, options || {});
+    }
+
     view.setOptions(options || {});
     if (context) view.bind(context);
     return view;
@@ -6375,7 +6382,7 @@ Reference      = require("./reference");
  * to the section
  */
 
-function View(template, pool, section, hydrators) {
+function View(template, pool, section, hydrators, options) {
 
   // todo - check if node child length is > 1. If so, then
   // create a section, otherwise don't.
@@ -6384,7 +6391,8 @@ function View(template, pool, section, hydrators) {
   this.section         = section;
   this.bindings        = [];
   this._pool           = pool;
-  this.accessor        = template.accessor || new template.accessorClass();
+  this.parent          = options.parent;
+  this.accessor        = this.parent ? this.parent.accessor : template.accessor || new template.accessorClass();
   this.rootNode        = section.rootNode();
   this.transitions     = new Transitions();
   this.runloop         = template.runloop;
