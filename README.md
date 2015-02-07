@@ -33,7 +33,7 @@ module.exports = (function(fragment, block, element, text, comment, parser, modi
 - works with NodeJS
 - unit testable in node, and in the browser
 - [works well with coverage tools such as istanbul](https://cloud.githubusercontent.com/assets/757408/4878446/ab0896ba-630c-11e4-9d14-fa1fc0179b1e.png)
-- 50kb minified & gzipped
+- 17kb minified & gzipped
 - no browser dependencies
 
 ### Adapters
