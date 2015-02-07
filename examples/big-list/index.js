@@ -1,4 +1,4 @@
-var pc = require("../../lib/index.js"),
+var pc = require("../../lib/browser.js"),
 React = require("react"),
 stats = require("statsjs"),
 Vue = require("vue"),
@@ -8,7 +8,7 @@ _ = require("lodash");
 
 var pcTpl = 
 "<div repeat.each={{source}} repeat.as='model'>" +
-    "<span>{{'item ' + ~model + ' ' + ~model }}<br /></span>" +
+    "<span>&times;{{'item ' + ~model + ' ' + ~model }}<br /></span>" +
 "</div>";
 
 var tpl = window.pcTpl = pc.template(pcTpl, pc);
