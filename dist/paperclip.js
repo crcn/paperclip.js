@@ -53,18 +53,12 @@ module.exports = protoclass(BaseAccessor, {
 var BaseAccessor = require("./base"),
 _set           = require("../utils/set");
 
-module.exports = BaseAccessor.extend({
+function POJOAccessor () {
+  this._getters = {};
+  this._watchers = [];
+}
 
-  /**
-   */
-
-  _getters: {},
-
-
-  /**
-   */
-
-  _watchers: [],
+module.exports = BaseAccessor.extend(POJOAccessor, {
 
   /**
    */
@@ -129,7 +123,7 @@ module.exports = BaseAccessor.extend({
     return this._addWatcher(function () {
       var newValue = self.get(object, path);
       if (!firstCall && newValue === currentValue && typeof newValue !== "function") return;
-      firstCall = true;
+      firstCall = false;
       var oldValue = currentValue;
       currentValue = newValue;
       listener(newValue, currentValue);
@@ -1112,7 +1106,9 @@ module.exports = BaseComponent.extend(StackComponent, {
     this.currentTemplate = currentTpl;
     if (this.currentView) this.currentView.dispose();
     if (!currentTpl) return;
-    this.currentView = currentTpl.view(this.view.context);
+    this.currentView = currentTpl.view(this.view.context, {
+      parent: this.view
+    });
     this.currentTemplate = currentTpl;
     this.section.appendChild(this.currentView.render());
   }
@@ -1252,6 +1248,7 @@ module.exports = BaseComponent.extend(EscapeComponent, {
     var node;
 
     if (value.render) {
+
       value.remove();
       node = value.render();
     } else if (value.nodeType != null) {
@@ -6409,6 +6406,7 @@ protoclass(View, {
 
   setOptions: function(options) {
     this.parent = options.parent;
+    if (options.parent) this.accessor = this.parent.accessor;
   },
 
   /**
