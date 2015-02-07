@@ -2,7 +2,6 @@ var expect = require("expect.js"),
 pc         = require("../.."),
 template   = pc.template,
 parser  = require("../../lib/parser"),
-BindableObject = require("bindable-object"),
 stringifyView = require("../utils/stringifyView");;
 
 /*

@@ -42,15 +42,15 @@ describe(__filename + "#", function () {
 
   it("can unbind a context", function () {
 
-    var c = new BindableObject({
+    var c = {
       name: "a"
-    });
+    };
 
     var v = pc.template("hello {{name}}").view(c);
 
     expect(stringifyView(v)).to.be("hello a");
     v.unbind();
-    c.set("name", "b");
+    v.set("name", "b");
     expect(stringifyView(v)).to.be("hello a");
   });
 
@@ -77,9 +77,9 @@ describe(__filename + "#", function () {
   });
   
   xit("doesn't double-bind values", function () {
-    var c = new BindableObject({
+    var c = {
       name: "a"
-    });
+    };
 
     var i = 0;
 

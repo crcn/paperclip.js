@@ -1,7 +1,6 @@
 var expect     = require("expect.js"),
 template       = require("../../lib/template"),
 parser         = require("../../lib/parser"),
-BindableObject = require("bindable-object"),
 Component      = require("../..").Component,
 stringifyView = require("../utils/stringifyView")
 
@@ -48,8 +47,8 @@ describe(__filename + "#", function () {
       as        = attrs.as || "model";
 
       for (var i = 0; i < count; i++) {
-        var model = new BindableObject();
-        model.set(as, i);
+        var model = {};
+        model[as] = i;
         options.section.appendChild(options.childTemplate.view(model).render());
       }
     };
@@ -105,8 +104,8 @@ describe(__filename + "#", function () {
         as = this.attributes.as || "model";
 
         for (var i = 0; i < count; i++) {
-          var model = new BindableObject();
-          model.set(as, i);
+          var model = {};
+          model[as] = i;
           this.section.appendChild(this.childTemplate.view(model).render());
         }
       }

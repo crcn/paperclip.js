@@ -1,7 +1,6 @@
 var expect     = require("expect.js"),
 template       = require("../../lib/template"),
 sinon          = require("sinon"),
-BindableObject = require("bindable-object"),
 stringifyView = require("../utils/stringifyView");
 
 /*
@@ -17,7 +16,7 @@ describe(__filename + "#", function () {
   });
 
   it("can pass a bindable object as the context of a view", function () {
-    var v = template("{{name}}").view(new BindableObject({name: "a" }));
+    var v = template("{{name}}").view({name: "a" });
     expect(stringifyView(v)).to.be("a");
   });
 
@@ -50,14 +49,14 @@ describe(__filename + "#", function () {
 
   it("doesn't sync changes from previous context", function () {
 
-    var ac = new BindableObject({name:"a"}),
-    bc     = new BindableObject({name:"b"});
+    var ac = {name:"a"},
+    bc     = {name:"b"};
 
     var v = template("{{name}}").view(ac);
     expect(stringifyView(v)).to.be("a");
     v.bind(bc)
     expect(stringifyView(v)).to.be("b");
-    ac.set("name", "c");
+    v.set("name", "c");
     expect(stringifyView(v)).to.be("b");
   });
 

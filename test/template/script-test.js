@@ -1,6 +1,5 @@
 var pc   = require("../.."),
 expect   = require("expect.js"),
-BindableObject = require("bindable-object"),
 stringifyView = require("../utils/stringifyView");
 
 // TODO - clean me up!
@@ -199,42 +198,42 @@ describe(__filename + "#", function () {
 
     var c;
     beforeEach(function () {
-      c = new BindableObject();
+      c = {};
     })
 
     it("can assign a=true", function () {
       expect(pc.template("{{a=true}}").view(c).toString()).to.be("true");
-      expect(c.get("a")).to.be(true);
+      expect(c.a).to.be(true);
     });
 
     it("can assign to a nested value", function () {
       expect(pc.template("{{a.b.c.d=!e}}").view(c).toString()).to.be("true");
-      expect(c.get("a.b.c.d")).to.be(true);
+      expect(c.a.b.c.d).to.be(true);
     });
 
     xit("can assign aa.a=a=b=c=d", function () {
-      var c = new BindableObject({d:1});
+      var c = {d:1};
       var v = pc.template("{{aa.a=a=b=c=d}}").view(c);
       v.render();
-      expect(c.get("aa.a")).to.be(1);
-      expect(c.get("a")).to.be(1);
-      expect(c.get("b")).to.be(1);
-      expect(c.get("c")).to.be(1);
-      expect(c.get("d")).to.be(1);
+      expect(v.get("aa.a")).to.be(1);
+      expect(v.get("a")).to.be(1);
+      expect(v.get("b")).to.be(1);
+      expect(v.get("c")).to.be(1);
+      expect(v.get("d")).to.be(1);
 
-      c.set("c", 2);
+      v.set("c", 2);
       // v.runner.update();
 
       // triggers re-evaluation. All values should STILL be 1
-      expect(c.get("c")).to.be(1);
+      expect(v.get("c")).to.be(1);
 
-      c.set("d", 2);
+      v.set("d", 2);
       // v.runner.update();
-      expect(c.get("aa.a")).to.be(2);
-      expect(c.get("a")).to.be(2);
-      expect(c.get("b")).to.be(2);
-      expect(c.get("c")).to.be(2);
-      expect(c.get("d")).to.be(2);
+      expect(v.get("aa.a")).to.be(2);
+      expect(v.get("a")).to.be(2);
+      expect(v.get("b")).to.be(2);
+      expect(v.get("c")).to.be(2);
+      expect(v.get("d")).to.be(2);
     });
   });
 });

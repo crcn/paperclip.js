@@ -1,6 +1,5 @@
 var pc   = require("../.."),
 expect   = require("expect.js"),
-BindableObject = require("bindable-object"),
 stringifyView = require("../utils/stringifyView");
 
 describe(__filename + "#", function () {
@@ -70,10 +69,10 @@ describe(__filename + "#", function () {
   xit("can bind to a model", function () {
     
 
-    var context = new BindableObject({
+    var context = {
       firstName: "a",
       lastName: "b"
-    });
+    };
 
     var tpl = pc.template("{{ ctx | fullName() }}");
 
@@ -94,13 +93,13 @@ describe(__filename + "#", function () {
 
   xit("properly unwatches a bindable object if set to undefined", function () {
 
-    var b = new BindableObject({
+    var b = {
       a: "a"
-    });
+    };
 
-    var context = new BindableObject({
+    var context = {
       b: b
-    });
+    };
 
     var t = pc.template("{{b|json()}}").view(context);
     expect(t.bindings.script._bindings.length).to.be(2);
