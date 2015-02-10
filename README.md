@@ -4,6 +4,35 @@ Visit http://paperclipjs.com for further documentation.
 
 Paperclip is a reactive template engine designed for the DOM. It works by compiling templates to document fragments, then clones them whenever they're needed. The result is blazing-fast rendering with very few moving parts. 
 
+### Features
+
+- explicit data-bindings (1-way, 2-way, unbound)
+
+
+### Syntax
+
+template:
+
+```html
+
+<input type="text" value="{{ <~> name }}" />
+<show when="{{name}}">
+  <h3 easeIn="fade" easeOut="fade">Hello {{name}}!</h3>
+</show>
+```
+
+controller (with [brfs](https://github.com/substack/brfs)):
+
+```javascript
+var pc   = require("paperclip");
+var fs   = require("fs");
+
+var helloTemplate = pc.template(fs.readFileSync(__dirname + "/template.pc", "utf8"));
+var helloView     = helloTemplate.view();
+
+document.body.appendChild(helloView.render());
+```
+
 ### Adapters
 
 - [MarionetteJS](https://github.com/mojo-js/marionette-paperclip)
