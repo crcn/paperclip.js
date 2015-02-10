@@ -6,8 +6,12 @@ Paperclip is a reactive template engine designed for the DOM. It works by compil
 
 ### Features
 
+- [very fast](http://jsperf.com/pc-templating-comparison/5)
 - explicit data-bindings (1-way, 2-way, unbound)
-
+- small (37kb gzipped)
+- accepts plain old javascript objects
+- works with any framework
+- no browser dependencies
 
 ### Syntax
 
@@ -17,7 +21,7 @@ template:
 
 <input type="text" value="{{ <~> name }}" />
 <show when="{{name}}">
-  <h3 easeIn="fade" easeOut="fade">Hello {{name}}!</h3>
+  <h3>Hello {{name}}!</h3>
 </show>
 ```
 
