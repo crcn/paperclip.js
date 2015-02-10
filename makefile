@@ -34,9 +34,8 @@ test-coveralls:
 	./node_modules/.bin/_mocha ./test/*/**-test.js --timeout $(TIMEOUT) -- --reporter $(REPORTER)  && \
 	cat ./coverage/lcov.info | ./node_modules/.bin/coveralls --verbose
 
-test-karma:
+test-browser:
 	./node_modules/karma/bin/karma start
-
 
 lint: jshint jscs
 	
