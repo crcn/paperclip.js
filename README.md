@@ -10,7 +10,7 @@ Paperclip is a reactive template engine designed for the DOM. It works by compil
 
 - [very fast](http://jsperf.com/pc-templating-comparison/5)
 - explicit data-bindings (1-way, 2-way, unbound)
-- small (37kb gzipped)
+- small (41KB gzipped)
 - accepts plain old javascript objects
 - works with any framework
 - no browser dependencies
