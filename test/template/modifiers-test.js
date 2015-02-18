@@ -29,6 +29,11 @@ describe(__filename + "#", function () {
     }
   });
 
+  it("can call isNaN()", function () {
+    var v = pc.template("{{a|isNaN}}").view({a:{b:1,c:2}});
+    expect(stringifyView(v)).to.be('true');
+  });
+
   it("can call multiple modifiers on one expression", function () {
     expect(pc.template("{{name|lowercase()|titlecase()}}").view({name:"ABC"}).toString()).to.be("Abc");
   });
