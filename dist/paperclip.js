@@ -1940,6 +1940,7 @@ module.exports = {
   }
 };
 
+/* istanbul ignore if */
 if (global.paperclip) {
   global.paperclip.parse           = module.exports.parse;
   global.paperclip.template.parser = module.exports;
@@ -6181,10 +6182,7 @@ if (process.browser) {
   isIE = !!(hasMSIE || hasTrident);
 }
 
-
 function Template(script, options) {
-
-
 
   this.options         = options;
   this.accessor        = options.accessor;
@@ -6195,7 +6193,6 @@ function Template(script, options) {
   this.attributes      = options.attributes    || defaults.attributes;
   this.runloop         = options.runloop       || defaults.runloop;
   this.nodeFactory     = options.nodeFactory   || nofactor;
-
 
   if (typeof script === "function") {
     this.vnode = script(

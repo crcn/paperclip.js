@@ -26,11 +26,11 @@ start-example-server:
 	./node_modules/.bin/mojo build ./examples/$(NAME)/index.js --debug --output=./examples/$(NAME)/index.bundle.js --serve=./examples --port=8085
 
 test-cov:
-	PC_DEBUG=1 ./node_modules/.bin/istanbul cover \
+	PC_DEBUG=1 ./node_modules/.bin/istanbul cover -x "lib/parser/parser.js" \
 	./node_modules/.bin/_mocha ./test/*/**-test.js --ignore-leaks --timeout $(TIMEOUT) --reporter $(REPORTER)
 
 test-coveralls:
-	PC_DEBUG=1 ./node_modules/.bin/istanbul cover \
+	PC_DEBUG=1 ./node_modules/.bin/istanbul cover -x "lib/parser/parser.js" \
 	./node_modules/.bin/_mocha ./test/*/**-test.js --timeout $(TIMEOUT) -- --reporter $(REPORTER)  && \
 	cat ./coverage/lcov.info | ./node_modules/.bin/coveralls --verbose
 
