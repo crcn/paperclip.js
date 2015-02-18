@@ -121,6 +121,25 @@ describe(__filename + "#", function () {
     t.render().dispatchEvent(e);
   });
 
+  it("doesn't catch events outside of escape event keycode", function () {
+    var i = 0;
+    var t = pc.template(
+      "<div onEscape='{{" +
+        "onEvent(event)" +
+      "}}'></div>"
+    , paperclip).view({
+      onEvent: function (event) {
+        i++;
+      }
+    }); 
+
+    var e = document.createEvent("Event");
+    e.initEvent("keydown", true, true);
+    e.keyCode = 30;
+    t.render().dispatchEvent(e);
+    expect(i).to.be(0);
+  });
+
 
   it("cannot trigger an event if a view is unbound", function () {
     var i = 0;

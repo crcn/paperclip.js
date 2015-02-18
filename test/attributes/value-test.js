@@ -2,7 +2,8 @@ var expect     = require("expect.js"),
 pc             = require("../.."),
 template       = pc.template,
 nodeFactory = require("nofactor/lib/dom"),
-defaultNodeFactory = require("nofactor");
+defaultNodeFactory = require("nofactor"),
+sinon     = require("sinon");
 
 
 /*
@@ -39,6 +40,23 @@ describe(__filename + "#", function () {
     }, 10);
   });
 
+  it("can data-bind to an element if contentEditable is true", function (next) {
+    var t = pc.template("<span value={{ <~>name }} contentEditable='true' />", pc);
+
+    var b = t.view();
+    var input = b.render();
+    input.innerHTML = "baab";
+    var e = document.createEvent("Event");
+    e.initEvent("change", true, true);
+    input.dispatchEvent(e);
+
+    setTimeout(function () {
+      expect(b.get("name")).to.be("baab");
+      b.dispose();
+      next();
+    }, 10);
+  });
+
   it("can data-bind to a checkbox", function (next) {
     var t = pc.template("<input type='checkbox' checked={{ <~>checked }} />", pc);
 
@@ -53,6 +71,44 @@ describe(__filename + "#", function () {
       expect(b.get("checked")).to.be(true);
       b.set("checked", false);
       expect(input.checked).to.be(false);
+      b.dispose();
+      next();
+    }, 10);
+  });
+
+  it("propagates event if keycode is 27", function (next) {
+    var t = pc.template("<input type='text' value={{ <~>value }} />", pc);
+
+    var b = t.view();
+    var input = b.render();
+    input.value = "abba";
+    var e = document.createEvent("Event");
+    e.initEvent("keyup", true, true);
+    e.keyCode = 27;
+    input.dispatchEvent(e);
+
+    setTimeout(function () {
+      expect(b.get("value")).to.be("abba");
+      b.dispose();
+      next();
+    }, 10);
+  });
+
+  it("stops propagating event if keycode isn't 27", function (next) {
+    var t = pc.template("<input type='text' value={{ <~>value }} />", pc);
+
+    var b = t.view();
+    var input = b.render();
+    input.value = "abba";
+    var e = document.createEvent("Event");
+    e.initEvent("keyup", true, true);
+    e.keyCode = 30;
+    var stub = sinon.stub(e, "stopPropagation");
+    input.dispatchEvent(e);
+
+
+    setTimeout(function () {
+      expect(stub.callCount).to.be(1);
       b.dispose();
       next();
     }, 10);
