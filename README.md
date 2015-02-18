@@ -1,8 +1,6 @@
 [![Build Status](https://travis-ci.org/mojo-js/paperclip.js.svg?branch=master)](https://travis-ci.org/mojo-js/paperclip.js) [![Coverage Status](https://coveralls.io/repos/mojo-js/paperclip.js/badge.svg?branch=master)](https://coveralls.io/r/mojo-js/paperclip.js?branch=master) [![Coverage Status](https://david-dm.org/mojo-js/paperclip.js.svg)](https://david-dm.org/mojo-js/paperclip.js) [![Join the chat at https://gitter.im/mojo-js/paperclip.js](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mojo-js/paperclip.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-
-
-Visit http://paperclipjs.com for further documentation.
+** Visit http://paperclipjs.com for further documentation. **
 
 Paperclip is a reactive template engine designed for the DOM. It works by compiling templates to document fragments, then clones them whenever they're needed. The result is blazing-fast rendering with very few moving parts. 
 
