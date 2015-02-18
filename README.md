@@ -46,7 +46,7 @@ document.body.appendChild(helloView.render());
 
 ### Examples
 
-- [updating 1000 items](http://requirebin.com/?gist=425cdb646205bb819477)
+- [updating 1000 items](http://requirebin.com/?gist=5602fd414139b6ed4fbc)
 - [inline html](http://requirebin.com/?gist=bbb9b0eaccd3d7e41df1)
 - [partial todomvc example](http://paperclip-todomvc-example.herokuapp.com/)
 - [POJO dots](http://jsfiddle.net/JTxdM/116/)
