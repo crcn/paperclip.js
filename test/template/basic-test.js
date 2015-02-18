@@ -2,7 +2,8 @@ var expect = require("expect.js"),
 pc         = require("../.."),
 template   = pc.template,
 parser  = require("../../lib/parser"),
-stringifyView = require("../utils/stringifyView");;
+stringifyView = require("../utils/stringifyView"),
+assert = require("assert");
 
 /*
 
@@ -20,6 +21,21 @@ describe(__filename + "#", function () {
     var script,
     tpl = template(script = parser.compile("hello world"));
     expect(typeof tpl.vnode).to.be("object");
+  });
+
+  it("can use a template with useCloneNode = false", function () {
+    var tpl = template(script = parser.compile("hello world"), { useCloneNode: false });
+    expect(stringifyView(tpl.view())).to.be("hello world");
+    expect(stringifyView(tpl.view())).to.be("hello world");
+  });
+
+  it("throws an error if the source is a string and there is no parser", function () {
+    var p = template.parser;
+    template.parser = void 0;
+    assert.throws(function () {
+      template("blah");
+    }, Error);
+    template.parser = p;
   });
 
   it("throws an error if the source is anything other than a string, or function", function () {

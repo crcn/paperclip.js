@@ -76,16 +76,17 @@ describe(__filename + "#", function () {
     expect(stringifyView(v)).to.be("hello c");
   });
   
-  xit("doesn't double-bind values", function () {
+  it("doesn't double-bind values", function () {
     var c = {
       name: "a"
     };
 
     var i = 0;
 
-    pc.modifier("inc", function () {
+    pc.modifiers.inc = function () {
       return i++;
-    });
+    }
+
 
     expect(pc.template("{{a|inc}}").view(c).toString()).to.be("0");
   });

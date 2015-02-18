@@ -211,7 +211,7 @@ describe(__filename + "#", function () {
       expect(c.a.b.c.d).to.be(true);
     });
 
-    xit("can assign aa.a=a=b=c=d", function () {
+    it("can assign aa.a=a=b=c=d", function () {
       var c = {d:1};
       var v = pc.template("{{aa.a=a=b=c=d}}").view(c);
       v.render();

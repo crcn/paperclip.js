@@ -20,18 +20,8 @@ describe(__filename + "#", function () {
     expect(stringifyView(v)).to.be("a");
   });
 
-  xit("can render a view & still bind without a context", function () {
-    var tpl = template("hello {{name}}"), v = tpl.view();
-    expect(v.scope).to.be(void 0);
-    var bindSpy = sinon.spy(v, "bind");
-    v.render();
-    expect(bindSpy.callCount).to.be(1);
-    expect(v.scope).not.to.be(void 0);
-  });
-
-
   // shouldn't happen anymore. Use different accessor.
-  xit("syncs changes from the view context back to a vanilla object", function () {
+  it("syncs changes from the view context back to a vanilla object", function () {
     var ctx;
     var v = template("{{name}}").view(ctx = {name:"a"});
     v.set("name", "b");

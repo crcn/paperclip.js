@@ -36,6 +36,36 @@ describe(__filename + "#", function () {
     expect(stringifyView(v)).to.be("c b a d");
   });
 
+
+  it("can re-bind a template component", function () {
+
+    var at = template("a {{name}}"),
+    bt     = template("b <at name={{name}} />", { components: { at: at.createComponentClass() }}),
+    ct     = template("c <bt name={{name}} />", { components: { bt: bt.createComponentClass() }});
+
+    var v = ct.view({name:"d"});
+
+    expect(stringifyView(v)).to.be("c b a d");
+
+    v.bind({ name: "e" });
+    expect(stringifyView(v)).to.be("c b a e");
+
+  });
+
+  it("can unbind before binding", function () {
+
+    var at = template("a {{name}}"),
+    bt     = template("b <at name={{name}} />", { components: { at: at.createComponentClass() }}),
+    ct     = template("c <bt name={{name}} />", { components: { bt: bt.createComponentClass() }});
+
+    var v = ct.view();
+    v.unbind();
+
+    v.bind({ name: "e" });
+    expect(stringifyView(v)).to.be("c b a e");
+
+  });
+
   it("can register a very basic repeat component", function () {
 
     function repeatComponent (options) {
@@ -134,4 +164,5 @@ describe(__filename + "#", function () {
 
     expect(stringifyView(v)).to.be("ab0ab1ab2ab3ab4");
   });
+
 });

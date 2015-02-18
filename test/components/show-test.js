@@ -10,7 +10,7 @@ var tpl = paperclip.template("abba")
 
 describe(__filename + "#", function () {
 
-  xit("can show conditional content", function () {
+  it("can show conditional content", function () {
     var v = pc.template(
       "hello <show when={{true}}>" + 
         "world" +
@@ -20,7 +20,7 @@ describe(__filename + "#", function () {
     expect(stringifyView(v)).to.be("hello world");
   });
 
-  xit("can hide conditional content", function () {
+  it("can hide conditional content", function () {
     var v = pc.template(
       "hello <show when={{false}}>" + 
         "world" +
@@ -30,7 +30,7 @@ describe(__filename + "#", function () {
     expect(stringifyView(v)).to.be("hello ");
   });
 
-  xit("can toggle conditional content", function () {
+  it("can toggle conditional content", function () {
     var v = pc.template(
       "hello <show when={{show}}>" + 
         "world" +
@@ -39,10 +39,10 @@ describe(__filename + "#", function () {
 
     expect(stringifyView(v)).to.be("hello world");
     v.set("show", false);
-    // v.runner.update();
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("hello ");
     v.set("show", true);
-    // v.runner.update();
+    v.runloop.runNow();
     expect(stringifyView(v)).to.be("hello world");
   });
 

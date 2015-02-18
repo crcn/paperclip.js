@@ -1,4 +1,5 @@
 var parser = require("../../lib/parser/parser.js"),
+template   = require("../../lib/template"),
 expect     = require("expect.js");
 
 describe(__filename + "#", function () {
@@ -30,9 +31,9 @@ describe(__filename + "#", function () {
     expect(ast.childNodes.expressions.expressions.length).to.be(4);
   });
 
-  xit("doesn't maintain whitespace if the space is a new line character", function () {
+  it("maintains whitespace if the space is a new line character", function () {
     var ast = parser.parse("{{a}}\n\t{{a}}");
-    expect(ast.childNodes.expressions.expressions.length).to.be(2);
+    expect(ast.childNodes.expressions.expressions.length).to.be(3);
   });
 
   it("accepts many types of characters in the tag name", function () {
@@ -123,53 +124,25 @@ describe(__filename + "#", function () {
       }
     });
 
-    xit("trims whitespace from attributes", function () {
-      var tpl = pc.template("<input value=' {{name}}'></input>");
-      expect(tpl.bind(new bindable.Object({ name: "john"})).toString()).to.be('<input value="john">');
+
+    it("trims whitespace from the start & end of elements", function () {
+      var tpl = template("<div> hello {{name}} </div>");
+      expect(tpl.view({ name: "john"}).toString()).to.be("<div>hello john</div>");
     });
 
-    xit("trims whitespace from the start & end of elements", function () {
-      var tpl = pc.template("<div> hello {{name}} </div>");
-      expect(tpl.bind(new bindable.Object({ name: "john"})).toString()).to.be("<div>hello john</div>");
+    it("maintains attribute spaces with a text binding", function () {
+      var tpl = template("<div class='blue red {{color}} yellow'></div>");
+      expect(tpl.view({ color: "blue" }).toString()).to.be('<div class="blue red blue yellow"></div>');
     });
 
-    xit("maintains attribute spaces with a text binding", function () {
-      var tpl = pc.template("<div class='blue red {{color}} yellow'></div>");
-      expect(tpl.bind(new bindable.Object({ color: "blue" })).toString()).to.be('<div class="blue red blue yellow"></div>');
+    it("preserves whitespace between nodes & text nodes", function () {
+      var tpl = template("<strong>hello</strong> world");
+      expect(tpl.view().toString()).to.be("<strong>hello</strong> world");
     });
 
-    xit("can data-bind unregistered atts", function () {
-      var tpl = pc.template("{{_id:'aa'}}").bind(new bindable.Object());
-      expect(tpl.bindings.clip.get("_id")).to.be("aa");
-    });
-
-    xit("can set value: to the first arg if it's not there", function () {
-      var tpl = pc.template("{{name,_id:'aa',_id2:'aaa'}}").bind(new bindable.Object());
-      expect(tpl.bindings.clip.get("_id")).to.be("aa");
-    });
-
-    xit("can reference bindings from data-bind", function () {
-      var tpl = pc.template("<div data-bind={{name,_id:'aa',_id2:'aaa'}}></div>").bind(new bindable.Object({name:"john"}));
-      expect(tpl.bindings.clip.get("_id")).to.be("aa");
-      expect(tpl.bindings.clip.get("_id2")).to.be("aaa");
-      expect(tpl.bindings.clip.get("value")).to.be("john");
-    });
-
-    xit("can reference bindings from any attribute", function () {
-      var tpl = pc.template("<div class={{name,_id:'aa',_id2:'aaa'}}></div>").bind(new bindable.Object({name:"john"}));
-      expect(tpl.bindings.clippedBuffer.buffer[0].clip.get("_id")).to.be("aa");
-      expect(tpl.bindings.clippedBuffer.buffer[0].clip.get("_id2")).to.be("aaa");
-      expect(tpl.bindings.clippedBuffer.buffer[0].clip.get("value")).to.be("john");
-    });
-
-    xit("preserves whitespace between nodes & text nodes", function () {
-      var tpl = pc.template("<strong>hello</strong> world").bind(new bindable.Object());
-      expect(tpl.toString()).to.be("<strong>hello</strong> world");
-    });
-
-    xit("preserves whitespace between nodes & blocks", function () {
-      var tpl = pc.template("<strong>hello</strong> {{name}}").bind(new bindable.Object({name:"john"}));
-      expect(tpl.toString()).to.be("<strong>hello</strong> john");
+    it("preserves whitespace between nodes & blocks", function () {
+      var tpl = template("<strong>hello</strong> {{name}}");
+      expect(tpl.view({name:"john"}).toString()).to.be("<strong>hello</strong> john");
     });
 
   });

@@ -14,6 +14,14 @@ describe(__filename + "#", function () {
     expect(t.toString()).to.be("a");
   });
 
+  it("can use a data-binding with an or statement", function () {
+    var c = {};
+    pc.template("{{a||<~>a}}").view(c);
+    pc.template("{{a||~a}}").view(c);
+    pc.template("{{a||<~a}}").view(c);
+    pc.template("{{a||~>a}}").view(c);
+  });
+
   xit("<~ can bind a reference, but not be settable", function () {
     var c ={
       a: "a"
@@ -40,14 +48,6 @@ describe(__filename + "#", function () {
     expect(ref.__isBindableReference).to.be(true);
     ref.value("b");
     expect(t.toString()).to.be("a");
-  });
-
-  it("can use a data-binding with an or statement", function () {
-    var c = {};
-    pc.template("{{a||<~>a}}").view(c);
-    pc.template("{{a||~a}}").view(c);
-    pc.template("{{a||<~a}}").view(c);
-    pc.template("{{a||~>a}}").view(c);
   });
 
   xit("allows for references with <~> to be bound both ways", function () {

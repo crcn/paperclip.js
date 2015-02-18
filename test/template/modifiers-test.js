@@ -95,28 +95,6 @@ describe(__filename + "#", function () {
     expect(stringifyView(v)).to.be("b c");
   });
 
-  xit("properly unwatches a bindable object if set to undefined", function () {
-
-    var b = {
-      a: "a"
-    };
-
-    var context = {
-      b: b
-    };
-
-    var t = pc.template("{{b|json()}}").view(context);
-    expect(t.bindings.script._bindings.length).to.be(2);
-    expect(t.toString()).to.be("{&#x22;a&#x22;:&#x22;a&#x22;,&#x22;_events&#x22;:{}}");
-    context.set("b", undefined);
-    // v.runner.update();
-    expect(t.bindings.script._bindings.length).to.be(1);
-    expect(t.toString()).to.be("");
-    context.set("b", b);
-    // v.runner.update();
-    expect(t.bindings.script._bindings.length).to.be(2);
-    expect(t.toString()).to.be("{&#x22;a&#x22;:&#x22;a&#x22;,&#x22;_events&#x22;:{}}");
-  });
 
   it("can be nested", function () {
 

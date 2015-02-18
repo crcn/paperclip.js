@@ -175,17 +175,16 @@ describe(__filename + "#", function () {
 
   // test autocomplete
   "text password email".split(" ").forEach(function (type) {
-    xit("data-binds the input field to the context with no event trigger for " + type + " types", function (next) {
+    it("data-binds the input field to the context with no event trigger for " + type + " types", function (next) {
       var t = pc.template("<input type='"+type+"' value={{ <~>name }} />", pc),
-      c = new BindableObject();
-      c.set("this", c);
+      c = {}
 
       var b = t.view(c);
       var input = b.render();
       input.value = "baab";
 
       setTimeout(function () {
-        expect(c.get("name")).to.be("baab");
+        expect(c.name).to.be("baab");
         b.dispose();
         next();
       }, process.browser ? 600 : 10);
@@ -216,5 +215,32 @@ describe(__filename + "#", function () {
       v     = t.view({value:false});
 
     expect(v.section.node.value).to.be("false");
+  });
+
+  it("properly re-binds to another reference value if it changes", function () {
+    var t = pc.template("<input type='text' value={{ <~>value }} />", pc),
+      v     = t.view({value:"a"});
+
+    v.render();
+    v.runloop.runNow();
+
+    expect(v.section.node.value).to.be("a");
+
+    v.set("value", "b");
+    v.runloop.runNow();
+    expect(v.section.node.value).to.be("b");
+  });
+
+  it("doesn't bust if value is initially undefined and there's an input", function () {
+    var t = pc.template("<input type='text' value={{ value }} />", pc),
+      v     = t.view();
+
+
+    var input = v.render();
+    input.value = "baab";
+    var e = document.createEvent("Event");
+    e.initEvent("change", true, true);
+    input.dispatchEvent(e);
+
   });
 });
