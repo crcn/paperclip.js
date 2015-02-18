@@ -5,52 +5,39 @@ stringifyView = require("../utils/stringifyView")
 describe(__filename + "#", function () {
 
 
-  xit("can add an ease in attribute", function (next) {
-
-    var v = pc.template(
-      "<div easeIn='fade'>abb</div>"
-    , {
-      attributes: {
-        easein: pc.Attribute.extend({
-          initialize: function () {
-            this.view.transitions.push(this);
-          },
-          enter: function () {
-            expect(this.value).to.be("fade");
-            next();
-          }
-        })
-      }
-    }).view();
-
-    v.render();
-  });
-
-  xit("can add an ease out attribute", function (next) {
+  it("can add an ease in attribute", function (next) {
 
     var i = 0;
 
     var v = pc.template(
-      "<div easeOut='fade' />"
-    , {
-      attributes: {
-        easeout: pc.Attribute.extend({
-          initialize: function () {
-            this.view.transitions.push(this);
-          },
-          exit: function (complete) {
-            expect(i).to.be(1);
-            expect(this.value).to.be("fade");
-            next();
-          }
-        })
+      "<div easeIn={{easeIn}}>abb</div>"
+    ).view({
+      easeIn: function (node, complete) {
+        expect(node.nodeName).to.be("DIV");
+        complete();
+        next();
       }
-    }).view();
+    });
 
     v.render();
 
-    i++;
+  });
 
+  it("can add an ease out attribute", function (next) {
+
+    var i = 0;
+
+    var v = pc.template(
+      "<div easeOut={{easeOut}} />"
+    ).view({  
+      easeOut: function (node, complete) {
+        expect(node.nodeName).to.be("DIV");
+        complete();
+        next();
+      }
+    });
+
+    v.render();
     // trigger
     v.dispose();
   });

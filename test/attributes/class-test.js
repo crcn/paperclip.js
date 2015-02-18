@@ -36,4 +36,18 @@ describe(__filename + "#", function () {
     v.runloop.runNow();
     expect(stringifyView(v)).to.be('<div class="class2"></div>');
   });
+
+  it("can specify multiple classes within a key", function () {
+    var v = pc.template(
+      "<div class={{{'class class1':useClass,class2:true}}}></div>"
+    , pc).view({useClass:false});
+    expect(stringifyView(v)).to.be('<div class="class2"></div>');
+    v.set("useClass", true);
+    v.runloop.runNow();
+    expect(stringifyView(v)).to.be('<div class="class2 class class1"></div>');
+    v.set("useClass", false);
+    v.runloop.runNow();
+    expect(stringifyView(v)).to.be('<div class="class2"></div>');
+
+  });
 });
