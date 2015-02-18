@@ -23,12 +23,13 @@ describe(__filename + "#", function () {
     expect(i).to.be(1);
   });
 
-  xit("can recursively allow things to update themselves", function (next) {
+  it("can recursively allow things to update themselves", function (next) {
     var i = 0;
     runloop.tick = function(tick) { return setTimeout(tick, 0); }
     var r = {
       update: function () {
         i++;
+        if (i < 11) 
         runloop.deferOnce(r);
       }
     }
@@ -36,6 +37,7 @@ describe(__filename + "#", function () {
 
     setTimeout(function () {
       expect(i).to.be.greaterThan(10);
+      next();
     }, 100);
   });
 
