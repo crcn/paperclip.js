@@ -5742,9 +5742,18 @@ if (process.browser) {
 function RunLoop(options) {
   this._animationQueue = [];
   this.tick = options.tick || defaultTick;
+  this._id = options._id || 2;
 }
 
 protoclass(RunLoop, {
+
+  /**
+   * child runloop in-case we get into recursive loops
+   */
+
+  child: function () {
+    return this.__child || (this.__child = new RunLoop({ tick: this.tick, _id: this._id << 2 }));
+  },
 
   /**
    * Runs animatable object on requestAnimationFrame. This gets
@@ -5756,8 +5765,16 @@ protoclass(RunLoop, {
 
   deferOnce: function(context) {
 
-    if (context.__running) return;
-    context.__running = true;
+    if (!context.__running) context.__running = 1;
+
+    if (context.__running & this._id) {
+      if (this._running) {
+        this.child().deferOnce(context);
+      }
+      return;
+    }
+
+    context.__running |= this._id;
 
     // push on the animatable object
     this._animationQueue.push(context);
@@ -5781,13 +5798,14 @@ protoclass(RunLoop, {
     if (!this._requestingFrame) return;
     var queue = this._animationQueue;
     this._animationQueue = [];
+    this._running = true;
 
     // queue.length is important here, because animate() can be
     // called again immediately after an update
     for (var i = 0; i < queue.length; i++) {
       var item = queue[i];
-      item.__running = false;
       item.update();
+      item.__running &= ~this._id;
 
       // check for anymore animations - need to run
       // them in order
@@ -5795,6 +5813,8 @@ protoclass(RunLoop, {
         this.runNow();
       }
     }
+
+    this._running = false;
   }
 });
 
