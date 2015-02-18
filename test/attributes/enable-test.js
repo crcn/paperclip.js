@@ -4,7 +4,7 @@ stringifyView = require("../utils/stringifyView");
 
 describe(__filename + "#", function () {
 
-  it("can enable an input", function () {
+  it("can disable & enable an input", function () {
 
     var v = pc.template(
       "<input enable='{{" +
@@ -22,5 +22,10 @@ describe(__filename + "#", function () {
     // TODO - check raf here
     v.runloop.runNow();
     expect(stringifyView(v)).to.be("<input disabled=\"disabled\">");
+
+
+    c.set('enable', true);
+    v.runloop.runNow();
+    expect(stringifyView(v)).to.be("<input>");
   });
 });
