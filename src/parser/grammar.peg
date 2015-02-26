@@ -88,7 +88,7 @@ DocType
     }
 
 ChildNodes
-  = children:(ElementNode/TextNode/BlockBinding/CommentNode)* { return new ArrayExpression(new ParametersExpression(trimTextExpressions(children))); }
+  = children:(VoidElement/ElementNode/TextNode/BlockBinding/CommentNode)* { return new ArrayExpression(new ParametersExpression(trimTextExpressions(children))); }
 
 
 CommentNode
@@ -96,6 +96,17 @@ CommentNode
     return new CommentNodeExpression(trimEnds(value.join("")));
   }
   / DocType
+
+
+VoidElement
+  = "<" nodeName:("area"/"base"/"br"/"col"/"command"/"embed"/"hr"/"img"/"input"/"keygen"/"link"/"meta"/"param"/"source"/"track"/"wbr") attributes:TagAttributes (">"/"/>")? _ endTag:EndTag? {
+
+    if (endTag && nodeName != endTag.name) {
+      expected("</" + nodeName + ">");
+    }
+
+    return new ElementNodeExpression(nodeName, attributes);
+  }
 
 ElementNode
   = startTag:StartTag children:ChildNodes endTag:EndTag {
@@ -125,8 +136,15 @@ StartEndTag
   = _ "<" info:TagInfo "/>" _ { return new ElementNodeExpression(info.name, info.attributes); }
 
 TagInfo
-  = name:TagName _ attributes:Attribute* _ {
+  = name:TagName attrs:TagAttributes {
+      return {
+        name: name,
+        attributes: attrs
+      };
+    }
 
+TagAttributes 
+  = _ attributes:Attribute* _ {
       var attrs = {};
 
       for (var i = 0, n = attributes.length; i < n; i++) {
@@ -134,11 +152,9 @@ TagInfo
         attrs[attr.name] = attr.value;
       }
 
-      return {
-        name: name,
-        attributes: new HashExpression(attrs)
-      };
-    }
+      return new HashExpression(attrs);
+  }
+
 
 EndTag
   = "</" name:TagName ">" {
