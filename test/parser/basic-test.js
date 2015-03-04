@@ -30,7 +30,11 @@ describe(__filename + "#", function () {
   ].forEach(function (nodeName) {
 
     it("can parse the " + nodeName + " void element without child nodes", function () {
-      parser.parse("<" + nodeName + ">");
+      parser.parse("<div><" + nodeName + "></div>");
+    });
+
+    it("can parse the " + nodeName + " void element with attrs and without child nodes", function () {
+      parser.parse("<div><" + nodeName + " ab='c' d></div>");
     });
 
     it("can parse the " + nodeName + " void element with a closing tag", function () {
@@ -39,6 +43,10 @@ describe(__filename + "#", function () {
 
     it("can parse the " + nodeName + " void element with a closing tag and no children", function () {
       parser.parse("<" + nodeName + " />");
+    });
+
+    it("can parse the " + nodeName + " void element with attrs and with closing tag", function () {
+      parser.parse("<" + nodeName + " ab='c' d />");
     });
 
 
