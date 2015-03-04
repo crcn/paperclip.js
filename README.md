@@ -44,6 +44,7 @@ document.body.appendChild(helloView.render());
 
 ### Examples
 
+- [dbmonster](http://paperclip-dbmonster.herokuapp.com/)
 - [updating 1000 items](http://requirebin.com/?gist=5602fd414139b6ed4fbc)
 - [inline html](http://requirebin.com/?gist=bbb9b0eaccd3d7e41df1)
 - [partial todomvc example](http://paperclip-todomvc-example.herokuapp.com/)
