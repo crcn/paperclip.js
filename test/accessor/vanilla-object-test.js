@@ -39,8 +39,10 @@ describe(__filename + "#", function () {
 
       call: function (context, path, params) {
 
-        var fnName = path.pop(),
-        fnCtx      = path.length ? this.get(object, path) : context;
+        var pt = path.split(".");
+
+        var fnName = pt,
+        fnCtx      = pt.length ? this.get(object, pt.join(".")) : context;
 
         if (!fnCtx) return;
         return fnCtx[fnName].call(fnCtx, params);
@@ -51,7 +53,8 @@ describe(__filename + "#", function () {
 
       get: function (object, path) {
 
-        var pt = path.join("."), getter;
+        var pt = path, getter;
+
         if (!(getter = this._getters[pt])) {
           getter = this._getters[pt] = new Function("return this." +pt);
         }
@@ -68,7 +71,7 @@ describe(__filename + "#", function () {
        */
 
       set: function (object, path, value) {
-        var pt = path.join("."), setter;
+        var pt = path, setter;
         if (!(setter = this._setters[pt])) {
           setter = this._setters[pt] = new Function("value", "return this." +pt+"=value");
         }

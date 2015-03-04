@@ -843,6 +843,7 @@ var paperclip = module.exports = {
   parse: parser.parse
 };
 
+/* istanbul ignore next */
 if (typeof window !== "undefined") {
 
   window.paperclip = paperclip;
@@ -1404,9 +1405,12 @@ BaseExpression.extend(AssignmentExpression, {
 
   toJavaScript: function() {
 
-    var path = this.reference.path.map(function(p) { return "'" + p + "'"; }).join(", ");
+    // var path = this.reference.path.map(function(p) { return "'" + p + "'"; }).join(", ");
 
-    return "this.set([" + path + "], " + this.value.toJavaScript() + ")";
+    var path = this.reference.path.join(".");
+
+
+    return "this.set('" + path + "', " + this.value.toJavaScript() + ")";
   }
 });
 
@@ -1752,13 +1756,16 @@ BaseExpression.extend(ReferenceExpression, {
       return "this.context." + this.path.join(".");
     }
 
-    var path = this.path.map(function(p) { return "'" + p + "'"; }).join(", ");
+    // var path = this.path.map(function(p) { return "'" + p + "'"; }).join(", ");
+
+    var path = this.path.join(".");
+
 
     if (this._isBoundTo) {
-      return "this.reference([" + path + "], " + (this.bindingType !== "<~") + ")";
+      return "this.reference('" + path + "', " + (this.bindingType !== "<~") + ")";
     }
 
-    return "this.get([" + path + "])";
+    return "this.get('" + path + "')";
   }
 });
 
@@ -1822,9 +1829,12 @@ BaseExpression.extend(ScriptExpression, {
     // remove duplicate references
     refs = uniq(refs.map(function(ref) {
       return ref.join(".");
-    })).map(function(ref) {
-      return ref.split(".");
-    });
+    }));
+
+    // much slower - use strings instead
+    // refs = refs.map(function(ref) {
+    //   return ref.split(".");
+    // });
 
     var buffer = "{";
 
@@ -5978,6 +5988,7 @@ var rAF = (global.requestAnimationFrame      ||
           global.mozRequestAnimationFrame    ||
           process.nextTick).bind(global);
 
+/* istanbul ignore next */
 if (process.browser) {
   var defaultTick = function(next) {
     rAF(next);
@@ -6655,6 +6666,7 @@ function View(template, pool, section, hydrators, options) {
   this.rootNode        = section.rootNode();
   this.transitions     = new Transitions();
   this.runloop         = template.runloop;
+  this._watchers       = [];
 
   for (var i = 0, n = hydrators.length; i < n; i++) {
     hydrators[i].hydrate(this);
@@ -6716,8 +6728,26 @@ protoclass(View, {
   /**
    */
 
-  watch: function(path, listener) {
-    return this.accessor.watchProperty(this.context, path, listener);
+  watch: function(keypath, listener) {
+    var watcher = this.accessor.watchProperty(this.context, keypath, listener);
+    var property = keypath.join(".");
+    var collection = this._watchers[property];
+    if (!collection) {
+      collection = this._watchers[property] = [];
+    }
+    collection.push(watcher);
+    var self = this;
+    return {
+      dispose: function () {
+        var i = collection.indexOf(watcher);
+        if (~i) collection.splice(i, 1);
+        watcher.dispose();
+      },
+      trigger: watcher.trigger
+    };
+  },
+   watch: function(keypath, listener) {
+    return this.accessor.watchProperty(this.context, keypath, listener);
   },
 
   /**
@@ -6732,7 +6762,9 @@ protoclass(View, {
 
   bind: function(context) {
 
-    if (this.context) this.unbind();
+    if (this.context) {
+      this.unbind();
+    }
     if (!context) context = {};
 
     this.context = this.accessor.castObject(context);
@@ -6749,6 +6781,7 @@ protoclass(View, {
     for (var i = this.bindings.length; i--;) {
       this.bindings[i].unbind();
     }
+
   },
 
   /**ch
