@@ -87,9 +87,7 @@ module.exports = BaseAccessor.extend(POJOAccessor, {
 
   get: function(object, path) {
 
-    if (typeof path === "string") path = path.split(".");
-
-    var pt = path.join(".");
+    var pt = typeof path !== "string" ? path.join(".") : path;
     var getter;
 
     if (!(getter = this._getters[pt])) {
@@ -1409,7 +1407,6 @@ BaseExpression.extend(AssignmentExpression, {
 
     var path = this.reference.path.join(".");
 
-
     return "this.set('" + path + "', " + this.value.toJavaScript() + ")";
   }
 });
@@ -1759,7 +1756,6 @@ BaseExpression.extend(ReferenceExpression, {
     // var path = this.path.map(function(p) { return "'" + p + "'"; }).join(", ");
 
     var path = this.path.join(".");
-
 
     if (this._isBoundTo) {
       return "this.reference('" + path + "', " + (this.bindingType !== "<~") + ")";
@@ -6728,24 +6724,6 @@ protoclass(View, {
   /**
    */
 
-  watch: function(keypath, listener) {
-    var watcher = this.accessor.watchProperty(this.context, keypath, listener);
-    var property = keypath.join(".");
-    var collection = this._watchers[property];
-    if (!collection) {
-      collection = this._watchers[property] = [];
-    }
-    collection.push(watcher);
-    var self = this;
-    return {
-      dispose: function () {
-        var i = collection.indexOf(watcher);
-        if (~i) collection.splice(i, 1);
-        watcher.dispose();
-      },
-      trigger: watcher.trigger
-    };
-  },
    watch: function(keypath, listener) {
     return this.accessor.watchProperty(this.context, keypath, listener);
   },
