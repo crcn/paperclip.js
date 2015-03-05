@@ -1,11 +1,11 @@
 var pc   = require("../.."),
-expect   = require("expect.js"),
+assert   = require("assert"),
 stringifyView = require("../utils/stringifyView")
 
 describe(__filename + "#", function () {
 
   it("can require() a template", function () {
     var tpl = pc.template(require("./tpl.pc"));
-    expect(stringifyView(tpl.view({name:"a"}))).to.be("hello a");
+    assert.equal(stringifyView(tpl.view({name:"a"})), "hello a");
   });
 });

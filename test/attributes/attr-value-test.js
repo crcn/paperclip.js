@@ -1,5 +1,5 @@
 var pc   = require("../.."),
-expect   = require("expect.js"),
+assert   = require("assert"),
 stringifyView = require("../utils/stringifyView")
 
 describe(__filename + "#", function () {
@@ -12,7 +12,7 @@ describe(__filename + "#", function () {
     n = v.render();
 
 
-    expect(stringifyView(v)).to.be('<div id="abc" class="some-class">abb</div>');
+    assert.equal(stringifyView(v), '<div id="abc" class="some-class">abb</div>');
   });
 
   it("can include additional strings with data-bound attributes", function () {
@@ -20,7 +20,7 @@ describe(__filename + "#", function () {
       "<div class='a {{b}}' id='abc'>abb</div>"
     ).view({b:"c"});
 
-    expect(stringifyView(v)).to.be('<div id="abc" class="a c">abb</div>');
+    assert.equal(stringifyView(v), '<div id="abc" class="a c">abb</div>');
   });
 
   it("can have multiple bindings within an attribute", function () {
@@ -28,7 +28,7 @@ describe(__filename + "#", function () {
       "<div class='a {{b}} {{c}} d' id='abc'>abb</div>"
     ).view({b:"e",c:"f"});
 
-    expect(stringifyView(v)).to.be('<div id="abc" class="a e f d">abb</div>');
+    assert.equal(stringifyView(v), '<div id="abc" class="a e f d">abb</div>');
   });
 
   it("can bind to multiple attributes", function () {
@@ -36,7 +36,7 @@ describe(__filename + "#", function () {
       "<div class='a {{b}} d' id='ab{{c}}'>abb</div>"
     ).view({b:"e",c:"f"});
 
-    expect(stringifyView(v)).to.be('<div id="abf" class="a e d">abb</div>');
+    assert.equal(stringifyView(v), '<div id="abf" class="a e d">abb</div>');
   });
 
   it("can updates the attributes when values change", function () {
@@ -50,7 +50,7 @@ describe(__filename + "#", function () {
     // bypass rAF
     v.runloop.runNow();
 
-    expect(stringifyView(v)).to.be('<div id="abc" class="a g h d">abb</div>');
+    assert.equal(stringifyView(v), '<div id="abc" class="a g h d">abb</div>');
   });
 
   it("can have unbound values", function () {
@@ -58,18 +58,18 @@ describe(__filename + "#", function () {
       "<div class='a {{~b}}' id='abc'>abb</div>"
     ).view({b:"c"});
 
-    expect(stringifyView(v)).to.be('<div id="abc" class="a c">abb</div>');
+    assert.equal(stringifyView(v), '<div id="abc" class="a c">abb</div>');
   });
 
   it("removes an attribute value if undefined", function () {
     var v = pc.template("<div class='{{a}}' />").view({});
-    expect(stringifyView(v)).to.be("<div></div>");
+    assert.equal(stringifyView(v), "<div></div>");
     v.set("a", "b");
     v.runloop.runNow();
-    expect(stringifyView(v)).to.be("<div class=\"b\"></div>");
+    assert.equal(stringifyView(v), "<div class=\"b\"></div>");
     v.set("a", void 0);
     v.runloop.runNow();
-    expect(stringifyView(v)).to.be("<div></div>");
+    assert.equal(stringifyView(v), "<div></div>");
     v.dispose();
   });
 

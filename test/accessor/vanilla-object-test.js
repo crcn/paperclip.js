@@ -1,4 +1,4 @@
-var expect     = require("expect.js"),
+var assert     = require("assert"),
 pc             = require("../..")
 template       = pc.template,
 stringifyView  = require("../utils/stringifyView");
@@ -174,7 +174,7 @@ describe(__filename + "#", function () {
 
     var v = tpl.view(context);
 
-    expect(stringifyView(v)).to.be("a\u00A0b");
+    assert.equal(stringifyView(v), "a\u00A0b");
 
     // woo for vanilla objects!
     context.a = "b";
@@ -183,7 +183,7 @@ describe(__filename + "#", function () {
     accessor.apply();
 
     v.runloop.runNow();
-    expect(stringifyView(v)).to.be("b\u00A0c");
+    assert.equal(stringifyView(v), "b\u00A0c");
 
   });
 
@@ -191,10 +191,10 @@ describe(__filename + "#", function () {
     var t = pc.template("{{^a}}", { accessor: accessor });
     var c = { a: 1 };
     var v = t.view(c);
-    expect(stringifyView(v)).to.be("1");
+    assert.equal(stringifyView(v), "1");
     c.a = 2;
     accessor.apply();
     v.runloop.runNow();
-    expect(stringifyView(v)).to.be("2");
+    assert.equal(stringifyView(v), "2");
   });
 });

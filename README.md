@@ -6,7 +6,7 @@ Paperclip is a reactive template engine designed for the DOM. It works by compil
 
 ### Features
 
-- [very fast](http://jsperf.com/pc-templating-comparison/5)
+- [very fast](http://paperclip-dbmonster.herokuapp.com/)
 - explicit data-bindings (1-way, 2-way, unbound)
 - small (41KB gzipped)
 - accepts plain old javascript objects
@@ -44,6 +44,7 @@ document.body.appendChild(helloView.render());
 
 ### Examples
 
+- [dbmonster](http://paperclip-dbmonster.herokuapp.com/)
 - [updating 1000 items](http://requirebin.com/?gist=5602fd414139b6ed4fbc)
 - [inline html](http://requirebin.com/?gist=bbb9b0eaccd3d7e41df1)
 - [partial todomvc example](http://paperclip-todomvc-example.herokuapp.com/)

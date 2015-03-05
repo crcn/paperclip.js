@@ -1,5 +1,5 @@
 var pc   = require("../.."),
-expect   = require("expect.js"),
+assert   = require("assert"),
 stringifyView = require("../utils/stringifyView");
 
 describe(__filename + "#", function () {
@@ -7,15 +7,15 @@ describe(__filename + "#", function () {
 
   
   it("can call uppercase()", function () {
-    expect(pc.template("{{name|uppercase()}}").view({name:"abc"}).toString()).to.be("ABC");
+    assert.equal(pc.template("{{name|uppercase()}}").view({name:"abc"}).toString(), "ABC");
   });
 
   it("can call lowercase()", function () {
-    expect(pc.template("{{name|lowercase()}}").view({name:"ABC"}).toString()).to.be("abc");
+    assert.equal(pc.template("{{name|lowercase()}}").view({name:"ABC"}).toString(), "abc");
   });
 
   it("can call titlecase()", function () {
-    expect(pc.template("{{name|titlecase()}}").view({name:"abc"}).toString()).to.be("Abc");
+    assert.equal(pc.template("{{name|titlecase()}}").view({name:"abc"}).toString(), "Abc");
   });
 
   it("can call json()", function () {
@@ -23,27 +23,27 @@ describe(__filename + "#", function () {
     var v = pc.template("{{a|json()}}").view({a:{b:1,c:2}});
 
     if (process.browser) {
-      expect(stringifyView(v)).to.be('{"b":1,"c":2}');
+      assert.equal(stringifyView(v), '{"b":1,"c":2}');
     } else {
-      expect(stringifyView(v)).to.be("{&#x22;b&#x22;:1,&#x22;c&#x22;:2}");
+      assert.equal(stringifyView(v), "{&#x22;b&#x22;:1,&#x22;c&#x22;:2}");
     }
   });
 
   it("can call isNaN()", function () {
     var v = pc.template("{{a|isNaN}}").view({a:{b:1,c:2}});
-    expect(stringifyView(v)).to.be('true');
+    assert.equal(stringifyView(v), 'true');
   });
 
   it("can call multiple modifiers on one expression", function () {
-    expect(pc.template("{{name|lowercase()|titlecase()}}").view({name:"ABC"}).toString()).to.be("Abc");
+    assert.equal(pc.template("{{name|lowercase()|titlecase()}}").view({name:"ABC"}).toString(), "Abc");
   });
 
   it("modifies the last expression only", function () {
-    expect(pc.template("{{a+b|uppercase()}}").view({a:"a",b:"b"}).toString()).to.be("aB");
+    assert.equal(pc.template("{{a+b|uppercase()}}").view({a:"a",b:"b"}).toString(), "aB");
   });
 
   it("respects grouped expressions", function () {
-    expect(pc.template("{{(a+b)|uppercase()}}").view({a:"a",b:"b"}).toString()).to.be("AB");
+    assert.equal(pc.template("{{(a+b)|uppercase()}}").view({a:"a",b:"b"}).toString(), "AB");
   });
 
   it("can register a custom modifer", function () {
@@ -53,7 +53,7 @@ describe(__filename + "#", function () {
       return name + value;
     };
     
-    expect(tpl.view({a:"a"}).toString()).to.be("ab")
+    assert.equal(tpl.view({a:"a"}).toString(), "ab")
   });
 
   it("recalls the modifier if a value changes", function () {
@@ -62,11 +62,11 @@ describe(__filename + "#", function () {
     }
 
     var v = pc.template("{{a|uppercase()}}").view(c);
-    expect(stringifyView(v)).to.be("A");
+    assert.equal(stringifyView(v), "A");
     c.a = "b";
     v.accessor.apply();
     v.runloop.runNow();
-    expect(stringifyView(v)).to.be("B");
+    assert.equal(stringifyView(v), "B");
   })
 
 
@@ -88,11 +88,11 @@ describe(__filename + "#", function () {
 
     var v = tpl.view({ ctx: context });
 
-    expect(stringifyView(v)).to.be("a b");
+    assert.equal(stringifyView(v), "a b");
     context.set("lastName", "c");
-    expect(stringifyView(v)).to.be("a c");
+    assert.equal(stringifyView(v), "a c");
     context.set("firstName", "b");
-    expect(stringifyView(v)).to.be("b c");
+    assert.equal(stringifyView(v), "b c");
   });
 
 
@@ -102,6 +102,6 @@ describe(__filename + "#", function () {
     tpl.modifiers.concat = function (name, value) {
       return name + value;
     };
-    expect(tpl.view({a:"a"}).toString()).to.be("aB");
+    assert.equal(tpl.view({a:"a"}).toString(), "aB");
   });
 });

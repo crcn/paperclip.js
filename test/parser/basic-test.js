@@ -1,6 +1,5 @@
 var parser = require("../../lib/parser"),
 template   = require("../../lib/template"),
-expect     = require("expect.js"),
 assert     = require("assert");
 
 describe(__filename + "#", function () {

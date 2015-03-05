@@ -1,4 +1,4 @@
-var expect     = require("expect.js"),
+var assert     = require("assert"),
 pc             = require("../..")
 template       = pc.template,
 stringifyView = require("../utils/stringifyView")
@@ -19,17 +19,17 @@ describe(__filename + "#", function () {
       html: "<h1>a b</h1>"
     });
 
-    expect(stringifyView(v)).to.be("<h1>a b</h1>");
+    assert.equal(stringifyView(v), "<h1>a b</h1>");
   });
 
   it("can render an html string", function () {
     var v = pc.template("hello <unsafe html={{content}} />", pc).view({ content: "abc" });
-    expect(stringifyView(v)).to.be("hello abc");
+    assert.equal(stringifyView(v), "hello abc");
   });
 
   it("can accept an undefined value", function () {
     var v = pc.template("hello <unsafe html={{undefined}} />", pc).view();
-    expect(stringifyView(v)).to.be("hello ");
+    assert.equal(stringifyView(v), "hello ");
   });
 
 
@@ -48,19 +48,19 @@ describe(__filename + "#", function () {
 
     t.accessor.apply();
     t.runloop.runNow();
-    expect(t.toString()).to.be("hello world");
+    assert.equal(t.toString(), "hello world");
     c.content = b3 = t3.view(c);
     t.accessor.apply();
     t.runloop.runNow();
-    expect(t.toString()).to.be("hello bob");
+    assert.equal(t.toString(), "hello bob");
     c.content = b2;
     t.accessor.apply();
     t.runloop.runNow();
-    expect(t.toString()).to.be("hello world");
+    assert.equal(t.toString(), "hello world");
     c.content = b3;
     t.accessor.apply();
     t.runloop.runNow();
-    expect(t.toString()).to.be("hello bob");
+    assert.equal(t.toString(), "hello bob");
   });
 
 
@@ -74,25 +74,25 @@ describe(__filename + "#", function () {
     t2    = pc.template("my name is <unsafe html={{content}} />",  pc).view(c2),
     t3    = pc.template("{{name}}", pc).view(c3);
 
-    expect(t.toString()).to.be("hello ");
+    assert.equal(t.toString(), "hello ");
     c.content = t2;
 
     t.accessor.apply();
     t.runloop.runNow();
-    expect(t.toString()).to.be("hello my name is ");
+    assert.equal(t.toString(), "hello my name is ");
     c2.content = t3;
     c3.name = "bob";
     t.accessor.apply();
     t3.accessor.apply();
     t2.accessor.apply();
     t.runloop.runNow();
-    expect(t.toString()).to.be("hello my name is bob");
+    assert.equal(t.toString(), "hello my name is bob");
     c.content = t3;
 
     t2.unbind();
     t.accessor.apply();
     t.runloop.runNow();
-    expect(t.toString()).to.be("hello bob");
+    assert.equal(t.toString(), "hello bob");
   });
 
 
@@ -109,11 +109,11 @@ describe(__filename + "#", function () {
       "</show>!"
     , pc).view(c);
 
-    expect(t.toString()).to.be("hello bob!")
+    assert.equal(t.toString(), "hello bob!")
     c.condition = false;
     t.accessor.apply();
     t.runloop.runNow();
-    expect(t.toString()).to.be("hello !");
+    assert.equal(t.toString(), "hello !");
   });
 
 });

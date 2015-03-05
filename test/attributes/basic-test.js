@@ -1,5 +1,5 @@
 var pc   = require("../.."),
-expect   = require("expect.js"),
+assert   = require("assert"),
 stringifyView = require("../utils/stringifyView");
 
 describe(__filename + "#", function () {
@@ -18,7 +18,7 @@ describe(__filename + "#", function () {
     });
 
     var v = tpl.view({});
-    expect(stringifyView(v)).to.be("<div>hello world!</div>");
+    assert.equal(stringifyView(v), "<div>hello world!</div>");
   });
 
 });

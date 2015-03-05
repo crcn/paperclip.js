@@ -1,4 +1,4 @@
-var expect     = require("expect.js"),
+var assert     = require("assert"),
 pc             = require("../..")
 template       = pc.template,
 stringifyView  = require("../utils/stringifyView");
@@ -16,7 +16,7 @@ describe(__filename + "#", function () {
     v     = t.view({name:"a"}),
     v2    = t.view(void 0);
 
-    expect(stringifyView(v2)).to.be("hello ");
+    assert.equal(stringifyView(v2), "hello ");
   });
 
   it("properly inherits a property from the parent view", function () {
@@ -25,7 +25,7 @@ describe(__filename + "#", function () {
     v     = t.view({name:"a"}),
     v2    = t.view(void 0, { parent: v });
 
-    expect(stringifyView(v2)).to.be("hello a");
+    assert.equal(stringifyView(v2), "hello a");
   });
 
   it("properly inherits functions & calls them", function () {
@@ -37,7 +37,7 @@ describe(__filename + "#", function () {
     }),
     v2    = t.view(void 0, { parent: v });
 
-    expect(stringifyView(v2)).to.be("hello a");
+    assert.equal(stringifyView(v2), "hello a");
   });
 
 });

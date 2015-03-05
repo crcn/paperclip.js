@@ -1,6 +1,10 @@
 {
   "name": "paperclip",
+<<<<<<< HEAD
   "version": "1.4.5",
+=======
+  "version": "1.4.9",
+>>>>>>> f1615d1decb2b2090f14a51da9c441da300c5bb5
   "description": "controller logic:",
   "main": "./lib/node.js",
   "scripts": {
@@ -27,7 +31,6 @@
   "devDependencies": {
     "benchmark": "~1.0.0",
     "coveralls": "^2.11.2",
-    "expect.js": "0.2.x",
     "express": "~3.3.4",
     "istanbul": "^0.3.5",
     "jquery": "~1.8.3",
