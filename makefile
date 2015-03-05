@@ -20,7 +20,7 @@ parser-watch: parser
 	fswatch ./src/parser/grammar.peg | xargs -n1 make parser
 
 test-watch:
-	PC_DEBUG=1 mocha --recursive --ignore-leaks --reporter $(REPORTER) -b -g $(ONLY) --timeout $(TIMEOUT) --watch ./test ./lib
+	PC_DEBUG=1 ./node_modules/.bin/mocha --recursive --ignore-leaks --reporter $(REPORTER) -b -g $(ONLY) --timeout $(TIMEOUT) --watch ./test ./lib
 
 start-example-server:
 	./node_modules/.bin/mojo build ./examples/$(NAME)/index.js --debug --output=./examples/$(NAME)/index.bundle.js --serve=./examples --port=8085
