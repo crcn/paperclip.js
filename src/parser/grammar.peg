@@ -99,7 +99,8 @@ CommentNode
 
 
 VoidElement
-  = "<" nodeName:("area"/"base"/"br"/"col"/"command"/"embed"/"hr"/"img"/"input"/"keygen"/"link"/"meta"/"param"/"source"/"track"/"wbr") attributes:TagAttributes (">"/"/>")? _ endTag:EndTag? {
+  = "<" nodeName:("area"/"base"/"br"/"col"/"command"/"embed"/"hr"/"img"/"input"/"keygen"/"link"/"meta"/"param"/"source"/"track"/"wbr") attributes:TagAttributes (">"/"/>")? _ endTag:EndVoidTag? {
+
 
     if (endTag && nodeName != endTag.name) {
       expected("</" + nodeName + ">");
@@ -107,6 +108,15 @@ VoidElement
 
     return new ElementNodeExpression(nodeName, attributes);
   }
+
+
+EndVoidTag
+  = "</" name:("area"/"base"/"br"/"col"/"command"/"embed"/"hr"/"img"/"input"/"keygen"/"link"/"meta"/"param"/"source"/"track"/"wbr") ">" {
+      return {
+        name: name
+      };
+    }
+
 
 ElementNode
   = startTag:StartTag children:ChildNodes endTag:EndTag {
