@@ -1408,8 +1408,6 @@ BaseExpression.extend(AssignmentExpression, {
 
   toJavaScript: function() {
 
-    // var path = this.reference.path.map(function(p) { return "'" + p + "'"; }).join(", ");
-
     var path = this.reference.path.join(".");
 
     return "this.set('" + path + "', " + this.value.toJavaScript() + ")";
@@ -7920,7 +7918,7 @@ nofactor       = require("nofactor");
 // instead of calling toFragment() each time. perhaps 
 var Section = function (nodeFactory, start, end) {
 
-  this.nodeFactory = nodeFactory = nodeFactory || nofactor;
+  this.nodeFactory = nodeFactory = nodeFactory || nofactor["default"];
 
   // create invisible markers so we know where the sections are
 
