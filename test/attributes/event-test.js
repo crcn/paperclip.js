@@ -1,5 +1,5 @@
 var pc   = require("../.."),
-expect   = require("expect.js"),
+assert   = require("assert"),
 nodeFactory = require("nofactor/lib/dom"),
 defaultNodeFactory = require("nofactor"),
 paperclip = require("../.."),
@@ -47,7 +47,7 @@ describe(__filename + "#", function () {
         "}}'></div>"
       , paperclip).view({
         onEvent: function (event) {
-          expect(event.type).to.be(name.toLowerCase());
+          assert.equal(event.type, name.toLowerCase());
           next();
         }
       });
@@ -137,7 +137,7 @@ describe(__filename + "#", function () {
     e.initEvent("keydown", true, true);
     e.keyCode = 30;
     t.render().dispatchEvent(e);
-    expect(i).to.be(0);
+    assert.equal(i, 0);
   });
 
 
@@ -157,9 +157,9 @@ describe(__filename + "#", function () {
     e.initEvent("keydown", true, true);
     e.keyCode = 27;
     t.render().dispatchEvent(e);
-    expect(i).to.be(1);
+    assert.equal(i, 1);
     t.unbind();
     t.section.node.dispatchEvent(e);
-    expect(i).to.be(1);
+    assert.equal(i, 1);
   });
 });

@@ -1,6 +1,7 @@
 var parser = require("../../lib/parser/parser.js"),
 template   = require("../../lib/template"),
-expect     = require("expect.js");
+assert     = require("assert");
+
 
 describe(__filename + "#", function () {
 
@@ -14,26 +15,26 @@ describe(__filename + "#", function () {
 
   it("doesn't maintain whitespace between two nodes", function () {
     var ast = parser.parse("<span>a</span>\n<span />");
-    expect(ast.childNodes.expressions.expressions.length).to.be(2);
+    assert.equal(ast.childNodes.expressions.expressions.length, 2);
     ast = parser.parse("<br /> <br />")
-    expect(ast.childNodes.expressions.expressions.length).to.be(2);
+    assert.equal(ast.childNodes.expressions.expressions.length, 2);
   });
 
   it("maintains whitespace if text is after an element", function () {
     var ast = parser.parse("<span>a</span> b");
-    expect(ast.childNodes.expressions.expressions[1].value).to.be(" b");
+    assert.equal(ast.childNodes.expressions.expressions[1].value, " b");
   });
 
   it("maintains spaces between blocks", function () {
     var ast = parser.parse("{{a}} {{b}}");
-    expect(ast.childNodes.expressions.expressions.length).to.be(3);
+    assert.equal(ast.childNodes.expressions.expressions.length, 3);
     var ast = parser.parse("{{a}} {{b}} c");
-    expect(ast.childNodes.expressions.expressions.length).to.be(4);
+    assert.equal(ast.childNodes.expressions.expressions.length, 4);
   });
 
   it("maintains whitespace if the space is a new line character", function () {
     var ast = parser.parse("{{a}}\n\t{{a}}");
-    expect(ast.childNodes.expressions.expressions.length).to.be(3);
+    assert.equal(ast.childNodes.expressions.expressions.length, 3);
   });
 
   it("accepts many types of characters in the tag name", function () {
@@ -52,7 +53,7 @@ describe(__filename + "#", function () {
     try {
       parser.parse("<a></b>");
     } catch (e) {
-      expect(e.message).to.be("Expected </a> but \"<\" found.");
+      assert.equal(e.message, "Expected </a> but \"<\" found.");
     }
   });
 
@@ -92,7 +93,7 @@ describe(__filename + "#", function () {
 
   it("doesn't maintain whitespace between comments", function () {
     var tpl = template("<span></span>\t <span></span> <!--a-->");
-    expect(tpl.view().toString()).to.be("<span></span><span></span><!--a-->");
+    assert.equal(tpl.view().toString(), "<span></span><span></span><!--a-->");
   });
 
   describe("bindings", function () {
@@ -133,22 +134,22 @@ describe(__filename + "#", function () {
 
     it("trims whitespace from the start & end of elements", function () {
       var tpl = template("<div> hello {{name}} </div>");
-      expect(tpl.view({ name: "john"}).toString()).to.be("<div>hello john</div>");
+      assert.equal(tpl.view({ name: "john"}).toString(), "<div>hello john</div>");
     });
 
     it("maintains attribute spaces with a text binding", function () {
       var tpl = template("<div class='blue red {{color}} yellow'></div>");
-      expect(tpl.view({ color: "blue" }).toString()).to.be('<div class="blue red blue yellow"></div>');
+      assert.equal(tpl.view({ color: "blue" }).toString(), '<div class="blue red blue yellow"></div>');
     });
 
     it("preserves whitespace between nodes & text nodes", function () {
       var tpl = template("<strong>hello</strong> world");
-      expect(tpl.view().toString()).to.be("<strong>hello</strong> world");
+      assert.equal(tpl.view().toString(), "<strong>hello</strong> world");
     });
 
     it("preserves whitespace between nodes & blocks", function () {
       var tpl = template("<strong>hello</strong> {{name}}");
-      expect(tpl.view({name:"john"}).toString()).to.be("<strong>hello</strong> john");
+      assert.equal(tpl.view({name:"john"}).toString(), "<strong>hello</strong> john");
     });
 
   });

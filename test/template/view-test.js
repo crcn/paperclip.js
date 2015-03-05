@@ -1,4 +1,4 @@
-var expect     = require("expect.js"),
+var assert     = require("assert"),
 template       = require("../../lib/template"),
 sinon          = require("sinon"),
 stringifyView = require("../utils/stringifyView");
@@ -12,12 +12,12 @@ describe(__filename + "#", function () {
 
   it("can render a view", function () {
     var tpl = template("hello world");
-    expect(tpl.view().toString()).to.be("hello world");
+    assert.equal(tpl.view().toString(), "hello world");
   });
 
   it("can pass a bindable object as the context of a view", function () {
     var v = template("{{name}}").view({name: "a" });
-    expect(stringifyView(v)).to.be("a");
+    assert.equal(stringifyView(v), "a");
   });
 
   // shouldn't happen anymore. Use different accessor.
@@ -26,15 +26,15 @@ describe(__filename + "#", function () {
     var v = template("{{name}}").view(ctx = {name:"a"});
     v.set("name", "b");
     v.runloop.runNow();
-    expect(stringifyView(v)).to.be("b");
-    expect(ctx.name).to.be("b");
+    assert.equal(stringifyView(v), "b");
+    assert.equal(ctx.name, "b");
   });
 
   it("can change the context of a view", function () {
     var v = template("{{name}}").view({name:"a"});
-    expect(stringifyView(v)).to.be("a");
+    assert.equal(stringifyView(v), "a");
     v.bind({name:"b"})
-    expect(stringifyView(v)).to.be("b");
+    assert.equal(stringifyView(v), "b");
   });
 
   it("doesn't sync changes from previous context", function () {
@@ -43,11 +43,11 @@ describe(__filename + "#", function () {
     bc     = {name:"b"};
 
     var v = template("{{name}}").view(ac);
-    expect(stringifyView(v)).to.be("a");
+    assert.equal(stringifyView(v), "a");
     v.bind(bc)
-    expect(stringifyView(v)).to.be("b");
+    assert.equal(stringifyView(v), "b");
     v.set("name", "c");
-    expect(stringifyView(v)).to.be("b");
+    assert.equal(stringifyView(v), "b");
   });
 
 });

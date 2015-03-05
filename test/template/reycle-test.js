@@ -1,4 +1,4 @@
-var expect = require("expect.js"),
+var assert = require("assert"),
 pc = require("../..");
 
 
@@ -9,16 +9,16 @@ describe(__filename + "#", function() {
 
     var v = tpl.view({}).dispose();
 
-    expect(tpl._viewPool.length).to.be(1);
+    assert.equal(tpl._viewPool.length, 1);
 
     tpl.view({});
 
-    expect(tpl._viewPool.length).to.be(0);
+    assert.equal(tpl._viewPool.length, 0);
 
     tpl.view({}).dispose();
     tpl.view({}).dispose();
 
-    expect(tpl._viewPool.length).to.be(1);
+    assert.equal(tpl._viewPool.length, 1);
 
     var v = tpl.view({}),
     v2    = tpl.view({});
@@ -26,6 +26,6 @@ describe(__filename + "#", function() {
     v.dispose(); 
     v2.dispose();
 
-    expect(tpl._viewPool.length).to.be(2);
+    assert.equal(tpl._viewPool.length, 2);
   });
 });

@@ -1,5 +1,5 @@
 var pc   = require("../.."),
-expect   = require("expect.js"),
+assert   = require("assert"),
 stringifyView = require("../utils/stringifyView")
 
 describe(__filename + "#", function () {
@@ -13,7 +13,7 @@ describe(__filename + "#", function () {
       "<div easeIn={{easeIn}}>abb</div>"
     ).view({
       easeIn: function (node, complete) {
-        expect(node.nodeName).to.be("DIV");
+        assert.equal(node.nodeName, "DIV");
         complete();
         next();
       }
@@ -31,7 +31,7 @@ describe(__filename + "#", function () {
       "<div easeOut={{easeOut}} />"
     ).view({  
       easeOut: function (node, complete) {
-        expect(node.nodeName).to.be("DIV");
+        assert.equal(node.nodeName, "DIV");
         complete();
         next();
       }
@@ -69,11 +69,11 @@ describe(__filename + "#", function () {
 
     v.render();
     v.dispose();
-    expect(tpl._viewPool.length).to.be(0);
-    expect(stringifyView(v)).to.be("<div><span></span></div>");
+    assert.equal(tpl._viewPool.length, 0);
+    assert.equal(stringifyView(v), "<div><span></span></div>");
     setTimeout(function () {
-      expect(tpl._viewPool.length).to.be(1);
-      expect(stringifyView(v)).to.be("<div></div>");
+      assert.equal(tpl._viewPool.length, 1);
+      assert.equal(stringifyView(v), "<div></div>");
       next();
     }, 10);
   }); 

@@ -1,5 +1,5 @@
 var pc   = require("../.."),
-expect   = require("expect.js");
+assert   = require("assert");
 
 
 describe(__filename + "#", function () {
@@ -9,9 +9,9 @@ describe(__filename + "#", function () {
     var c = {
       a: "a"
     }, t = pc.template("{{~a}}").view(c);
-    expect(t.toString()).to.be("a");
+    assert.equal(t.toString(), "a");
     t.set("a", "b");
-    expect(t.toString()).to.be("a");
+    assert.equal(t.toString(), "a");
   });
 
   it("can use a data-binding with an or statement", function () {
@@ -26,14 +26,14 @@ describe(__filename + "#", function () {
     var c ={
       a: "a"
     }, t = pc.template("{{<~a}}").view(c);
-    expect(t.toString()).to.be("a");
+    assert.equal(t.toString(), "a");
     t.set("a", "b");
-    expect(t.toString()).to.be("b");
+    assert.equal(t.toString(), "b");
     var ref = t.clips._clips[0].script.evaluate(t.scope);
 
-    expect(ref.__isBindableReference).to.be(true);
+    assert.equal(ref.__isBindableReference, true);
     ref.value("baab");
-    expect(ref.value()).to.be("b");
+    assert.equal(ref.value(), "b");
   });
 
 
@@ -41,26 +41,26 @@ describe(__filename + "#", function () {
     var c = {
       a: "a"
     }, t = pc.template("{{~>a}}").view(c);
-    expect(t.toString()).to.be("a");
+    assert.equal(t.toString(), "a");
     var ref = t.clips._clips[0].script.evaluate(t.scope);
 
-    expect(t.clips._clips[0].script.refs.length).to.be(0);
-    expect(ref.__isBindableReference).to.be(true);
+    assert.equal(t.clips._clips[0].script.refs.length, 0);
+    assert.equal(ref.__isBindableReference, true);
     ref.value("b");
-    expect(t.toString()).to.be("a");
+    assert.equal(t.toString(), "a");
   });
 
   xit("allows for references with <~> to be bound both ways", function () {
     var c = {
       a: "a"
     }, t = pc.template("{{<~>a}}").view(c);
-    expect(t.toString()).to.be("a");
+    assert.equal(t.toString(), "a");
     var ref = t.clips._clips[0].script.evaluate(t.scope);
-    expect(t.clips._clips[0].script.refs.length).to.be(1);
-    expect(ref.__isBindableReference).to.be(true);
-    expect(ref.value()).to.be("a");
+    assert.equal(t.clips._clips[0].script.refs.length, 1);
+    assert.equal(ref.__isBindableReference, true);
+    assert.equal(ref.value(), "a");
     ref.value("b");
-    expect(t.toString()).to.be("b");
+    assert.equal(t.toString(), "b");
   });
   
 });

@@ -1,4 +1,4 @@
-var expect     = require("expect.js"),
+var assert     = require("assert"),
 pc             = require("../.."),
 template       = pc.template,
 nodeFactory = require("nofactor/lib/dom"),
@@ -34,7 +34,7 @@ describe(__filename + "#", function () {
     input.dispatchEvent(e);
 
     setTimeout(function () {
-      expect(b.get("name")).to.be("baab");
+      assert.equal(b.get("name"), "baab");
       b.dispose();
       next();
     }, 10);
@@ -51,7 +51,7 @@ describe(__filename + "#", function () {
     input.dispatchEvent(e);
 
     setTimeout(function () {
-      expect(b.get("name")).to.be("baab");
+      assert.equal(b.get("name"), "baab");
       b.dispose();
       next();
     }, 10);
@@ -68,9 +68,9 @@ describe(__filename + "#", function () {
     input.dispatchEvent(e);
 
     setTimeout(function () {
-      expect(b.get("checked")).to.be(true);
+      assert.equal(b.get("checked"), true);
       b.set("checked", false);
-      expect(input.checked).to.be(false);
+      assert.equal(input.checked, false);
       b.dispose();
       next();
     }, 10);
@@ -88,7 +88,7 @@ describe(__filename + "#", function () {
     input.dispatchEvent(e);
 
     setTimeout(function () {
-      expect(b.get("value")).to.be("abba");
+      assert.equal(b.get("value"), "abba");
       b.dispose();
       next();
     }, 10);
@@ -108,7 +108,7 @@ describe(__filename + "#", function () {
 
 
     setTimeout(function () {
-      expect(stub.callCount).to.be(1);
+      assert.equal(stub.callCount, 1);
       b.dispose();
       next();
     }, 10);
@@ -125,7 +125,7 @@ describe(__filename + "#", function () {
     input.dispatchEvent(e);
 
     setTimeout(function () {
-      expect(b.get("a.b.c.d.e")).to.be("baab");
+      assert.equal(b.get("a.b.c.d.e"), "baab");
       b.dispose();
       next();
     }, 10);
@@ -142,10 +142,10 @@ describe(__filename + "#", function () {
     input.dispatchEvent(e);
 
     setTimeout(function () {
-      expect(b.get("name")).to.be("abba");
+      assert.equal(b.get("name"), "abba");
       b.set("name", "bbaa");
       setTimeout(function () {
-        expect(input.value).to.be("bbaa");
+        assert.equal(input.value, "bbaa");
         b.dispose();
         next();
       }, 10);
@@ -163,10 +163,10 @@ describe(__filename + "#", function () {
     input.dispatchEvent(e);
 
     setTimeout(function () {
-      expect(b.get("name")).to.be("baab");
+      assert.equal(b.get("name"), "baab");
       b.set("name", "bbaa");
       setTimeout(function () {
-        expect(b.get("name")).to.be("bbaa");
+        assert.equal(b.get("name"), "bbaa");
         b.dispose();
         next();
       }, 10);
@@ -184,7 +184,7 @@ describe(__filename + "#", function () {
       input.value = "baab";
 
       setTimeout(function () {
-        expect(c.name).to.be("baab");
+        assert.equal(c.name, "baab");
         b.dispose();
         next();
       }, process.browser ? 600 : 10);
@@ -200,21 +200,21 @@ describe(__filename + "#", function () {
       err = e;
     }
 
-    expect(err.message).to.contain("must be a reference");
+    assert.notEqual(err.message.indexOf("must be a reference"), -1);
   });
 
   it("can handle 0s", function () {
     var t = pc.template("<input type='text' value={{ <~>value }} />", pc),
       v     = t.view({value:0});
 
-    expect(v.section.node.value).to.be("0");
+    assert.equal(v.section.node.value, "0");
   });
 
   it("can handle false", function () {
     var t = pc.template("<input type='text' value={{ <~>value }} />", pc),
       v     = t.view({value:false});
 
-    expect(v.section.node.value).to.be("false");
+    assert.equal(v.section.node.value, "false");
   });
 
   it("properly re-binds to another reference value if it changes", function () {
@@ -224,11 +224,11 @@ describe(__filename + "#", function () {
     v.render();
     v.runloop.runNow();
 
-    expect(v.section.node.value).to.be("a");
+    assert.equal(v.section.node.value, "a");
 
     v.set("value", "b");
     v.runloop.runNow();
-    expect(v.section.node.value).to.be("b");
+    assert.equal(v.section.node.value, "b");
   });
 
   it("doesn't bust if value is initially undefined and there's an input", function () {

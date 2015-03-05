@@ -1,4 +1,4 @@
-var expect  = require("expect.js"),
+var assert  = require("assert"),
 RunLoop     = require("../../lib/runloop");
 
 describe(__filename + "#", function () {
@@ -20,7 +20,7 @@ describe(__filename + "#", function () {
     runloop.deferOnce({ update: function () {
       i++;
     }});
-    expect(i).to.be(1);
+    assert.equal(i, 1);
   });
 
   it("can recursively allow things to update themselves", function (next) {
@@ -36,7 +36,7 @@ describe(__filename + "#", function () {
     runloop.deferOnce(r);
 
     setTimeout(function () {
-      expect(i).to.be.greaterThan(10);
+      assert.equal(i > 10, true);
       next();
     }, 100);
   });
@@ -52,11 +52,11 @@ describe(__filename + "#", function () {
       runloop.deferOnce({
         update: function () {
           i++;
-          expect(i).to.be(1);
+          assert.equal(i, 1);
           runloop.deferOnce({
             update: function () {
               i++;
-              expect(i).to.be(2);
+              assert.equal(i, 2);
             }
           })
         }
@@ -65,12 +65,12 @@ describe(__filename + "#", function () {
       runloop.deferOnce({
         update: function () {
           i++;
-          expect(i).to.be(3);
+          assert.equal(i, 3);
         }
       });
 
       setTimeout(function () {
-        expect(i).to.be(3);
+        assert.equal(i, 3);
         next();
       }, 10);
   });
@@ -87,11 +87,11 @@ describe(__filename + "#", function () {
     });
 
     runloop.runNow();
-    expect(i).to.be(5);
+    assert.equal(i, 5);
 
 
     setTimeout(function () {
-      expect(i).to.be(5);
+      assert.equal(i, 5);
       next();
     }, 10);
   });
@@ -106,17 +106,17 @@ describe(__filename + "#", function () {
     runloop = new RunLoop({ tick: process.nextTick });
 
     runloop.deferOnce(runnable);
-    expect(i).to.be(0);
+    assert.equal(i, 0);
     runloop.deferOnce(runnable);
-    expect(i).to.be(0);
+    assert.equal(i, 0);
     runloop.runNow();
 
-    expect(i).to.be(1);
+    assert.equal(i, 1);
 
     runloop.deferOnce(runnable);
     runloop.runNow();
 
-    expect(i).to.be(2);
+    assert.equal(i, 2);
   });
 
 });

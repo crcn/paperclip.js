@@ -1,4 +1,4 @@
-var expect     = require("expect.js"),
+var assert     = require("assert"),
 pc             = require("../..")
 template       = pc.template,
 stringifyView = require("../utils/stringifyView");
@@ -17,7 +17,7 @@ describe(__filename + "#", function () {
         hello: htpl.createComponentClass()
       }
     });
-    expect(tpl.view().toString()).to.be("hello world!");
+    assert.equal(tpl.view().toString(), "hello world!");
   });
 
   it("binds attribute properties to the context of a template view", function () {
@@ -29,10 +29,10 @@ describe(__filename + "#", function () {
     });
 
     var v = tpl.view({message:"a"});
-    expect(stringifyView(v)).to.be("hello a!");
+    assert.equal(stringifyView(v), "hello a!");
     v.set("message", "b");
     v.runloop.runNow();
-    expect(stringifyView(v)).to.be("hello b!");
+    assert.equal(stringifyView(v), "hello b!");
   });
 
   it("attributes don't override context properties", function () {
@@ -44,9 +44,9 @@ describe(__filename + "#", function () {
     });
 
     var v = tpl.view({message:"a"});
-    expect(stringifyView(v)).to.be("hello world!");
+    assert.equal(stringifyView(v), "hello world!");
     // v.runner.update();
-    expect(v.context.message).to.be("a");
+    assert.equal(v.context.message, "a");
   });
 
   it("properly unbinds the template component", function () {
@@ -58,11 +58,11 @@ describe(__filename + "#", function () {
     });
 
     var v = tpl.view({message:"world"});
-    expect(stringifyView(v)).to.be("hello world!");
+    assert.equal(stringifyView(v), "hello world!");
     v.unbind();
     v.set("message", "a");
     v.runloop.runNow();
-    expect(stringifyView(v)).to.be("hello world!");
+    assert.equal(stringifyView(v), "hello world!");
   });
 
 });

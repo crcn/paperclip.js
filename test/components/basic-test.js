@@ -1,4 +1,4 @@
-var expect     = require("expect.js"),
+var assert     = require("assert"),
 template       = require("../../lib/template"),
 parser         = require("../../lib/parser"),
 Component      = require("../..").Component,
@@ -22,7 +22,7 @@ describe(__filename + "#", function () {
       }
     }).view();
 
-    expect(stringifyView(v)).to.be("hello world");
+    assert.equal(stringifyView(v), "hello world");
   });
 
   it("can register a component with a sub component", function () {
@@ -33,7 +33,7 @@ describe(__filename + "#", function () {
 
     var v = ct.view({name:"d"});
 
-    expect(stringifyView(v)).to.be("c b a d");
+    assert.equal(stringifyView(v), "c b a d");
   });
 
 
@@ -45,10 +45,10 @@ describe(__filename + "#", function () {
 
     var v = ct.view({name:"d"});
 
-    expect(stringifyView(v)).to.be("c b a d");
+    assert.equal(stringifyView(v), "c b a d");
 
     v.bind({ name: "e" });
-    expect(stringifyView(v)).to.be("c b a e");
+    assert.equal(stringifyView(v), "c b a e");
 
   });
 
@@ -62,7 +62,7 @@ describe(__filename + "#", function () {
     v.unbind();
 
     v.bind({ name: "e" });
-    expect(stringifyView(v)).to.be("c b a e");
+    assert.equal(stringifyView(v), "c b a e");
 
   });
 
@@ -86,7 +86,7 @@ describe(__filename + "#", function () {
     var tpl = template("<repeat count='5' as='number'>{{number}}</repeat>", { components:{repeat:repeatComponent}});
     var v = tpl.view({});
 
-    expect(stringifyView(v)).to.be("01234");
+    assert.equal(stringifyView(v), "01234");
   });
 
   it("can register a dynamic repeat component", function () {
@@ -113,15 +113,15 @@ describe(__filename + "#", function () {
 
     var tpl = template("<repeat count={{count}} as='number'>{{number}}</repeat>", { components:{repeat:repeatComponent}});
     var v = tpl.view({count:5});
-    expect(stringifyView(v)).to.be("01234");
+    assert.equal(stringifyView(v), "01234");
     v.set("count", 3);
     v.accessor.apply();
     v.runloop.runNow();
-    expect(stringifyView(v)).to.be("012");
+    assert.equal(stringifyView(v), "012");
     v.set("count", 8);
     v.accessor.apply();
     v.runloop.runNow();
-    expect(stringifyView(v)).to.be("01234567");
+    assert.equal(stringifyView(v), "01234567");
   });
 
   it("can register a dynamic repeat component with embedded components", function () {
@@ -162,7 +162,7 @@ describe(__filename + "#", function () {
 
     var v = tpl.view({});
 
-    expect(stringifyView(v)).to.be("ab0ab1ab2ab3ab4");
+    assert.equal(stringifyView(v), "ab0ab1ab2ab3ab4");
   });
 
 });

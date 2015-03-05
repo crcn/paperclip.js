@@ -1,5 +1,5 @@
 var parser = require("../../lib/parser/parser.js"),
-expect     = require("expect.js");
+assert     = require("assert");
 
 describe(__filename + "#", function () {
 
@@ -181,14 +181,14 @@ describe(__filename + "#", function () {
 
     it("can parse the fast operator", function () {
       var ast = parser.parse("{{^a}}").childNodes.expressions.expressions[0].scripts;
-      expect(ast.value.value.value.fast).to.be(true);
-      // expect(ast.value.value.value.unbound).to.be(true);
+      assert.equal(ast.value.value.value.fast, true);
+      // assert.equal(ast.value.value.value.unbound, true);
     });
 
     describe("function calls", function () {
       it("can be parsed", function () {
         var ast = parser.parse("{{a.b.c(1,2,3 + 4)}}").childNodes.expressions.expressions[0];
-        // expect(ast.toJavaScript()).to.be("block({'value':{run: function () { return this.call(this.get([\"a\",\"b\"]), \"c\", [1, 2, 3+4]); }, refs: []}}, void 0)")
+        // assert.equal(ast.toJavaScript(), "block({'value':{run: function () { return this.call(this.get([\"a\",\"b\"]), \"c\", [1, 2, 3+4]); }, refs: []}}, void 0)")
       });
     });
 

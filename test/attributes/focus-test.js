@@ -1,5 +1,5 @@
 var pc   = require("../.."),
-expect   = require("expect.js"),
+assert   = require("assert"),
 stringifyView = require("../utils/stringifyView");
 
 describe(__filename + "#", function () {
@@ -22,11 +22,11 @@ describe(__filename + "#", function () {
     }
 
 
-    expect(stringifyView(v)).to.be("<input>");
+    assert.equal(stringifyView(v), "<input>");
     c.set('focus', true);
 
     v.runloop.runNow();
-    expect(i).to.be(1);
+    assert.equal(i, 1);
 
 
   });
@@ -49,15 +49,15 @@ describe(__filename + "#", function () {
     }
 
 
-    expect(stringifyView(v)).to.be("<input>");
+    assert.equal(stringifyView(v), "<input>");
     c.set('focus', false);
 
     v.runloop.runNow();
-    expect(i).to.be(0);
+    assert.equal(i, 0);
     c.set('focus', true);
 
     v.runloop.runNow();
-    expect(i).to.be(1);
+    assert.equal(i, 1);
 
 
   });

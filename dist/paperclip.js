@@ -1525,11 +1525,9 @@ BaseExpression.extend(CallExpression, {
 
     var buffer = "this.call(";
 
-
     buffer += "'" + path.join(".") + "'";
 
     buffer += ", [" + this.parameters.toJavaScript() + "]";
-
 
     return buffer + ")";
   }
