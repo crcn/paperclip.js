@@ -35,6 +35,20 @@ describe(__filename + "#", function () {
     assert.equal(stringifyView(v), '2 + 3 is 5');
   });
 
+  it("can have inline function calls", function () {
+
+    var tpl = pc.template("{{a()}}-{{i}}");
+    var v = tpl.view({
+      i:0,
+      a: function(){ 
+        return ++this.i; 
+      }
+    });
+
+    assert.equal(v.toString(), '1-2');
+    v.set("i", 2);
+  });
+
   if (!process.browser)
   it("properly encodes html entities", function () {
     assert.equal(pc.template("{{content}}").view({content:"<script />"}).toString(), "&#x3C;script /&#x3E;");

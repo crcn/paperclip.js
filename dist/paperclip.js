@@ -81,7 +81,9 @@ module.exports = BaseAccessor.extend(POJOAccessor, {
     }
 
     try {
-      return caller.call(object, params);
+      var ret = caller.call(object, params);
+      this.applyChanges();
+      return ret;
     } catch (e) {
       return void 0;
     }
@@ -227,9 +229,12 @@ module.exports = BaseAccessor.extend(POJOAccessor, {
    */
 
   applyChanges: function() {
+    // if (this.__applyingChanges) return;
+    // this.__applyingChanges = true;
     for (var i = 0, n = this._watchers.length; i < n; i++) {
       this._watchers[i].apply();
     }
+    // this.__applyingChanges = false;
   }
 });
 
@@ -1407,8 +1412,6 @@ BaseExpression.extend(AssignmentExpression, {
    */
 
   toJavaScript: function() {
-
-    // var path = this.reference.path.map(function(p) { return "'" + p + "'"; }).join(", ");
 
     var path = this.reference.path.join(".");
 
