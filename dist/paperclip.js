@@ -55,6 +55,7 @@ var _set         = require("../utils/set");
 function POJOAccessor() {
   BaseAccessor.call(this);
   this._getters  = {};
+  this._callers  = {};
   this._watchers = [];
 }
 
@@ -70,16 +71,20 @@ module.exports = BaseAccessor.extend(POJOAccessor, {
 
   call: function(object, path, params) {
 
-    if (typeof path === "string") path = path.split(".");
+    var caller;
 
-    var fnName = path.pop();
-    var fnCtx  = path.length ? this.get(object, path) : object;
-    var fn     = fnCtx[fnName];
+    if (!(caller = this._callers[path])) {
+      var ctxPath = ["this"].concat(path.split("."));
+      ctxPath.pop();
+      ctxPath = ctxPath.join(".");
+      caller = this._callers[path] = new Function("params", "return this." + path + ".apply(" + ctxPath + ", params);");
+    }
 
-    if (!fn) return;
-    var ret = fn.apply(fnCtx, params);
-    this.applyChanges();
-    return ret;
+    try {
+      return caller.call(object, params);
+    } catch (e) {
+      return void 0;
+    }
   },
 
   /**
@@ -1520,11 +1525,11 @@ BaseExpression.extend(CallExpression, {
 
     var buffer = "this.call(";
 
-    buffer += "[" + path.map(function(name) {
-      return "\"" + name + "\"";
-    }).join(",") + "]";
+
+    buffer += "'" + path.join(".") + "'";
 
     buffer += ", [" + this.parameters.toJavaScript() + "]";
+
 
     return buffer + ")";
   }
