@@ -2,7 +2,10 @@
 
 **Visit http://paperclipjs.com for further documentation.**
 
-Paperclip is a reactive template engine designed for the DOM. It works by compiling templates to document fragments, then clones them whenever they're needed. The result is blazing-fast rendering with very few moving parts. 
+Paperclip is a reactive template engine designed for the DOM. It works by compiling templates to document fragments, then clones them whenever they're needed. The result is blazing-fast rendering with very few moving parts.
+
+
+<!-- How is it so fast? -->
 
 ### Features
 
