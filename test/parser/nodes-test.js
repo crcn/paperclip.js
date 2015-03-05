@@ -89,6 +89,12 @@ describe(__filename + "#", function () {
     var ast = parser.parse("<!-- hello -->");
   });
 
+
+  it("doesn't maintain whitespace between comments", function () {
+    var tpl = template("<span></span>\t <span></span> <!--a-->");
+    expect(tpl.view().toString()).to.be("<span></span><span></span><!--a-->");
+  });
+
   describe("bindings", function () {
     it("can parse text blocks", function () {
       var ast= parser.parse("aa {{abc}} bb");

@@ -88,7 +88,7 @@ DocType
     }
 
 ChildNodes
-  = children:(VoidElement/ElementNode/TextNode/BlockBinding/CommentNode)* { return new ArrayExpression(new ParametersExpression(trimTextExpressions(children))); }
+  = children:(VoidElement/ElementNode/CommentNode/TextNode/BlockBinding)* { return new ArrayExpression(new ParametersExpression(trimTextExpressions(children))); }
 
 
 CommentNode

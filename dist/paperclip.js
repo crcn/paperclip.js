@@ -87,9 +87,7 @@ module.exports = BaseAccessor.extend(POJOAccessor, {
 
   get: function(object, path) {
 
-    if (typeof path === "string") path = path.split(".");
-
-    var pt = path.join(".");
+    var pt = typeof path !== "string" ? path.join(".") : path;
     var getter;
 
     if (!(getter = this._getters[pt])) {
@@ -843,6 +841,7 @@ var paperclip = module.exports = {
   parse: parser.parse
 };
 
+/* istanbul ignore next */
 if (typeof window !== "undefined") {
 
   window.paperclip = paperclip;
@@ -1404,9 +1403,11 @@ BaseExpression.extend(AssignmentExpression, {
 
   toJavaScript: function() {
 
-    var path = this.reference.path.map(function(p) { return "'" + p + "'"; }).join(", ");
+    // var path = this.reference.path.map(function(p) { return "'" + p + "'"; }).join(", ");
 
-    return "this.set([" + path + "], " + this.value.toJavaScript() + ")";
+    var path = this.reference.path.join(".");
+
+    return "this.set('" + path + "', " + this.value.toJavaScript() + ")";
   }
 });
 
@@ -1752,13 +1753,15 @@ BaseExpression.extend(ReferenceExpression, {
       return "this.context." + this.path.join(".");
     }
 
-    var path = this.path.map(function(p) { return "'" + p + "'"; }).join(", ");
+    // var path = this.path.map(function(p) { return "'" + p + "'"; }).join(", ");
+
+    var path = this.path.join(".");
 
     if (this._isBoundTo) {
-      return "this.reference([" + path + "], " + (this.bindingType !== "<~") + ")";
+      return "this.reference('" + path + "', " + (this.bindingType !== "<~") + ")";
     }
 
-    return "this.get([" + path + "])";
+    return "this.get('" + path + "')";
   }
 });
 
@@ -1822,9 +1825,12 @@ BaseExpression.extend(ScriptExpression, {
     // remove duplicate references
     refs = uniq(refs.map(function(ref) {
       return ref.join(".");
-    })).map(function(ref) {
-      return ref.split(".");
-    });
+    }));
+
+    // much slower - use strings instead
+    // refs = refs.map(function(ref) {
+    //   return ref.split(".");
+    // });
 
     var buffer = "{";
 
@@ -2627,11 +2633,11 @@ module.exports = (function() {
       if (s2 === peg$FAILED) {
         s2 = peg$parseElementNode();
         if (s2 === peg$FAILED) {
-          s2 = peg$parseTextNode();
+          s2 = peg$parseCommentNode();
           if (s2 === peg$FAILED) {
-            s2 = peg$parseBlockBinding();
+            s2 = peg$parseTextNode();
             if (s2 === peg$FAILED) {
-              s2 = peg$parseCommentNode();
+              s2 = peg$parseBlockBinding();
             }
           }
         }
@@ -2642,11 +2648,11 @@ module.exports = (function() {
         if (s2 === peg$FAILED) {
           s2 = peg$parseElementNode();
           if (s2 === peg$FAILED) {
-            s2 = peg$parseTextNode();
+            s2 = peg$parseCommentNode();
             if (s2 === peg$FAILED) {
-              s2 = peg$parseBlockBinding();
+              s2 = peg$parseTextNode();
               if (s2 === peg$FAILED) {
-                s2 = peg$parseCommentNode();
+                s2 = peg$parseBlockBinding();
               }
             }
           }
@@ -5978,6 +5984,7 @@ var rAF = (global.requestAnimationFrame      ||
           global.mozRequestAnimationFrame    ||
           process.nextTick).bind(global);
 
+/* istanbul ignore next */
 if (process.browser) {
   var defaultTick = function(next) {
     rAF(next);
@@ -6655,6 +6662,7 @@ function View(template, pool, section, hydrators, options) {
   this.rootNode        = section.rootNode();
   this.transitions     = new Transitions();
   this.runloop         = template.runloop;
+  this._watchers       = [];
 
   for (var i = 0, n = hydrators.length; i < n; i++) {
     hydrators[i].hydrate(this);
@@ -6716,8 +6724,8 @@ protoclass(View, {
   /**
    */
 
-  watch: function(path, listener) {
-    return this.accessor.watchProperty(this.context, path, listener);
+   watch: function(keypath, listener) {
+    return this.accessor.watchProperty(this.context, keypath, listener);
   },
 
   /**
@@ -6732,7 +6740,9 @@ protoclass(View, {
 
   bind: function(context) {
 
-    if (this.context) this.unbind();
+    if (this.context) {
+      this.unbind();
+    }
     if (!context) context = {};
 
     this.context = this.accessor.castObject(context);
@@ -6749,6 +6759,7 @@ protoclass(View, {
     for (var i = this.bindings.length; i--;) {
       this.bindings[i].unbind();
     }
+
   },
 
   /**ch
@@ -7723,7 +7734,7 @@ nofactor       = require("nofactor");
 // instead of calling toFragment() each time. perhaps 
 var Section = function (nodeFactory, start, end) {
 
-  this.nodeFactory = nodeFactory = nodeFactory || nofactor["default"];
+  this.nodeFactory = nodeFactory = nodeFactory || nofactor;
 
   // create invisible markers so we know where the sections are
 
