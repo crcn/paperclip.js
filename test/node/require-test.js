@@ -9,3 +9,4 @@ describe(__filename + "#", function () {
     assert.equal(stringifyView(tpl.view({name:"a"})), "hello a");
   });
 });
+

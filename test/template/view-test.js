@@ -15,6 +15,7 @@ describe(__filename + "#", function () {
     assert.equal(tpl.view().toString(), "hello world");
   });
 
+
   it("can pass a bindable object as the context of a view", function () {
     var v = template("{{name}}").view({name: "a" });
     assert.equal(stringifyView(v), "a");
