@@ -696,11 +696,13 @@ BaseAttribute.extend(ValueAttribute, {
 
     var self = this;
 
-    this._modelBindings = this.view.watch(model.path, function(value) {
-      self._elementValue(self._parseValue(value));
-    });
+    if (model.gettable) {
+      this._modelBindings = this.view.watch(model.path, function(value) {
+        self._elementValue(self._parseValue(value));
+      });
 
-    this._modelBindings.trigger();
+      this._modelBindings.trigger();
+    }
   },
 
   _parseValue: function(value) {
@@ -1764,7 +1766,7 @@ BaseExpression.extend(ReferenceExpression, {
     var path = this.path.join(".");
 
     if (this._isBoundTo) {
-      return "this.reference('" + path + "', " + (this.bindingType !== "<~") + ")";
+      return "this.reference('" + path + "', " + (this.bindingType !== "<~") + ", " + (this.bindingType !== "~>") + ")";
     }
 
     return "this.get('" + path + "')";
@@ -6891,8 +6893,8 @@ protoclass(View, {
   /**
    */
 
-  reference: function(path, settable) {
-    return new Reference(this, path, settable);
+  reference: function(path, settable, gettable) {
+    return new Reference(this, path, settable, gettable);
   },
 
   /**
@@ -6913,7 +6915,7 @@ protoclass(View, {
   /**
    */
 
-   watch: function(keypath, listener) {
+  watch: function(keypath, listener) {
     return this.accessor.watchProperty(this.context, keypath, listener);
   },
 
@@ -7011,10 +7013,11 @@ var protoclass = require("protoclass");
 /**
  */
 
-function Reference(view, path, settable) {
+function Reference(view, path, settable, gettable) {
   this.view     = view;
   this.path     = path;
   this.settable = settable !== false;
+  this.gettable = gettable !== false;
 }
 
 /**
@@ -7031,7 +7034,9 @@ protoclass(Reference, {
    */
 
   value: function(value) {
-    if (!arguments.length) return this.view.get(this.path);
+    if (!arguments.length) {
+      return this.gettable ? this.view.get(this.path) : void 0;
+    }
     if (this.settable) this.view.set(this.path, value);
   },
 
@@ -7893,6 +7898,7 @@ process.browser = true;
 process.env = {};
 process.argv = [];
 process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
 
 function noop() {}
 

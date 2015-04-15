@@ -167,9 +167,46 @@ describe(__filename + "#", function () {
       b.set("name", "bbaa");
       setTimeout(function () {
         assert.equal(b.get("name"), "bbaa");
+        assert.equal(input.value, "baab");
         b.dispose();
         next();
       }, 10);
+    }, 10);
+  });
+
+  it("doesn't set value if only binding from value ~> model", function (next) {
+    var t = pc.template("<input type='text' value={{ ~>name }} />", pc);
+
+    var b = t.view({name:"abba"});
+    var input = b.render();
+
+    setTimeout(function () {
+      assert.equal(input.value, void 0);
+      next();
+    }, 10);
+  });
+
+  it("sets value if binding is <~", function (next) {
+    var t = pc.template("<input type='text' value={{ <~name }} />", pc);
+
+    var b = t.view({name:"abba"});
+    var input = b.render();
+
+    setTimeout(function () {
+      assert.equal(input.value, "abba");
+      next();
+    }, 10);
+  });
+
+  it("sets value if binding is <~>", function (next) {
+    var t = pc.template("<input type='text' value={{ <~>name }} />", pc);
+
+    var b = t.view({name:"abba"});
+    var input = b.render();
+
+    setTimeout(function () {
+      assert.equal(input.value, "abba");
+      next();
     }, 10);
   });
 
