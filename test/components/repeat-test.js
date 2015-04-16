@@ -90,5 +90,35 @@ describe(__filename + "#", function () {
     v.runloop.runNow();
     assert.equal(stringifyView(v), "<ul><li>4</li><li>5</li><li>6</li><li>7</li></ul>");
   });
-});
 
+  it("can repeat over an object", function() {
+      var tpl = template(
+        "<repeat each={{source}} as='a' key='v'>" +
+          "{{a}}-{{v}}" +
+        "</repeat>"
+      , paperclip);
+
+      var v = tpl.view({
+        source: { a:1, b:2, c:3, e:4 }
+      });
+
+      assert.equal(stringifyView(v), "1-a2-b3-c4-e");
+  });
+
+  it("can customize the key", function () {
+
+    var tpl = template(
+      "<repeat each={{source}} as='a' key='v'>" +
+        "a-{{v}}" +
+      "</repeat>"
+    , paperclip);
+
+    var v = tpl.view({
+      source: [
+        0, 1, 2, 3
+      ]
+    });
+
+    assert.equal(stringifyView(v), "a-0a-1a-2a-3");
+  });
+});
