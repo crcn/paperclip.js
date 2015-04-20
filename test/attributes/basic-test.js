@@ -51,4 +51,21 @@ describe(__filename + "#", function () {
     assert.equal(stringifyView(v), "<div>baab</div>");
   });
 
+  it("automatically converts dashes to camelCase", function() {
+
+    var tpl = template("<div say-hello />", {
+      attributes: {
+        sayHello: pc.Attribute.extend({
+          initialize: function () {
+            this._node = this.nodeFactory.createTextNode("Hello World");
+            this.node.appendChild(this._node);
+          }
+        })
+      }
+    });
+
+    var v = tpl.view({});
+    assert.equal(stringifyView(v), "<div>Hello World</div>");
+  });
+
 });
