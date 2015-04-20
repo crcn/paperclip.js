@@ -548,13 +548,16 @@ module.exports = BaseAttribute.extend({
     BaseAttribute.prototype.bind.call(this);
     var self = this;
 
-    this._binding = this.value.watch(this.view, function(nv) {
-      if (nv === self.currentValue) return;
-      self.currentValue = nv;
-      self.view.runloop.deferOnce(self);
-    });
+    if (this.value.watch) {
+      this._binding = this.value.watch(this.view, function(nv) {
+        if (nv === self.currentValue) return;
+        self.currentValue = nv;
+        self.view.runloop.deferOnce(self);
+      });
 
-    this.currentValue = this.value.evaluate(this.view);
+      this.currentValue = this.value.evaluate(this.view);
+    }
+
     if (this.currentValue != null) this.update();
   },
 
@@ -569,7 +572,7 @@ module.exports = BaseAttribute.extend({
    */
 
   unbind: function() {
-    this._binding.dispose();
+    if (this._binding) this._binding.dispose();
   }
 });
 
@@ -824,7 +827,7 @@ var paperclip = module.exports = {
   /**
    */
 
-  Attribute : require("./attributes/base"),
+  Attribute : require("./attributes/script"),
 
   /**
    * template factory
@@ -865,7 +868,7 @@ if (typeof window !== "undefined") {
   };
 }
 
-},{"./attributes/base":3,"./components/base":18,"./defaults":24,"./parser":46,"./template":53,"nofactor":79}],18:[function(require,module,exports){
+},{"./attributes/script":14,"./components/base":18,"./defaults":24,"./parser":46,"./template":53,"nofactor":79}],18:[function(require,module,exports){
 var protoclass = require("protoclass");
 var _bind      = require("../utils/bind");
 
@@ -942,6 +945,17 @@ function RepeatComponent(options) {
 /**
  */
 
+function _each(target, iterate) {
+  if (Object.prototype.toString.call(target) === "[object Array]") {
+    for (var i = 0, n = target.length; i < n; i++) iterate(target[i], i);
+  } else {
+    for (var key in target) iterate(target[key], key);
+  }
+}
+
+/**
+ */
+
 module.exports = BaseComponent.extend({
 
   /**
@@ -954,6 +968,7 @@ module.exports = BaseComponent.extend({
     if (this._updateListener) this._updateListener.dispose();
 
     var name     = this.attributes.as;
+    var key      = this.attributes.key || "index";
     var source   = this.attributes.each;
     var accessor = this.view.accessor;
 
@@ -970,19 +985,20 @@ module.exports = BaseComponent.extend({
     var self = this;
     var properties;
 
-    for (var i = 0, n = source.length; i < n; i++) {
+    var n = 0;
 
-      var model = source[i];
+    _each(source, function(model, i) {
 
       if (name) {
-        properties = { index: i };
+        properties = {};
+        properties[key]  = i;
         properties[name] = model;
       } else {
         properties = model;
       }
 
-      if (i < this._children.length) {
-        var c = this._children[i];
+      if (i < self._children.length) {
+        var c = self._children[i];
 
         // model is different? rebind. Otherwise ignore
         if (c.context === model || c.context[name] !== model) {
@@ -991,17 +1007,19 @@ module.exports = BaseComponent.extend({
       } else {
 
         // cannot be this - must be default scope
-        var child = this.childTemplate.view(properties, {
-          parent: this.view
+        var child = self.childTemplate.view(properties, {
+          parent: self.view
         });
 
-        this._children.push(child);
-        this.section.appendChild(child.render());
+        self._children.push(child);
+        self.section.appendChild(child.render());
       }
-    }
+
+      n++;
+    });
 
     // TODO - easeOutSync?
-    this._children.splice(i).forEach(function(child) {
+    this._children.splice(n).forEach(function(child) {
       child.dispose();
     });
   }
@@ -7493,8 +7511,17 @@ var _set              = require("../../../utils/set");
 /**
  */
 
+function _replaceDashes(k) {
+  return k.replace(/\-./, function(k) {
+    return k.substr(1).toUpperCase();
+  });
+}
+
+/**
+ */
+
 function Element(name, attributes, children) {
-  this.name       = name;
+  this.name       = _replaceDashes(name);
   this.attributes = attributes;
   this.children   = children;
 }
@@ -7546,10 +7573,11 @@ module.exports = protoclass(Element, {
     // components should be attachable to regular DOM elements as well
     for (var k in this.attributes) {
 
+      var k2                 = _replaceDashes(k);
       var v                  = this.attributes[k];
       var tov                = typeof v;
-      var attrComponentClass = template.components[k];
-      var attrClass          = template.attributes[k];
+      var attrComponentClass = template.components[k2];
+      var attrClass          = template.attributes[k2];
 
       hasAttrComponent = !!attrComponentClass || hasAttrComponent;
 
@@ -7579,7 +7607,7 @@ module.exports = protoclass(Element, {
         ));
       } else {
 
-        if (tov === "string") {
+        if (tov !== "object") {
           // element.setAttribute(k, v);
           vanillaAttrs[k] = v;
         } else {
@@ -7609,7 +7637,10 @@ module.exports = protoclass(Element, {
     */
 
     for (k in vanillaAttrs) {
-      element.setAttribute(k, vanillaAttrs[k]);
+      var v = vanillaAttrs[k];
+      if (typeof v === "string") {
+        element.setAttribute(k, vanillaAttrs[k]);
+      }
     }
 
     // no component class with the attrs? append the children

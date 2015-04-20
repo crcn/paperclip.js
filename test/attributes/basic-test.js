@@ -21,4 +21,34 @@ describe(__filename + "#", function () {
     assert.equal(stringifyView(v), "<div>hello world!</div>");
   });
 
+  it("can specify an attribute without a value", function() {
+    var tpl = template("<div abba>baab</div>", {});
+
+    var v = tpl.view({});
+    assert.equal(stringifyView(v), "<div>baab</div>");
+  });
+
+  it("automatically converts dashes to camelCase", function() {
+
+    var tpl = template("<div say-hello={{message}} />", {
+      attributes: {
+        sayHello: pc.Attribute.extend({
+          initialize: function () {
+            this._node = this.nodeFactory.createTextNode("");
+            this.node.appendChild(this._node);
+          },
+          update: function() {
+            this._node.replaceText(this.value.evaluate(this.view));
+          }
+        })
+      }
+    });
+
+    var v = tpl.view({ message: "abba" });
+    assert.equal(stringifyView(v), "<div>abba</div>");
+    v.set("message", "baab");
+    v.runloop.runNow();
+    assert.equal(stringifyView(v), "<div>baab</div>");
+  });
+
 });

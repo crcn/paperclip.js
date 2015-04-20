@@ -142,7 +142,7 @@ describe(__filename + "#", function () {
     });
 
 
-    var tpl = template("<repeat count='5' as='number'>a<show value={{number}} /></repeat>", { 
+    var tpl = template("<repeat count='5' as='number'>a<show value={{number}} /></repeat>", {
       components: {
         repeat: RepeatComponent,
         show: Component.extend({
@@ -163,6 +163,29 @@ describe(__filename + "#", function () {
     var v = tpl.view({});
 
     assert.equal(stringifyView(v), "ab0ab1ab2ab3ab4");
+  });
+
+  it("automatically converts dashes to camelCase", function() {
+
+    var tpl = template("<say-hello message={{message}} />", {
+      components: {
+        sayHello: Component.extend({
+          initialize: function () {
+            this._node = this.nodeFactory.createTextNode("");
+            this.section.appendChild(this._node);
+          },
+          update: function() {
+            this._node.replaceText(this.attributes.message);
+          }
+        })
+      }
+    });
+
+    var v = tpl.view({ message: "abba" });
+    assert.equal(stringifyView(v), "abba");
+    v.set("message", "baab");
+    v.runloop.runNow();
+    assert.equal(stringifyView(v), "baab");
   });
 
 });
