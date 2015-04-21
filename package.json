@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "1.4.15",
+  "version": "1.4.16",
   "description": "controller logic:",
   "main": "./lib/node.js",
   "scripts": {
@@ -25,6 +25,7 @@
   "gitHead": "1336ca5b7f1f0c344a291ace63ddf211d5a94acd",
   "readmeFilename": "README.md",
   "devDependencies": {
+    "babel": "^5.1.11",
     "benchmark": "~1.0.0",
     "coveralls": "^2.11.2",
     "express": "~3.3.4",
@@ -42,7 +43,6 @@
     "karma-safari-launcher": "^0.1.1",
     "karma-sauce-launcher": "^0.2.10",
     "mocha": "~1.15.1",
-    "mojo-cli": "^0.1.1",
     "pegjs": "^0.8.0",
     "react": "^0.11.2",
     "sinon": "^1.12.2",
