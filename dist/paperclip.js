@@ -73,7 +73,7 @@ if (typeof window !== "undefined") {
   };
 }
 
-},{"./attributes/script":15,"./components/base":18,"./defaults":24,"./parser":46,"./template":53,"nofactor":80}],2:[function(require,module,exports){
+},{"./attributes/script":15,"./components/base":18,"./defaults":24,"./parser":46,"./template":53,"nofactor":78}],2:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
@@ -123,7 +123,7 @@ module.exports = protoclass(BaseAccessor, {
   }*/
 });
 
-},{"protoclass":81}],3:[function(require,module,exports){
+},{"protoclass":79}],3:[function(require,module,exports){
 var BaseAccessor = require("./base");
 var _set         = require("../utils/set");
 
@@ -357,7 +357,7 @@ module.exports = protoclass(Attribute, {
   }
 });
 
-},{"protoclass":81}],5:[function(require,module,exports){
+},{"protoclass":79}],5:[function(require,module,exports){
 var ScriptAttribute = require("./script");
 
 /**
@@ -548,7 +548,7 @@ Base.extend(EventAttribute, {
 
 module.exports = EventAttribute;
 
-},{"../utils/bind":70,"./base":4,"protoclass":81}],13:[function(require,module,exports){
+},{"../utils/bind":70,"./base":4,"protoclass":79}],13:[function(require,module,exports){
 (function (process){
 var ScriptAttribute = require("./script");
 
@@ -930,7 +930,7 @@ module.exports = protoclass(Component, {
   }
 });
 
-},{"../utils/bind":70,"protoclass":81}],19:[function(require,module,exports){
+},{"../utils/bind":70,"protoclass":79}],19:[function(require,module,exports){
 var BaseComponent  = require("./base");
 
 /**
@@ -1510,7 +1510,7 @@ protoclass(BaseExpression, {
 
 module.exports = BaseExpression;
 
-},{"protoclass":81}],28:[function(require,module,exports){
+},{"protoclass":79}],28:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function BlockBindingExpression(scripts, contentTemplate, childBlock) {
@@ -6294,7 +6294,7 @@ protoclass(RunLoop, {
 module.exports = RunLoop;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":76,"protoclass":81}],49:[function(require,module,exports){
+},{"_process":76,"protoclass":79}],49:[function(require,module,exports){
 
 // TODO: refactor me
 
@@ -6522,7 +6522,7 @@ protoclass(Marker, {
 
 module.exports = FragmentSection;
 
-},{"../utils":72,"document-section":77,"protoclass":81}],51:[function(require,module,exports){
+},{"../utils":72,"document-section":77,"protoclass":79}],51:[function(require,module,exports){
 var DocumentSection = require("document-section").Section;
 var protoclass      = require("protoclass");
 var utils           = require("../utils");
@@ -6616,7 +6616,7 @@ protoclass(Marker, {
 
 module.exports = NodeSection;
 
-},{"../utils":72,"document-section":77,"protoclass":81}],52:[function(require,module,exports){
+},{"../utils":72,"document-section":77,"protoclass":79}],52:[function(require,module,exports){
 var BaseComponent = require("../components/base");
 var _bind         = require("../utils/bind");
 var _extend       = require("../utils/extend");
@@ -6846,7 +6846,7 @@ module.exports = function(source, options) {
 };
 
 }).call(this,require('_process'))
-},{"../defaults":24,"../section/fragment":50,"../section/node":51,"../utils/extend":71,"./component":52,"./view":54,"./vnode/block":59,"./vnode/comment":61,"./vnode/element":65,"./vnode/fragment":67,"./vnode/text":68,"_process":76,"nofactor":80,"protoclass":81}],54:[function(require,module,exports){
+},{"../defaults":24,"../section/fragment":50,"../section/node":51,"../utils/extend":71,"./component":52,"./view":54,"./vnode/block":59,"./vnode/comment":61,"./vnode/element":65,"./vnode/fragment":67,"./vnode/text":68,"_process":76,"nofactor":78,"protoclass":79}],54:[function(require,module,exports){
 var protoclass     = require("protoclass");
 var Transitions    = require("./transitions");
 var _bind          = require("../../utils/bind");
@@ -7031,7 +7031,7 @@ protoclass(View, {
 
 module.exports = View;
 
-},{"../../utils/bind":70,"../../utils/stringifyNode":74,"./reference":55,"./transitions":56,"protoclass":81}],55:[function(require,module,exports){
+},{"../../utils/bind":70,"../../utils/stringifyNode":74,"./reference":55,"./transitions":56,"protoclass":79}],55:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
@@ -7074,7 +7074,7 @@ protoclass(Reference, {
 
 module.exports = Reference;
 
-},{"protoclass":81}],56:[function(require,module,exports){
+},{"protoclass":79}],56:[function(require,module,exports){
 (function (process){
 var protoclass = require("protoclass");
 var async      = require("../../utils/async");
@@ -7127,7 +7127,7 @@ module.exports = protoclass(Transitions, {
 });
 
 }).call(this,require('_process'))
-},{"../../utils/async":69,"_process":76,"protoclass":81}],57:[function(require,module,exports){
+},{"../../utils/async":69,"_process":76,"protoclass":79}],57:[function(require,module,exports){
 var protoclass = require("protoclass");
 var utils      = require("../../../utils");
 var _bind      = require("../../../utils/bind");
@@ -7194,7 +7194,7 @@ module.exports = protoclass(BlockBinding, {
   }
 });
 
-},{"../../../utils":72,"../../../utils/bind":70,"protoclass":81}],58:[function(require,module,exports){
+},{"../../../utils":72,"../../../utils/bind":70,"protoclass":79}],58:[function(require,module,exports){
 var protoclass = require("protoclass");
 var utils      = require("../../../utils");
 var Binding    = require("./binding");
@@ -7229,7 +7229,7 @@ module.exports = protoclass(BlockHydrator, {
   }
 });
 
-},{"../../../utils":72,"./binding":57,"protoclass":81}],59:[function(require,module,exports){
+},{"../../../utils":72,"./binding":57,"protoclass":79}],59:[function(require,module,exports){
 var protoclass = require("protoclass");
 var utils      = require("../../../utils");
 var script     = require("../../../script");
@@ -7267,7 +7267,7 @@ module.exports.create = function(script) {
   return new Block(script);
 };
 
-},{"../../../script":49,"../../../utils":72,"./binding":57,"./hydrator":58,"./unbound":60,"protoclass":81}],60:[function(require,module,exports){
+},{"../../../script":49,"../../../utils":72,"./binding":57,"./hydrator":58,"./unbound":60,"protoclass":79}],60:[function(require,module,exports){
 var protoclass = require("protoclass");
 var utils      = require("../../../utils");
 
@@ -7310,7 +7310,7 @@ module.exports = protoclass(UnboundBlockBinding, {
   unbind: function() { }
 });
 
-},{"../../../utils":72,"protoclass":81}],61:[function(require,module,exports){
+},{"../../../utils":72,"protoclass":79}],61:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
@@ -7340,7 +7340,7 @@ module.exports.create = function(value) {
   return new Comment(value);
 };
 
-},{"protoclass":81}],62:[function(require,module,exports){
+},{"protoclass":79}],62:[function(require,module,exports){
 var protoclass        = require("protoclass");
 var utils             = require("../../../utils");
 var AttributesBinding = require("./attributesBinding");
@@ -7387,7 +7387,7 @@ module.exports = protoclass(AttributeHydrator, {
   }
 });
 
-},{"../../../utils":72,"./attributesBinding":63,"protoclass":81}],63:[function(require,module,exports){
+},{"../../../utils":72,"./attributesBinding":63,"protoclass":79}],63:[function(require,module,exports){
 var protoclass = require("protoclass");
 var utils      = require("../../../utils");
 
@@ -7448,7 +7448,7 @@ module.exports = protoclass(AttributesBinding, {
   }
 });
 
-},{"../../../utils":72,"protoclass":81}],64:[function(require,module,exports){
+},{"../../../utils":72,"protoclass":79}],64:[function(require,module,exports){
 var protoclass        = require("protoclass");
 var AttributesBinding = require("./attributesBinding");
 var _extend           = require("../../../utils/extend");
@@ -7502,7 +7502,7 @@ module.exports = protoclass(ComponentHydrator, {
   }
 });
 
-},{"../../../utils/extend":71,"./attributesBinding":63,"protoclass":81}],65:[function(require,module,exports){
+},{"../../../utils/extend":71,"./attributesBinding":63,"protoclass":79}],65:[function(require,module,exports){
 var protoclass        = require("protoclass");
 var FragmentSection   = require("../../../section/fragment");
 var NodeSection       = require("../../../section/node");
@@ -7676,7 +7676,7 @@ module.exports.create = function(name, attributes, children) {
   return new Element(name, attrs, new Fragment(children));
 };
 
-},{"../../../script":49,"../../../section/fragment":50,"../../../section/node":51,"../../../utils":72,"../../../utils/set":73,"../fragment":67,"./attributeHydrator":62,"./componentHydrator":64,"./valueAttribute":66,"protoclass":81}],66:[function(require,module,exports){
+},{"../../../script":49,"../../../section/fragment":50,"../../../section/node":51,"../../../utils":72,"../../../utils/set":73,"../fragment":67,"./attributeHydrator":62,"./componentHydrator":64,"./valueAttribute":66,"protoclass":79}],66:[function(require,module,exports){
 var ScriptAttribute = require("../../../attributes/script");
 
 /**
@@ -7728,7 +7728,7 @@ module.exports.create = function(children) {
   return new Fragment(children);
 };
 
-},{"protoclass":81}],68:[function(require,module,exports){
+},{"protoclass":79}],68:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
@@ -7765,7 +7765,7 @@ module.exports.create = function(value) {
   return new Text(value);
 };
 
-},{"protoclass":81}],69:[function(require,module,exports){
+},{"protoclass":79}],69:[function(require,module,exports){
 module.exports = {
 
   /**
@@ -7962,23 +7962,23 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],77:[function(require,module,exports){
-var protoclass = require("protoclass"),
-nofactor       = require("nofactor");
+var protoclass  = require("protoclass"),
+defaultDocument = require("nofactor");
 
 // TODO - figure out a way to create a document fragment in the constructor
-// instead of calling toFragment() each time. perhaps 
-var Section = function (nodeFactory, start, end) {
+// instead of calling toFragment() each time. perhaps
+var Section = function (document, start, end) {
 
-  this.nodeFactory = nodeFactory = nodeFactory || nofactor;
+  this.document = document = document || defaultDocument;
 
   // create invisible markers so we know where the sections are
 
-  this.start       = start || nodeFactory.createTextNode("");
-  this.end         = end   || nodeFactory.createTextNode("");
+  this.start       = start || document.createTextNode("");
+  this.end         = end   || document.createTextNode("");
   this.visible     = true;
 
   if (!this.start.parentNode) {
-    var parent  = nodeFactory.createFragment();
+    var parent  = document.createDocumentFragment();
     parent.appendChild(this.start);
     parent.appendChild(this.end);
   }
@@ -8010,15 +8010,14 @@ Section = protoclass(Section, {
     if (this.start.parentNode.nodeType === 11) {
       parentClone = this.start.parentNode.cloneNode(true);
     } else {
-      parentClone = this.nodeFactory.createFragment();
+      parentClone = this.document.createDocumentFragment();
 
       this.getChildNodes().forEach(function (node) {
         parentClone.appendChild(node.cloneNode(true));
       });
     }
 
-
-    return new Section(this.nodeFactory, parentClone.childNodes[0], parentClone.childNodes[parentClone.childNodes.length - 1 ]);
+    return new Section(this.document, parentClone.childNodes[0], parentClone.childNodes[parentClone.childNodes.length - 1 ]);
   },
 
   /**
@@ -8026,10 +8025,21 @@ Section = protoclass(Section, {
 
   remove: function () {
     // this removes the child nodes completely
-    return this.nodeFactory.createFragment(this.getChildNodes());
+    return this._createFragment(this.getChildNodes());
   },
 
-  /** 
+  /**
+   */
+
+  _createFragment: function(nodes) {
+    var fragment = this.document.createDocumentFragment();
+    nodes.forEach(function(node) {
+      fragment.appendChild(node);
+    });
+    return fragment;
+  },
+
+  /**
    * shows the section
    */
 
@@ -8079,7 +8089,7 @@ Section = protoclass(Section, {
     return children;
   },
 
-  
+
   /**
    * DEPRECATED - use appendChild
    */
@@ -8091,7 +8101,7 @@ Section = protoclass(Section, {
     if (!newNodes.length) return;
 
     if(newNodes.length > 1) {
-      newNodes = this.nodeFactory.createFragment(newNodes);
+      newNodes = this._createFragment(newNodes);
     } else {
       newNodes = newNodes[0];
     }
@@ -8116,7 +8126,7 @@ Section = protoclass(Section, {
     if (!newNodes.length) return;
 
     if(newNodes.length > 1) {
-      newNodes = this.nodeFactory.createFragment(newNodes);
+      newNodes = this._createFragment(newNodes);
     } else {
       newNodes = newNodes[0];
     }
@@ -8198,158 +8208,22 @@ Section = protoclass(Section, {
    */
 
   _section: function (children) {
-    var section = new Section(this.nodeFactory);
+    var section = new Section(this.document);
     section.append.apply(section, children);
     return section;
   }
 });
 
-module.exports = function (nodeFactory, start, end)  {
-  return new Section(nodeFactory, start, end);
+module.exports = function (document, start, end)  {
+  return new Section(document, start, end);
 }
 
 module.exports.Section = Section;
-},{"nofactor":79,"protoclass":81}],78:[function(require,module,exports){
-var protoclass = require("protoclass");
 
-
-/**
- * @module mojo
- * @module mojo-core
- */
-
-
-/**
-
-
-  
-@class BaseNodeFactory
-*/
-
-function BaseFactory () {
-
-}
-
-protoclass(BaseFactory, {
-
-  /**
-   * creates a new element
-   * @method createElement
-   * @param {String} name name of the element
-   * @returns {ElementNode}
-   */
-
-  createElement: function (element) {},
-
-  /**
-   * creates a new fragment
-   * @method createFragment
-   * @returns {FragmentNode}
-   */
-
-  createFragment: function () { },
-
-  /**
-   * creates a new comment
-   * @method createComment
-   * @returns {CommentNode}
-   */
-
-  createComment: function (value) { },
-
-  /**
-   * creates a new text node
-   * @method createTextNode
-   * @returns {TextNode}
-   */
-
-  createTextNode: function (value) { },
-
-  /*
-   */
-
-  parseHtml: function (content) { }
-});
-
-
-
-module.exports = BaseFactory;
-
-},{"protoclass":81}],79:[function(require,module,exports){
-var Base = require("./base");
-
-/**
- * @module mojo
- * @module mojo-core
- */
-
-/**
- * @class DomFactory
- * @extends BaseNodeFactory
- */
-
-
-function DomFactory () {
-
-}
-
-
-Base.extend(DomFactory, {
-
-  /*
-   */
-
-  name: "dom",
-
-  /*
-   */
-
-  createElement: function (name) {
-    return document.createElement(name);
-  },
-
-  /*
-   */
-
-  createComment: function (value) {
-    return document.createComment(value);
-  },
-
-  /*
-   */
-
-  createTextNode: function (value) {
-    return document.createTextNode(value);
-  },
-
-  /*
-   */
-
-  createFragment: function (children) {
-
-    if (!children) children = [];
-
-    var frag = document.createDocumentFragment()
-
-    var childrenToArray = [];
-
-    for (var i = 0, n = children.length; i < n; i++) {
-      childrenToArray.push(children[i]);
-    }
-
-    for(var j = 0, n2 = childrenToArray.length; j < n2; j++) {
-      frag.appendChild(childrenToArray[j]);
-    }
-
-    return frag;
-  }
-});
-
-module.exports = new DomFactory();
-},{"./base":78}],80:[function(require,module,exports){
+},{"nofactor":78,"protoclass":79}],78:[function(require,module,exports){
 module.exports = document;
 
-},{}],81:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 function _copy (to, from) {
 
   for (var i = 0, n = from.length; i < n; i++) {
