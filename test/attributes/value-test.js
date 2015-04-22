@@ -1,7 +1,6 @@
 var assert     = require("assert"),
 pc             = require("../.."),
 template       = pc.template,
-document = require("nofactor/lib/dom"),
 defaultdocument = require("nofactor"),
 sinon     = require("sinon");
 
