@@ -934,8 +934,6 @@ module.exports = protoclass(Component, {
 var BaseComponent  = require("./base");
 
 /**
- * TODO: alloc property
- * TODO: chunk property
  */
 
 function RepeatComponent(options) {
@@ -8248,7 +8246,7 @@ function protoclass (parent, child) {
     parent  = function() { };
   }
 
-  _copy(child, parent); 
+  _copy(child, parent);
 
   function ctor () {
     this.constructor = child;
