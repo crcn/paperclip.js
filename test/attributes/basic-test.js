@@ -11,7 +11,7 @@ describe(__filename + "#", function () {
       attributes: {
         hello: pc.Attribute.extend({
           initialize: function () {
-            this.node.appendChild(this.nodeFactory.createTextNode("hello world!"));
+            this.node.appendChild(this.document.createTextNode("hello world!"));
           }
         })
       }
@@ -34,7 +34,7 @@ describe(__filename + "#", function () {
       attributes: {
         sayHello: pc.Attribute.extend({
           initialize: function () {
-            this._node = this.nodeFactory.createTextNode("");
+            this._node = this.document.createTextNode("");
             this.node.appendChild(this._node);
           },
           update: function() {
@@ -57,7 +57,7 @@ describe(__filename + "#", function () {
       attributes: {
         sayHello: pc.Attribute.extend({
           initialize: function () {
-            this._node = this.nodeFactory.createTextNode("Hello World");
+            this._node = this.document.createTextNode("Hello World");
             this.node.appendChild(this._node);
           }
         })

@@ -147,10 +147,10 @@ describe(__filename + "#", function () {
         repeat: RepeatComponent,
         show: Component.extend({
           initialize: function () {
-            this.section.appendChild(this.node = this.nodeFactory.createTextNode(""));
+            this.section.appendChild(this.node = this.document.createTextNode(""));
           },
           update: function () {
-            if (this.nodeFactory.name === "dom") {
+            if (this.document.name === "dom") {
               this.node.nodeValue = "b" + this.attributes.value;
             } else {
               this.node.replaceText("b" + this.attributes.value);
@@ -171,7 +171,7 @@ describe(__filename + "#", function () {
       components: {
         sayHello: Component.extend({
           initialize: function () {
-            this._node = this.nodeFactory.createTextNode("");
+            this._node = this.document.createTextNode("");
             this.section.appendChild(this._node);
           },
           update: function() {

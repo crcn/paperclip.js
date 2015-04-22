@@ -1,7 +1,6 @@
 var pc   = require("../.."),
 assert   = require("assert"),
-nodeFactory = require("nofactor/lib/dom"),
-defaultNodeFactory = require("nofactor"),
+defaultDocument = require("nofactor"),
 paperclip = require("../.."),
 stringifyView = require("../utils/stringifyView"),
 template = paperclip.template;
@@ -9,22 +8,22 @@ template = paperclip.template;
 describe(__filename + "#", function () {
 
   before(function () {
-    paperclip.nodeFactory = nodeFactory;
+    paperclip.document = document;
   });
 
 
   after(function () {
-    paperclip.nodeFactory = defaultNodeFactory;
+    paperclip.document = defaultDocument;
   });
 
 
   [
-    "click", 
+    "click",
     "doubleClick:dblclick",
-    "load", 
-    "submit", 
-    "mouseDown", 
-    "mouseMove", 
+    "load",
+    "submit",
+    "mouseDown",
+    "mouseMove",
     "mouseUp",
     "change",
     "mouseOver",
@@ -52,7 +51,8 @@ describe(__filename + "#", function () {
         }
       });
 
-      t.render(); 
+      t.render();
+
 
       var e = document.createEvent("Event");
       e.initEvent(name.toLowerCase(), true, true);
@@ -72,7 +72,7 @@ describe(__filename + "#", function () {
       onEvent: function (event) {
         next();
       }
-    }); 
+    });
 
 
 
@@ -95,7 +95,7 @@ describe(__filename + "#", function () {
       onEvent: function (event) {
         next();
       }
-    }); 
+    });
 
     var e = document.createEvent("Event");
     e.initEvent("keydown", true, true);
@@ -113,7 +113,7 @@ describe(__filename + "#", function () {
       onEvent: function (event) {
         next();
       }
-    }); 
+    });
 
     var e = document.createEvent("Event");
     e.initEvent("keydown", true, true);
@@ -131,7 +131,7 @@ describe(__filename + "#", function () {
       onEvent: function (event) {
         i++;
       }
-    }); 
+    });
 
     var e = document.createEvent("Event");
     e.initEvent("keydown", true, true);
@@ -151,7 +151,7 @@ describe(__filename + "#", function () {
       onEvent: function (event) {
         i++;
       }
-    }); 
+    });
 
     var e = document.createEvent("Event");
     e.initEvent("keydown", true, true);

@@ -1,4 +1,79 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var nofactor = require("nofactor");
+var defaults = require("./defaults");
+var template = require("./template");
+var parser   = require("./parser");
+
+template.parser = parser;
+
+var paperclip = module.exports = {
+
+  /**
+   */
+
+  accessors: defaults.accessors,
+
+  /**
+   */
+
+  runloop: defaults.runloop,
+
+  /**
+   */
+
+  document: nofactor,
+
+  /**
+   * web component base class
+   */
+
+  Component : require("./components/base"),
+
+  /**
+   */
+
+  Attribute : require("./attributes/script"),
+
+  /**
+   * template factory
+   */
+
+  template  : template,
+
+  /**
+   */
+
+  components : defaults.components,
+
+  /**
+   */
+
+  attributes : defaults.attributes,
+
+  /**
+   */
+
+  modifiers: defaults.modifiers,
+
+  /**
+   */
+
+  parse: parser.parse
+};
+
+/* istanbul ignore next */
+if (typeof window !== "undefined") {
+
+  window.paperclip = paperclip;
+
+  // no conflict mode. Release paperclip from global scope.
+  window.paperclip.noConflict = function() {
+    delete window.paperclip;
+    return paperclip;
+  };
+}
+
+},{"./attributes/script":15,"./components/base":18,"./defaults":24,"./parser":46,"./template":53,"nofactor":80}],2:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
@@ -48,7 +123,7 @@ module.exports = protoclass(BaseAccessor, {
   }*/
 });
 
-},{"protoclass":80}],2:[function(require,module,exports){
+},{"protoclass":81}],3:[function(require,module,exports){
 var BaseAccessor = require("./base");
 var _set         = require("../utils/set");
 
@@ -238,7 +313,7 @@ module.exports = BaseAccessor.extend(POJOAccessor, {
   }
 });
 
-},{"../utils/set":73,"./base":1}],3:[function(require,module,exports){
+},{"../utils/set":73,"./base":2}],4:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
@@ -247,12 +322,12 @@ var protoclass = require("protoclass");
 
 function Attribute(options) {
 
-  this.view          = options.view;
-  this.node          = options.node;
-  this.section       = options.section;
-  this.key           = options.key;
-  this.value         = options.value;
-  this.nodeFactory   = this.view.template.nodeFactory;
+  this.view     = options.view;
+  this.node     = options.node;
+  this.section  = options.section;
+  this.key      = options.key;
+  this.value    = options.value;
+  this.document = this.view.template.document;
 
   // initialize the DOM elements
   this.initialize();
@@ -282,7 +357,7 @@ module.exports = protoclass(Attribute, {
   }
 });
 
-},{"protoclass":80}],4:[function(require,module,exports){
+},{"protoclass":81}],5:[function(require,module,exports){
 var ScriptAttribute = require("./script");
 
 /**
@@ -335,7 +410,7 @@ module.exports.test = function(value) {
   return typeof value === "object" && !value.buffered;
 };
 
-},{"./script":14}],5:[function(require,module,exports){
+},{"./script":15}],6:[function(require,module,exports){
 var KeyCodedEventAttribute = require("./keyCodedEvent");
 
 /**
@@ -345,7 +420,7 @@ module.exports = KeyCodedEventAttribute.extend({
   keyCodes: [8]
 });
 
-},{"./keyCodedEvent":13}],6:[function(require,module,exports){
+},{"./keyCodedEvent":14}],7:[function(require,module,exports){
 var BaseAttribue = require("./base");
 
 /**
@@ -362,7 +437,7 @@ module.exports = BaseAttribue.extend({
   }
 });
 
-},{"./base":3}],7:[function(require,module,exports){
+},{"./base":4}],8:[function(require,module,exports){
 var BaseAttribue = require("./base");
 
 /**
@@ -379,7 +454,7 @@ module.exports = BaseAttribue.extend({
   }
 });
 
-},{"./base":3}],8:[function(require,module,exports){
+},{"./base":4}],9:[function(require,module,exports){
 var ScriptAttribute = require("./script");
 
 /**
@@ -395,7 +470,7 @@ module.exports = ScriptAttribute.extend({
   }
 });
 
-},{"./script":14}],9:[function(require,module,exports){
+},{"./script":15}],10:[function(require,module,exports){
 var KeyCodedEventAttribute = require("./keyCodedEvent");
 
 /**
@@ -405,7 +480,7 @@ module.exports = KeyCodedEventAttribute.extend({
   keyCodes: [13]
 });
 
-},{"./keyCodedEvent":13}],10:[function(require,module,exports){
+},{"./keyCodedEvent":14}],11:[function(require,module,exports){
 var KeyCodedEventAttribute = require("./keyCodedEvent");
 
 /**
@@ -415,7 +490,7 @@ module.exports = KeyCodedEventAttribute.extend({
   keyCodes: [27]
 });
 
-},{"./keyCodedEvent":13}],11:[function(require,module,exports){
+},{"./keyCodedEvent":14}],12:[function(require,module,exports){
 var protoclass = require("protoclass");
 var _bind      = require("../utils/bind");
 var Base       = require("./base");
@@ -473,7 +548,7 @@ Base.extend(EventAttribute, {
 
 module.exports = EventAttribute;
 
-},{"../utils/bind":70,"./base":3,"protoclass":80}],12:[function(require,module,exports){
+},{"../utils/bind":70,"./base":4,"protoclass":81}],13:[function(require,module,exports){
 (function (process){
 var ScriptAttribute = require("./script");
 
@@ -502,7 +577,7 @@ module.exports = ScriptAttribute.extend({
 });
 
 }).call(this,require('_process'))
-},{"./script":14,"_process":76}],13:[function(require,module,exports){
+},{"./script":15,"_process":76}],14:[function(require,module,exports){
 var EventDataBinding = require("./event");
 
 /**
@@ -533,7 +608,7 @@ module.exports = EventDataBinding.extend({
   }
 });
 
-},{"./event":11}],14:[function(require,module,exports){
+},{"./event":12}],15:[function(require,module,exports){
 var BaseAttribute = require("./base");
 
 /**
@@ -576,7 +651,7 @@ module.exports = BaseAttribute.extend({
   }
 });
 
-},{"./base":3}],15:[function(require,module,exports){
+},{"./base":4}],16:[function(require,module,exports){
 var ScriptAttribute = require("./script");
 
 /**
@@ -625,7 +700,7 @@ module.exports.test = function(value) {
   return typeof value === "object" && !value.buffered;
 };
 
-},{"./script":14}],16:[function(require,module,exports){
+},{"./script":15}],17:[function(require,module,exports){
 (function (process){
 var BaseAttribute = require("./script");
 var _bind         = require("../utils/bind");
@@ -793,82 +868,7 @@ ValueAttribute.test = function(value) {
 module.exports = ValueAttribute;
 
 }).call(this,require('_process'))
-},{"../utils/bind":70,"./script":14,"_process":76}],17:[function(require,module,exports){
-var nofactor = require("nofactor");
-var defaults = require("./defaults");
-var template = require("./template");
-var parser   = require("./parser");
-
-template.parser = parser;
-
-var paperclip = module.exports = {
-
-  /**
-   */
-
-  accessors: defaults.accessors,
-
-  /**
-   */
-
-  runloop: defaults.runloop,
-
-  /**
-   */
-
-  nodeFactory: nofactor,
-
-  /**
-   * web component base class
-   */
-
-  Component : require("./components/base"),
-
-  /**
-   */
-
-  Attribute : require("./attributes/script"),
-
-  /**
-   * template factory
-   */
-
-  template  : template,
-
-  /**
-   */
-
-  components : defaults.components,
-
-  /**
-   */
-
-  attributes : defaults.attributes,
-
-  /**
-   */
-
-  modifiers: defaults.modifiers,
-
-  /**
-   */
-
-  parse: parser.parse
-};
-
-/* istanbul ignore next */
-if (typeof window !== "undefined") {
-
-  window.paperclip = paperclip;
-
-  // no conflict mode. Release paperclip from global scope.
-  window.paperclip.noConflict = function() {
-    delete window.paperclip;
-    return paperclip;
-  };
-}
-
-},{"./attributes/script":14,"./components/base":18,"./defaults":24,"./parser":46,"./template":53,"nofactor":79}],18:[function(require,module,exports){
+},{"../utils/bind":70,"./script":15,"_process":76}],18:[function(require,module,exports){
 var protoclass = require("protoclass");
 var _bind      = require("../utils/bind");
 
@@ -881,7 +881,7 @@ function Component(options) {
   this.childTemplate = options.childTemplate;
   this.view          = options.view;
   this.section       = options.section;
-  this.nodeFactory   = this.view.template.nodeFactory;
+  this.document   = this.view.template.document;
   this.didChange     = _bind(this.didChange, this);
 
   // initialize the DOM elements
@@ -930,7 +930,7 @@ module.exports = protoclass(Component, {
   }
 });
 
-},{"../utils/bind":70,"protoclass":80}],19:[function(require,module,exports){
+},{"../utils/bind":70,"protoclass":81}],19:[function(require,module,exports){
 var BaseComponent  = require("./base");
 
 /**
@@ -1209,6 +1209,7 @@ module.exports = BaseComponent.extend(SwitchComponent, {
 });
 
 },{"../utils/bind":70,"./base":18}],23:[function(require,module,exports){
+(function (global){
 var BaseComponent  = require("./base");
 
 /**
@@ -1255,12 +1256,16 @@ module.exports = BaseComponent.extend(EscapeComponent, {
     } else if (value.nodeType != null) {
       node = value;
     } else {
-      if (this.nodeFactory.name !== "dom") {
-        node = this.nodeFactory.createTextNode(String(value));
+      if (this.document !== global.document) {
+        node = this.document.createTextNode(String(value));
       } else {
-        var div = this.nodeFactory.createElement("div");
+        var div = this.document.createElement("div");
         div.innerHTML = String(value);
-        node = this.nodeFactory.createFragment(div.childNodes);
+        node = this.document.createDocumentFragment();
+        var cn = Array.prototype.slice.call(div.childNodes);
+        for (var i = 0, n = cn.length; i < n; i++) {
+          node.appendChild(cn[i]);
+        }
       }
     }
 
@@ -1268,6 +1273,7 @@ module.exports = BaseComponent.extend(EscapeComponent, {
   }
 });
 
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./base":18}],24:[function(require,module,exports){
 (function (process){
 var Runloop       = require("./runloop");
@@ -1374,7 +1380,7 @@ module.exports = {
 };
 
 }).call(this,require('_process'))
-},{"./accessors/pojo":2,"./attributes/class":4,"./attributes/delete":5,"./attributes/easeIn":6,"./attributes/easeOut":7,"./attributes/enable":8,"./attributes/enter":9,"./attributes/escape":10,"./attributes/event":11,"./attributes/focus":12,"./attributes/style":15,"./attributes/value":16,"./components/repeat":19,"./components/show":20,"./components/stack":21,"./components/switch":22,"./components/unsafe":23,"./runloop":48,"_process":76}],25:[function(require,module,exports){
+},{"./accessors/pojo":3,"./attributes/class":5,"./attributes/delete":6,"./attributes/easeIn":7,"./attributes/easeOut":8,"./attributes/enable":9,"./attributes/enter":10,"./attributes/escape":11,"./attributes/event":12,"./attributes/focus":13,"./attributes/style":16,"./attributes/value":17,"./components/repeat":19,"./components/show":20,"./components/stack":21,"./components/switch":22,"./components/unsafe":23,"./runloop":48,"_process":76}],25:[function(require,module,exports){
 var BaseExpression       = require("./base");
 var ParametersExpression = require("./parameters");
 
@@ -1504,7 +1510,7 @@ protoclass(BaseExpression, {
 
 module.exports = BaseExpression;
 
-},{"protoclass":80}],28:[function(require,module,exports){
+},{"protoclass":81}],28:[function(require,module,exports){
 var BaseExpression = require("./base");
 
 function BlockBindingExpression(scripts, contentTemplate, childBlock) {
@@ -6288,7 +6294,7 @@ protoclass(RunLoop, {
 module.exports = RunLoop;
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":76,"protoclass":80}],49:[function(require,module,exports){
+},{"_process":76,"protoclass":81}],49:[function(require,module,exports){
 
 // TODO: refactor me
 
@@ -6456,8 +6462,8 @@ var utils           = require("../utils");
 /**
  */
 
-function FragmentSection(nodeFactory, start, end) {
-  DocumentSection.call(this, nodeFactory, start, end);
+function FragmentSection(document, start, end) {
+  DocumentSection.call(this, document, start, end);
 }
 
 /**
@@ -6476,7 +6482,7 @@ DocumentSection.extend(FragmentSection, {
    */
 
   createMarker: function() {
-    return new Marker(this.nodeFactory, utils.getNodePath(this.start), utils.getNodePath(this.end));
+    return new Marker(this.document, utils.getNodePath(this.start), utils.getNodePath(this.end));
   },
 
   /**
@@ -6484,15 +6490,15 @@ DocumentSection.extend(FragmentSection, {
 
   clone: function() {
     var clone = DocumentSection.prototype.clone.call(this);
-    return new FragmentSection(this.nodeFactory, clone.start, clone.end);
+    return new FragmentSection(this.document, clone.start, clone.end);
   }
 });
 
 /**
  */
 
-function Marker(nodeFactory, startPath, endPath) {
-  this.nodeFactory = nodeFactory;
+function Marker(document, startPath, endPath) {
+  this.document = document;
   this.startPath   = startPath;
   this.endPath     = endPath;
 }
@@ -6510,13 +6516,13 @@ protoclass(Marker, {
     var start = utils.getNodeByPath(rootNode, this.startPath);
     var end   = utils.getNodeByPath(rootNode, this.endPath);
 
-    return new FragmentSection(this.nodeFactory, start, end);
+    return new FragmentSection(this.document, start, end);
   }
 });
 
 module.exports = FragmentSection;
 
-},{"../utils":72,"document-section":77,"protoclass":80}],51:[function(require,module,exports){
+},{"../utils":72,"document-section":77,"protoclass":81}],51:[function(require,module,exports){
 var DocumentSection = require("document-section").Section;
 var protoclass      = require("protoclass");
 var utils           = require("../utils");
@@ -6524,9 +6530,9 @@ var utils           = require("../utils");
 /**
  */
 
-function NodeSection(nodeFactory, node, _rnode) {
+function NodeSection(document, node, _rnode) {
   this.node = node;
-  this.nodeFactory = nodeFactory;
+  this.document = document;
 }
 
 /**
@@ -6545,7 +6551,7 @@ protoclass(NodeSection, {
    */
 
   createMarker: function() {
-    return new Marker(this.nodeFactory, utils.getNodePath(this.node));
+    return new Marker(this.document, utils.getNodePath(this.node));
   },
 
   /**
@@ -6582,16 +6588,16 @@ protoclass(NodeSection, {
    */
 
   clone: function() {
-    return new NodeSection(this.nodeFactory, this.node.cloneNode(true));
+    return new NodeSection(this.document, this.node.cloneNode(true));
   }
 });
 
 /**
  */
 
-function Marker(nodeFactory, nodePath) {
+function Marker(document, nodePath) {
   this.nodePath    = nodePath;
-  this.nodeFactory = nodeFactory;
+  this.document = document;
 }
 
 /**
@@ -6604,13 +6610,13 @@ protoclass(Marker, {
 
   getSection: function(rootNode) {
     var start = utils.getNodeByPath(rootNode, this.nodePath);
-    return new NodeSection(this.nodeFactory, start);
+    return new NodeSection(this.document, start);
   }
 });
 
 module.exports = NodeSection;
 
-},{"../utils":72,"document-section":77,"protoclass":80}],52:[function(require,module,exports){
+},{"../utils":72,"document-section":77,"protoclass":81}],52:[function(require,module,exports){
 var BaseComponent = require("../components/base");
 var _bind         = require("../utils/bind");
 var _extend       = require("../utils/extend");
@@ -6689,15 +6695,15 @@ if (process.browser) {
 
 function Template(script, options) {
 
-  this.options         = options;
-  this.accessor        = options.accessor;
-  this.useCloneNode    = options.useCloneNode != void 0 ? !!options.useCloneNode : !isIE;
-  this.accessorClass   = options.accessorClass || defaults.accessorClass;
-  this.components      = options.components    || defaults.components;
-  this.modifiers       = options.modifiers     || defaults.modifiers;
-  this.attributes      = options.attributes    || defaults.attributes;
-  this.runloop         = options.runloop       || defaults.runloop;
-  this.nodeFactory     = options.nodeFactory   || nofactor;
+  this.options       = options;
+  this.accessor      = options.accessor;
+  this.useCloneNode  = options.useCloneNode != void 0 ? !!options.useCloneNode : !isIE;
+  this.accessorClass = options.accessorClass || defaults.accessorClass;
+  this.components    = options.components    || defaults.components;
+  this.modifiers     = options.modifiers     || defaults.modifiers;
+  this.attributes    = options.attributes    || defaults.attributes;
+  this.runloop       = options.runloop       || defaults.runloop;
+  this.document      = options.document   || nofactor;
 
   if (typeof script === "function") {
     this.vnode = script(
@@ -6730,15 +6736,15 @@ module.exports = protoclass(Template, {
     this.hydrators = [];
 
     // first build the cloneable DOM node
-    this.section = new FragmentSection(this.nodeFactory);
+    this.section = new FragmentSection(this.document);
 
     var node = this.vnode.initialize(this);
 
     if (node.nodeType === 11) {
-      this.section = new FragmentSection(this.nodeFactory);
+      this.section = new FragmentSection(this.document);
       this.section.appendChild(node);
     } else {
-      this.section = new NodeSection(this.nodeFactory, node);
+      this.section = new NodeSection(this.document, node);
     }
 
     // next we need to initialize the hydrators - many of them
@@ -6840,7 +6846,7 @@ module.exports = function(source, options) {
 };
 
 }).call(this,require('_process'))
-},{"../defaults":24,"../section/fragment":50,"../section/node":51,"../utils/extend":71,"./component":52,"./view":54,"./vnode/block":59,"./vnode/comment":61,"./vnode/element":65,"./vnode/fragment":67,"./vnode/text":68,"_process":76,"nofactor":79,"protoclass":80}],54:[function(require,module,exports){
+},{"../defaults":24,"../section/fragment":50,"../section/node":51,"../utils/extend":71,"./component":52,"./view":54,"./vnode/block":59,"./vnode/comment":61,"./vnode/element":65,"./vnode/fragment":67,"./vnode/text":68,"_process":76,"nofactor":80,"protoclass":81}],54:[function(require,module,exports){
 var protoclass     = require("protoclass");
 var Transitions    = require("./transitions");
 var _bind          = require("../../utils/bind");
@@ -7015,7 +7021,7 @@ protoclass(View, {
     var node = this.render();
 
     /* istanbul ignore if */
-    if (this.template.nodeFactory.name === "dom") {
+    if (this.template.document.name === "dom") {
       return _stringifyNode(node);
     }
 
@@ -7025,7 +7031,7 @@ protoclass(View, {
 
 module.exports = View;
 
-},{"../../utils/bind":70,"../../utils/stringifyNode":74,"./reference":55,"./transitions":56,"protoclass":80}],55:[function(require,module,exports){
+},{"../../utils/bind":70,"../../utils/stringifyNode":74,"./reference":55,"./transitions":56,"protoclass":81}],55:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
@@ -7068,7 +7074,7 @@ protoclass(Reference, {
 
 module.exports = Reference;
 
-},{"protoclass":80}],56:[function(require,module,exports){
+},{"protoclass":81}],56:[function(require,module,exports){
 (function (process){
 var protoclass = require("protoclass");
 var async      = require("../../utils/async");
@@ -7121,7 +7127,7 @@ module.exports = protoclass(Transitions, {
 });
 
 }).call(this,require('_process'))
-},{"../../utils/async":69,"_process":76,"protoclass":80}],57:[function(require,module,exports){
+},{"../../utils/async":69,"_process":76,"protoclass":81}],57:[function(require,module,exports){
 var protoclass = require("protoclass");
 var utils      = require("../../../utils");
 var _bind      = require("../../../utils/bind");
@@ -7131,7 +7137,7 @@ var _bind      = require("../../../utils/bind");
 
 function BlockBinding(node, script, view) {
   this.view   = view;
-  this.nodeFactory = view.template.nodeFactory;
+  this.document = view.template.document;
   this.script = script;
   this.node   = node;
   this.didChange = _bind(this.didChange, this);
@@ -7170,7 +7176,7 @@ module.exports = protoclass(BlockBinding, {
 
   update: function() {
     var v = String(this.currentValue == null ? "" : this.currentValue);
-    if (this.nodeFactory.name !== "dom") {
+    if (this.document.name !== "dom") {
       this.node.replaceText(v, true);
     } else {
       this.node.nodeValue = String(v);
@@ -7188,7 +7194,7 @@ module.exports = protoclass(BlockBinding, {
   }
 });
 
-},{"../../../utils":72,"../../../utils/bind":70,"protoclass":80}],58:[function(require,module,exports){
+},{"../../../utils":72,"../../../utils/bind":70,"protoclass":81}],58:[function(require,module,exports){
 var protoclass = require("protoclass");
 var utils      = require("../../../utils");
 var Binding    = require("./binding");
@@ -7223,7 +7229,7 @@ module.exports = protoclass(BlockHydrator, {
   }
 });
 
-},{"../../../utils":72,"./binding":57,"protoclass":80}],59:[function(require,module,exports){
+},{"../../../utils":72,"./binding":57,"protoclass":81}],59:[function(require,module,exports){
 var protoclass = require("protoclass");
 var utils      = require("../../../utils");
 var script     = require("../../../script");
@@ -7247,7 +7253,7 @@ module.exports = protoclass(Block, {
    */
 
   initialize: function(template) {
-    var node = template.nodeFactory.createTextNode("");
+    var node = template.document.createTextNode("");
     var bindingClass = this.script.refs.length ? Binding : Unbound;
     template.hydrators.push(new Hydrator(node, this.script, bindingClass));
     return node;
@@ -7261,7 +7267,7 @@ module.exports.create = function(script) {
   return new Block(script);
 };
 
-},{"../../../script":49,"../../../utils":72,"./binding":57,"./hydrator":58,"./unbound":60,"protoclass":80}],60:[function(require,module,exports){
+},{"../../../script":49,"../../../utils":72,"./binding":57,"./hydrator":58,"./unbound":60,"protoclass":81}],60:[function(require,module,exports){
 var protoclass = require("protoclass");
 var utils      = require("../../../utils");
 
@@ -7270,7 +7276,7 @@ var utils      = require("../../../utils");
 
 function UnboundBlockBinding(node, script, view) {
   this.view   = view;
-  this.nodeFactory = view.template.nodeFactory;
+  this.document = view.template.document;
   this.script = script;
   this.node   = node;
 }
@@ -7291,7 +7297,7 @@ module.exports = protoclass(UnboundBlockBinding, {
 
     var v = String(value == null ? "" : value);
 
-    if (this.nodeFactory.name !== "dom") {
+    if (this.document.name !== "dom") {
       this.node.replaceText(v, true);
     } else {
       this.node.nodeValue = String(v);
@@ -7304,7 +7310,7 @@ module.exports = protoclass(UnboundBlockBinding, {
   unbind: function() { }
 });
 
-},{"../../../utils":72,"protoclass":80}],61:[function(require,module,exports){
+},{"../../../utils":72,"protoclass":81}],61:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
@@ -7323,7 +7329,7 @@ module.exports = protoclass(Comment, {
    */
 
   initialize: function(template) {
-    return template.nodeFactory.createComment(this.value);
+    return template.document.createComment(this.value);
   }
 });
 
@@ -7334,7 +7340,7 @@ module.exports.create = function(value) {
   return new Comment(value);
 };
 
-},{"protoclass":80}],62:[function(require,module,exports){
+},{"protoclass":81}],62:[function(require,module,exports){
 var protoclass        = require("protoclass");
 var utils             = require("../../../utils");
 var AttributesBinding = require("./attributesBinding");
@@ -7381,7 +7387,7 @@ module.exports = protoclass(AttributeHydrator, {
   }
 });
 
-},{"../../../utils":72,"./attributesBinding":63,"protoclass":80}],63:[function(require,module,exports){
+},{"../../../utils":72,"./attributesBinding":63,"protoclass":81}],63:[function(require,module,exports){
 var protoclass = require("protoclass");
 var utils      = require("../../../utils");
 
@@ -7442,7 +7448,7 @@ module.exports = protoclass(AttributesBinding, {
   }
 });
 
-},{"../../../utils":72,"protoclass":80}],64:[function(require,module,exports){
+},{"../../../utils":72,"protoclass":81}],64:[function(require,module,exports){
 var protoclass        = require("protoclass");
 var AttributesBinding = require("./attributesBinding");
 var _extend           = require("../../../utils/extend");
@@ -7496,7 +7502,7 @@ module.exports = protoclass(ComponentHydrator, {
   }
 });
 
-},{"../../../utils/extend":71,"./attributesBinding":63,"protoclass":80}],65:[function(require,module,exports){
+},{"../../../utils/extend":71,"./attributesBinding":63,"protoclass":81}],65:[function(require,module,exports){
 var protoclass        = require("protoclass");
 var FragmentSection   = require("../../../section/fragment");
 var NodeSection       = require("../../../section/node");
@@ -7542,7 +7548,7 @@ module.exports = protoclass(Element, {
     if (componentClass) {
 
       // create a dynamic section - this is owned by the component
-      var section = new FragmentSection(template.nodeFactory);
+      var section = new FragmentSection(template.document);
 
       template.hydrators.push(new ComponentHydrator(
         this.name,
@@ -7565,16 +7571,17 @@ module.exports = protoclass(Element, {
       return section.render();
     }
 
-    var element          = template.nodeFactory.createElement(this.name);
+    var element          = template.document.createElement(this.name);
     var hasAttrComponent = false;
     var vanillaAttrs     = {};
     var elementSection;
+    var v;
 
     // components should be attachable to regular DOM elements as well
     for (var k in this.attributes) {
 
       var k2                 = _replaceDashes(k);
-      var v                  = this.attributes[k];
+      v                      = this.attributes[k];
       var tov                = typeof v;
       var attrComponentClass = template.components[k2];
       var attrClass          = template.attributes[k2];
@@ -7585,7 +7592,7 @@ module.exports = protoclass(Element, {
 
         // TODO - element might need to be a sub view
         if (!elementSection) {
-          elementSection = new NodeSection(template.nodeFactory, element);
+          elementSection = new NodeSection(template.document, element);
         }
 
         template.hydrators.push(new ComponentHydrator(
@@ -7637,7 +7644,7 @@ module.exports = protoclass(Element, {
     */
 
     for (k in vanillaAttrs) {
-      var v = vanillaAttrs[k];
+      v = vanillaAttrs[k];
       if (typeof v === "string") {
         element.setAttribute(k, vanillaAttrs[k]);
       }
@@ -7669,7 +7676,7 @@ module.exports.create = function(name, attributes, children) {
   return new Element(name, attrs, new Fragment(children));
 };
 
-},{"../../../script":49,"../../../section/fragment":50,"../../../section/node":51,"../../../utils":72,"../../../utils/set":73,"../fragment":67,"./attributeHydrator":62,"./componentHydrator":64,"./valueAttribute":66,"protoclass":80}],66:[function(require,module,exports){
+},{"../../../script":49,"../../../section/fragment":50,"../../../section/node":51,"../../../utils":72,"../../../utils/set":73,"../fragment":67,"./attributeHydrator":62,"./componentHydrator":64,"./valueAttribute":66,"protoclass":81}],66:[function(require,module,exports){
 var ScriptAttribute = require("../../../attributes/script");
 
 /**
@@ -7686,7 +7693,7 @@ module.exports = ScriptAttribute.extend({
   }
 });
 
-},{"../../../attributes/script":14}],67:[function(require,module,exports){
+},{"../../../attributes/script":15}],67:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
@@ -7706,9 +7713,11 @@ module.exports = protoclass(Fragment, {
 
   initialize: function(template) {
     if (this.children.length === 1) return this.children[0].initialize(template);
-    return template.nodeFactory.createFragment(this.children.map(function(child) {
-      return child.initialize(template);
-    }));
+    var frag = template.document.createDocumentFragment();
+    this.children.forEach(function(child) {
+      frag.appendChild(child.initialize(template));
+    });
+    return frag;
   }
 });
 
@@ -7719,7 +7728,7 @@ module.exports.create = function(children) {
   return new Fragment(children);
 };
 
-},{"protoclass":80}],68:[function(require,module,exports){
+},{"protoclass":81}],68:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 /**
@@ -7742,10 +7751,10 @@ module.exports = protoclass(Text, {
     // blank text nodes are NOT allowed. Chrome has an issue rendering
     // blank text nodes - way, WAY slower if this isn't here!
     if (/^\s+$/.test(this.value)) {
-      return template.nodeFactory.createTextNode("\u00A0");
+      return template.document.createTextNode("\u00A0");
     }
 
-    return template.nodeFactory.createTextNode(this.value);
+    return template.document.createTextNode(this.value);
   }
 });
 
@@ -7756,7 +7765,7 @@ module.exports.create = function(value) {
   return new Text(value);
 };
 
-},{"protoclass":80}],69:[function(require,module,exports){
+},{"protoclass":81}],69:[function(require,module,exports){
 module.exports = {
 
   /**
@@ -8200,7 +8209,7 @@ module.exports = function (nodeFactory, start, end)  {
 }
 
 module.exports.Section = Section;
-},{"nofactor":79,"protoclass":80}],78:[function(require,module,exports){
+},{"nofactor":79,"protoclass":81}],78:[function(require,module,exports){
 var protoclass = require("protoclass");
 
 
@@ -8266,7 +8275,7 @@ protoclass(BaseFactory, {
 
 module.exports = BaseFactory;
 
-},{"protoclass":80}],79:[function(require,module,exports){
+},{"protoclass":81}],79:[function(require,module,exports){
 var Base = require("./base");
 
 /**
@@ -8338,6 +8347,9 @@ Base.extend(DomFactory, {
 
 module.exports = new DomFactory();
 },{"./base":78}],80:[function(require,module,exports){
+module.exports = document;
+
+},{}],81:[function(require,module,exports){
 function _copy (to, from) {
 
   for (var i = 0, n = from.length; i < n; i++) {
@@ -8413,4 +8425,4 @@ protoclass.setup = function (child) {
 
 
 module.exports = protoclass;
-},{}]},{},[17]);
+},{}]},{},[1]);

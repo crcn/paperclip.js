@@ -1,8 +1,8 @@
 var assert     = require("assert"),
 pc             = require("../.."),
 template       = pc.template,
-nodeFactory = require("nofactor/lib/dom"),
-defaultNodeFactory = require("nofactor"),
+document = require("nofactor/lib/dom"),
+defaultdocument = require("nofactor"),
 sinon     = require("sinon");
 
 
@@ -14,12 +14,12 @@ var tpl = paperclip.template("abba")
 describe(__filename + "#", function () {
 
   before(function () {
-    pc.nodeFactory = nodeFactory;
+    pc.document = document;
   });
 
 
   after(function () {
-    pc.nodeFactory = defaultNodeFactory;
+    pc.document = defaultdocument;
   });
 
 
