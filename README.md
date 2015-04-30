@@ -16,6 +16,11 @@ Paperclip is a reactive template engine that compiles HTML to DOM. All optimizat
 - works with any framework
 - no browser dependencies
 
+### Roadmap
+
+- move immutable virtual DOM to a [new repo](https://github.com/mojo-js/immutable-virtual-dom).
+- move more towards hybrid dirty-type checking & observables (ultra fast).
+
 ### Syntax
 
 template:
