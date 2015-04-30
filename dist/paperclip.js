@@ -7515,7 +7515,7 @@ function _replaceDashes(k) {
  */
 
 function Element(name, attributes, children) {
-  this.name       = _replaceDashes(name);
+  this.name       = name;
   this.attributes = attributes;
   this.children   = children;
 }
@@ -7530,7 +7530,9 @@ module.exports = protoclass(Element, {
 
   initialize: function(template) {
 
-    var componentClass = template.components[this.name];
+    var ccName = _replaceDashes(this.name);
+
+    var componentClass = template.components[ccName];
 
     // is a component present?
     if (componentClass) {
@@ -7539,7 +7541,7 @@ module.exports = protoclass(Element, {
       var section = new FragmentSection(template.document);
 
       template.hydrators.push(new ComponentHydrator(
-        this.name,
+        ccName,
         this.attributes,
         template.child(this.children),
         section,
@@ -7603,7 +7605,6 @@ module.exports = protoclass(Element, {
       } else {
 
         if (tov !== "object") {
-          // element.setAttribute(k, v);
           vanillaAttrs[k] = v;
         } else {
           template.hydrators.push(new AttributeHydrator(
