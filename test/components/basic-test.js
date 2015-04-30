@@ -188,4 +188,10 @@ describe(__filename + "#", function () {
     assert.equal(stringifyView(v), "baab");
   });
 
+  it("doesn't convert dashes to camel case for native elements", function() {
+    var tpl = template("<say-hello />");
+    var v = tpl.view({ });
+    var n = v.render();
+    assert.equal(n.nodeName, "SAY-HELLO");
+  });
 });
