@@ -73,4 +73,10 @@ describe(__filename + "#", function () {
     v.dispose();
   });
 
+  it("maintains dashes in native elements", function() {
+    var v = pc.template("<div data-test />").view({});
+    var n = v.render();
+    assert.equal(n.getAttribute("data-test"), true);
+  });
+
 });

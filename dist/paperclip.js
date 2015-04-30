@@ -278,7 +278,6 @@ module.exports = BaseAccessor.extend(POJOAccessor, {
   },
 
   /**
-   * TODO - deserialize is improper. Maybe use
    */
 
   normalizeCollection: function(collection) {
@@ -501,9 +500,6 @@ var Base       = require("./base");
 function EventAttribute(options) {
   this._onEvent = _bind(this._onEvent, this);
   Base.call(this, options);
-
-  // TODO - register event handler on view. Don't attach
-  // event handler on node here
 }
 
 /**
@@ -959,8 +955,6 @@ module.exports = BaseComponent.extend({
   /**
    */
 
-  // TODO - unbind here
-
   update: function() {
 
     if (this._updateListener) this._updateListener.dispose();
@@ -1016,7 +1010,6 @@ module.exports = BaseComponent.extend({
       n++;
     });
 
-    // TODO - easeOutSync?
     this._children.splice(n).forEach(function(child) {
       child.dispose();
     });
@@ -1070,7 +1063,6 @@ function StackComponent(options) {
 
   var self = this;
 
-  // TODO - this is a bit fugly
   this.childTemplates = this.childTemplate.vnode.children.map(function(vnode) {
     return self.childTemplate.child(vnode);
   });
@@ -1127,7 +1119,6 @@ function SwitchComponent(options) {
 
   var self = this;
 
-  // TODO - this is a bit fugly
   this.childTemplates = this.childTemplate.vnode.children.map(function(vnode) {
     return self.childTemplate.child(vnode);
   });
@@ -1195,8 +1186,6 @@ module.exports = BaseComponent.extend(SwitchComponent, {
 
     this.currentChild = child;
 
-    // bypass the show component
-    // TODO - not optimial. Do on initialize
     var childChildTemplate = child.child(child.vnode.children, {
       accessor: this.view.accessor
     });
@@ -6563,8 +6552,6 @@ protoclass(NodeSection, {
    */
 
   removeAll: function() {
-
-    // TODO - check node type for this
     this.node.innerHTML = "";
   },
 
@@ -6845,6 +6832,7 @@ module.exports = function(source, options) {
 
 }).call(this,require('_process'))
 },{"../defaults":24,"../section/fragment":50,"../section/node":51,"../utils/extend":71,"./component":52,"./view":54,"./vnode/block":59,"./vnode/comment":61,"./vnode/element":65,"./vnode/fragment":67,"./vnode/text":68,"_process":76,"nofactor":78,"protoclass":79}],54:[function(require,module,exports){
+(function (global){
 var protoclass     = require("protoclass");
 var Transitions    = require("./transitions");
 var _bind          = require("../../utils/bind");
@@ -6863,9 +6851,6 @@ var Reference      = require("./reference");
 
 function View(template, pool, section, hydrators, options) {
 
-  // todo - check if node child length is > 1. If so, then
-  // create a section, otherwise don't.
-  // this.section = node.childNodes.length > 1 ? createSection() : singleSection(this.node);
   this.template        = template;
   this.section         = section;
   this.bindings        = [];
@@ -7019,7 +7004,7 @@ protoclass(View, {
     var node = this.render();
 
     /* istanbul ignore if */
-    if (this.template.document.name === "dom") {
+    if (this.template.document === global.document) {
       return _stringifyNode(node);
     }
 
@@ -7029,6 +7014,7 @@ protoclass(View, {
 
 module.exports = View;
 
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../../utils/bind":70,"../../utils/stringifyNode":74,"./reference":55,"./transitions":56,"protoclass":79}],55:[function(require,module,exports){
 var protoclass = require("protoclass");
 
@@ -7126,6 +7112,7 @@ module.exports = protoclass(Transitions, {
 
 }).call(this,require('_process'))
 },{"../../utils/async":69,"_process":76,"protoclass":79}],57:[function(require,module,exports){
+(function (global){
 var protoclass = require("protoclass");
 var utils      = require("../../../utils");
 var _bind      = require("../../../utils/bind");
@@ -7174,7 +7161,7 @@ module.exports = protoclass(BlockBinding, {
 
   update: function() {
     var v = String(this.currentValue == null ? "" : this.currentValue);
-    if (this.document.name !== "dom") {
+    if (this.document !== global.document) {
       this.node.replaceText(v, true);
     } else {
       this.node.nodeValue = String(v);
@@ -7192,6 +7179,7 @@ module.exports = protoclass(BlockBinding, {
   }
 });
 
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../../../utils":72,"../../../utils/bind":70,"protoclass":79}],58:[function(require,module,exports){
 var protoclass = require("protoclass");
 var utils      = require("../../../utils");
@@ -7266,6 +7254,7 @@ module.exports.create = function(script) {
 };
 
 },{"../../../script":49,"../../../utils":72,"./binding":57,"./hydrator":58,"./unbound":60,"protoclass":79}],60:[function(require,module,exports){
+(function (global){
 var protoclass = require("protoclass");
 var utils      = require("../../../utils");
 
@@ -7295,7 +7284,7 @@ module.exports = protoclass(UnboundBlockBinding, {
 
     var v = String(value == null ? "" : value);
 
-    if (this.document.name !== "dom") {
+    if (this.document !== global.document) {
       this.node.replaceText(v, true);
     } else {
       this.node.nodeValue = String(v);
@@ -7308,6 +7297,7 @@ module.exports = protoclass(UnboundBlockBinding, {
   unbind: function() { }
 });
 
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"../../../utils":72,"protoclass":79}],61:[function(require,module,exports){
 var protoclass = require("protoclass");
 
@@ -7643,7 +7633,7 @@ module.exports = protoclass(Element, {
 
     for (k in vanillaAttrs) {
       v = vanillaAttrs[k];
-      if (typeof v === "string") {
+      if (typeof v !== "object") {
         element.setAttribute(k, vanillaAttrs[k]);
       }
     }
@@ -8246,7 +8236,7 @@ function protoclass (parent, child) {
     parent  = function() { };
   }
 
-  _copy(child, parent);
+  _copy(child, parent); 
 
   function ctor () {
     this.constructor = child;

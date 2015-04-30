@@ -25,7 +25,7 @@ describe(__filename + "#", function () {
     var tpl = template("<div abba>baab</div>", {});
 
     var v = tpl.view({});
-    assert.equal(stringifyView(v), "<div>baab</div>");
+    assert.equal(stringifyView(v), "<div abba=\"true\">baab</div>");
   });
 
   it("automatically converts dashes to camelCase", function() {
