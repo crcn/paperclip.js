@@ -1,28 +1,6 @@
 {
 /*jshint laxcomma:false */
 
-var DoctypeExpression          = require("./ast/doctype");
-var RootNodeExpression         = require("./ast/rootNode");
-var TextNodeExpression         = require("./ast/textNode");
-var CommentNodeExpression      = require("./ast/commentNode");
-var ElementNodeExpression      = require("./ast/elementNode");
-var BlockBindingExpression     = require("./ast/blockBinding");
-var DocTypeExpression          = require("./ast/doctype");
-var TernaryConditionExpression = require("./ast/ternaryCondition");
-var AssignmentExpression       = require("./ast/assignment");
-var OperatorExpression         = require("./ast/operator");
-var NotExpression              = require("./ast/not");
-var LiteralExpression          = require("./ast/literal");
-var StringExpression           = require("./ast/string");
-var ReferenceExpression        = require("./ast/reference");
-var HashExpression             = require("./ast/hash");
-var ScriptExpression           = require("./ast/script");
-var CallExpression             = require("./ast/call");
-var ModifierExpression         = require("./ast/modifier");
-var ArrayExpression            = require("./ast/array");
-var ParametersExpression       = require("./ast/parameters");
-var GroupExpression            = require("./ast/group");
-
 function trimWhitespace(ws) {
   return trimNewLineChars(ws).replace(/(^\s+)|(\s+$)/, "");
 }
@@ -39,9 +17,6 @@ function trimmedText() {
   return trimWhitespace(text());
 }
 
-function singleOrArrayExpression(values) {
-  return values.length === 1 ? values[0] : new ArrayExpression(new ParametersExpression(values));
-}
 
 function attrValues(values) {
 
@@ -52,7 +27,7 @@ function attrValues(values) {
   if (values.length === 1 && values[0].type === "string") {
     return values[0];
   } else {
-    return new ArrayExpression(new ParametersExpression(values));
+    return values;
   }
 }
 
@@ -74,13 +49,17 @@ function trimTextExpressions(expressions) {
   return _trim(_trim(expressions.reverse()).reverse());
 }
 
+function expression(name) {
+  return Array.prototype.slice.call(arguments);
+}
+
 }
 
 Start
   = Template
 
 Template
-  = children:ChildNodes { return new RootNodeExpression(children); }
+  = children:ChildNodes { return ["root"].concat(children) }
 
 DocType
   = "<!DOCTYPE" _ info:[^>]+ _ ">" {
@@ -88,7 +67,7 @@ DocType
     }
 
 ChildNodes
-  = children:(VoidElement/ElementNode/CommentNode/TextNode/BlockBinding)* { return new ArrayExpression(new ParametersExpression(trimTextExpressions(children))); }
+  = children:(VoidElement/ElementNode/CommentNode/TextNode/BlockBinding)* { return trimTextExpressions(children); }
 
 
 CommentNode
@@ -106,7 +85,7 @@ VoidElement
       expected("</" + nodeName + ">");
     }
 
-    return new ElementNodeExpression(nodeName, attributes);
+    return ["element", nodeName, attributes];
   }
 
 
@@ -125,13 +104,13 @@ ElementNode
       expected("</" + startTag.name + ">");
     }
 
-    return new ElementNodeExpression(startTag.name, startTag.attributes, children);
+    return ["element", startTag.name, startTag.attributes, children];
   }
   / StartEndTag
 
 TextNode
   = value:TextCharacter+ {
-      return new TextNodeExpression(trimNewLineChars(value.join("")));
+      return expression("text", trimNewLineChars(value.join("")));
     }
 
 TextCharacter
@@ -155,14 +134,7 @@ TagInfo
 
 TagAttributes
   = _ attributes:Attribute* _ {
-      var attrs = {};
-
-      for (var i = 0, n = attributes.length; i < n; i++) {
-        var attr = attributes[i];
-        attrs[attr.name] = attr.value;
-      }
-
-      return new HashExpression(attrs);
+      return attributes;
   }
 
 
@@ -178,21 +150,15 @@ TagName
 
 Attribute
   = name:TagName _ "=" _ values:AttributeValues {
-      return {
-        name: name,
-        value: values
-      };
+      return ["attribute", name, values]
     }
   / name:TagName {
-      return {
-        name: name,
-        value: new LiteralExpression(true)
-      };
+      return ['attribute', name, []]
     }
 
 AttributeValues
-  = '"' values:(AttrTextBinding/(!"{{" [^"])+ { return new StringExpression(trimNewLineChars(text())); })* '"' { return attrValues(values); }
-  / "'" values:(AttrTextBinding/(!"{{" [^'])+ { return new StringExpression(trimNewLineChars(text())); })* "'" { return attrValues(values); }
+  = '"' values:(AttrTextBinding/(!"{{" [^"])+ { return trimNewLineChars(text()); })* '"' { return attrValues(values); }
+  / "'" values:(AttrTextBinding/(!"{{" [^'])+ { return trimNewLineChars(text()); })* "'" { return attrValues(values); }
   / binding:AttrTextBinding { return attrValues([binding]); }
 
 BlockBinding
@@ -334,7 +300,7 @@ Group
 
 Reserved
   = expression:(Boolean / Undefined / Null / NaN / Infinity) {
-      return new LiteralExpression(expression.value);
+      return expression.value;
     }
 
 Boolean
@@ -397,7 +363,7 @@ HashValue
   = _ key:HashKey _":" value:Expression? {
       return {
         key: key,
-        value: value || new LiteralExpression(void 0)
+        value: value
       };
     }
 

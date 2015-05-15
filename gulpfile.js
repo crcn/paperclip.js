@@ -1,9 +1,11 @@
 var gulp       = require("gulp");
 var istanbul   = require("gulp-istanbul");
 var mocha      = require("gulp-mocha");
+var peg        = require("gulp-peg");
 var plumber    = require("gulp-plumber");
 var jshint     = require("gulp-jshint");
 var browserify = require("browserify");
+var spawn      = require("child_process").spawn;
 var uglify     = require("gulp-uglify");
 var source     = require("vinyl-source-stream");
 var buffer     = require("vinyl-buffer");
@@ -20,9 +22,9 @@ process.env.PC_DEBUG = 1;
  */
 
 var paths = {
-  testFiles  : ["test/**/*-test.js"],
+  testFiles  : ["test/**/*-test.js", "lib/**/*-test.js"],
   appFiles   : ["lib/**/*.js"],
-  allFiles   : ["test/**", "lib/**"]
+  allFiles   : ["test/**", "lib/**", "src/**"]
 };
 
 /**
@@ -97,6 +99,15 @@ gulp.task("test-browser", function(complete) {
   }, complete);
 });
 
+/**
+ */
+
+gulp.task("parser", function() {
+  return gulp.
+  src(__dirname + "/src/parser/index.peg").
+  pipe(peg()).
+  pipe(gulp.dest(__dirname + "/lib/parser"));
+});
 
 /**
  */
