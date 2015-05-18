@@ -249,28 +249,25 @@ Group
 
 Reserved
   = expression:(Boolean / Undefined / Null / NaN / Infinity) {
-      return ["literal", expression.value];
+      return expression;
     }
 
 Boolean
   = value:("true"/"false") {
-      return {
-        type: "boolean",
-        value: value === "true"
-      };
+      return ["literal", value === "true"];
     }
 
 Undefined
-  = "undefined" { return { type: "undefined", value: void 0 }; }
+  = "undefined" { return ["literal", void 0]; }
 
 NaN
-  = "NaN" { return { type: "nan", value: NaN }; }
+  = "NaN" { return ["literal", NaN]; }
 
 Infinity
-  = "Infinity" { return { type: "infinity", value: Infinity }; }
+  = "Infinity" { return ["literal", Infinity]; }
 
 Null
-  = ("null"/"NULL") { return { type: "null", value: null }; }
+  = ("null"/"NULL") { return ["literal", null]; }
 
 FunctionCall
   = reference:ObjectReference parameters:Parameters {
