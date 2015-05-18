@@ -105,7 +105,9 @@ gulp.task("test-browser", function(complete) {
 gulp.task("parser", function() {
   return gulp.
   src(__dirname + "/src/parser.peg").
-  pipe(peg()).
+  pipe(peg({
+    optimize: "size"
+  })).
   pipe(gulp.dest(__dirname + "/lib"));
 });
 
