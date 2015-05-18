@@ -17,7 +17,6 @@ function trimmedText() {
   return trimWhitespace(text());
 }
 
-
 function attrValues(values) {
 
   values = values.filter(function(v) {
@@ -67,7 +66,7 @@ DocType
     }
 
 ChildNodes
-  = children:(VoidElement/ElementNode/CommentNode/TextNode/BlockBinding)* { return trimTextExpressions(children); }
+  = children:(VoidElement/ElementNode/CommentNode/TextNode/TextBinding)* { return trimTextExpressions(children); }
 
 
 CommentNode
@@ -157,50 +156,14 @@ Attribute
     }
 
 AttributeValues
-  = '"' values:(AttrTextBinding/(!"{{" [^"])+ { return ["string", text()]; })* '"' { return attrValues(values); }
-  / "'" values:(AttrTextBinding/(!"{{" [^'])+ { return ["string", text()]; })* "'" { return attrValues(values); }
-  / binding:AttrTextBinding { return attrValues([binding]); }
-
-BlockBinding
-  = "{{#" blockBinding:StartBlockBinding { return blockBinding; }
-  / TextBinding
-
-
-StartBlockBinding
-  = scripts:SingleScript _ fragment:Template _ child:ChildBlockBinding {
-      return ["block", scripts, fragment, child];
-    }
-
-ChildBlockBinding
-  = "{{/" blockBinding:StartBlockBinding { return new RootNodeExpression(blockBinding); }
-  / "{{/}}" _ { return void 0; }
+  = '"' values:(TextBinding/(!"{{" [^"])+ { return ["string", text()]; })* '"' { return attrValues(values); }
+  / "'" values:(TextBinding/(!"{{" [^'])+ { return ["string", text()]; })* "'" { return attrValues(values); }
+  / binding:TextBinding { return attrValues([binding]); }
 
 TextBinding
-  = "{{" _ scripts:Scripts _ "}}" {
-      return scripts;
-    }
-
-AttrTextBinding
-  = "{{" _ scripts:Scripts _ "}}" {
-      return scripts;
-    }
-
-
-SingleScript
-  = _ scriptName:ReferenceName _ "}}" {
-      var hash = {};
-      hash[scriptName] = ["script", ["literal", true]];
-      return ["hash", hash];
-    }
-  / scripts:Scripts _ "}}" {
-      return scripts;
-    }
-
-Scripts
-  = _ value:Expression _ ascripts:("," HashValuesArray)*  {
+  = "{{" _ value:Expression _ "}}" {
       return ["script", value];
     }
-
 
 Expression
   = TernaryConditional
@@ -236,7 +199,6 @@ Operation
     }
   / Operatable
 
-
 Operatable
   = _ value:Modifiers _ { return value; }
 
@@ -244,7 +206,7 @@ Modifiers
   = expression:Not modifiers:Modifier* {
 
       for (var i = 0, n = modifiers.length; i < n; i++) {
-        expression = new ModifierExpression(modifiers[i].name, new ParametersExpression([expression].concat(modifiers[i].parameters)));
+        expression = ["modifier", modifiers[i].name, [expression].concat(modifiers[i].parameters)];
       }
 
       return expression;
@@ -263,8 +225,11 @@ ObjectReference
   = _ context:Object _ { return context; }
 
 Not
-  = not:("!"/"-") value:Not {
-      return new NotExpression(not, value);
+  = not:"!" value:Not {
+      return ["not", value];
+    }
+  / not:("!"/"-") value:Not {
+      return ["negative", value];
     }
   / Reserved/FunctionCall/ObjectReference
 
@@ -273,7 +238,7 @@ Object
 
 Number
   = value:("-"? ([0-9]+DecimalNumber? / DecimalNumber)) {
-      return new LiteralExpression(parseFloat(text()));
+      return ["literal", parseFloat(text())];
     }
 
 DecimalNumber
@@ -284,7 +249,7 @@ Group
 
 Reserved
   = expression:(Boolean / Undefined / Null / NaN / Infinity) {
-      return expression.value;
+      return ["literal", expression.value];
     }
 
 Boolean
@@ -309,7 +274,7 @@ Null
 
 FunctionCall
   = reference:ObjectReference parameters:Parameters {
-      return new CallExpression(reference, new ParametersExpression(parameters));
+      return ["call", reference.slice(1), parameters];
     }
 
 Reference
@@ -358,10 +323,10 @@ HashKey
 
 StringLiteral "string"
   = '"' chars:DoubleStringCharacter* '"' {
-      return new StringExpression(chars.join(""));
+      return ["string", chars.join("")];
     }
   / "'" chars:SingleStringCharacter* "'" {
-      return new StringExpression(chars.join(""));
+      return ["string", chars.join("")];
     }
 
 DoubleStringCharacter
@@ -380,6 +345,3 @@ Word
 
 _
   = [ \n\r\t]*
-
-_nl
-  = [\n\r\t]*

@@ -141,7 +141,7 @@ gulp.task("jscs", function() {
 
       "excludeFiles": [
           "test/data/**",
-          "./lib/parser/index.js"
+          "./lib/parser/parser.js"
       ]
   }));
 });
