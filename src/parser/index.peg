@@ -2,7 +2,7 @@
 /*jshint laxcomma:false */
 
 function trimWhitespace(ws) {
-  return trimNewLineChars(ws).replace(/(^\s+)|(\s+$)/, "");
+  return trimNewLineChars(ws).replace(/(^[\r\n]+)|([\r\n]+$)/, " ");
 }
 
 function trimEnds(ws) {
@@ -59,11 +59,11 @@ Start
   = Template
 
 Template
-  = children:ChildNodes { return ["root"].concat(children) }
+  = children:ChildNodes { return children; }
 
 DocType
   = "<!DOCTYPE" _ info:[^>]+ _ ">" {
-      return new DocTypeExpression(info.join(""));
+      return ["doctype", info.join("")];
     }
 
 ChildNodes
@@ -72,13 +72,13 @@ ChildNodes
 
 CommentNode
   = _ "<!--" value:(!"-->" v:SourceCharacter { return v; })+ "-->" _ {
-    return new CommentNodeExpression(trimEnds(value.join("")));
+    return ["comment", trimEnds(value.join(""))];
   }
   / DocType
 
 
 VoidElement
-  = "<" nodeName:("area"/"base"/"br"/"col"/"command"/"embed"/"hr"/"img"/"input"/"keygen"/"link"/"meta"/"param"/"source"/"track"/"wbr") attributes:TagAttributes (">"/"/>")? _ endTag:EndVoidTag? {
+  = "<" nodeName:("area"/"base"/"br"/"col"/"command"/"embed"/"hr"/"img"/"input"/"keygen"/"link"/"meta"/"param"/"source"/"track"/"wbr") attributes:TagAttributes (">"/"/>")? endTag:EndVoidTag? {
 
 
     if (endTag && nodeName != endTag.name) {
@@ -90,7 +90,7 @@ VoidElement
 
 
 EndVoidTag
-  = "</" name:("area"/"base"/"br"/"col"/"command"/"embed"/"hr"/"img"/"input"/"keygen"/"link"/"meta"/"param"/"source"/"track"/"wbr") ">" {
+  = _ "</" name:("area"/"base"/"br"/"col"/"command"/"embed"/"hr"/"img"/"input"/"keygen"/"link"/"meta"/"param"/"source"/"track"/"wbr") ">" {
       return {
         name: name
       };
@@ -110,7 +110,7 @@ ElementNode
 
 TextNode
   = value:TextCharacter+ {
-      return expression("text", trimNewLineChars(value.join("")));
+      return ["text", trimNewLineChars(value.join(""))];
     }
 
 TextCharacter
@@ -122,7 +122,7 @@ StartTag
   = _ "<" info:TagInfo ">" _ { return info; }
 
 StartEndTag
-  = _ "<" info:TagInfo "/>" _ { return new ElementNodeExpression(info.name, info.attributes); }
+  = _ "<" info:TagInfo "/>" _ { return ["element", info.name, info.attributes]; }
 
 TagInfo
   = name:TagName attrs:TagAttributes {
@@ -157,8 +157,8 @@ Attribute
     }
 
 AttributeValues
-  = '"' values:(AttrTextBinding/(!"{{" [^"])+ { return trimNewLineChars(text()); })* '"' { return attrValues(values); }
-  / "'" values:(AttrTextBinding/(!"{{" [^'])+ { return trimNewLineChars(text()); })* "'" { return attrValues(values); }
+  = '"' values:(AttrTextBinding/(!"{{" [^"])+ { return ["string", text()]; })* '"' { return attrValues(values); }
+  / "'" values:(AttrTextBinding/(!"{{" [^'])+ { return ["string", text()]; })* "'" { return attrValues(values); }
   / binding:AttrTextBinding { return attrValues([binding]); }
 
 BlockBinding
@@ -168,7 +168,7 @@ BlockBinding
 
 StartBlockBinding
   = scripts:SingleScript _ fragment:Template _ child:ChildBlockBinding {
-      return new BlockBindingExpression(scripts, fragment, child);
+      return ["block", scripts, fragment, child];
     }
 
 ChildBlockBinding
@@ -177,7 +177,7 @@ ChildBlockBinding
 
 TextBinding
   = "{{" _ scripts:Scripts _ "}}" {
-      return new BlockBindingExpression(scripts);
+      return scripts;
     }
 
 AttrTextBinding
@@ -189,32 +189,16 @@ AttrTextBinding
 SingleScript
   = _ scriptName:ReferenceName _ "}}" {
       var hash = {};
-      hash[scriptName] = new ScriptExpression(new LiteralExpression(true));
-      return new HashExpression(hash);
+      hash[scriptName] = ["script", ["literal", true]];
+      return ["hash", hash];
     }
   / scripts:Scripts _ "}}" {
       return scripts;
     }
 
 Scripts
-  = scripts:HashValues {
-      for (var k in scripts) {
-        scripts[k] = new ScriptExpression(scripts[k]);
-      }
-      return new HashExpression(scripts);
-    }
-  / _ value:Expression _ ascripts:("," HashValuesArray)*  {
-
-      var scripts = {
-        value: new ScriptExpression(value)
-      };
-
-      ascripts = ascripts.length ? ascripts[0][1] : [];
-      for (var i = 0, n = ascripts.length; i < n; i++) {
-        scripts[ascripts[i].key] = new ScriptExpression(ascripts[i].value);
-      }
-
-      return new HashExpression(scripts);
+  = _ value:Expression _ ascripts:("," HashValuesArray)*  {
+      return ["script", value];
     }
 
 
@@ -223,7 +207,7 @@ Expression
 
 TernaryConditional
   = condition:Assignment "?" left:TernaryConditional ":" right:TernaryConditional {
-      return new TernaryConditionExpression(condition, left, right);
+      return ["condition", condition, left, right];
     }
   / Assignment
 
@@ -242,13 +226,13 @@ InnerParameters
 
 Assignment
   = left:ObjectReference "=" right:Assignment {
-      return new AssignmentExpression(left, right);
+      return ["assign", left, right];
     }
   / Operation
 
 Operation
   = left:Operatable operator: ("&&" / "||" / "===" / "==" / "!==" / "!=" / ">==" / ">=" / ">" / "<==" / "<=" / "<" / "+" / "-" / "%" / "*" / "/") right:Operation {
-      return new OperatorExpression(operator, left, right);
+      return ["operator", operator, left, right];
     }
   / Operatable
 
@@ -331,7 +315,7 @@ FunctionCall
 Reference
   = bindingType:("^"/"~>"/"<~>"/"~"/"<~")? _ reference:ReferenceName path:("." ReferenceName)* _ {
       path = [reference].concat(path.map(function(p) { return p[1]; }));
-      return new ReferenceExpression(path, bindingType);
+      return ["reference", path, bindingType];
     }
 
 ReferenceName
@@ -339,7 +323,7 @@ ReferenceName
 
 Hash
   = "{" _ values:HashValues? _ "}" {
-      return new HashExpression(values);
+      return ["hash", values];
     }
 
 HashValues
