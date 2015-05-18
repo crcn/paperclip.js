@@ -149,10 +149,10 @@ TagName
 
 Attribute
   = name:TagName _ "=" _ values:AttributeValues {
-      return ["attribute", name, values]
+      return ["attribute", name, values];
     }
   / name:TagName {
-      return ['attribute', name, []]
+      return ['attribute', name, []];
     }
 
 AttributeValues
@@ -245,7 +245,7 @@ DecimalNumber
   = "." [0-9]+
 
 Group
-  = "(" group:Expression ")" { return new GroupExpression(group); }
+  = "(" group:Expression ")" { return ["group", group]; }
 
 Reserved
   = expression:(Boolean / Undefined / Null / NaN / Infinity) {

@@ -104,9 +104,9 @@ gulp.task("test-browser", function(complete) {
 
 gulp.task("parser", function() {
   return gulp.
-  src(__dirname + "/src/parser/index.peg").
+  src(__dirname + "/src/parser.peg").
   pipe(peg()).
-  pipe(gulp.dest(__dirname + "/lib/parser"));
+  pipe(gulp.dest(__dirname + "/lib"));
 });
 
 /**
@@ -141,7 +141,7 @@ gulp.task("jscs", function() {
 
       "excludeFiles": [
           "test/data/**",
-          "./lib/parser/parser.js"
+          "./lib/parser.js"
       ]
   }));
 });
