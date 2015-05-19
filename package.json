@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "2.0.4",
+  "version": "3.0.0",
   "description": "controller logic:",
   "main": "./lib/node.js",
   "scripts": {
@@ -64,7 +64,6 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "vue": "^0.11.4",
-    "xtend": "^4.0.0",
     "yargs": "^3.7.2"
   },
   "bin": {
@@ -75,8 +74,10 @@
     "document-section": "^2.0.0",
     "he": "~0.5.0",
     "immutable-virtual-dom": "^1.0.5",
+    "ivd": "^1.0.5",
     "nofactor": "^2.0.0",
     "optimist": "0.6.x",
-    "protoclass": "0.0.x"
+    "protoclass": "0.0.x",
+    "xtend": "^4.0.0"
   }
 }

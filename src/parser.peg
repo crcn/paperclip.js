@@ -84,7 +84,7 @@ VoidElement
       expected("</" + nodeName + ">");
     }
 
-    return ["element", nodeName, attributes];
+    return ["element", nodeName, attributes, []];
   }
 
 
@@ -121,7 +121,7 @@ StartTag
   = _ "<" info:TagInfo ">" _ { return info; }
 
 StartEndTag
-  = _ "<" info:TagInfo "/>" _ { return ["element", info.name, info.attributes]; }
+  = _ "<" info:TagInfo "/>" _ { return ["element", info.name, info.attributes, []]; }
 
 TagInfo
   = name:TagName attrs:TagAttributes {
