@@ -79,7 +79,6 @@ CommentNode
 VoidElement
   = "<" nodeName:("area"/"base"/"br"/"col"/"command"/"embed"/"hr"/"img"/"input"/"keygen"/"link"/"meta"/"param"/"source"/"track"/"wbr") attributes:TagAttributes (">"/"/>")? endTag:EndVoidTag? {
 
-
     if (endTag && nodeName != endTag.name) {
       expected("</" + nodeName + ">");
     }
@@ -151,6 +150,9 @@ Attribute
   = name:TagName _ "=" _ values:AttributeValues {
       return ["attribute", name, values];
     }
+  / name:TagName _ "=" _ property:TextBinding {
+      return ["property", name, property];
+    }
   / name:TagName {
       return ['attribute', name, []];
     }
@@ -158,7 +160,7 @@ Attribute
 AttributeValues
   = '"' values:(TextBinding/(!"{{" [^"])+ { return ["string", text()]; })* '"' { return attrValues(values); }
   / "'" values:(TextBinding/(!"{{" [^'])+ { return ["string", text()]; })* "'" { return attrValues(values); }
-  / binding:TextBinding { return attrValues([binding]); }
+
 
 TextBinding
   = "{{" _ value:Expression _ "}}" {
