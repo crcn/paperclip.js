@@ -66,7 +66,7 @@ DocType
     }
 
 ChildNodes
-  = children:(VoidElement/ElementNode/CommentNode/TextNode/TextBinding)* { return trimTextExpressions(children); }
+  = children:(VoidElement/ElementNode/CommentNode/TextNode/BlockBinding)* { return trimTextExpressions(children); }
 
 
 CommentNode
@@ -166,6 +166,11 @@ TextBinding
   = "{{" _ value:Expression _ "}}" {
       return ["script", value];
     }
+
+BlockBinding
+  = script:TextBinding {
+    return ["block", script[1]];
+  }
 
 Expression
   = TernaryConditional
@@ -273,7 +278,7 @@ Null
 
 FunctionCall
   = reference:ObjectReference parameters:Parameters {
-      return ["call", reference.slice(1), parameters];
+      return ["call", reference, parameters];
     }
 
 Reference
