@@ -10807,7 +10807,7 @@ module.exports.Section = Section;
      *   Shape.call(this);
      * }
      *
-     * Circle.prototype = _.create(Shape.prototype, { 'constructor': Circle });
+     * Circle.prototype = _.freeze(Shape.prototype, { 'constructor': Circle });
      *
      * var circle = new Circle;
      * circle instanceof Circle;
@@ -15970,7 +15970,7 @@ BaseFactory.extend(CustomFactory, {
 	 */
 
 	registerElement: function (name, factory) {
-		this._factories.element[name] = factories.factory.create(factory);
+		this._factories.element[name] = factories.factory.freeze(factory);
 		return this;
 	},
 
@@ -15979,7 +15979,7 @@ BaseFactory.extend(CustomFactory, {
 
 	createElement: function (name) {
 		var factory = this._factories.element[name];
-		if (factory) return factory.create(name);
+		if (factory) return factory.freeze(name);
 		return this._mainFactory.createElement(name);
 	},
 
@@ -16772,7 +16772,7 @@ keygen, link, meta, param, source, track, wbr
 
 
     AnyFactory.prototype.push = function(factory) {
-      return this.factories.push(factoryFactory.create(factory));
+      return this.factories.push(factoryFactory.freeze(factory));
     };
 
     /*
@@ -16782,7 +16782,7 @@ keygen, link, meta, param, source, track, wbr
     AnyFactory.prototype.create = function(data) {
       var _ref;
 
-      return (_ref = this._getFactory(data)) != null ? _ref.create(data) : void 0;
+      return (_ref = this._getFactory(data)) != null ? _ref.freeze(data) : void 0;
     };
 
     /*
@@ -17011,12 +17011,12 @@ keygen, link, meta, param, source, track, wbr
       _ref = this._getFactories(data, this.mandatory);
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         factory = _ref[_i];
-        items.push(factory.create(data));
+        items.push(factory.freeze(data));
       }
       _ref1 = this._getFactories(data, this.optional);
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         factory = _ref1[_j];
-        items.push(factory.create(data));
+        items.push(factory.freeze(data));
       }
       if (items.length === 1) {
         return items[0];
@@ -17163,7 +17163,7 @@ protoclass.setup = function (child) {
     }
 
     child.create = function () {
-      var obj = Object.create(child.prototype);
+      var obj = Object.freeze(child.prototype);
       child.apply(obj, arguments);
       return obj;
     }

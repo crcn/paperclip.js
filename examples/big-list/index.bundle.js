@@ -10839,7 +10839,7 @@ module.exports.Section = Section;
      *   Shape.call(this);
      * }
      *
-     * Circle.prototype = _.create(Shape.prototype, { 'constructor': Circle });
+     * Circle.prototype = _.freeze(Shape.prototype, { 'constructor': Circle });
      *
      * var circle = new Circle;
      * circle instanceof Circle;
@@ -16070,7 +16070,7 @@ protoclass.setup = function (child) {
     }
 
     child.create = function () {
-      var obj = Object.create(child.prototype);
+      var obj = Object.freeze(child.prototype);
       child.apply(obj, arguments);
       return obj;
     }
@@ -25630,7 +25630,7 @@ if ("production" !== process.env.NODE_ENV) {
 
 ReactDescriptor.createFactory = function(type) {
 
-  var descriptorPrototype = Object.create(ReactDescriptor.prototype);
+  var descriptorPrototype = Object.freeze(ReactDescriptor.prototype);
 
   var factory = function(props, children) {
     // For consistency we currently allocate a new object for every descriptor.
@@ -25659,7 +25659,7 @@ ReactDescriptor.createFactory = function(type) {
     }
 
     // Initialize the descriptor object
-    var descriptor = Object.create(descriptorPrototype);
+    var descriptor = Object.freeze(descriptorPrototype);
 
     // Record the component responsible for creating this descriptor.
     descriptor._owner = ReactCurrentOwner.current;
@@ -25712,7 +25712,7 @@ ReactDescriptor.createFactory = function(type) {
 };
 
 ReactDescriptor.cloneAndReplaceProps = function(oldDescriptor, newProps) {
-  var newDescriptor = Object.create(oldDescriptor.constructor.prototype);
+  var newDescriptor = Object.freeze(oldDescriptor.constructor.prototype);
   // It's important that this property order matches the hidden class of the
   // original descriptor to maintain perf.
   newDescriptor._owner = oldDescriptor._owner;
@@ -30922,7 +30922,7 @@ SyntheticEvent.Interface = EventInterface;
 SyntheticEvent.augmentClass = function(Class, Interface) {
   var Super = this;
 
-  var prototype = Object.create(Super.prototype);
+  var prototype = Object.freeze(Super.prototype);
   mergeInto(prototype, Class.prototype);
   Class.prototype = prototype;
   Class.prototype.constructor = Class;
@@ -36269,7 +36269,7 @@ exports.extend = function (extendOptions) {
   extendOptions = extendOptions || {}
   var Super = this
   var Sub = createClass(extendOptions.name || 'VueComponent')
-  Sub.prototype = Object.create(Super.prototype)
+  Sub.prototype = Object.freeze(Super.prototype)
   Sub.prototype.constructor = Sub
   Sub.cid = cid++
   Sub.options = mergeOptions(
@@ -38682,7 +38682,7 @@ module.exports = {
       this._checkParam('track-by') ||
       this._checkParam('trackby') // 0.11.0 compat
     // cache for primitive value instances
-    this.cache = Object.create(null)
+    this.cache = Object.freeze(null)
   },
 
   /**
@@ -38940,7 +38940,7 @@ module.exports = {
     // and meta properties onto it.
     // use _.define to avoid accidentally overwriting scope
     // properties.
-    var context = Object.create(this.vm)
+    var context = Object.freeze(this.vm)
     var key
     for (key in data) {
       _.define(context, key, data[key])
@@ -39972,7 +39972,7 @@ exports._initData = function () {
     }
   }
   // observe data
-  Observer.create(data).addVm(this)
+  Observer.freeze(data).addVm(this)
 }
 
 /**
@@ -40007,7 +40007,7 @@ exports._setData = function (newData) {
     }
   }
   oldData.__ob__.removeVm(this)
-  Observer.create(newData).addVm(this)
+  Observer.freeze(newData).addVm(this)
   this._digest()
 }
 
@@ -40156,7 +40156,7 @@ exports._defineMeta = function (key, value) {
 },{"../observer":274,"../observer/dep":273,"../util":288}],272:[function(require,module,exports){
 var _ = require('../util')
 var arrayProto = Array.prototype
-var arrayMethods = Object.create(arrayProto)
+var arrayMethods = Object.freeze(arrayProto)
 
 /**
  * Intercept mutating methods and emit events
@@ -40431,7 +40431,7 @@ p.walk = function (obj) {
  */
 
 p.observe = function (val) {
-  return Observer.create(val)
+  return Observer.freeze(val)
 }
 
 /**
@@ -42707,7 +42707,7 @@ var extend = _.extend
  * @param {Vue} [vm]
  */
 
-var strats = Object.create(null)
+var strats = Object.freeze(null)
 
 /**
  * Helper that recursively merges two data objects together.
@@ -42830,7 +42830,7 @@ strats.filters =
 strats.partials =
 strats.transitions =
 strats.components = function (parentVal, childVal, vm, key) {
-  var ret = Object.create(
+  var ret = Object.freeze(
     vm && vm.$parent
       ? vm.$parent.$options[key]
       : _.Vue.options[key]
@@ -42879,7 +42879,7 @@ strats.methods =
 strats.computed = function (parentVal, childVal) {
   if (!childVal) return parentVal
   if (!parentVal) return childVal
-  var ret = Object.create(parentVal)
+  var ret = Object.freeze(parentVal)
   extend(ret, childVal)
   return ret
 }
@@ -43066,7 +43066,7 @@ function Watcher (vm, expression, cb, options) {
   options = options || {}
   this.deep = options.deep
   this.user = options.user
-  this.deps = Object.create(null)
+  this.deps = Object.freeze(null)
   // setup filters if any.
   // We delegate directive filters here to the watcher
   // because they need to be included in the dependency

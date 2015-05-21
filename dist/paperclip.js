@@ -8277,7 +8277,7 @@ protoclass.setup = function (child) {
     }
 
     child.create = function () {
-      var obj = Object.create(child.prototype);
+      var obj = Object.freeze(child.prototype);
       child.apply(obj, arguments);
       return obj;
     }

@@ -9505,7 +9505,7 @@ module.exports.Section = Section;
      *   Shape.call(this);
      * }
      *
-     * Circle.prototype = _.create(Shape.prototype, { 'constructor': Circle });
+     * Circle.prototype = _.freeze(Shape.prototype, { 'constructor': Circle });
      *
      * var circle = new Circle;
      * circle instanceof Circle;
@@ -14736,7 +14736,7 @@ protoclass.setup = function (child) {
     }
 
     child.create = function () {
-      var obj = Object.create(child.prototype);
+      var obj = Object.freeze(child.prototype);
       child.apply(obj, arguments);
       return obj;
     }
