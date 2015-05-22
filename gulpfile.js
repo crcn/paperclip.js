@@ -69,7 +69,7 @@ gulp.task("test-coveralls", ["test-coverage"], function () {
  */
 
 gulp.task("bundle", function() {
-  return browserify("./lib/browser.js").
+  return browserify("./lib/index.js").
   bundle().
   pipe(source(pkg.name + '.js')).
   pipe(buffer()).
@@ -164,7 +164,8 @@ gulp.task("jshint", function() {
       "noarg"    : true,
       "mocha"    : true,
       "evil"     : true,
-      "laxbreak" : true
+      "laxbreak" : true,
+      "-W100"    : true
     })).
     pipe(jshint.reporter('default'));
 });

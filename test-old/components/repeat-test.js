@@ -10,21 +10,6 @@ var tpl = paperclip.template("abba")
 
 describe(__filename + "#", function () {
 
-  it("can embed a repeat component with a vanilla array", function () {
-    var tpl = template("<repeat each={{numbers}} as='number'>{{number}}</repeat>", paperclip);
-    var v = tpl.view({numbers:[0,1,2,3]});
-    assert.equal(stringifyView(v), "0123");
-  });
-
-  it("can dynamically update the repeat tag", function () {
-    var tpl = template("<repeat each={{numbers}} as='number'>{{number}}</repeat>", paperclip);
-    var v = tpl.view({numbers:[0,1,2,3]});
-    assert.equal(stringifyView(v), "0123");
-    v.set("numbers", [4,5,6,7]);
-    v.runloop.runNow();
-    assert.equal(stringifyView(v), "4567");
-  });
-
   it("updates the block if the source changes", function () {
     var tpl = template("<repeat each={{numbers}} as='number'>{{number}}</repeat>", paperclip);
     var src = [0,1,2,3];
@@ -38,31 +23,6 @@ describe(__filename + "#", function () {
     v.accessor.apply();
     v.runloop.runNow();
     assert.equal(stringifyView(v), "45673");
-  });
-
-  it("can nest repeat elements", function () {
-
-
-    var tpl = template(
-      "<repeat each={{source}} as='a'>" +
-        "a" +
-        "<repeat each={{a}} as='b'>" +
-          "b {{b}}" +
-        "</repeat>" +
-      "</repeat>"
-    , paperclip);
-
-    var v = tpl.view({
-      source: [
-        [0, 1],
-        [2, 3],
-        [4, 5],
-        [6, 7]
-      ]
-    });
-
-    assert.equal(stringifyView(v), "ab 0b 1ab 2b 3ab 4b 5ab 6b 7");
-
   });
 
   it("properly inherits properties from the parent view", function () {
