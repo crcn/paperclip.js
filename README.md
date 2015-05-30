@@ -61,11 +61,10 @@ document.body.appendChild(helloView.render());
 ### Commands
 
 ```
-make test-node    # run unit tests in NodeJS
-make test-browser # run unit tests in the browser
-make test-cov     # run test coverage tool
-make parser       # build the parser
-make test-watch   # run the tests and watch them
-make browser min  # build for the browser
-make lint         # run jshint and jscs
+gulp test          # run unit tests in NodeJS
+gulp test-browser  # run unit tests in the browser
+gulp test-coverage # run test coverage tool
+gulp watch         # run the tests and watch them
+gulp bundle minify # build for the browser
+gulp lint          # run jshint and jscs
 ```
