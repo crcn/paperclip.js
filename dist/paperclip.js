@@ -5,19 +5,155 @@
  */
 
 module.exports = {
-  template: require("./template"),
+  template    : require("./template"),
+  transpile   : require("./transpiler").transpile,
   noConflict: function() {
     delete global.paperclip;
   }
 };
 
-
 if (typeof window !== "undefined") {
   window.paperclip = module.exports;
-};
+}
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./template":6}],2:[function(require,module,exports){
+},{"./template":8,"./transpiler":9}],2:[function(require,module,exports){
+var extend       = require("xtend/mutable");
+
+function POJOAccessor() {
+  this._getters  = {};
+  this._callers  = {};
+  this._watchers = [];
+}
+
+function _set(target, keypath, value) {
+
+  var keys = typeof keypath === "string" ? keypath.split(".") : keypath;
+  var ct   = target;
+  var key;
+
+  for (var i = 0, n = keys.length - 1; i < n; i++) {
+    key = keys[i];
+    if (!ct[key]) {
+      ct[key] = {};
+    }
+    ct = ct[key];
+  }
+
+  ct[keys[keys.length - 1]] = value;
+  return value;
+}
+
+extend(POJOAccessor.prototype, {
+
+  /**
+   */
+
+  call: function(object, keypath, params) {
+
+    var caller;
+
+    if (!(caller = this._callers[keypath])) {
+      var ctxPath = ["this"].concat(keypath.split("."));
+      ctxPath.pop();
+      ctxPath = ctxPath.join(".");
+      caller = this._callers[keypath] = new Function("params", "return this." + keypath + ".apply(" + ctxPath + ", params);");
+    }
+
+    try {
+      var ret = caller.call(object, params);
+      this.applyChanges(object);
+      return ret;
+    } catch (e) {
+      return void 0;
+    }
+  },
+
+  /**
+   */
+
+  get: function(object, path) {
+
+    var pt = typeof path !== "string" ? path.join(".") : path;
+    var getter;
+
+    if (!(getter = this._getters[pt])) {
+      getter = this._getters[pt] = new Function("return this." + pt);
+    }
+
+    // is undefined - fugly, but works for this test.
+    try {
+      return getter.call(object);
+    } catch (e) {
+      return void 0;
+    }
+  },
+
+  /**
+   */
+
+  set: function(object, path, value) {
+
+    if (typeof path === "string") path = path.split(".");
+
+    var ret = _set(object, path, value);
+
+    this.applyChanges(object);
+
+    return ret;
+  },
+
+  /**
+   */
+
+  watch: function(object, listener) {
+
+    var self = this;
+    var currentValue;
+    var firstCall = true;
+
+    return this._addWatcher(function(changedObject) {
+      if (changedObject === object) listener();
+    });
+  },
+
+  /**
+   */
+
+  _addWatcher: function(applyChanges) {
+
+    var self = this;
+
+    var watcher = {
+      apply: applyChanges,
+      trigger: applyChanges,
+      dispose: function() {
+        var i = self._watchers.indexOf(watcher);
+        if (~i) self._watchers.splice(i, 1);
+      }
+    };
+
+    this._watchers.push(watcher);
+
+    return watcher;
+  },
+
+  /**
+   */
+
+  applyChanges: function(object) {
+    for (var i = 0, n = this._watchers.length; i < n; i++) {
+      this._watchers[i].apply(object);
+    }
+  }
+});
+
+/**
+ */
+
+module.exports = POJOAccessor;
+
+},{"xtend/mutable":25}],3:[function(require,module,exports){
 var extend     = require("xtend/mutable");
 var transpiler = require("./transpiler");
 
@@ -45,12 +181,12 @@ extend(Compiler.prototype, {
 
 module.exports = new Compiler();
 
-},{"./transpiler":7,"xtend/mutable":24}],3:[function(require,module,exports){
+},{"./transpiler":9,"xtend/mutable":25}],4:[function(require,module,exports){
 module.exports = {
   repeat: require("./repeat")
 };
 
-},{"./repeat":4}],4:[function(require,module,exports){
+},{"./repeat":5}],5:[function(require,module,exports){
 var extend = require("xtend/mutable");
 var ivd    = require("ivd");
 
@@ -68,8 +204,12 @@ function Repeat(section, vnode, attributes, options) {
  */
 
 function _each(target, iterate) {
-  if (Object.prototype.toString.call(target) === "[object Array]") {
-    for (var i = 0, n = target.length; i < n; i++) iterate(target[i], i);
+
+  if (!target) return;
+
+  if (target.forEach) {
+    // use API here since target could be an object
+    target.forEach(iterate);
   } else {
     for (var key in target) iterate(target[key], key);
   }
@@ -90,35 +230,47 @@ extend(Repeat.prototype, {
   /**
    */
 
-  update: function() {
+  update: function(parent) {
 
     var as       = this.as;
     var each     = this.each;
+    var key      = this.key || "key";
 
     var n        = 0;
     var self     = this;
 
     var properties;
 
-    _each(each, function(model, key) {
+    _each(each, function(model, k) {
+
+      var child;
 
       if (as) {
         properties       = { };
-        properties[key]  = key;
+        properties[key]  = k;
         properties[as]   = model;
       } else {
         properties = model;
       }
 
-      // var child = this.cTemplate.view(ctx);
-
       if (n >= self._children.length) {
-        var child = self._cTemplate.view(properties);
+        child = self._cTemplate.view(properties, {
+          parent: parent
+        });
         self._children.push(child);
         self.section.appendChild(child.render());
       } else {
-        var child = self._children[n];
-        child.update(properties);
+        child = self._children[n];
+
+        // if (child.context[as] !== model) {
+          // child.update(properties);
+        // }
+
+        if (properties !== model) {
+          child.set(as, model);
+        } else if (child.context[as] !== model) {
+          child.update(properties);
+        }
       }
 
       n++;
@@ -135,7 +287,41 @@ extend(Repeat.prototype, {
 
 module.exports = Repeat;
 
-},{"ivd":16,"xtend/mutable":24}],5:[function(require,module,exports){
+},{"ivd":19,"xtend/mutable":25}],6:[function(require,module,exports){
+var extend = require("xtend/mutable");
+
+module.exports = function(update) {
+
+  /**
+   */
+
+  function Binding(ref, options) {
+    this.ref     = ref;
+    this.options = options;
+  }
+
+  /**
+   */
+
+  extend(Binding.prototype, {
+
+    /**
+     */
+
+    _update: update,
+
+    /**
+     */
+
+    update: function(view) {
+      this._update(view);
+    }
+  });
+
+  return Binding;
+};
+
+},{"xtend/mutable":25}],7:[function(require,module,exports){
 module.exports = (function() {
   /*
    * Generated by PEG.js 0.8.0.
@@ -1044,25 +1230,28 @@ module.exports = (function() {
     parse:       parse
   };
 })();
-},{}],6:[function(require,module,exports){
-var ivd               = require("ivd");
-var compiler          = require("./compiler");
-var extend            = require("xtend/mutable");
-var defaultComponents = require("./components");
+},{}],8:[function(require,module,exports){
+var ivd                = require("ivd");
+var compiler           = require("./compiler");
+var extend             = require("xtend/mutable");
+var defaultComponents  = require("./components");
+var createBindingClass = require("./createBindingClass");
+var View               = require("./view");
 
 /**
  */
 
 module.exports = function(source, options) {
   var createVNode = typeof source === "string" ? compiler.compile(source) : source;
-  var vnode       = createVNode(ivd.fragment, ivd.element, ivd.text, ivd.comment, ivd.dynamic, ivd.root, ivd.reference);
+  var vnode       = createVNode(ivd.fragment, ivd.element, ivd.text, ivd.comment, ivd.dynamic, createBindingClass);
 
   return ivd.template(vnode, extend({
-    components: defaultComponents
+    components : defaultComponents,
+    viewClass  : View
   }, options));
 };
 
-},{"./compiler":2,"./components":3,"ivd":16,"xtend/mutable":24}],7:[function(require,module,exports){
+},{"./compiler":3,"./components":4,"./createBindingClass":6,"./view":10,"ivd":19,"xtend/mutable":25}],9:[function(require,module,exports){
 var extend = require("xtend/mutable");
 var parser = require("./parser");
 
@@ -1075,6 +1264,7 @@ function Transpiler() {
       this[k] = this[k].bind(this);
     }
   }
+  this.transpile = this.transpile.bind(this);
 }
 
 /**
@@ -1094,53 +1284,13 @@ extend(Transpiler.prototype, {
 
   _root: function(elements) {
 
-    this._refs       = {};
-    this._refCounter = 0;
-
-
-    var buffer = "function(fragment, element, text, comment, dynamic, root, reference) {";
-
+    var buffer = "function(fragment, element, text, comment, dynamic, createBindingClass) {";
     var fragment = "fragment(" + elements.map(this._expression).join(",") + ")";
-
-    // buffer += "return " + this.__bundleReferences(fragment);
-
     buffer += "return " + fragment;
-
     buffer += "}";
 
     return buffer;
   },
-
-  /**
-   */
-
-  //  __bundleReferences: function(buffer) {
-  //
-  //   if (!this._refCounter) return buffer;
-  //
-  //   buffer = "root(" + buffer + ", function(refs, context) {"
-  //
-  //   for (var refName in this._refs) {
-  //     this._refs[refName].forEach(function(ref) {
-  //
-  //       var type = ref[0];
-  //
-  //       buffer += "refs." + refName;
-  //
-  //       if(type === "block") {
-  //         buffer += ".nodeValue = " + this._expression(ref[1]) + ";"
-  //       } else if (type === "attribute") {
-  //         buffer += ".setAttribute('" + ref[1] + "', " + ref[2].map(this._expression).join("+") + ");";
-  //       } else if (type === "property") {
-  //         buffer += "." + ref[1] + "=" + this._expression(ref[2]);
-  //       }
-  //     }.bind(this));
-  //   }
-  //
-  //   buffer += "})";
-  //
-  //   return buffer;
-  // },
 
   /**
    */
@@ -1159,14 +1309,18 @@ extend(Transpiler.prototype, {
 
     buffer += ", {";
 
-    expression[2].forEach(function(attr) {
+    var attrs = [];
+
+    buffer += expression[2].map(function(attr) {
       var value = attr[2];
       if (value.length === 1 && value[0][0] === "string") {
-        buffer += "'" + attr[1] + "':" + this._expression(value[0]);
+        return "'" + attr[1] + "':" + this._expression(value[0]);
       } else {
         dynamicAttributes.push(attr);
       }
-    }.bind(this));
+    }.bind(this)).filter(function(str) {
+      return !!str;
+    }).join(",");
 
     buffer += "}";
 
@@ -1180,16 +1334,16 @@ extend(Transpiler.prototype, {
 
     if (dynamicAttributes.length) {
 
-      buffer = "dynamic(" + buffer + ", function(ref, context) {";
+      buffer = "dynamic(" + buffer + ", createBindingClass(function(view) {";
 
       dynamicAttributes.forEach(function(ref) {
 
         var type = ref[0];
 
-        buffer += "ref";
+        buffer += "this.ref";
 
-        if(type === "block") {
-          buffer += ".nodeValue = " + this._expression(ref[1]) + ";"
+        if (type === "block") {
+          buffer += ".nodeValue = " + this._expression(ref[1]) + ";";
         } else if (type === "attribute") {
           buffer += ".setAttribute('" + ref[1] + "', " + ref[2].map(this._expression).join("+") + ");";
         } else if (type === "property") {
@@ -1197,7 +1351,7 @@ extend(Transpiler.prototype, {
         }
       }.bind(this));
 
-      buffer += "})";
+      buffer += "}))";
     }
 
     return buffer;
@@ -1216,10 +1370,9 @@ extend(Transpiler.prototype, {
    */
 
   _block: function(expression) {
-    var buffer = "dynamic(text(), function(ref, context) {";
-    buffer += "ref.nodeValue = " + this._expression(expression[1]) + ";"
-
-    return buffer + "})";
+    var buffer = "dynamic(text(), createBindingClass(function(view) {";
+    buffer += "this.ref.nodeValue = " + this._expression(expression[1]) + ";";
+    return buffer + "}))";
   },
 
   /**
@@ -1247,8 +1400,7 @@ extend(Transpiler.prototype, {
    */
 
   _reference: function(expression) {
-    var buffer = "context." + expression[1].join(".");
-    return buffer;
+    return "view.get('" + expression[1].join(".") + "')";
   },
 
   /**
@@ -1316,6 +1468,32 @@ extend(Transpiler.prototype, {
 
   _group: function(expression) {
     return "(" + this._expression(expression[1]) + ")";
+  },
+
+  /**
+   */
+
+  __findExpressions: function(type, expr) {
+    var exprs = [];
+
+    this.__traverse(expr, function(expr) {
+      if (expr[0] === type) exprs.push(expr);
+    });
+
+    return exprs;
+  },
+
+  /**
+   */
+
+  __traverse: function(expr, iterator) {
+    iterator(expr);
+    expr.forEach(function(v) {
+      if (v && typeof v === "object") {
+        this.__traverse(v, iterator);
+      }
+    }.bind(this));
+
   }
 });
 
@@ -1324,7 +1502,78 @@ extend(Transpiler.prototype, {
 
 module.exports = new Transpiler();
 
-},{"./parser":5,"xtend/mutable":24}],8:[function(require,module,exports){
+},{"./parser":7,"xtend/mutable":25}],10:[function(require,module,exports){
+var ivd      = require("ivd");
+var extend   = require("xtend/mutable");
+var BaseView = ivd.View;
+var Accessor = require("./accessor");
+
+/**
+ */
+
+function PaperclipView(node, bindings, template, context, options) {
+
+  if (!options) options = {};
+
+  this.parent   = options.parent;
+  this.accessor = this.parent ? this.parent.accessor : new Accessor();
+
+  BaseView.call(this, node, bindings, template, context, options);
+}
+
+/**
+ */
+
+extend(PaperclipView.prototype, BaseView.prototype, {
+
+  /**
+   */
+
+  get: function(keypath) {
+    var v =  this.accessor.get(this.context, keypath);
+    return v != void 0 ? v : this.parent ? this.parent.get(keypath) : void 0;
+  },
+
+  /**
+   */
+
+  set: function(keypath, value) {
+    return this.accessor.set(this.context, keypath, value);
+  },
+
+  /**
+   */
+
+  call: function(keypath, params) {
+    var v =  this.accessor.get(this.context, keypath);
+    return v != void 0 ? this.accessor.call(this.context, keypath, params) : this.parent ? this.parent.call(keypath, params) : void 0;
+  },
+
+  /**
+   */
+
+  update: function(context) {
+
+    if (this.context === context) return;
+
+    // TODO - dispose this
+    if (this._contextWatcher) {
+      this._contextWatcher.dispose();
+    }
+
+    this.context         = context;
+    this._contextWatcher = this.accessor.watch(context, BaseView.prototype.update.bind(this, this));
+
+    BaseView.prototype.update.call(this, this);
+  }
+});
+
+/**
+ */
+
+module.exports = PaperclipView;
+
+},{"./accessor":2,"ivd":19,"xtend/mutable":25}],11:[function(require,module,exports){
 var extend        = require("xtend/mutable");
 var getNodeByPath = require("./_getNodeByPath");
 var getNodePath   = require("./_getNodePath");
@@ -1373,7 +1622,7 @@ extend(FragmentSection.prototype, {
     var current  = start.nextSibling;
     var end      = this.end;
 
-    while(current !== end) {
+    while (current !== end) {
       node.appendChild(current);
       current = start.nextSibling;
     }
@@ -1410,7 +1659,10 @@ extend(FragmentSection.prototype, {
       }
     }
 
-    return new FragmentSection(this.document, parentClone.childNodes[0], parentClone.childNodes[parentClone.childNodes.length - 1]);
+    var first = parentClone.childNodes[0];
+    var last  = parentClone.childNodes[parentClone.childNodes.length - 1];
+
+    return new FragmentSection(this.document, first, last);
   },
 
   /**
@@ -1420,7 +1672,7 @@ extend(FragmentSection.prototype, {
     var current = this.start;
     var end     = this.end.nextSibling;
     var children = [];
-    while(current !== end) {
+    while (current !== end) {
       children.push(current);
       current = current.nextSibling;
     }
@@ -1452,7 +1704,7 @@ extend(Marker.prototype, {
 
 module.exports = FragmentSection;
 
-},{"./_getNodeByPath":9,"./_getNodePath":10,"xtend/mutable":24}],9:[function(require,module,exports){
+},{"./_getNodeByPath":12,"./_getNodePath":13,"xtend/mutable":25}],12:[function(require,module,exports){
 module.exports = function(root, path) {
 
   var c = root;
@@ -1462,9 +1714,9 @@ module.exports = function(root, path) {
   }
 
   return c;
-}
+};
 
-},{}],10:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = function(node) {
 
   var path = [];
@@ -1479,13 +1731,13 @@ module.exports = function(node) {
     p = p.parentNode;
 
     // virtual nodes - must be skipped
-    while(p && p.nodeType > 12) p = p.parentNode;
+    while (p && p.nodeType > 12) p = p.parentNode;
   }
 
   return path;
-}
+};
 
-},{}],11:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var extend        = require("xtend/mutable");
 var getNodeByPath = require("./_getNodeByPath");
 var getNodePath   = require("./_getNodePath");
@@ -1562,7 +1814,7 @@ extend(Marker.prototype, {
 
 module.exports = NodeSection;
 
-},{"./_getNodeByPath":9,"./_getNodePath":10,"xtend/mutable":24}],12:[function(require,module,exports){
+},{"./_getNodeByPath":12,"./_getNodePath":13,"xtend/mutable":25}],15:[function(require,module,exports){
 /**
  */
 
@@ -1589,7 +1841,7 @@ module.exports = function(nodeValue) {
   return new Comment(nodeValue);
 };
 
-},{}],13:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 var extend        = require("xtend/mutable");
 var getNodePath   = require("./_getNodePath");
 var getNodeByPath = require("./_getNodeByPath");
@@ -1597,9 +1849,9 @@ var getNodeByPath = require("./_getNodeByPath");
 /**
  */
 
-function DynamicNode(vnode, handler) {
+function DynamicNode(vnode, bindingClass) {
   this.vnode            = vnode;
-  this.handler          = handler;
+  this.bindingClass     = bindingClass;
   this.vnode.parentNode = this;
 }
 
@@ -1620,7 +1872,7 @@ DynamicNode.prototype.freeze = function(options, hydrators) {
 DynamicNode.prototype.freezeComponent = function(options, hydrators) {
   var h2 = [];
   var element = this.vnode.freeze(options, h2);
-  hydrators.push(new ComponentHydrator(h2[0], this.handler, options));
+  hydrators.push(new ComponentHydrator(h2[0], this.bindingClass, options));
   return element;
 };
 
@@ -1629,17 +1881,17 @@ DynamicNode.prototype.freezeComponent = function(options, hydrators) {
 
 DynamicNode.prototype.freezeElement = function(options, hydrators) {
   var node = this.vnode.freeze(options, hydrators);
-  hydrators.push(new Hydrator(node, this.handler, options));
+  hydrators.push(new Hydrator(node, this.bindingClass, options));
   return node;
 };
 
 /**
  */
 
-function Hydrator(ref, handler, options) {
-  this.options = options;
-  this.ref     = ref;
-  this.handler = handler;
+function Hydrator(ref, bindingClass, options) {
+  this.options      = options;
+  this.ref          = ref;
+  this.bindingClass = bindingClass;
 }
 
 /**
@@ -1652,35 +1904,16 @@ extend(Hydrator.prototype, {
 
   hydrate: function(root, bindings) {
     if (!this._refPath) this._refPath = getNodePath(this.ref);
-    bindings.push(new Binding(getNodeByPath(root, this._refPath), this.handler, this.options));
+    bindings.push(new this.bindingClass(getNodeByPath(root, this._refPath), this.options));
   }
 });
-
 /**
  */
 
-function Binding(ref, handler, options) {
-  this.ref     = ref;
-  this.handler = handler;
-  this.options = options;
-}
-
-/**
- */
-
-extend(Binding.prototype, {
-  update: function(context) {
-    this.handler.call(this, this.ref, context);
-  }
-});
-
-/**
- */
-
-function ComponentHydrator(hydrator, handler, options) {
-  this.options  = options;
-  this.hydrator = hydrator;
-  this.handler  = handler;
+function ComponentHydrator(hydrator, bindingClass, options) {
+  this.options       = options;
+  this.hydrator      = hydrator;
+  this.bindingClass  = bindingClass;
 }
 
 /**
@@ -1691,7 +1924,7 @@ extend(ComponentHydrator.prototype, {
     var b2 = [];
     this.hydrator.hydrate(root, b2);
     var component = b2[0];
-    bindings.push(new ComponentBinding(component, this.handler, this.options));
+    bindings.push(new this.bindingClass(component, this.options));
     bindings.push(component);
   }
 });
@@ -1699,29 +1932,11 @@ extend(ComponentHydrator.prototype, {
 /**
  */
 
-function ComponentBinding(component, handler, options) {
-  this.component = component;
-  this.handler   = handler;
-  this.options   = options;
-}
-
-/**
- */
-
-extend(ComponentBinding.prototype, {
-  update: function(context) {
-    this.handler.call(this, this.component, context);
-  }
-});
-
-/**
- */
-
-module.exports = function(vnode, handler) {
-  return new DynamicNode(vnode, handler);
+module.exports = function(vnode, bindingClass) {
+  return new DynamicNode(vnode, bindingClass);
 };
 
-},{"./_getNodeByPath":9,"./_getNodePath":10,"xtend/mutable":24}],14:[function(require,module,exports){
+},{"./_getNodeByPath":12,"./_getNodePath":13,"xtend/mutable":25}],17:[function(require,module,exports){
 var createSection    = require("./section");
 var fragment         = require("./fragment");
 var FragmentSection  = require("./_fragmentSection");
@@ -1752,7 +1967,6 @@ Element.prototype.freeze = function(options, hydrators) {
     return this.freezeComponent(components[this.nodeName], options, hydrators);
   }
 
-
   return this.freezeElement(options, hydrators);
 };
 
@@ -1763,7 +1977,8 @@ Element.prototype.freezeComponent = function(clazz, options, hydrators) {
 
   // TODO - check parent node to see if there are anymore children. If not, then user NodeSection
   var section = new FragmentSection(options.document);
-  hydrators.push(new ComponentHydrator(clazz, section, fragment.apply(this, this.childNodes), this.attributes, options));
+  var frag    = fragment.apply(this, this.childNodes);
+  hydrators.push(new ComponentHydrator(clazz, section, frag, this.attributes, options));
   return section.render();
 };
 
@@ -1773,7 +1988,6 @@ Element.prototype.freezeComponent = function(clazz, options, hydrators) {
 Element.prototype.freezeElement = function(options, hydrators) {
 
   var element = options.document.createElement(this.nodeName);
-
 
   for (var attrName in this.attributes) {
     element.setAttribute(attrName, this.attributes[attrName]);
@@ -1785,7 +1999,6 @@ Element.prototype.freezeElement = function(options, hydrators) {
 
   return element;
 };
-
 
 /**
 */
@@ -1804,8 +2017,7 @@ function ComponentHydrator(clazz, section, childNodes, attributes, options) {
 ComponentHydrator.prototype.hydrate = function(root, bindings) {
   if (!this._marker) this._marker = this.section.createMarker();
   bindings.push(new this.clazz(this._marker.createSection(root), this.childNodes, this.attributes, this.options));
-}
-
+};
 
 /**
  */
@@ -1814,7 +2026,7 @@ module.exports = function(name, attributes, children) {
   return new Element(name, attributes, Array.prototype.slice.call(arguments, 2));
 };
 
-},{"./_fragmentSection":8,"./fragment":15,"./section":19}],15:[function(require,module,exports){
+},{"./_fragmentSection":11,"./fragment":18,"./section":20}],18:[function(require,module,exports){
 
 /**
  */
@@ -1852,7 +2064,7 @@ module.exports = function() {
   return new Fragment(children);
 };
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /**
  */
 
@@ -1863,139 +2075,11 @@ module.exports = {
   dynamic   : require("./dynamic"),
   comment   : require("./comment"),
   template  : require("./template"),
-  root      : require("./root"),
-  reference : require("./reference")
+
+  View      : require("./view")
 };
 
-},{"./comment":12,"./dynamic":13,"./element":14,"./fragment":15,"./reference":17,"./root":18,"./template":20,"./text":21}],17:[function(require,module,exports){
-var extend         = require("xtend/mutable");
-var _getNodePath   = require("./_getNodePath");
-var _getNodeByPath = require("./_getNodeByPath");
-
-/**
- */
-
-function Reference(name, node) {
-  this.name            = name;
-  this.node            = node;
-  this.node.parentNode = this;
-}
-
-/**
- */
-
-Reference.prototype.nodeType = 14;
-
-/**
- */
-
-Reference.prototype.freeze = function(options, o) {
-
-  if (options.components[this.node.nodeName]) {
-    var hydrators = [];
-    var ret = this.node.freeze(options, hydrators);
-
-    // this stuff is ratchet, but it works
-    options.refs[this.name] = function(root, bindings) {
-      var b2 = [];
-      hydrators[0].hydrate(root, b2);
-      bindings.push(b2[0]);
-      return b2[0];
-    };
-  } else {
-    var path = _getNodePath(this);
-
-    options.refs[this.name] = function(root) {
-      return _getNodeByPath(root, path);
-    }
-
-    ret = this.node.freeze(options, hydrators);
-  }
-
-  return ret
-};
-
-/**
- */
-
-module.exports = function(name, node) {
-  return new Reference(name, node);
-};
-
-},{"./_getNodeByPath":9,"./_getNodePath":10,"xtend/mutable":24}],18:[function(require,module,exports){
-var _getNodeByPath = require("./_getNodeByPath");
-var _getNodePath   = require("./_getNodePath");
-
-/**
- */
-
-function Root(node, handler) {
-  this.node    = node;
-  this.handler = handler;
-}
-
-/**
- */
-
-Root.prototype.freeze = function(options, hydrators) {
-
-  var refs     = {};
-
-  options.refs = refs;
-  var ret = this.node.freeze(options, hydrators);
-
-  hydrators.unshift(new Hydrator(refs, this.handler, options));
-
-  return ret;
-}
-
-/**
- */
-
-function Hydrator(refPaths, handler, options) {
-  this.refPaths = refPaths;
-  this.handler  = handler;
-  this.options  = options;
-}
-
-/**
- */
-
-Hydrator.prototype.hydrate = function(root, bindings) {
-  var refs = {};
-
-  for (var refName in this.refPaths) {
-    refs[refName] = this.refPaths[refName](root, bindings);
-  }
-
-  bindings.unshift(new Binding(refs, this.handler, this.options));
-}
-
-/**
- */
-
-function Binding(refs, handler, options) {
-  this.refs    = refs;
-  this.handler = handler;
-  this.options = options;
-}
-
-/**
- */
-
-Binding.prototype.update = function(context) {
-  this.handler.call(this, this.refs, context);
-};
-
-
-/**
- */
-
-module.exports = function(node, handler) {
-  return new Root(node, handler);
-}
-
-},{"./_getNodeByPath":9,"./_getNodePath":10}],19:[function(require,module,exports){
+},{"./comment":15,"./dynamic":16,"./element":17,"./fragment":18,"./template":21,"./text":22,"./view":23}],20:[function(require,module,exports){
 var extend          = require("xtend/mutable");
 var FragmentSection = require("./_fragmentSection");
 var NodeSection     = require("./_nodeSection");
@@ -2010,7 +2094,7 @@ module.exports = function(document, node) {
   }
 };
 
-},{"./_fragmentSection":8,"./_nodeSection":11,"xtend/mutable":24}],20:[function(require,module,exports){
+},{"./_fragmentSection":11,"./_nodeSection":14,"xtend/mutable":25}],21:[function(require,module,exports){
 var defaultDocument = require("nofactor");
 var View            = require("./view");
 var extend          = require("xtend/mutable");
@@ -2028,8 +2112,9 @@ function _uppercaseComponentNames(options) {
     c2[k.toUpperCase()] = c1[k];
   }
 
-  return extend(options, { components: c2 })
+  return extend(options, { components: c2 });
 }
+
 /**
  */
 
@@ -2043,6 +2128,8 @@ function Template(vnode, options) {
   options = _uppercaseComponentNames(extend({
     document  : defaultDocument
   }, options));
+
+  this.viewClass = options.viewClass || View;
 
   // freeze & create the template node immediately
   var node = vnode.freeze(options, this._hydrators);
@@ -2059,7 +2146,7 @@ function Template(vnode, options) {
  * creates a new view
  */
 
-Template.prototype.view = function(context) {
+Template.prototype.view = function(context, options) {
 
   // TODO - make compatible with IE 8
   var section     = this.section.clone();
@@ -2070,7 +2157,7 @@ Template.prototype.view = function(context) {
   }
 
   // TODO - set section instead of node
-  return new View(section, bindings, context);
+  return new this.viewClass(section, bindings, this, context, options);
 };
 
 /**
@@ -2080,7 +2167,7 @@ module.exports = function(vnode, options) {
   return new Template(vnode, options);
 };
 
-},{"./_fragmentSection":8,"./_nodeSection":11,"./view":22,"nofactor":23,"xtend/mutable":24}],21:[function(require,module,exports){
+},{"./_fragmentSection":11,"./_nodeSection":14,"./view":23,"nofactor":24,"xtend/mutable":25}],22:[function(require,module,exports){
 /**
  */
 
@@ -2102,14 +2189,16 @@ module.exports = function(nodeValue) {
   return new Text(nodeValue);
 };
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /**
  */
 
-function View(section, bindings, context) {
+function View(section, bindings, template, context, options) {
 
   this.section  = section;
   this.bindings = bindings;
+  this.template = template;
+  this.options  = options;
 
   if (context) this.update(context);
 }
@@ -2122,31 +2211,31 @@ View.prototype.update = function(context) {
   for (var i = 0, n = this.bindings.length; i < n; i++) {
     this.bindings[i].update(context);
   }
-}
+};
 
 /**
  */
 
 View.prototype.render = function() {
   return this.section.render();
-}
+};
 
 /**
  */
 
 View.prototype.remove = function() {
   return this.section.remove();
-}
+};
 
 /**
  */
 
 module.exports = View;
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 module.exports = document;
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 module.exports = extend
 
 function extend(target) {

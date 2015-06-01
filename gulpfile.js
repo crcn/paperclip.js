@@ -22,7 +22,7 @@ process.env.PC_DEBUG = 1;
  */
 
 var paths = {
-  testFiles  : ["test/**/*-test.js", "lib/**/*-test.js"],
+  testFiles  : ["test/helpers/document.js", "test/**/*-test.js", "lib/**/*-test.js"],
   appFiles   : ["lib/**/*.js"],
   allFiles   : ["test/**", "lib/**", "src/**"]
 };
@@ -129,7 +129,7 @@ gulp.task("jscs", function() {
       "fileExtensions": [ ".js", "jscs" ],
 
       "requireParenthesesAroundIIFE": true,
-      "maximumLineLength": 120,
+      "maximumLineLength": 200,
       "validateLineBreaks": "LF",
       "validateIndentation": 2,
       "validateQuoteMarks": "\"",

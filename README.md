@@ -26,7 +26,6 @@ Paperclip is a reactive template engine that compiles HTML to DOM. All optimizat
 template:
 
 ```html
-
 <input type="text" value="{{ <~> name }}" />
 <show when="{{name}}">
   <h3>Hello {{name}}!</h3>
