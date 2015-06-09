@@ -3,6 +3,9 @@
   "version": "3.0.3",
   "description": "controller logic:",
   "main": "./lib/node.js",
+  "publishConfig": {
+    "tag": "trunk"
+  },
   "scripts": {
     "test": "gulp lint test-coveralls"
   },
