@@ -1,5 +1,5 @@
 {
-  "name": "paperclip-alpha",
+  "name": "paperclip",
   "version": "3.0.3",
   "description": "controller logic:",
   "main": "./lib/node.js",
