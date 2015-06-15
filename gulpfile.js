@@ -1,5 +1,6 @@
 var gulp       = require("gulp");
 var istanbul   = require("gulp-istanbul");
+var peg        = require("gulp-peg");
 var mocha      = require("gulp-mocha");
 var plumber    = require("gulp-plumber");
 var jshint     = require("gulp-jshint");
@@ -22,7 +23,7 @@ process.env.PC_DEBUG = 1;
 var paths = {
   testFiles  : ["test/**/*-test.js"],
   appFiles   : ["lib/**/*.js"],
-  allFiles   : ["test/**", "lib/**"]
+  allFiles   : ["test/**", "lib/**", "src/**"]
 };
 
 /**
@@ -89,6 +90,18 @@ gulp.task("minify", ["bundle"], function() {
 
 /**
  */
+
+gulp.task("parser", function() {
+  return gulp.
+  src(__dirname + "/src/parser/parser.peg").
+  pipe(peg({
+    optimize: "size"
+  })).
+  pipe(gulp.dest(__dirname + "/lib/parser"));
+});
+
+/**
+ */9
 
 gulp.task("test-browser", function(complete) {
   karma.start({

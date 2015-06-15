@@ -49,6 +49,10 @@ function attrValues(values) {
     return !/^[\n\t\r]+$/.test(v.value);
   });
 
+  if (!values.length) {
+    return new LiteralExpression(true);
+  }
+
   if (values.length === 1 && values[0].type === "string") {
     return values[0];
   } else {
@@ -159,7 +163,7 @@ TagAttributes
 
       for (var i = 0, n = attributes.length; i < n; i++) {
         var attr = attributes[i];
-        attrs[attr.name] = attr.value;
+        attrs[attr.name] = attr.value || true;
       }
 
       return new HashExpression(attrs);

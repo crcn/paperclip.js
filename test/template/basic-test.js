@@ -39,7 +39,7 @@ describe(__filename + "#", function () {
   });
 
   it("throws an error if the source is anything other than a string, or function", function () {
-    
+
     var err;
     try {
       template({});
@@ -102,5 +102,11 @@ describe(__filename + "#", function () {
     assert.notEqual(tpl.modifiers.uppercase, void 0);
     assert.notEqual(tpl.accessorClass, void 0);
   });
-  
+
+  it("can parse templates with empty attributes", function() {
+    var tpl = pc.template("<div id='test' empty-attribute='' ></div>");
+    var v = tpl.view();
+    v.render();
+  })
+
 });
