@@ -101,7 +101,7 @@ gulp.task("parser", function() {
 });
 
 /**
- */9
+ */
 
 gulp.task("test-browser", function(complete) {
   karma.start({

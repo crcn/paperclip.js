@@ -180,7 +180,7 @@ describe(__filename + "#", function () {
     var input = b.render();
 
     setTimeout(function () {
-      assert.equal(input.value, void 0);
+      assert.equal(input.value, '');
       next();
     }, 10);
   });

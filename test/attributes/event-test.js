@@ -31,7 +31,14 @@ describe(__filename + "#", function () {
     "focusIn:focus",
     "focusOut:blur",
     "keyDown",
-    "keyUp"
+    "keyUp",
+    "dragstart",
+    "dragend",
+    "dragover",
+    "dragenter",
+    "dragleave",
+    "selectstart",
+    "drop"
   ].forEach(function (event) {
 
     var ep = event.split(":"),
@@ -60,6 +67,45 @@ describe(__filename + "#", function () {
     });
   });
 
+  it("does not prevent dragstart events", function (next) {
+    var t = pc.template(
+      "<div onDragStart='{{" +
+      "onDragStart(event)" +
+      "}}'></div>"
+      , paperclip).view({
+        onDragStart: function (event) {
+          if (!event.defaultPrevented) {
+            next();
+          }
+        }
+      });
+
+    var e = document.createEvent("Event");
+    e.initEvent("dragstart", true, true);
+    t.render().dispatchEvent(e);
+
+    t.dispose();
+  });
+
+  it("does not prevent dragend events", function (next) {
+    var t = pc.template(
+      "<div onDragEnd='{{" +
+      "onDragEnd(event)" +
+      "}}'></div>"
+      , paperclip).view({
+        onDragEnd: function (event) {
+          if (!event.defaultPrevented) {
+            next();
+          }
+        }
+      });
+
+    var e = document.createEvent("Event");
+    e.initEvent("dragend", true, true);
+    t.render().dispatchEvent(e);
+
+    t.dispose();
+  });
 
 
   it("can capture an onEnter event", function (next) {
