@@ -43,7 +43,7 @@
     "istanbul": "^0.3.5",
     "jquery": "~1.8.3",
     "jscs": "^1.10.0",
-    "jsdom": "^5.5.0",
+    "jsdom": "3.x.x",
     "jshint": "^2.6.0",
     "karma": "^0.12.31",
     "karma-browserify": "^3.0.1",
