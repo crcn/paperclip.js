@@ -121,4 +121,19 @@ describe(__filename + "#", function () {
 
     assert.equal(stringifyView(v), "a-0a-1a-2a-3");
   });
+
+  it("should be able to iterate through a string, and update when the parent context changes", function() {
+
+    var tpl = template(
+      "<repeat each='12345' as='a'>" +
+        "<span class='{{ a === selected ? 'selected' : undefined }}'>{{a}}</span>" +
+      "</repeat>"
+    );
+
+    var v = tpl.view({});
+    // assert.equal(stringifyView(v), "<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>");
+    v.set("selected", "1");
+    assert.equal(stringifyView(v), "<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>");
+
+  });
 });
