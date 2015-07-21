@@ -15,7 +15,8 @@ describe(__filename + "#", function () {
   it("can add a class attribute with a block to a div element", function () {
     var v = pc.template(
       "<div class='class {{'class2'}}'></div>"
-    , pc).view();
+    , pc).view({});
+
 
     assert.equal(stringifyView(v), '<div class="class class2"></div>');
   });
@@ -23,7 +24,8 @@ describe(__filename + "#", function () {
   it("can add a class binding to a div element", function () {
     var v = pc.template(
       "<div class={{{class:true,class2:true}}}></div>"
-    , pc).view();
+    , pc).view({});
+
     assert.equal(stringifyView(v), '<div class="class class2"></div>');
   });
 
@@ -33,7 +35,8 @@ describe(__filename + "#", function () {
     , pc).view({useClass:true});
     assert.equal(stringifyView(v), '<div class="class class2"></div>');
     v.set("useClass", false);
-    v.runloop.runNow();
+    // v.update({useClass:false})
+    // v.runloop.runNow();
     assert.equal(stringifyView(v), '<div class="class2"></div>');
   });
 
@@ -43,10 +46,10 @@ describe(__filename + "#", function () {
     , pc).view({useClass:false});
     assert.equal(stringifyView(v), '<div class="class2"></div>');
     v.set("useClass", true);
-    v.runloop.runNow();
+    // v.runloop.runNow();
     assert.equal(stringifyView(v), '<div class="class2 class class1"></div>');
     v.set("useClass", false);
-    v.runloop.runNow();
+    // v.runloop.runNow();
     assert.equal(stringifyView(v), '<div class="class2"></div>');
 
   });

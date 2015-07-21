@@ -12,6 +12,7 @@ var buffer     = require("vinyl-buffer");
 var jscs       = require("gulp-jscs");
 var coveralls  = require("gulp-coveralls");
 var rename     = require("gulp-rename");
+var collapse   = require("bundle-collapser/plugin");
 var karma      = require("karma").server;
 var options    = require("yargs").argv;
 
@@ -70,6 +71,7 @@ gulp.task("test-coveralls", ["test-coverage"], function () {
 
 gulp.task("bundle", function() {
   return browserify("./lib/index.js").
+  plugin(collapse).
   bundle().
   pipe(source(pkg.name + '.js')).
   pipe(buffer()).

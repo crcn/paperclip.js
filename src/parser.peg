@@ -321,7 +321,7 @@ HashValue
     }
 
 HashKey
-  = key:StringLiteral { return key.value; }
+  = key:StringLiteral { return key[1]; }
   / key:ReferenceName { return key; }
 
 

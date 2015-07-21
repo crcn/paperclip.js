@@ -47,7 +47,7 @@ describe(__filename + "#", function () {
     var v = tpl.view({ message: "abba" });
     assert.equal(stringifyView(v), "<div>abba</div>");
     v.set("message", "baab");
-    v.runloop.runNow();
+    // v.runloop.runNow();
     assert.equal(stringifyView(v), "<div>baab</div>");
   });
 
