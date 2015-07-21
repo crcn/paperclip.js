@@ -7,11 +7,10 @@ describe(__filename + "#", function () {
 
   it("can data-bind to an attribute", function () {
     var v = pc.template(
-      "<div class=\"{{'some-class'}}\" id='abc'>abb</div>"
-    , pc).view({}),
+      "<div class={{'some-class'}} id='abc'>abb</div>"
+    , pc).view(),
     n = v.render();
 
-    // console.log(pc.transpile("<div class={{'some-class'}} id='abc'>abb</div>"));
 
     assert.equal(stringifyView(v), '<div id="abc" class="some-class">abb</div>');
   });
@@ -49,7 +48,7 @@ describe(__filename + "#", function () {
     v.set("c", "h");
 
     // bypass rAF
-    // v.runloop.runNow();
+    v.runloop.runNow();
 
     assert.equal(stringifyView(v), '<div id="abc" class="a g h d">abb</div>');
   });
@@ -66,10 +65,10 @@ describe(__filename + "#", function () {
     var v = pc.template("<div class='{{a}}' />").view({});
     assert.equal(stringifyView(v), "<div></div>");
     v.set("a", "b");
-    // v.runloop.runNow();
+    v.runloop.runNow();
     assert.equal(stringifyView(v), "<div class=\"b\"></div>");
     v.set("a", void 0);
-    // v.runloop.runNow();
+    v.runloop.runNow();
     assert.equal(stringifyView(v), "<div></div>");
     v.dispose();
   });
@@ -77,7 +76,7 @@ describe(__filename + "#", function () {
   it("maintains dashes in native elements", function() {
     var v = pc.template("<div data-test />").view({});
     var n = v.render();
-    assert.equal(n.getAttribute("data-test"), "true");
+    assert.equal(n.getAttribute("data-test"), true);
   });
 
 });

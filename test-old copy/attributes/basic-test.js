@@ -28,9 +28,9 @@ describe(__filename + "#", function () {
     assert.equal(stringifyView(v), "<div abba=\"true\">baab</div>");
   });
 
-  xit("automatically converts dashes to camelCase", function() {
+  it("automatically converts dashes to camelCase", function() {
 
-    var tpl = template("<div say-hello='{{message}}' />", {
+    var tpl = template("<div say-hello={{message}} />", {
       attributes: {
         sayHello: pc.Attribute.extend({
           initialize: function () {
@@ -51,7 +51,7 @@ describe(__filename + "#", function () {
     assert.equal(stringifyView(v), "<div>baab</div>");
   });
 
-  xit("automatically converts dashes to camelCase", function() {
+  it("automatically converts dashes to camelCase", function() {
 
     var tpl = template("<div say-hello />", {
       attributes: {
