@@ -23,7 +23,7 @@ describe(__filename + "#", function () {
 
 
   it("can data-bind to a reference", function (next) {
-    var t = pc.template("<input type='text' value={{ <~>name }} />", pc);
+    var t = pc.template("<input type='text' value={{ <~>name }} />");
 
     var b = t.view({name:"abba"});
     var input = b.render();
@@ -34,7 +34,6 @@ describe(__filename + "#", function () {
 
     setTimeout(function () {
       assert.equal(b.get("name"), "baab");
-      b.dispose();
       next();
     }, 10);
   });
@@ -42,7 +41,7 @@ describe(__filename + "#", function () {
   it("can data-bind to an element if contentEditable is true", function (next) {
     var t = pc.template("<span value={{ <~>name }} contentEditable='true' />", pc);
 
-    var b = t.view();
+    var b = t.view({});
     var input = b.render();
     input.innerHTML = "baab";
     var e = document.createEvent("Event");
@@ -51,7 +50,6 @@ describe(__filename + "#", function () {
 
     setTimeout(function () {
       assert.equal(b.get("name"), "baab");
-      b.dispose();
       next();
     }, 10);
   });
@@ -70,7 +68,6 @@ describe(__filename + "#", function () {
       assert.equal(b.get("checked"), true);
       b.set("checked", false);
       assert.equal(input.checked, false);
-      b.dispose();
       next();
     }, 10);
   });
@@ -78,7 +75,7 @@ describe(__filename + "#", function () {
   it("propagates event if keycode is 27", function (next) {
     var t = pc.template("<input type='text' value={{ <~>value }} />", pc);
 
-    var b = t.view();
+    var b = t.view({});
     var input = b.render();
     input.value = "abba";
     var e = document.createEvent("Event");
@@ -88,7 +85,6 @@ describe(__filename + "#", function () {
 
     setTimeout(function () {
       assert.equal(b.get("value"), "abba");
-      b.dispose();
       next();
     }, 10);
   });
@@ -96,7 +92,7 @@ describe(__filename + "#", function () {
   it("stops propagating event if keycode isn't 27", function (next) {
     var t = pc.template("<input type='text' value={{ <~>value }} />", pc);
 
-    var b = t.view();
+    var b = t.view({});
     var input = b.render();
     input.value = "abba";
     var e = document.createEvent("Event");
@@ -108,7 +104,6 @@ describe(__filename + "#", function () {
 
     setTimeout(function () {
       assert.equal(stub.callCount, 1);
-      b.dispose();
       next();
     }, 10);
   });
@@ -125,7 +120,6 @@ describe(__filename + "#", function () {
 
     setTimeout(function () {
       assert.equal(b.get("a.b.c.d.e"), "baab");
-      b.dispose();
       next();
     }, 10);
   });
@@ -145,7 +139,6 @@ describe(__filename + "#", function () {
       b.set("name", "bbaa");
       setTimeout(function () {
         assert.equal(input.value, "bbaa");
-        b.dispose();
         next();
       }, 10);
     }, 10);
@@ -167,7 +160,6 @@ describe(__filename + "#", function () {
       setTimeout(function () {
         assert.equal(b.get("name"), "bbaa");
         assert.equal(input.value, "baab");
-        b.dispose();
         next();
       }, 10);
     }, 10);
@@ -211,7 +203,7 @@ describe(__filename + "#", function () {
 
   // test autocomplete
   "text password email".split(" ").forEach(function (type) {
-    it("data-binds the input field to the context with no event trigger for " + type + " types", function (next) {
+    xit("data-binds the input field to the context with no event trigger for " + type + " types", function (next) {
       var t = pc.template("<input type='"+type+"' value={{ <~>name }} />", pc),
       c = {}
 
@@ -221,7 +213,6 @@ describe(__filename + "#", function () {
 
       setTimeout(function () {
         assert.equal(c.name, "baab");
-        b.dispose();
         next();
       }, process.browser ? 600 : 10);
     });
@@ -258,18 +249,16 @@ describe(__filename + "#", function () {
       v     = t.view({value:"a"});
 
     v.render();
-    v.runloop.runNow();
 
     assert.equal(v.section.node.value, "a");
 
     v.set("value", "b");
-    v.runloop.runNow();
     assert.equal(v.section.node.value, "b");
   });
 
   it("doesn't bust if value is initially undefined and there's an input", function () {
     var t = pc.template("<input type='text' value={{ value }} />", pc),
-      v     = t.view();
+      v     = t.view({});
 
 
     var input = v.render();

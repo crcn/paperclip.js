@@ -1,4 +1,4 @@
-var template = require("./template");
+var template = require("../..").template;
 var expect   = require("expect.js");
 var doc      = require("nofactor");
 

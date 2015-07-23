@@ -20,12 +20,12 @@ describe(__filename + "#", function () {
     c.set('enable', false);
 
     // TODO - check raf here
-    v.runloop.runNow();
+    // v.runloop.runNow();
     assert.equal(stringifyView(v), "<input disabled=\"disabled\">");
 
 
     c.set('enable', true);
-    v.runloop.runNow();
+    // v.runloop.runNow();
     assert.equal(stringifyView(v), "<input>");
   });
 });

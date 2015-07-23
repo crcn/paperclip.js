@@ -2,7 +2,7 @@
 
 module.exports = function(str) {
   var els = str.match(/<\w[^>]+/g);
-
+  
   if (!els) return str;
 
   for (var i = 0, n = els.length; i < n; i++) {

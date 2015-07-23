@@ -21,22 +21,20 @@ describe(__filename + "#", function () {
     var v = tpl.view({numbers:[0,1,2,3]});
     assert.equal(stringifyView(v), "0123");
     v.set("numbers", [4,5,6,7]);
-    v.runloop.runNow();
     assert.equal(stringifyView(v), "4567");
   });
 
   it("updates the block if the source changes", function () {
     var tpl = template("<repeat each={{numbers}} as='number'>{{number}}</repeat>", paperclip);
     var src = [0,1,2,3];
-    var v = tpl.view({numbers: src});
+    var ctx = {numbers: src};
+    var v = tpl.view(ctx);
     assert.equal(stringifyView(v), "0123");
     src.splice(0, 1, 4);
-    v.accessor.apply();
-    v.runloop.runNow();
+    v.update(ctx)
     assert.equal(stringifyView(v), "4123");
     src.splice(1, 2, 5, 6, 7);
-    v.accessor.apply();
-    v.runloop.runNow();
+    v.update(ctx);
     assert.equal(stringifyView(v), "45673");
   });
 
@@ -74,20 +72,18 @@ describe(__filename + "#", function () {
   });
 
   it("can apply a repeat block to an existing element", function () {
-    var tpl = template("<ul repeat.each={{numbers}} repeat.as='number'><li>{{number}}</li></ul>", paperclip);
+    var tpl = template("<ul><li repeat.each={{numbers}} repeat.as='number'>{{number}}</li></ul>");
     var v = tpl.view({numbers:[0,1,2,3]});
     assert.equal(stringifyView(v), "<ul><li>0</li><li>1</li><li>2</li><li>3</li></ul>");
     v.set("numbers", [4,5,6,7]);
-    v.runloop.runNow();
     assert.equal(stringifyView(v), "<ul><li>4</li><li>5</li><li>6</li><li>7</li></ul>");
   });
 
   it("can apply a repeat block with unbound child values & still update", function () {
-    var tpl = template("<ul repeat.each={{numbers}} repeat.as='number'><li>{{~number}}</li></ul>", paperclip);
+    var tpl = template("<ul><li repeat.each={{numbers}} repeat.as='number'>{{~number}}</li></ul>");
     var v = tpl.view({numbers:[0,1,2,3]})
     assert.equal(stringifyView(v), "<ul><li>0</li><li>1</li><li>2</li><li>3</li></ul>");
     v.set("numbers", [4,5,6,7]);
-    v.runloop.runNow();
     assert.equal(stringifyView(v), "<ul><li>4</li><li>5</li><li>6</li><li>7</li></ul>");
   });
 
@@ -96,7 +92,7 @@ describe(__filename + "#", function () {
         "<repeat each={{source}} as='a' key='v'>" +
           "{{a}}-{{v}}" +
         "</repeat>"
-      , paperclip);
+      );
 
       var v = tpl.view({
         source: { a:1, b:2, c:3, e:4 }
@@ -111,7 +107,7 @@ describe(__filename + "#", function () {
       "<repeat each={{source}} as='a' key='v'>" +
         "a-{{v}}" +
       "</repeat>"
-    , paperclip);
+    );
 
     var v = tpl.view({
       source: [
@@ -131,9 +127,8 @@ describe(__filename + "#", function () {
     );
 
     var v = tpl.view({});
-    // assert.equal(stringifyView(v), "<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>");
     v.set("selected", "1");
-    assert.equal(stringifyView(v), "<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>");
+    assert.equal(stringifyView(v), "<span class=\"selected\">1</span><span>2</span><span>3</span><span>4</span><span>5</span>");
 
   });
 });

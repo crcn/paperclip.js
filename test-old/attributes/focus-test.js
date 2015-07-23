@@ -25,7 +25,7 @@ describe(__filename + "#", function () {
     assert.equal(stringifyView(v), "<input>");
     c.set('focus', true);
 
-    v.runloop.runNow();
+    // v.runloop.runNow();
     assert.equal(i, 1);
 
 
@@ -52,11 +52,11 @@ describe(__filename + "#", function () {
     assert.equal(stringifyView(v), "<input>");
     c.set('focus', false);
 
-    v.runloop.runNow();
+    // v.runloop.runNow();
     assert.equal(i, 0);
     c.set('focus', true);
 
-    v.runloop.runNow();
+    // v.runloop.runNow();
     assert.equal(i, 1);
 
 

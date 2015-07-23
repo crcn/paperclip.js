@@ -32,12 +32,12 @@ describe(__filename + "#", function () {
     "focusOut:blur",
     "keyDown",
     "keyUp",
-    "dragstart",
-    "dragend",
-    "dragover",
-    "dragenter",
-    "dragleave",
-    "selectstart",
+    "dragStart",
+    "dragEnd",
+    "dragOver",
+    "dragEnter",
+    "dragLeave",
+    "selectStart",
     "drop"
   ].forEach(function (event) {
 
@@ -49,7 +49,7 @@ describe(__filename + "#", function () {
 
       var t = template(
         "<div on"+name.substr(0, 1).toUpperCase() + name.substr(1)+"='{{" +
-          "onEvent(event)" +
+          "onEvent" +
         "}}'></div>"
       , paperclip).view({
         onEvent: function (event) {
@@ -70,7 +70,7 @@ describe(__filename + "#", function () {
   it("does not prevent dragstart events", function (next) {
     var t = pc.template(
       "<div onDragStart='{{" +
-      "onDragStart(event)" +
+      "onDragStart" +
       "}}'></div>"
       , paperclip).view({
         onDragStart: function (event) {
@@ -84,13 +84,12 @@ describe(__filename + "#", function () {
     e.initEvent("dragstart", true, true);
     t.render().dispatchEvent(e);
 
-    t.dispose();
   });
 
   it("does not prevent dragend events", function (next) {
     var t = pc.template(
       "<div onDragEnd='{{" +
-      "onDragEnd(event)" +
+      "onDragEnd" +
       "}}'></div>"
       , paperclip).view({
         onDragEnd: function (event) {
@@ -103,8 +102,6 @@ describe(__filename + "#", function () {
     var e = document.createEvent("Event");
     e.initEvent("dragend", true, true);
     t.render().dispatchEvent(e);
-
-    t.dispose();
   });
 
 
@@ -112,7 +109,7 @@ describe(__filename + "#", function () {
 
     var t = pc.template(
       "<div onEnter='{{" +
-        "onEvent(event)" +
+        "onEvent" +
       "}}'></div>"
     , paperclip).view({
       onEvent: function (event) {
@@ -127,15 +124,13 @@ describe(__filename + "#", function () {
     e.keyCode = 13;
     t.render().dispatchEvent(e);
 
-
-    t.dispose();
   });
 
   it("can capture an onDelete event", function (next) {
 
     var t = pc.template(
       "<div onDelete='{{" +
-        "onEvent(event)" +
+        "onEvent" +
       "}}'></div>"
     , paperclip).view({
       onEvent: function (event) {
@@ -153,7 +148,7 @@ describe(__filename + "#", function () {
 
     var t = pc.template(
       "<div onEscape='{{" +
-        "onEvent(event)" +
+        "onEvent" +
       "}}'></div>"
     , paperclip).view({
       onEvent: function (event) {
@@ -171,7 +166,7 @@ describe(__filename + "#", function () {
     var i = 0;
     var t = pc.template(
       "<div onEscape='{{" +
-        "onEvent(event)" +
+        "onEvent" +
       "}}'></div>"
     , paperclip).view({
       onEvent: function (event) {
@@ -191,7 +186,7 @@ describe(__filename + "#", function () {
     var i = 0;
     var t = pc.template(
       "<div onEscape='{{" +
-        "onEvent(event)" +
+        "onEvent" +
       "}}'></div>"
     , paperclip).view({
       onEvent: function (event) {
@@ -204,7 +199,7 @@ describe(__filename + "#", function () {
     e.keyCode = 27;
     t.render().dispatchEvent(e);
     assert.equal(i, 1);
-    t.unbind();
+    t.update({});
     t.section.node.dispatchEvent(e);
     assert.equal(i, 1);
   });

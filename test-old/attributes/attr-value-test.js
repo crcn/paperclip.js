@@ -8,7 +8,7 @@ describe(__filename + "#", function () {
   it("can data-bind to an attribute", function () {
     var v = pc.template(
       "<div class=\"{{'some-class'}}\" id='abc'>abb</div>"
-    , pc).view({}),
+    ).view({}),
     n = v.render();
 
     // console.log(pc.transpile("<div class={{'some-class'}} id='abc'>abb</div>"));
@@ -71,7 +71,7 @@ describe(__filename + "#", function () {
     v.set("a", void 0);
     // v.runloop.runNow();
     assert.equal(stringifyView(v), "<div></div>");
-    v.dispose();
+
   });
 
   it("maintains dashes in native elements", function() {

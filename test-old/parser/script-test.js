@@ -4,6 +4,46 @@ assert     = require("assert");
 describe(__filename + "#", function () {
 
 
+  /*
+  // TODO
+  [
+
+    ["a||b"                   , [{a:1, b:2}, "1"], [{a:false, b:2}, "2"]],
+    ["a===b"                  , [{a:1, b:1}, "true"], [{a:1, b:"1"}, "false"]],
+    ["a==b"                   , [{a:1, b:1}, "true"], [{a:1, b:"1"}, "true"], [{a:1, b:2}, "false"]],
+    ["a?b:c"                  , [{a:1, b:2}, "2"], [{a:false, b:2, c:3}, "3"]],
+    ["a-b"                    , [{a:1, b:2}, "-1"]],
+    ["a.b.c"                  , [{a:{b:{c:1}}}, "1"]],
+    ["null"                   , [{}, "null"]],
+    ["!a"                     , [{a:false}, "true"]],
+    ["!!a"                    , [{a:1}, "true"]],
+    ["-a"                     , [{a:1}, "-1"]],
+    ["add(a, b)"              , [{add: function(a, b) { return a + b; }, a:1, b: 2}, "3"]],
+    ["a|abs"                  , [{a:-1}, "1"]],
+    ["a|abs|add(5)"           , [{a:-1}, "6"]],
+    ["a.b.c(1,2)"             , [{a:{b:{c:function(a, b) { return a + b; }}}}, "3"]],
+    ["a + '-' + b + '-' + c"  , [{a:1, b:2, c:3}, "1-2-3"]],
+    ["a+-b"                   , [{a:5, b:-2}, "7"]],
+    ["a-(-b)"                 , [{a:5, b:-2}, "3"]],
+    ["10>=10===true"          , [{}, "true"]]
+
+  ].forEach(function(test) {
+    it("can parse " + test[0], function() {
+      var tpl = template("{{" + test[0] + "}}", {
+        modifiers: {
+          abs: Math.abs,
+          add: function(a, b) { return a + b; }
+        }
+      });
+      test.slice(1).forEach(function(match) {
+        var v   = tpl.view(match[0]);
+        v.update(match[0]);
+        expect(v.toString()).to.be(match[1]);
+      });
+    });
+  });
+
+  */
 
   describe("scripts", function () {
     it("automatically assigns value script", function () {

@@ -34,7 +34,8 @@ var paths = {
 var mochaOptions = {
   bail     : options.bail     !== 'false',
   reporter : options.reporter || 'dot',
-  grep     : options.grep   || options.only
+  grep     : options.grep   || options.only,
+  timeout  : 500
 }
 
 /**
