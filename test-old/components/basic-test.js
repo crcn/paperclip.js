@@ -168,4 +168,22 @@ describe(__filename + "#", function () {
     var n = v.render();
     assert.equal(n.nodeName, "SAY-HELLO");
   });
+
+  it("properties and attributes go to the same place on a registered component", function() {
+    var tpl = template("<component a='{{a}}' b={{b}}></component>", {
+      components: {
+        component: pc.Component.extend({
+          initialize: function() {
+            this.section.appendChild(this.node = this.document.createTextNode(""));
+          },
+          update: function() {
+            this.node.nodeValue = "a:" + this.attributes.a + ", b:" + this.attributes.b;
+          }
+        })
+      }
+    });
+
+    var v = tpl.view({ a: 1, b: 2 });
+    assert.equal(stringifyView(v), "a:1, b:2");
+  });
 });

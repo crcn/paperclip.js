@@ -1,7 +1,7 @@
 var assert     = require("assert"),
 pc             = require("../..")
 template       = pc.template,
-stringifyView = require("../utils/stringifyView")
+stringifyView  = require("../utils/stringifyView")
 
 /*
 
@@ -104,7 +104,7 @@ describe(__filename + "#", function () {
     };
 
     var t = pc.template(
-      "hello <show when={{condition}}>" + 
+      "hello <show when={{condition}}>" +
         "<unsafe html={{content}} />" +
       "</show>!"
     , pc).view(c);
@@ -117,4 +117,3 @@ describe(__filename + "#", function () {
   });
 
 });
-

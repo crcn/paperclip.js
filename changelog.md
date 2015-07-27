@@ -4,5 +4,7 @@
 - fewer change watchers
 - autocomplete check temporarily removed
 - templates can now be registered as components
-- key={{value}} and key='{{value}}' behave differently. 
+- key={{value}} and key='{{value}}' behave differently.
 - repeat attributes are now applied to the element they're attached to. E.g: `<li repeat.each={{numbers}} as='number'>{{number}}</li>`
+- template.view() does not call `update` if the context is not currently present
+- `.bind()` has been changed to `update()`
