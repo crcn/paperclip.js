@@ -1,20 +1,11 @@
 var pc   = require("../.."),
 assert   = require("assert"),
-defaultDocument = require("nofactor"),
 paperclip = require("../.."),
 stringifyView = require("../utils/stringifyView"),
 template = paperclip.template;
 
 describe(__filename + "#", function () {
 
-  before(function () {
-    paperclip.document = document;
-  });
-
-
-  after(function () {
-    paperclip.document = defaultDocument;
-  });
 
 
   [

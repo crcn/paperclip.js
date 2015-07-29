@@ -38,28 +38,30 @@ describe(__filename + "#", function () {
       name: "bob"
     }
 
-    var t = pc.template("hello <unsafe html={{content}} />", pc).view(c),
-    t2    = pc.template("world", pc),
-    t3    = pc.template("{{name}}", pc);
+    var t = pc.template("hello <unsafe html={{content}} />").view(c),
+    t2    = pc.template("world"),
+    t3    = pc.template("{{name}}");
 
     var b2, b3;
 
-    c.content = b2 = t2.view({});
+    t.update({ content: b2 = t2.view({})});
 
-    t.accessor.apply();
-    t.runloop.runNow();
+    // t.accessor.apply();
+    // t.runloop.runNow();
     assert.equal(t.toString(), "hello world");
-    c.content = b3 = t3.view(c);
-    t.accessor.apply();
-    t.runloop.runNow();
+    var c = { content: b3 = t3.view({name:"bob"}) };
+    t.update(c);
+
+    // t.accessor.apply();
+    // t.runloop.runNow();
     assert.equal(t.toString(), "hello bob");
-    c.content = b2;
-    t.accessor.apply();
-    t.runloop.runNow();
+    t.update({ content:  b2 });
+    // t.accessor.apply();
+    // t.runloop.runNow();
     assert.equal(t.toString(), "hello world");
-    c.content = b3;
-    t.accessor.apply();
-    t.runloop.runNow();
+    t.update({ content: b3 });
+    // t.accessor.apply();
+    // t.runloop.runNow();
     assert.equal(t.toString(), "hello bob");
   });
 
@@ -70,28 +72,35 @@ describe(__filename + "#", function () {
     c2    = {},
     c3    = {};
 
-    var t = pc.template("hello <unsafe html={{content}} />", pc).view(c),
-    t2    = pc.template("my name is <unsafe html={{content}} />",  pc).view(c2),
-    t3    = pc.template("{{name}}", pc).view(c3);
+    var t = pc.template("hello <unsafe html={{content}} />").view(c),
+    t2    = pc.template("my name is <unsafe html={{content}} />").view(c2),
+    t3    = pc.template("{{name}}").view(c3);
 
     assert.equal(t.toString(), "hello ");
     c.content = t2;
 
-    t.accessor.apply();
-    t.runloop.runNow();
+    t.update(c);
+
+    // t.accessor.apply();
+    // t.runloop.runNow();
     assert.equal(t.toString(), "hello my name is ");
     c2.content = t3;
     c3.name = "bob";
-    t.accessor.apply();
-    t3.accessor.apply();
-    t2.accessor.apply();
-    t.runloop.runNow();
+
+    t.update(c);
+
+    // t.accessor.apply();
+    // t3.accessor.apply();
+    // t2.accessor.apply();
+    // t.runloop.runNow();
     assert.equal(t.toString(), "hello my name is bob");
     c.content = t3;
 
-    t2.unbind();
-    t.accessor.apply();
-    t.runloop.runNow();
+    t.update(c);
+
+    // t2.unbind();
+    // t.accessor.apply();
+    // t.runloop.runNow();
     assert.equal(t.toString(), "hello bob");
   });
 
@@ -107,12 +116,13 @@ describe(__filename + "#", function () {
       "hello <show when={{condition}}>" +
         "<unsafe html={{content}} />" +
       "</show>!"
-    , pc).view(c);
+    ).view(c);
 
     assert.equal(t.toString(), "hello bob!")
     c.condition = false;
-    t.accessor.apply();
-    t.runloop.runNow();
+    t.update(c);
+    // t.accessor.apply();
+    // t.runloop.runNow();
     assert.equal(t.toString(), "hello !");
   });
 

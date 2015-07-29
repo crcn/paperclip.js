@@ -1,7 +1,6 @@
 var assert     = require("assert"),
 pc             = require("../.."),
 template       = pc.template,
-defaultdocument = require("nofactor"),
 sinon     = require("sinon");
 
 
@@ -12,14 +11,7 @@ var tpl = paperclip.template("abba")
 
 describe(__filename + "#", function () {
 
-  before(function () {
-    pc.document = document;
-  });
 
-
-  after(function () {
-    pc.document = defaultdocument;
-  });
 
 
   it("can data-bind to a reference", function (next) {
