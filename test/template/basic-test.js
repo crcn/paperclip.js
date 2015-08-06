@@ -2,6 +2,7 @@ var assert = require("assert"),
 pc         = require("../.."),
 template   = pc.template,
 parser  = require("../../lib/parser"),
+compiler = require("../../lib/compiler"),
 stringifyView = require("../utils/stringifyView"),
 assert = require("assert");
 
@@ -13,29 +14,20 @@ var tpl = paperclip.template("abba")
 describe(__filename + "#", function () {
 
   it("can create a new template with a string source", function () {
-    var tpl = template("hello world");
+    var tpl = pc.template("hello world");
     assert.equal(typeof tpl.vnode, "object");
   });
 
   it("can create a new template with a script as the source", function () {
     var script,
-    tpl = template(script = parser.compile("hello world"));
+    tpl = template(script = compiler.compile("hello world"));
     assert.equal(typeof tpl.vnode, "object");
   });
 
-  it("can use a template with useCloneNode = false", function () {
+  xit("can use a template with useCloneNode = false", function () {
     var tpl = template(script = parser.compile("hello world"), { useCloneNode: false });
     assert.equal(stringifyView(tpl.view()), "hello world");
     assert.equal(stringifyView(tpl.view()), "hello world");
-  });
-
-  it("throws an error if the source is a string and there is no parser", function () {
-    var p = template.parser;
-    template.parser = void 0;
-    assert.throws(function () {
-      template("blah");
-    }, Error);
-    template.parser = p;
   });
 
   it("throws an error if the source is anything other than a string, or function", function () {
@@ -58,7 +50,7 @@ describe(__filename + "#", function () {
 
   it("template is not cached if the source is a function, and has been re-used", function () {
     var script,
-    tpl = template(script = parser.compile("hello world"));
+    tpl = template(script = compiler.compile("hello world"));
     assert.notEqual(tpl, template(script));
   });
 
@@ -94,14 +86,6 @@ describe(__filename + "#", function () {
     assert.equal(tpl.view().toString(), "foo &amp; bar")
   });
 
-  if (!process.browser)
-  it("has all the right defaults", function () {
-    var tpl = pc.template("foo &amp;amp; bar", {});
-    assert.notEqual(tpl.components.show, void 0);
-    assert.notEqual(tpl.attributes.onclick, void 0);
-    assert.notEqual(tpl.modifiers.uppercase, void 0);
-    assert.notEqual(tpl.accessorClass, void 0);
-  });
 
   it("can parse templates with empty attributes", function() {
     var tpl = pc.template("<div id='test' empty-attribute='' ></div>");

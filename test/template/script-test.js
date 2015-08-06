@@ -5,15 +5,15 @@ stringifyView = require("../utils/stringifyView");
 // TODO - clean me up!
 
 describe(__filename + "#", function () {
-  
+
   describe("preserved words", function () {
 
     it("can return an undefined value", function () {
-      assert.equal(pc.template("{{undefined}}").view({undefined:"abba"}).toString(), "");
+      assert.equal(pc.template("{{undefined}}").view({undefined:"abba"}).toString(), "undefined");
     });
 
     it("can return an null value", function () {
-      assert.equal(pc.template("{{null}}").view({null:"abba"}).toString(), "");
+      assert.equal(pc.template("{{null}}").view({null:"abba"}).toString(), "null");
     });
 
     it("can return false", function () {
@@ -38,14 +38,9 @@ describe(__filename + "#", function () {
       assert.equal(pc.template("{{name.first}}").view().toString(), "");
     });
 
-    it("dcan return an alternative value if a ref doesn't exist", function () {
-      var v = pc.template("{{name.first || 'doesn\\'t exist!' }}").view();
-
-      if (process.browser) {
-        assert.equal(stringifyView(v), "doesn't exist!");
-      } else {
-        assert.equal(stringifyView(v), "doesn&#x27;t exist!");
-      }
+    it("can return an alternative value if a ref doesn't exist", function () {
+      var v = pc.template("{{name.first || 'doesn\\'t exist!' }}").view({});
+      assert.equal(stringifyView(v), "doesn't exist!");
     });
 
     it("can call a function", function () {
@@ -98,40 +93,40 @@ describe(__filename + "#", function () {
     });
 
     it("can return false || true", function () {
-      assert.equal(pc.template("{{false||true}}").view().toString(), "true");
+      assert.equal(pc.template("{{false||true}}").view({}).toString(), "true");
     });
 
     it("can return true && true", function () {
-      assert.equal(pc.template("{{true&&true}}").view().toString(), "true");
+      assert.equal(pc.template("{{true&&true}}").view({}).toString(), "true");
     });
 
     it("can return true && false", function () {
-      assert.equal(pc.template("{{true&&false}}").view().toString(), "false");
+      assert.equal(pc.template("{{true&&false}}").view({}).toString(), "false");
     });
 
     it("can check that 10 > 9 === true", function () {
-      assert.equal(pc.template("{{10>9===true}}").view().toString(), "true");
+      assert.equal(pc.template("{{10>9===true}}").view({}).toString(), "true");
     });
 
     it("can cast !!name as a boolean", function () {
       assert.equal(pc.template("{{!!name}}").view({name:"craig"}).toString(), "true");
-      assert.equal(pc.template("{{!!name}}").view().toString(), "false");
+      assert.equal(pc.template("{{!!name}}").view({}).toString(), "false");
     });
 
     it("can check that 10 > 10 === false", function () {
-      assert.equal(pc.template("{{10>10}}").view().toString(), "false");
+      assert.equal(pc.template("{{10>10}}").view({}).toString(), "false");
     });
 
     it("can check that 10 >= 10 === false", function () {
-      assert.equal(pc.template("{{10>=10===true}}").view().toString(), "true");
+      assert.equal(pc.template("{{10>=10===true}}").view({}).toString(), "true");
     });
 
     it("can check that 10 < 10 === false", function () {
-      assert.equal(pc.template("{{10<10}}").view().toString(), "false");
+      assert.equal(pc.template("{{10<10}}").view({}).toString(), "false");
     });
 
     it("can check that 10 <= 10 === true", function () {
-      assert.equal(pc.template("{{10<=10===true}}").view().toString(), "true");
+      assert.equal(pc.template("{{10<=10===true}}").view({}).toString(), "true");
     });
 
     it("can check that hello() === 'world!'", function () {
@@ -149,14 +144,14 @@ describe(__filename + "#", function () {
     });
 
     it("can be defined", function () {
-      assert.equal(pc.template('{{"abba"}}').view().toString(), "abba");
+      assert.equal(pc.template('{{"abba"}}').view({}).toString(), "abba");
     })
   });
 
   describe("numbers", function () {
 
     it("can add two numbers together", function() {
-      assert.equal(pc.template("{{5+2}}").view().toString(), "7");
+      assert.equal(pc.template("{{5+2}}").view({}).toString(), "7");
     });
 
     it("can add two refs together", function() {
@@ -186,11 +181,11 @@ describe(__filename + "#", function () {
     // breaks
     if(false)
     it("can subtract a negative value", function () {
-      assert.equal(pc.template("{{5 - -4}}").view().toString(), "9");
+      assert.equal(pc.template("{{5 - -4}}").view({}).toString(), "9");
     });
 
     it("can be concatenated on a string", function () {
-      assert.equal(pc.template("{{100+'%'}}").view().toString(), "100%");
+      assert.equal(pc.template("{{100+'%'}}").view({}).toString(), "100%");
     });
   });
 
@@ -201,17 +196,17 @@ describe(__filename + "#", function () {
       c = {};
     })
 
-    it("can assign a=true", function () {
+    xit("can assign a=true", function () {
       assert.equal(pc.template("{{a=true}}").view(c).toString(), "true");
       assert.equal(c.a, true);
     });
 
-    it("can assign to a nested value", function () {
+    xit("can assign to a nested value", function () {
       assert.equal(pc.template("{{a.b.c.d=!e}}").view(c).toString(), "true");
       assert.equal(c.a.b.c.d, true);
     });
 
-    it("can assign aa.a=a=b=c=d", function () {
+    xit("can assign aa.a=a=b=c=d", function () {
       var c = {d:1};
       var v = pc.template("{{aa.a=a=b=c=d}}").view(c);
       v.render();

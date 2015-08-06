@@ -5,7 +5,7 @@ stringifyView = require("../utils/stringifyView");
 describe(__filename + "#", function () {
 
 
-  
+
   it("can call uppercase()", function () {
     assert.equal(pc.template("{{name|uppercase()}}").view({name:"abc"}).toString(), "ABC");
   });
@@ -19,14 +19,8 @@ describe(__filename + "#", function () {
   });
 
   it("can call json()", function () {
-
     var v = pc.template("{{a|json()}}").view({a:{b:1,c:2}});
-
-    if (process.browser) {
-      assert.equal(stringifyView(v), '{"b":1,"c":2}');
-    } else {
-      assert.equal(stringifyView(v), "{&#x22;b&#x22;:1,&#x22;c&#x22;:2}");
-    }
+     assert.equal(stringifyView(v), '{"b":1,"c":2}');
   });
 
   it("can call isNaN()", function () {
@@ -52,7 +46,7 @@ describe(__filename + "#", function () {
     tpl.modifiers.concat = function (name, value) {
       return name + value;
     };
-    
+
     assert.equal(tpl.view({a:"a"}).toString(), "ab")
   });
 
@@ -63,16 +57,16 @@ describe(__filename + "#", function () {
 
     var v = pc.template("{{a|uppercase()}}").view(c);
     assert.equal(stringifyView(v), "A");
-    c.a = "b";
-    v.accessor.apply();
-    v.runloop.runNow();
+    v.set("a", "b");
+    // v.accessor.apply();
+    // v.runloop.runNow();
     assert.equal(stringifyView(v), "B");
   })
 
 
   // TODO - make this work!
   xit("can bind to a model", function () {
-    
+
 
     var context = {
       firstName: "a",

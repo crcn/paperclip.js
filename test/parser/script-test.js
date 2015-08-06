@@ -50,13 +50,6 @@ describe(__filename + "#", function () {
         var ast = parser.parse("{{ a }}");
     });
 
-    it("properly parses scripts", function () {
-        var ast = parser.parse("{{ a:b, c: d, e:f}}")
-    });
-
-    it("can handle whitespace between keys", function () {
-        var ast = parser.parse("{{ a : b, c: d, e:f}}");
-    });
 
   });
 
@@ -161,9 +154,6 @@ describe(__filename + "#", function () {
         var ast = parser.parse("{{true && false >= true || undefined < null}}");
       });
 
-      it("puts equations at a higher priority than comparisons", function () {
-        var ast = parser.parse("{{scriptA:1>2+3}}")
-      });
     });
 
     describe("references", function () {
@@ -219,7 +209,7 @@ describe(__filename + "#", function () {
       });
     });
 
-    it("can parse the fast operator", function () {
+    xit("can parse the fast operator", function () {
       var ast = parser.parse("{{^a}}").childNodes.expressions.expressions[0].scripts;
       assert.equal(ast.value.value.value.fast, true);
       // assert.equal(ast.value.value.value.unbound, true);
@@ -227,7 +217,7 @@ describe(__filename + "#", function () {
 
     describe("function calls", function () {
       it("can be parsed", function () {
-        var ast = parser.parse("{{a.b.c(1,2,3 + 4)}}").childNodes.expressions.expressions[0];
+        var ast = parser.parse("{{a.b.c(1,2,3 + 4)}}");
         // assert.equal(ast.toJavaScript(), "block({'value':{run: function () { return this.call(this.get([\"a\",\"b\"]), \"c\", [1, 2, 3+4]); }, refs: []}}, void 0)")
       });
     });
@@ -238,26 +228,17 @@ describe(__filename + "#", function () {
       });
     });
 
-
-    it("can parse various expression", function () {
-      [
-        "{{ html:~sections.pages }}",
-        "{{ mobileBlocker: {} }}",
-        "{{error.code == 604}}",
-        "{{ onSubmit: signup() }}",
-        "{{!showOtherInput}}",
-        "{{#if: loading || !classrooms }}aff{{/else}}blarg{{/}}",
-        "{{ loadingGif: { show: true } }}",
-        "{{ model.demo ? 'demo-class' : '' }}",
-        "{{model.nstudents.numConnected == 0  && !model.demo}}",
-        "{{model: teacher, focus: true}}",
-        "{{ clipboard: { text: link, onCopied: onCopiedLink } | varg() }}",
-        '{{ a| t | e }}',
-        '<h2>{{ "dojo.teacher_web:invite_page.someone_invited_you" | t() }}</h2>'
-      ].forEach(function (expr) {
-        parser.parse(expr);
+    [
+      "{{error.code == 604}}",
+      "{{!showOtherInput}}",
+      "{{ model.demo ? 'demo-class' : '' }}",
+      "{{model.nstudents.numConnected == 0  && !model.demo}}",
+      '{{ a| t | e }}',
+      '<h2>{{ "dojo.teacher_web:invite_page.someone_invited_you" | t() }}</h2>'
+    ].forEach(function(script) {
+      it("can parse " + script, function() {
+        parser.parse(script);
       });
     });
-
-  });
+});
 });

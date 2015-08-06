@@ -1,4 +1,6 @@
-var pc   = require("../.."),
+require("../../lib/register");
+
+var pc   = require("../../lib"),
 assert   = require("assert"),
 stringifyView = require("../utils/stringifyView")
 
@@ -9,4 +11,3 @@ describe(__filename + "#", function () {
     assert.equal(stringifyView(tpl.view({name:"a"})), "hello a");
   });
 });
-

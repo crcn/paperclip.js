@@ -5,7 +5,7 @@ assert   = require("assert");
 describe(__filename + "#", function () {
 
 
-  it("can ignore a reference with ~", function () {
+  xit("can ignore a reference with ~", function () {
     var c = {
       a: "a"
     }, t = pc.template("{{~a}}").view(c);
@@ -62,5 +62,5 @@ describe(__filename + "#", function () {
     ref.value("b");
     assert.equal(t.toString(), "b");
   });
-  
+
 });

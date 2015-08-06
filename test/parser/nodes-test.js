@@ -1,6 +1,8 @@
 var parser = require("../../lib/parser.js"),
+pc         = require("../../lib"),
 template   = require("../../lib/template"),
-assert     = require("assert");
+assert     = require("assert"),
+stringifyView = require("../utils/stringifyView");
 
 
 describe(__filename + "#", function () {
@@ -14,27 +16,29 @@ describe(__filename + "#", function () {
   });
 
   it("doesn't maintain whitespace between two nodes", function () {
-    var ast = parser.parse("<span>a</span>\n<span />");
-    assert.equal(ast.childNodes.expressions.expressions.length, 2);
-    ast = parser.parse("<br /> <br />")
-    assert.equal(ast.childNodes.expressions.expressions.length, 2);
+    var vnode = pc.template("<span>a</span>\n<span />").vnode;
+
+
+    assert.equal(vnode.childNodes.length, 2);
+    var vnode = pc.template("<br /> <br />").vnode;
+    assert.equal(vnode.childNodes.length, 2);
   });
 
   it("maintains whitespace if text is after an element", function () {
-    var ast = parser.parse("<span>a</span> b");
-    assert.equal(ast.childNodes.expressions.expressions[1].value, " b");
+    var vnode = pc.template("<span>a</span> b").vnode;
+    assert.equal(vnode.childNodes[1].nodeValue, " b");
   });
 
   it("maintains spaces between blocks", function () {
-    var ast = parser.parse("{{a}} {{b}}");
-    assert.equal(ast.childNodes.expressions.expressions.length, 3);
-    var ast = parser.parse("{{a}} {{b}} c");
-    assert.equal(ast.childNodes.expressions.expressions.length, 4);
+    var vnode = pc.template("{{a}} {{b}}").vnode;
+    assert.equal(vnode.childNodes.length, 3);
+    var vnode = pc.template("{{a}} {{b}} c").vnode;
+    assert.equal(vnode.childNodes.length, 4);
   });
 
   it("maintains whitespace if the space is a new line character", function () {
-    var ast = parser.parse("{{a}}\n\t{{a}}");
-    assert.equal(ast.childNodes.expressions.expressions.length, 3);
+    var vnode = pc.template("{{a}}\n\t{{a}}").vnode;
+    assert.equal(vnode.childNodes.length, 3);
   });
 
   it("accepts many types of characters in the tag name", function () {
@@ -92,8 +96,9 @@ describe(__filename + "#", function () {
 
 
   it("doesn't maintain whitespace between comments", function () {
-    var tpl = template("<span></span>\t <span></span> <!--a-->");
-    assert.equal(tpl.view().toString(), "<span></span><span></span><!--a-->");
+    var tpl = pc.template("<span></span>\t <span></span> <!--a-->");
+
+    assert.equal(stringifyView(tpl.view({})), "<span></span><span></span><!--a-->");
   });
 
   describe("bindings", function () {
@@ -101,56 +106,24 @@ describe(__filename + "#", function () {
       var ast= parser.parse("aa {{abc}} bb");
     });
 
-    it("can parse binding blocks", function () {
-      var ast = parser.parse("{{#a}} 123 {{/}}");
-    });
-
-    it("can parse binding blocks with children", function () {
-      var ast = parser.parse("{{#a}}123{{/b}}456{{/c}}789{{/}}");
-    });
-
-    it("can parse bindings within attribute values", function () {
-      var ast = parser.parse("<input data-bind='{{model:<~>name}}'></input>");
-    });
-
-    it("can parse attribute values as bindings", function () {
-      var ast = parser.parse("<input data-bind={{model:<~>name}} />");
-    });
-
-    it("can parse bindings and text within attrbutes", function () {
-      var ast = parser.parse("<input value='hello {{firstName}} {{lastName}}'></input>");
-
-
-      var fs = require("fs");
-
-      try {
-        var ast = parser.parse(fs.readFileSync(__dirname + "/test.pc", "utf8"));
-        // console.log(JSON.stringify(ast, null, 2));
-      } catch (e) {
-        // console.log(e);
-      }
-    });
-
-
     it("trims whitespace from the start & end of elements", function () {
-      var tpl = template("<div> hello {{name}} </div>");
-      assert.equal(tpl.view({ name: "john"}).toString(), "<div>hello john</div>");
+      var tpl = pc.template("<div> hello {{name}} </div>");
+      assert.equal(stringifyView(tpl.view({ name: "john"})), "<div>hello john</div>");
     });
 
     it("maintains attribute spaces with a text binding", function () {
-      var tpl = template("<div class='blue red {{color}} yellow'></div>");
+      var tpl = pc.template("<div class='blue red {{color}} yellow'></div>");
       assert.equal(tpl.view({ color: "blue" }).toString(), '<div class="blue red blue yellow"></div>');
     });
 
     it("preserves whitespace between nodes & text nodes", function () {
-      var tpl = template("<strong>hello</strong> world");
+      var tpl = pc.template("<strong>hello</strong> world");
       assert.equal(tpl.view().toString(), "<strong>hello</strong> world");
     });
 
     it("preserves whitespace between nodes & blocks", function () {
-      var tpl = template("<strong>hello</strong> {{name}}");
-      assert.equal(tpl.view({name:"john"}).toString(), "<strong>hello</strong> john");
+      var tpl = pc.template("<strong>hello</strong> {{name}}");
+      assert.equal(tpl.view({name:"john"}).toString(), "<strong>hello</strong> john");
     });
-
   });
 });

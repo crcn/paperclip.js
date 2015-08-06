@@ -1,16 +1,21 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (global){
+var defaultAdapter = require(24);
+var template       = require(32);
+var extend         = require(70);
 
 /**
  */
 
 module.exports = {
-  template    : require(24),
-  transpile   : require(26).transpile,
+  transpile   : require(33).transpile,
   Attribute   : require(3),
-  Component   : require(18),
+  Component   : require(17),
   noConflict: function() {
     delete global.paperclip;
+  },
+  template: function(source, adapter) {
+    return template(source, extend({}, defaultAdapter, adapter || {}));
   }
 };
 
@@ -19,8 +24,8 @@ if (typeof window !== "undefined") {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"18":18,"24":24,"26":26,"3":3}],2:[function(require,module,exports){
-var extend       = require(49);
+},{"17":17,"24":24,"3":3,"32":32,"33":33,"70":70}],2:[function(require,module,exports){
+var extend       = require(70);
 
 function POJOAccessor() {
   this._getters  = {};
@@ -155,8 +160,8 @@ extend(POJOAccessor.prototype, {
 
 module.exports = POJOAccessor;
 
-},{"49":49}],3:[function(require,module,exports){
-var protoclass = require(48);
+},{"70":70}],3:[function(require,module,exports){
+var protoclass = require(69);
 
 /**
  */
@@ -187,7 +192,7 @@ protoclass(Base, {
 
 module.exports = Base;
 
-},{"48":48}],4:[function(require,module,exports){
+},{"69":69}],4:[function(require,module,exports){
 var BaseAttribute = require(3);
 
 /**
@@ -364,8 +369,8 @@ module.exports = BaseAttribute.extend({
   }
 });
 
-}).call(this,require(31))
-},{"3":3,"31":31}],13:[function(require,module,exports){
+}).call(this,require(51))
+},{"3":3,"51":51}],13:[function(require,module,exports){
 
 module.exports = {
   onClick       : require(11),
@@ -486,7 +491,7 @@ module.exports.test = function(vnode, key, value) {
 
 },{"3":3}],16:[function(require,module,exports){
 var BaseAttribute = require(3);
-var _bind         = require(28);
+var _bind         = require(35);
 
 /**
  */
@@ -633,38 +638,11 @@ module.exports.test = function(vnode, key, value) {
   return typeof value !== "string";
 };
 
-},{"28":28,"3":3}],17:[function(require,module,exports){
-var extend     = require(49);
-var transpiler = require(26);
-
-/**
- */
-
-function Compiler() { }
-
-/**
- */
-
-extend(Compiler.prototype, {
-
-  /**
-   */
-
-  compile: function(source, options) {
-    var js = transpiler.transpile(source, options);
-    return new Function("return " + js)();
-  }
-});
-
-/**
- */
-
-module.exports = new Compiler();
-
-},{"26":26,"49":49}],18:[function(require,module,exports){
-var protoclass = require(48);
-var template   = require(24);
-var extend     = require(49);
+},{"3":3,"35":35}],17:[function(require,module,exports){
+var protoclass = require(69);
+var template   = require(32);
+var fragment   = require(44);
+var extend     = require(70);
 
 /**
  */
@@ -675,7 +653,7 @@ function Component(section, vnode, attributes, view) {
   this.view          = view;
   this.document      = view.template.options.document;
   this.attributes    = {};
-  this.childTemplate = template(vnode, view.template.options);
+  if (vnode.childNodes) this.childTemplate = template(fragment(vnode.childNodes), view.template.options);
   for (var key in attributes) this.setAttribute(key, attributes[key]);
   this.initialize();
 };
@@ -684,32 +662,43 @@ function Component(section, vnode, attributes, view) {
  */
 
 module.exports = protoclass(Component, {
+
+  // TODO - add basic attribute validation here
+
+  /**
+   */
+
   initialize: function() {
     // OVERRIDE ME
   },
+
+  /**
+   */
+
   setAttribute: function(key, value) {
     this.attributes[key] = value;
   }
 });
 
-},{"24":24,"48":48,"49":49}],19:[function(require,module,exports){
+},{"32":32,"44":44,"69":69,"70":70}],18:[function(require,module,exports){
 module.exports = {
-  repeat: require(20)
+  repeat : require(19),
+  show   : require(20),
+  stack  : require(21),
+  switch : require(22),
+  unsafe : require(23)
 };
 
-},{"20":20}],20:[function(require,module,exports){
-var extend = require(49);
-var ivd    = require(40);
+},{"19":19,"20":20,"21":21,"22":22,"23":23}],19:[function(require,module,exports){
+var extend = require(70);
+var Base   = require(17);
 
 /**
  */
 
-function Repeat(section, vnode, attributes, view) {
-  extend(this, attributes);
-  this.section    = section;
-  this._cTemplate  = ivd.template(vnode, view.template.options);
+function RepeatComponent() {
+  Base.apply(this, arguments);
   this._children   = [];
-  this.view        = view;
 }
 
 /**
@@ -732,7 +721,14 @@ function _each(target, iterate) {
 /**
  */
 
-extend(Repeat.prototype, {
+module.exports = Base.extend(RepeatComponent, {
+
+  /**
+   */
+
+  initialize: function() {
+    // TODO - throw error of props don't exist here
+  },
 
   /**
    */
@@ -768,8 +764,9 @@ extend(Repeat.prototype, {
         properties = model;
       }
 
+      // TODO - provide SAME context here for speed and stability
       if (n >= self._children.length) {
-        child = self._cTemplate.view(properties, {
+        child = self.childTemplate.view(properties, {
           parent: parent
         });
         self._children.push(child);
@@ -788,13 +785,577 @@ extend(Repeat.prototype, {
   }
 });
 
+},{"17":17,"70":70}],20:[function(require,module,exports){
+var Base = require(17);
+
 /**
  */
 
-module.exports = Repeat;
+function ShowComponent() {
+  Base.apply(this, arguments);
+}
 
-},{"40":40,"49":49}],21:[function(require,module,exports){
-var extend = require(49);
+/**
+ */
+
+module.exports = Base.extend(ShowComponent, {
+
+  /**
+   */
+
+  update: function(context) {
+    var show = !!this.attributes.when;
+
+    if (this._show === show) return;
+
+    this._show = show;
+
+    if (show) {
+      this._view = this.childTemplate.view(this.view.context);
+      this.section.appendChild(this._view.render());
+    } else {
+
+      if (this._view) {
+        this._view.remove();
+      }
+
+      this._view = void 0;
+    }
+  }
+});
+
+},{"17":17}],21:[function(require,module,exports){
+var BaseComponent = require(17);
+var template      = require(32);
+
+/**
+ */
+
+function StackComponent(options) {
+  BaseComponent.apply(this, arguments);
+
+  var self = this;
+
+  this.childTemplates = this.childTemplate.vnode.target.childNodes.map(function(vnode) {
+    return template(vnode, self.view.template.options);
+  });
+}
+
+/**
+ */
+
+module.exports = BaseComponent.extend(StackComponent, {
+
+  /**
+   */
+
+  update: function(context) {
+
+    var currentTemplate;
+    var show = this.attributes.state;
+
+    if (typeof show === "number") {
+      currentTemplate = this.childTemplates[show];
+    } else {
+
+      // match by name
+      for (var i = this.childTemplates.length; i--;) {
+        var childTemplate = this.childTemplates[i];
+        if (childTemplate.vnode.target.attributes.name === show) {
+          currentTemplate = childTemplate;
+          break;
+        }
+      }
+    }
+
+
+    if (this.currentTemplate !== currentTemplate) {
+
+      if (this.currentView) {
+        this.currentView.remove();
+        this.currentView = void 0;
+      }
+
+      this.currentTemplate = currentTemplate;
+
+      if (this.currentTemplate) {
+        this.currentView = currentTemplate.view(context);
+        this.section.appendChild(this.currentView.render());
+      }
+    } else if (this.currentView) {
+      this.currentView.update(context);
+    }
+  }
+});
+
+},{"17":17,"32":32}],22:[function(require,module,exports){
+var BaseComponent = require(17);
+var _bind         = require(35);
+var template      = require(32);
+var vdocument     = require(41);
+var fragment      = require(44);
+
+/**
+ */
+
+function SwitchComponent() {
+  BaseComponent.apply(this, arguments);
+
+  var self = this;
+
+  // console.log(this.vnode);
+  // console.log(this.vnode)
+
+  this.childTemplates = this.vnode.target.childNodes.map(function(vnode) {
+    return template(vnode, self.view.template.options);
+  });
+
+  // this.vChildTemplates = this.vnode.target.childNodes.map(function(vnode) {
+
+    // return template(vnode)
+  // });
+}
+
+/**
+ */
+
+module.exports = BaseComponent.extend(SwitchComponent, {
+
+  /**
+   */
+
+  update: function(context) {
+
+    var child;
+    var element;
+
+
+    for (var i = 0, n = this.childTemplates.length; i < n; i++) {
+      child = this.childTemplates[i];
+      var dynamicVNode = child.vnode;
+      element      = dynamicVNode.target;
+      var atts = {};
+
+      if (!dynamicVNode.bindingClass) break;
+
+      // eesh - no beuno, but works well for now
+      dynamicVNode.bindingClass.prototype.update2.call({
+        view: this.view,
+        setAttribute: function(k, v) {
+          atts[k] = v;
+        },
+        setProperty: function(k, v) {
+          atts[k] = v;
+        }
+      });
+
+      if (atts.when) break;
+
+    }
+
+    if (this.currentChild == child) {
+      return this._view.update(context);
+    }
+
+    if (this._view) {
+      this._view.remove();
+    }
+
+    if (i == n) return;
+
+    this.currentChild = child;
+
+    var childChildTemplate = template(fragment(element.childNodes), this.view.template.options);
+
+    this._view = childChildTemplate.view(context);
+    this.section.appendChild(this._view.render());
+  }
+});
+
+},{"17":17,"32":32,"35":35,"41":41,"44":44}],23:[function(require,module,exports){
+(function (global){
+var Base = require(17);
+
+/**
+ */
+
+function UnsafeComponent() {
+  Base.apply(this, arguments);
+}
+
+/**
+ */
+
+module.exports = Base.extend(UnsafeComponent, {
+
+  /**
+   */
+
+  update: function(context) {
+
+    var value = this.attributes.html;
+
+    // dirty check if is a binding
+    if (typeof value === "object" && value.evaluate) {
+      value = void 0;
+    }
+
+    if (this.currentValue && this.currentValue === value) {
+      if (this.currentValue.render) {
+        this.currentValue.update(this.currentValue.context);
+        return;
+      }
+    }
+
+    // has a remove script
+    if (this.currentValue && this.currentValue.remove) {
+      this.currentValue.remove();
+    }
+
+    this.currentValue = value;
+
+    if (!value) {
+      return this.section.removeChildNodes();
+    }
+
+    var node;
+
+
+    if (value.render) {
+      value.remove();
+      node = value.render();
+    } else if (value.nodeType != null) {
+      node = value;
+    } else {
+      if (this.document !== global.document) {
+        node = this.document.createTextNode(String(value));
+      } else {
+        var div = this.document.createElement("div");
+        div.innerHTML = String(value);
+        node = this.document.createDocumentFragment();
+        var cn = Array.prototype.slice.call(div.childNodes);
+        for (var i = 0, n = cn.length; i < n; i++) {
+          node.appendChild(cn[i]);
+        }
+      }
+    }
+
+    this.section.removeChildNodes();
+    this.section.appendChild(node);
+  }
+});
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"17":17}],24:[function(require,module,exports){
+module.exports = {
+
+  /**
+   */
+
+  attributes: require(13),
+
+  /**
+   */
+
+  components: require(18),
+
+  /**
+   */
+
+  viewClass: require(28)
+};
+
+},{"13":13,"18":18,"28":28}],25:[function(require,module,exports){
+var protoclass = require(69);
+
+/**
+ */
+
+function Reference(view, path, gettable, settable) {
+  this.view     = view;
+  this.path     = path;
+  this.settable = settable !== false;
+  this.gettable = gettable !== false;
+}
+
+/**
+ */
+
+protoclass(Reference, {
+
+  /**
+   */
+
+  __isReference: true,
+
+  /**
+   */
+
+  value: function(value) {
+    if (!arguments.length) {
+      return this.gettable ? this.view.get(this.path) : void 0;
+    }
+    if (this.settable) this.view.set(this.path, value);
+  },
+
+  /**
+   */
+
+  toString: function() {
+    return this.view.get(this.path);
+  }
+});
+
+module.exports = Reference;
+
+},{"69":69}],26:[function(require,module,exports){
+(function (process){
+var protoclass = require(69);
+var async      = require(34);
+
+/**
+ */
+
+function Transitions() {
+  this._enter = [];
+  this._exit  = [];
+}
+
+/**
+ */
+
+module.exports = protoclass(Transitions, {
+
+  /**
+   */
+
+  push: function(transition) {
+    if (transition.enter) this._enter.push(transition);
+    if (transition.exit) this._exit.push(transition);
+  },
+
+  /**
+   */
+
+  enter: function() {
+    if (!this._enter.length) return false;
+    for (var i = 0, n = this._enter.length; i < n; i++) {
+      this._enter[i].enter();
+    }
+  },
+
+  /**
+   */
+
+  exit: function(complete) {
+    if (!this._exit.length) return false;
+    var self = this;
+    process.nextTick(function() {
+      async.each(self._exit, function(transition, next) {
+        transition.exit(next);
+      }, complete);
+    });
+
+    return true;
+  }
+});
+
+}).call(this,require(51))
+},{"34":34,"51":51,"69":69}],27:[function(require,module,exports){
+/* istanbul ignore next */
+function _stringifyNode(node) {
+
+  var buffer = "";
+
+  if (node.nodeType === 11) {
+    for (var i = 0, n = node.childNodes.length; i < n; i++) {
+      buffer += _stringifyNode(node.childNodes[i]);
+    }
+    return buffer;
+  }
+
+  buffer = node.nodeValue || node.outerHTML || "";
+
+  if (node.nodeType === 8) {
+    buffer = "<!--" + buffer + "-->";
+  }
+
+  return buffer;
+}
+
+module.exports = _stringifyNode;
+
+},{}],28:[function(require,module,exports){
+(function (global){
+var ivd            = require(60);
+var extend         = require(70);
+var BaseView       = ivd.View;
+var Accessor       = require(2);
+var _stringifyNode = require(27);
+var Transitions    = require(26);
+var Reference      = require(25);
+
+/**
+ */
+
+function PaperclipView(node, template, options) {
+
+  if (!options) options = {};
+
+  this.parent       = options.parent;
+  this.accessor     = this.parent ? this.parent.accessor : new Accessor();
+  this.transitions  = new Transitions();
+  this._remove      = this._remove.bind(this);
+
+  BaseView.call(this, node, template, options);
+}
+
+/**
+ */
+
+extend(PaperclipView.prototype, BaseView.prototype, {
+
+  /**
+   */
+
+  get: function(keypath) {
+    var v =  this.accessor.get(this.context, keypath);
+    return v != void 0 ? v : this.parent ? this.parent.get(keypath) : void 0;
+  },
+
+  /**
+   */
+
+  set: function(keypath, value) {
+    this.accessor.set(this.context, keypath, value);
+    this.update(this.context);
+  },
+
+  /**
+   */
+
+  setProperties: function(properties) {
+    for (var keypath in properties) {
+      this.accessor.set(this.context, keypath, properties[keypath]);
+    }
+    this.update(this.context);
+  },
+
+  /**
+   */
+
+  ref: function(keypath, gettable, settable) {
+    if (!this._refs) this._refs = {};
+
+    return new Reference(this, keypath, gettable, settable);
+    // return this._refs[keypath] || (this._refs[keypath] = new Reference(this, keypath, gettable, settable));
+  },
+
+  /**
+   */
+
+  call: function(keypath, params) {
+    var v =  this.accessor.get(this.context, keypath);
+    return v != void 0 ? this.accessor.call(this.context, keypath, params) : this.parent ? this.parent.call(keypath, params) : void 0;
+  },
+
+  /**
+   */
+
+  update: function(context) {
+    BaseView.prototype.update.call(this, this.context = context);
+  },
+
+  /**
+   * for testing. TODO - move this stuff to sections instead.
+   */
+
+  toString: function() {
+
+    if (this.template.section.document === global.document) {
+      return _stringifyNode(this.section.start ? this.section.start.parentNode : this.section.node);
+    }
+
+    return (this.section.start ? this.section.start.parentNode : this.section.node).toString();
+  },
+
+  /**
+   */
+
+  render: function() {
+
+    // re-bind if the old context exists.
+    if (!this.context && this.__context) {
+      var context    = this.__context;
+      this.__context = void 0;
+      this.update(context);
+    }
+
+    var section = BaseView.prototype.render.call(this);
+    this.transitions.enter();
+    return section;
+  },
+
+  /**
+   */
+
+  remove: function() {
+    if (this.__context) return;
+    if (this.transitions.exit(this._remove)) return;
+    this._remove();
+    return this;
+  },
+
+  /**
+   */
+
+  _remove: function() {
+    BaseView.prototype.remove.call(this);
+
+    // cache the context incase we re-render this view
+    this.__context = this.context;
+
+    // remove the context & unbind all the bindings
+    this.update(void 0);
+  }
+});
+
+/**
+ */
+
+module.exports = PaperclipView;
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"2":2,"25":25,"26":26,"27":27,"60":60,"70":70}],29:[function(require,module,exports){
+var extend     = require(70);
+var transpiler = require(33);
+
+/**
+ */
+
+function Compiler() { }
+
+/**
+ */
+
+extend(Compiler.prototype, {
+
+  /**
+   */
+
+  compile: function(source, options) {
+    var js = transpiler.transpile(source, options);
+    return new Function("return " + js)();
+  }
+});
+
+/**
+ */
+
+module.exports = new Compiler();
+
+},{"33":33,"70":70}],30:[function(require,module,exports){
+var extend = require(70);
 
 module.exports = function(initialize, update) {
 
@@ -846,10 +1407,12 @@ module.exports = function(initialize, update) {
 
     setProperty: function(key, value) {
       if (!this.setAsRegisteredAttribute(key, value)) {
-        if (value != void 0) {
-          this.ref[key] = value;
+
+        // no node type? It's a registered component.
+        if (!this.ref.nodeType) {
+          this.ref.setAttribute(key, value);
         } else {
-          this.ref[key] = void 0;
+          this.ref[key] = value;
         }
       }
     },
@@ -885,7 +1448,7 @@ module.exports = function(initialize, update) {
   return Binding;
 };
 
-},{"49":49}],22:[function(require,module,exports){
+},{"70":70}],31:[function(require,module,exports){
 module.exports = (function() {
   /*
    * Generated by PEG.js 0.8.0.
@@ -1794,57 +2357,11 @@ module.exports = (function() {
     parse:       parse
   };
 })();
-},{}],23:[function(require,module,exports){
-var protoclass = require(48);
-
-/**
- */
-
-function Reference(view, path, gettable, settable) {
-  this.view     = view;
-  this.path     = path;
-  this.settable = settable !== false;
-  this.gettable = gettable !== false;
-}
-
-/**
- */
-
-protoclass(Reference, {
-
-  /**
-   */
-
-  __isReference: true,
-
-  /**
-   */
-
-  value: function(value) {
-    if (!arguments.length) {
-      return this.gettable ? this.view.get(this.path) : void 0;
-    }
-    if (this.settable) this.view.set(this.path, value);
-  },
-
-  /**
-   */
-
-  toString: function() {
-    return this.view.get(this.path);
-  }
-});
-
-module.exports = Reference;
-
-},{"48":48}],24:[function(require,module,exports){
-var ivd                = require(40);
-var compiler           = require(17);
-var extend             = require(49);
-var defaultComponents  = require(19);
-var defaultAttributes  = require(13);
-var createBindingClass = require(21);
-var View               = require(30);
+},{}],32:[function(require,module,exports){
+var ivd                = require(45);
+var compiler           = require(29);
+var extend             = require(70);
+var createBindingClass = require(30);
 
 
 
@@ -1859,6 +2376,8 @@ module.exports = function(source, options) {
   if (typeof source === "object") {
     vnode = source;
   } else {
+
+    // TODO - use options parser here
     createVNode = typeof source === "string" ? compiler.compile(source, options) : source;
     vnode       = createVNode(ivd.fragment, ivd.element, ivd.text, ivd.comment, ivd.dynamic, createBindingClass);
   }
@@ -1869,69 +2388,12 @@ module.exports = function(source, options) {
     options.document = document;
   }
 
-  return ivd.template(vnode, extend({
-    components : defaultComponents,
-    attributes : defaultAttributes,
-    viewClass  : View
-  }, options));
+  return ivd.template(vnode, options);
 };
 
-},{"13":13,"17":17,"19":19,"21":21,"30":30,"40":40,"49":49}],25:[function(require,module,exports){
-(function (process){
-var protoclass = require(48);
-var async      = require(27);
-
-/**
- */
-
-function Transitions() {
-  this._enter = [];
-  this._exit  = [];
-}
-
-/**
- */
-
-module.exports = protoclass(Transitions, {
-
-  /**
-   */
-
-  push: function(transition) {
-    if (transition.enter) this._enter.push(transition);
-    if (transition.exit) this._exit.push(transition);
-  },
-
-  /**
-   */
-
-  enter: function() {
-    if (!this._enter.length) return false;
-    for (var i = 0, n = this._enter.length; i < n; i++) {
-      this._enter[i].enter();
-    }
-  },
-
-  /**
-   */
-
-  exit: function(complete) {
-    if (!this._exit.length) return false;
-    var self = this;
-    process.nextTick(function() {
-      async.each(self._exit, function(transition, next) {
-        transition.exit(next);
-      }, complete);
-    });
-
-    return true;
-  }
-});
-
-}).call(this,require(31))
-},{"27":27,"31":31,"48":48}],26:[function(require,module,exports){
-var extend = require(49);
-var parser = require(22);
+},{"29":29,"30":30,"45":45,"70":70}],33:[function(require,module,exports){
+var extend = require(70);
+var parser = require(31);
 
 /**
  */
@@ -1972,7 +2434,7 @@ extend(Transpiler.prototype, {
   _root: function(elements) {
 
     var buffer = "function(fragment, element, text, comment, dynamic, createBindingClass) {";
-    var fragment = "fragment(" + elements.map(this._expression).join(",") + ")";
+    var fragment = "fragment([" + elements.map(this._expression).join(",") + "])";
     buffer += "return " + fragment;
     buffer += "}";
 
@@ -1987,10 +2449,49 @@ extend(Transpiler.prototype, {
   },
 
   /**
+   * check for stuff like <li repeat.each={{items}}></li>
    */
 
   _element: function(expression) {
-    var buffer = "element('" + expression[1] + "'";
+
+
+    var exprs = {};
+    var prev  = expression;
+    var attrs = [];
+
+    expression[2].forEach(function(attr, i) {
+
+      var key    = attr[1];
+      var value  = attr[2];
+      var keyParts = key.split(".");
+
+      // check for things like <li repeat.each={{items}}></li>
+      if (keyParts.length > 1) {
+
+        if (!exprs[keyParts[0]]) {
+
+          expression = exprs[keyParts[0]] = ["element", keyParts[0], [], [[
+            "element",
+            expression[1],
+            attrs,
+            expression[3]
+          ]]];
+        }
+
+        exprs[keyParts[0]][2].push([attr[0], keyParts[1], value]);
+      } else {
+        attrs.push(attr);
+      }
+    });
+
+    return this._element2(expression);
+  },
+
+  /**
+   */
+
+  _element2: function(expression) {
+    var buffer   = "element('" + expression[1] + "'";
 
     var dynamicAttributes = [];
 
@@ -1999,9 +2500,12 @@ extend(Transpiler.prototype, {
     var attrs = [];
 
     buffer += expression[2].map(function(attr) {
-      var value = attr[2];
+
+      var key    = attr[1];
+      var value  = attr[2];
+
       if (!value.length || (value.length === 1 && value[0][0] === "string")) {
-        return "'" + attr[1] + "':" + (value.length ? this._expression(value[0]) : "true");
+        return "'" + key + "':" + (value.length ? this._expression(value[0]) : "true");
       } else {
         dynamicAttributes.push(attr);
       }
@@ -2057,8 +2561,8 @@ extend(Transpiler.prototype, {
         buffer += "createBindingClass(" + (staticAttrBuffer.length ? staticAttrBuffer : "void 0") + ", " + (dynamicAttrBuffer ? dynamicAttrBuffer : "void 0") + ")";
         buffer += ")";
       }
-
     }
+
 
     return buffer;
   },
@@ -2233,7 +2737,7 @@ extend(Transpiler.prototype, {
 
 module.exports = new Transpiler();
 
-},{"22":22,"49":49}],27:[function(require,module,exports){
+},{"31":31,"70":70}],34:[function(require,module,exports){
 module.exports = {
 
   /**
@@ -2255,7 +2759,7 @@ module.exports = {
   }
 };
 
-},{}],28:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 module.exports = function(callback, context) {
   if (callback.bind) return callback.bind.apply(callback, [context].concat(Array.prototype.slice.call(arguments, 2)));
   return function() {
@@ -2263,148 +2767,840 @@ module.exports = function(callback, context) {
   };
 };
 
-},{}],29:[function(require,module,exports){
-/* istanbul ignore next */
-function _stringifyNode(node) {
-
-  var buffer = "";
-
-  if (node.nodeType === 11) {
-    for (var i = 0, n = node.childNodes.length; i < n; i++) {
-      buffer += _stringifyNode(node.childNodes[i]);
-    }
-    return buffer;
-  }
-
-  buffer = node.nodeValue || node.outerHTML || "";
-
-  if (node.nodeType === 8) {
-    buffer = "<!--" + buffer + "-->";
-  }
-
-  return buffer;
-}
-
-module.exports = _stringifyNode;
-
-},{}],30:[function(require,module,exports){
-(function (global){
-var ivd            = require(40);
-var extend         = require(49);
-var BaseView       = ivd.View;
-var Accessor       = require(2);
-var _stringifyNode = require(29);
-var Transitions    = require(25);
-var Reference      = require(23);
+},{}],36:[function(require,module,exports){
+var extend        = require(70);
+var getNodeByPath = require(37);
+var getNodePath   = require(38);
 
 /**
  */
 
-function PaperclipView(node, template, options) {
+function FragmentSection(document, start, end) {
+  this.document = document;
 
-  if (!options) options = {};
+  this.start = start || document.createTextNode("");
+  this.end   = end   || document.createTextNode("");
 
-  this.parent       = options.parent;
-  this.accessor     = this.parent ? this.parent.accessor : new Accessor();
-  this.transitions  = new Transitions();
-  this._remove      = this._remove.bind(this);
-
-  BaseView.call(this, node, template, options);
+  if (!this.start.parentNode) {
+    var parent = document.createDocumentFragment();
+    parent.appendChild(this.start);
+    parent.appendChild(this.end);
+  }
 }
 
 /**
  */
 
-extend(PaperclipView.prototype, BaseView.prototype, {
+extend(FragmentSection.prototype, {
 
   /**
    */
 
-  get: function(keypath) {
-    var v =  this.accessor.get(this.context, keypath);
-    return v != void 0 ? v : this.parent ? this.parent.get(keypath) : void 0;
-  },
-
-  /**
-   */
-
-  set: function(keypath, value) {
-    this.accessor.set(this.context, keypath, value);
-    this.update(this.context);
-  },
-
-  /**
-   */
-
-  ref: function(keypath, gettable, settable) {
-    if (!this._refs) this._refs = {};
-
-    return new Reference(this, keypath, gettable, settable);
-    // return this._refs[keypath] || (this._refs[keypath] = new Reference(this, keypath, gettable, settable));
-  },
-
-  /**
-   */
-
-  call: function(keypath, params) {
-    var v =  this.accessor.get(this.context, keypath);
-    return v != void 0 ? this.accessor.call(this.context, keypath, params) : this.parent ? this.parent.call(keypath, params) : void 0;
-  },
-
-  /**
-   */
-
-  update: function(context) {
-    BaseView.prototype.update.call(this, this.context = context);
-  },
-
-  /**
-   * for testing. TODO - move this stuff to sections instead.
-   */
-
-  toString: function() {
-
-    if (this.template.section.document === global.document) {
-      return _stringifyNode(this.section.start ? this.section.start.parentNode : this.section.node);
-    }
-
-    return (this.section.start ? this.section.start.parentNode : this.section.node).toString();
+  appendChild: function(node) {
+    this.end.parentNode.insertBefore(node, this.end);
   },
 
   /**
    */
 
   render: function() {
-    var section = BaseView.prototype.render.call(this);
-    this.transitions.enter();
-    return section;
+    return this.start.parentNode;
   },
 
   /**
    */
 
   remove: function() {
-    if (this.transitions.exit(this._remove)) return;
-    this._remove();
+    var node     = this.removeChildNodes();
+    node.insertBefore(this.start, node.childNodes[0]);
+    node.appendChild(this.end);
     return this;
   },
 
   /**
    */
 
-  _remove: function() {
-    BaseView.prototype.remove.call(this);
-    this.update(void 0);
+  removeChildNodes: function() {
+    var node    = this.document.createDocumentFragment();
+    var start   = this.start;
+    var current = start.nextSibling;
+    var end     = this.end;
+
+    while (current !== end) {
+      node.appendChild(current);
+      current = start.nextSibling;
+    }
+
+    return node;
+  },
+
+  /**
+   */
+
+  createMarker: function() {
+    return new Marker(this.document, getNodePath(this.start), getNodePath(this.end));
+  },
+
+  /**
+   */
+
+  clone: function() {
+    var parentClone;
+
+    // fragment?
+    if (this.start.parentNode.nodeType === 11) {
+      parentClone = this.start.parentNode.cloneNode(true);
+    } else {
+      parentClone  = this.document.createDocumentFragment();
+      var children = this._getChildNodes();
+      var n        = children.length;
+
+      for (var i = 0; i < n; i++) {
+        parentClone.appendChild(children[i].cloneNode(true));
+      }
+    }
+
+    var first = parentClone.childNodes[0];
+    var last  = parentClone.childNodes[parentClone.childNodes.length - 1];
+
+    return new FragmentSection(this.document, first, last);
+  },
+
+  /**
+   */
+
+  _getChildNodes: function() {
+    var current = this.start;
+    var end     = this.end.nextSibling;
+    var children = [];
+    while (current !== end) {
+      children.push(current);
+      current = current.nextSibling;
+    }
+    return children;
   }
 });
 
 /**
  */
 
-module.exports = PaperclipView;
+function Marker(document, startPath, endPath) {
+  this.document  = document;
+  this.startPath = startPath;
+  this.endPath   = endPath;
+}
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"2":2,"23":23,"25":25,"29":29,"40":40,"49":49}],31:[function(require,module,exports){
+/**
+ */
+
+extend(Marker.prototype, {
+
+  /**
+   */
+
+  createSection: function(root) {
+    return new FragmentSection(this.document, getNodeByPath(root, this.startPath), getNodeByPath(root, this.endPath));
+  }
+});
+
+module.exports = FragmentSection;
+
+},{"37":37,"38":38,"70":70}],37:[function(require,module,exports){
+module.exports = function(root, path) {
+
+  var c = root;
+
+  for (var i = 0, n = path.length; i < n; i++) {
+    c = c.childNodes[path[i]];
+  }
+
+  return c;
+};
+
+},{}],38:[function(require,module,exports){
+module.exports = function(node) {
+
+  var path = [];
+  var p    = node.parentNode;
+  var c    = node;
+
+  while (p) {
+
+    path.unshift(Array.prototype.indexOf.call(p.childNodes, c));
+    c = p;
+
+    p = p.parentNode;
+
+    // virtual nodes - must be skipped
+    while (p && p.nodeType > 12) p = p.parentNode;
+  }
+
+  return path;
+};
+
+},{}],39:[function(require,module,exports){
+var extend        = require(70);
+var getNodeByPath = require(37);
+var getNodePath   = require(38);
+
+/**
+ */
+
+function NodeSection(document, node) {
+  this.document = document;
+  this.node     = node;
+}
+
+/**
+ */
+
+extend(NodeSection.prototype, {
+
+  /**
+   */
+
+  createMarker: function() {
+    return new Marker(this.document, getNodePath(this.node));
+  },
+
+  /**
+   */
+
+  appendChild: function(childNode) {
+    this.node.appendChild(childNode);
+  },
+
+  /**
+   */
+
+  render: function() {
+    return this.node;
+  },
+
+  /**
+   */
+
+  remove: function() {
+    if (this.node.parentNode) this.node.parentNode.removeChild(this.node);
+  },
+
+  /**
+   */
+
+  removeChildNodes: function() {
+    while(this.node.childNodes.length) this.node.removeChild(this.childNodes[0]);
+  },
+
+  /**
+   */
+
+  clone: function() {
+    return new NodeSection(this.document, this.node.cloneNode(true));
+  }
+});
+
+/**
+ */
+
+function Marker(document, path) {
+  this.document = document;
+  this.path     = path;
+}
+
+/**
+ */
+
+extend(Marker.prototype, {
+
+  /**
+   */
+
+  createSection: function(root) {
+    return new NodeSection(this.document, this.findNode(root));
+  },
+
+  /**
+   */
+
+  findNode: function(root) {
+    return getNodeByPath(root, this.path);
+  }
+});
+
+module.exports = NodeSection;
+
+},{"37":37,"38":38,"70":70}],40:[function(require,module,exports){
+/**
+ */
+
+function Comment(nodeValue) {
+  this.nodeValue = nodeValue || "";
+  this.target    = this;
+}
+
+/**
+ */
+
+Comment.prototype.nodeType = 8;
+
+/**
+ */
+
+Comment.prototype.freeze = function(options) {
+  return options.document.createComment(this.nodeValue);
+};
+
+/**
+ */
+
+module.exports = function(nodeValue) {
+  return new Comment(nodeValue);
+};
+
+},{}],41:[function(require,module,exports){
+var text     = require(49);
+var element  = require(43);
+var fragment = require(44);
+var comment  = require(40);
+
+module.exports = {
+
+  /**
+   */
+
+  createTextNode: function(nodeValue) {
+    return text(nodeValue);
+  },
+
+  /**
+   */
+
+  createDocumentFragment: function() {
+    return fragment([]);
+  },
+
+  /**
+   */
+
+  createElement: function(nodeName) {
+    return element(nodeName);
+  }
+};
+
+},{"40":40,"43":43,"44":44,"49":49}],42:[function(require,module,exports){
+var extend        = require(70);
+var getNodePath   = require(38);
+var getNodeByPath = require(37);
+
+/**
+ */
+
+function DynamicNode(vnode, bindingClass) {
+  this.vnode            = vnode;
+  this.bindingClass     = bindingClass;
+  this.vnode.parentNode = this;
+  this.target           = vnode;
+}
+
+/**
+ */
+
+DynamicNode.prototype.freeze = function(options, hydrators) {
+  if (options.components[this.vnode.nodeName]) {
+    return this.freezeComponent(options, hydrators);
+  } else {
+    return this.freezeElement(options, hydrators);
+  }
+};
+
+/**
+ */
+
+DynamicNode.prototype.freezeComponent = function(options, hydrators) {
+  var h2 = [];
+  var element = this.vnode.freeze(options, h2);
+  hydrators.push(new ComponentHydrator(h2[0], this.bindingClass, options));
+  return element;
+};
+
+/**
+ */
+
+DynamicNode.prototype.freezeElement = function(options, hydrators) {
+  var node = this.vnode.freeze(options, hydrators);
+  hydrators.push(new Hydrator(node, this.bindingClass, options));
+  return node;
+};
+
+/**
+ */
+
+function Hydrator(ref, bindingClass, options) {
+  this.options      = options;
+  this.ref          = ref;
+  this.bindingClass = bindingClass;
+}
+
+/**
+ */
+
+extend(Hydrator.prototype, {
+
+  /**
+   */
+
+  hydrate: function(root, view) {
+    if (!this._refPath) this._refPath = getNodePath(this.ref);
+    view.bindings.push(new this.bindingClass(getNodeByPath(root, this._refPath), view));
+  }
+});
+/**
+ */
+
+function ComponentHydrator(hydrator, bindingClass, options) {
+  this.options       = options;
+  this.hydrator      = hydrator;
+  this.bindingClass  = bindingClass;
+}
+
+/**
+ */
+
+extend(ComponentHydrator.prototype, {
+  hydrate: function(root, view) {
+    this.hydrator.hydrate(root, view);
+    var component = view.bindings[view.bindings.length - 1];
+    view.bindings.splice(view.bindings.indexOf(component), 0, new this.bindingClass(component, view));
+  }
+});
+
+/**
+ */
+
+module.exports = function(vnode, bindingClass) {
+  return new DynamicNode(vnode, bindingClass);
+};
+
+},{"37":37,"38":38,"70":70}],43:[function(require,module,exports){
+var createSection    = require(46);
+var fragment         = require(44);
+var FragmentSection  = require(36);
+var NodeSection      = require(39);
+
+/**
+ */
+
+function Element(nodeName, attributes, childNodes) {
+  this.nodeName   = String(nodeName).toLowerCase();
+  this._nodeNameNoDashes = this.nodeName.replace(/-/g, "");
+  this.attributes = attributes || {};
+  this.childNodes = childNodes;
+  this.target     = this;
+  for (var i = childNodes.length; i--;) {
+    childNodes[i].parentNode = this;
+  }
+}
+
+/**
+ */
+
+Element.prototype.nodeType = 1;
+
+/**
+ */
+
+Element.prototype.freeze = function(options, hydrators) {
+
+  var components = options.components || {};
+  var attributes = options.attributes || {};
+
+  if (components[this._nodeNameNoDashes]) {
+    return this._freezeComponent(components[this._nodeNameNoDashes], options, hydrators);
+  }
+
+  return this._freezeElement(options, hydrators);
+};
+
+/**
+ */
+
+Element.prototype.setAttribute = function(key, value) {
+  this.attributes[key] = value;
+};
+
+/**
+ */
+
+Element.prototype._freezeComponent = function(clazz, options, hydrators) {
+
+  // TODO - check parent node to see if there are anymore children. If not, then user NodeSection
+  var section = new FragmentSection(options.document);
+  hydrators.push(new ComponentHydrator(clazz, section, this, this._splitAttributes(options), options));
+  return section.render();
+};
+
+/**
+ */
+
+Element.prototype._freezeElement = function(options, hydrators) {
+
+  var element = options.document.createElement(this.nodeName);
+
+  var inf = this._splitAttributes(options);
+
+  for (var attrName in inf.staticAttributes) {
+    element.setAttribute(attrName, inf.staticAttributes[attrName]);
+  }
+
+  for (var i = 0, n = this.childNodes.length; i < n; i++) {
+    element.appendChild(this.childNodes[i].freeze(options, hydrators));
+  }
+
+  if (Object.keys(inf.dynamicAttributes).length) {
+    hydrators.push(new ElementAttributeHydrator(new NodeSection(options.document, element), options, inf.dynamicAttributes));
+  }
+
+  return element;
+};
+
+
+/**
+ */
+
+Element.prototype._splitAttributes = function(options) {
+
+  var dynamicAttributes = {};
+  var staticAttributes  = {};
+
+  if (options.attributes) {
+    for (var key in this.attributes) {
+      var attrClass = options.attributes[key];
+      if (attrClass && (!attrClass.test || attrClass.test(this, key, this.attributes[key]))) {
+        dynamicAttributes[key] = this.attributes[key];
+      } else {
+        staticAttributes[key]  = this.attributes[key];
+      }
+    }
+  } else {
+    staticAttributes = this.attributes;
+  }
+
+
+  return {
+    dynamicAttributes : dynamicAttributes,
+    staticAttributes  : staticAttributes
+  };
+};
+
+/**
+*/
+
+function ComponentHydrator(clazz, section, element, attrInfo, options) {
+  this.clazz                = clazz;
+  this.section              = section;
+  this.element              = element;
+  this.dynamicAttributes    = attrInfo.dynamicAttributes;
+  this.attributes           = attrInfo.staticAttributes;
+  this.hasDynamicAttributes = !!Object.keys(attrInfo.dynamicAttributes).length;
+  this.options              = options;
+}
+
+/**
+*/
+
+ComponentHydrator.prototype.hydrate = function(root, view) {
+  if (!this._marker) this._marker = this.section.createMarker();
+  var ref = new this.clazz(this._marker.createSection(root), this.element, this.attributes, view);
+  if (this.hasDynamicAttributes) {
+    _hydrateDynamicAttributes(ref, this.options, this.dynamicAttributes, view);
+  }
+  if (ref.update) view.bindings.push(ref);
+};
+
+/**
+ */
+
+module.exports = function(name, attributes, children) {
+  return new Element(name, attributes, Array.prototype.slice.call(arguments, 2));
+};
+
+/**
+ */
+
+function ElementAttributeHydrator(section, options, dynamicAttributes) {
+  this.section           = section;
+  this.options           = options;
+  this.dynamicAttributes = dynamicAttributes;
+}
+
+/**
+ */
+
+ElementAttributeHydrator.prototype.hydrate = function(root, view) {
+  if (!this._marker) this._marker = this.section.createMarker();
+  _hydrateDynamicAttributes(this._marker.findNode(root), this.options, this.dynamicAttributes, view);
+};
+
+/**
+ */
+
+function _hydrateDynamicAttributes(ref, options, dynamicAttributes, view) {
+  for (var key in dynamicAttributes) {
+    var clazz = options.attributes[key];
+    var attr = new clazz(ref, key, dynamicAttributes[key], view);
+    if (attr.update) view.bindings.push(attr);
+  }
+}
+
+},{"36":36,"39":39,"44":44,"46":46}],44:[function(require,module,exports){
+
+/**
+ */
+
+function Fragment(childNodes) {
+  this.childNodes = childNodes;
+  this.target     = this;
+  for (var i = childNodes.length; i--;) childNodes[i].parentNode = this;
+}
+
+/**
+ */
+
+Fragment.prototype.nodeType = 11;
+
+/**
+ */
+
+Fragment.prototype.freeze = function(options, hydrators) {
+
+  var fragment = options.document.createDocumentFragment();
+
+  for (var i = 0, n = this.childNodes.length; i < n; i++) {
+    fragment.appendChild(this.childNodes[i].freeze(options, hydrators));
+  }
+
+  return fragment;
+};
+
+/**
+ */
+
+module.exports = function(children) {
+  if (children.length === 1) return children[0];
+  return new Fragment(children);
+};
+
+},{}],45:[function(require,module,exports){
+/**
+ */
+
+module.exports = {
+  element   : require(43),
+  fragment  : require(44),
+  text      : require(49),
+  dynamic   : require(42),
+  comment   : require(40),
+  template  : require(48),
+  View      : require(50)
+};
+
+},{"40":40,"42":42,"43":43,"44":44,"48":48,"49":49,"50":50}],46:[function(require,module,exports){
+var extend          = require(70);
+var FragmentSection = require(36);
+var NodeSection     = require(39);
+
+module.exports = function(document, node) {
+  if (node.nodeType === 11) {
+    var section = new FragmentSection(document);
+    section.appendChild(node);
+    return section;
+  } else {
+    return new NodeSection(document, node);
+  }
+};
+
+},{"36":36,"39":39,"70":70}],47:[function(require,module,exports){
+module.exports = function(template) {
+
+  function Component(section, vnode, attributes, view) {
+    this.section    = section;
+    this.vnode      = vnode;
+    this.attributes = attributes;
+    this.view       = view;
+
+    this.childView = template.view();
+    this.section.appendChild(this.childView.render());
+  }
+
+  Component.prototype.template = template;
+
+  Component.prototype.setAttribute = function(key, value) {
+    this.attributes[key] = value;
+  };
+
+  Component.prototype.update = function(context) {
+    this.childView.update(this.attributes);
+  };
+
+  return Component;
+}
+
+},{}],48:[function(require,module,exports){
+var defaultDocument   = require(68);
+var View              = require(50);
+var extend            = require(70);
+var FragmentSection   = require(36);
+var NodeSection       = require(39);
+var templateComponent = require(47);
+
+function _cleanupComponents(hash) {
+  var c1 = hash || {};
+  var c2 = {};
+
+  for (var k in c1) {
+    if (c1[k].__isTemplate) c1[k]  =  templateComponent(c1[k]);
+    c2[k.toLowerCase()] = c1[k];
+  }
+
+  return c2;
+}
+
+/**
+ */
+
+function _cleanupOptions(options) {
+  return extend({}, options, {
+    components: _cleanupComponents(options.components),
+    attributes: options.attributes
+  });
+}
+
+/**
+ */
+
+function Template(vnode, options) {
+
+  this.vnode = vnode;
+
+  // hydrates nodes when the template is used
+  this._hydrators = [];
+
+  options = _cleanupOptions(extend({
+    document  : defaultDocument
+  }, options));
+
+  this.viewClass = options.viewClass || View;
+  this.options   = options;
+
+  // freeze & create the template node immediately
+  var node = vnode.freeze(options, this._hydrators);
+
+  if (node.nodeType === 11) {
+    this.section = new FragmentSection(options.document);
+    this.section.appendChild(node);
+  } else {
+    this.section = new NodeSection(options.document, node);
+  }
+}
+
+/**
+ */
+
+Template.prototype.__isTemplate = true;
+
+/**
+ * creates a new view
+ */
+
+Template.prototype.view = function(context, options) {
+
+  // TODO - make compatible with IE 8
+  var section     = this.section.clone();
+
+  var view = new this.viewClass(section, this, options);
+
+  for (var i = 0, n = this._hydrators.length; i < n; i++) {
+    this._hydrators[i].hydrate(section.node || section.start.parentNode, view);
+  }
+
+  // only set the context if it exists. Should be a very explicit thing.
+  if (context) view.update(context);
+
+  // TODO - set section instead of node
+  return view;
+};
+
+/**
+ */
+
+module.exports = function(vnode, options) {
+  return new Template(vnode, options);
+};
+
+},{"36":36,"39":39,"47":47,"50":50,"68":68,"70":70}],49:[function(require,module,exports){
+/**
+ */
+
+function Text(nodeValue) {
+  this.nodeValue = nodeValue || "";
+  this.target    = this;
+}
+
+/**
+ */
+
+Text.prototype.freeze = function(options) {
+  return options.document.createTextNode(this.nodeValue);
+};
+
+/**
+ */
+
+module.exports = function(nodeValue) {
+  return new Text(nodeValue);
+};
+
+},{}],50:[function(require,module,exports){
+/**
+ */
+
+function View(section, template, options) {
+  this.section  = section;
+  this.bindings = [];
+  this.template = template;
+  this.options  = options;
+}
+
+/**
+ * updates the view
+ */
+
+View.prototype.update = function(context) {
+  for (var i = 0, n = this.bindings.length; i < n; i++) {
+    this.bindings[i].update(context);
+  }
+};
+
+/**
+ */
+
+View.prototype.render = function() {
+  return this.section.render();
+};
+
+/**
+ */
+
+View.prototype.remove = function() {
+  return this.section.remove();
+};
+
+/**
+ */
+
+module.exports = View;
+
+},{}],51:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2464,10 +3660,10 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],32:[function(require,module,exports){
-var extend        = require(47);
-var getNodeByPath = require(33);
-var getNodePath   = require(34);
+},{}],52:[function(require,module,exports){
+var extend        = require(67);
+var getNodeByPath = require(53);
+var getNodePath   = require(54);
 
 /**
  */
@@ -2595,43 +3791,14 @@ extend(Marker.prototype, {
 
 module.exports = FragmentSection;
 
-},{"33":33,"34":34,"47":47}],33:[function(require,module,exports){
-module.exports = function(root, path) {
-
-  var c = root;
-
-  for (var i = 0, n = path.length; i < n; i++) {
-    c = c.childNodes[path[i]];
-  }
-
-  return c;
-};
-
-},{}],34:[function(require,module,exports){
-module.exports = function(node) {
-
-  var path = [];
-  var p    = node.parentNode;
-  var c    = node;
-
-  while (p) {
-
-    path.unshift(Array.prototype.indexOf.call(p.childNodes, c));
-    c = p;
-
-    p = p.parentNode;
-
-    // virtual nodes - must be skipped
-    while (p && p.nodeType > 12) p = p.parentNode;
-  }
-
-  return path;
-};
-
-},{}],35:[function(require,module,exports){
-var extend        = require(47);
-var getNodeByPath = require(33);
-var getNodePath   = require(34);
+},{"53":53,"54":54,"67":67}],53:[function(require,module,exports){
+arguments[4][37][0].apply(exports,arguments)
+},{"37":37}],54:[function(require,module,exports){
+arguments[4][38][0].apply(exports,arguments)
+},{"38":38}],55:[function(require,module,exports){
+var extend        = require(67);
+var getNodeByPath = require(53);
+var getNodePath   = require(54);
 
 /**
  */
@@ -2712,7 +3879,7 @@ extend(Marker.prototype, {
 
 module.exports = NodeSection;
 
-},{"33":33,"34":34,"47":47}],36:[function(require,module,exports){
+},{"53":53,"54":54,"67":67}],56:[function(require,module,exports){
 /**
  */
 
@@ -2739,10 +3906,10 @@ module.exports = function(nodeValue) {
   return new Comment(nodeValue);
 };
 
-},{}],37:[function(require,module,exports){
-var extend        = require(47);
-var getNodePath   = require(34);
-var getNodeByPath = require(33);
+},{}],57:[function(require,module,exports){
+var extend        = require(67);
+var getNodePath   = require(54);
+var getNodeByPath = require(53);
 
 /**
  */
@@ -2832,11 +3999,11 @@ module.exports = function(vnode, bindingClass) {
   return new DynamicNode(vnode, bindingClass);
 };
 
-},{"33":33,"34":34,"47":47}],38:[function(require,module,exports){
-var createSection    = require(41);
-var fragment         = require(39);
-var FragmentSection  = require(32);
-var NodeSection      = require(35);
+},{"53":53,"54":54,"67":67}],58:[function(require,module,exports){
+var createSection    = require(61);
+var fragment         = require(59);
+var FragmentSection  = require(52);
+var NodeSection      = require(55);
 
 /**
  */
@@ -2995,7 +4162,7 @@ function _hydrateDynamicAttributes(ref, options, dynamicAttributes, view) {
   }
 }
 
-},{"32":32,"35":35,"39":39,"41":41}],39:[function(require,module,exports){
+},{"52":52,"55":55,"59":59,"61":61}],59:[function(require,module,exports){
 
 /**
  */
@@ -3033,25 +4200,25 @@ module.exports = function() {
   return new Fragment(children);
 };
 
-},{}],40:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 /**
  */
 
 module.exports = {
-  element   : require(38),
-  fragment  : require(39),
-  text      : require(44),
-  dynamic   : require(37),
-  comment   : require(36),
-  template  : require(42),
+  element   : require(58),
+  fragment  : require(59),
+  text      : require(64),
+  dynamic   : require(57),
+  comment   : require(56),
+  template  : require(62),
 
-  View      : require(45)
+  View      : require(65)
 };
 
-},{"36":36,"37":37,"38":38,"39":39,"42":42,"44":44,"45":45}],41:[function(require,module,exports){
-var extend          = require(47);
-var FragmentSection = require(32);
-var NodeSection     = require(35);
+},{"56":56,"57":57,"58":58,"59":59,"62":62,"64":64,"65":65}],61:[function(require,module,exports){
+var extend          = require(67);
+var FragmentSection = require(52);
+var NodeSection     = require(55);
 
 module.exports = function(document, node) {
   if (node.nodeType === 11) {
@@ -3063,13 +4230,13 @@ module.exports = function(document, node) {
   }
 };
 
-},{"32":32,"35":35,"47":47}],42:[function(require,module,exports){
-var defaultDocument   = require(46);
-var View              = require(45);
-var extend            = require(47);
-var FragmentSection   = require(32);
-var NodeSection       = require(35);
-var templateComponent = require(43);
+},{"52":52,"55":55,"67":67}],62:[function(require,module,exports){
+var defaultDocument   = require(66);
+var View              = require(65);
+var extend            = require(67);
+var FragmentSection   = require(52);
+var NodeSection       = require(55);
+var templateComponent = require(63);
 
 function _cleanupComponents(hash) {
   var c1 = hash || {};
@@ -3154,7 +4321,7 @@ module.exports = function(vnode, options) {
   return new Template(vnode, options);
 };
 
-},{"32":32,"35":35,"43":43,"45":45,"46":46,"47":47}],43:[function(require,module,exports){
+},{"52":52,"55":55,"63":63,"65":65,"66":66,"67":67}],63:[function(require,module,exports){
 module.exports = function(template) {
 
   function Component(section, vnode, attributes, view) {
@@ -3176,7 +4343,7 @@ module.exports = function(template) {
   return Component;
 }
 
-},{}],44:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 /**
  */
 
@@ -3198,50 +4365,12 @@ module.exports = function(nodeValue) {
   return new Text(nodeValue);
 };
 
-},{}],45:[function(require,module,exports){
-/**
- */
-
-function View(section, template, options) {
-  this.section  = section;
-  this.bindings = [];
-  this.template = template;
-  this.options  = options;
-}
-
-/**
- * updates the view
- */
-
-View.prototype.update = function(context) {
-  for (var i = 0, n = this.bindings.length; i < n; i++) {
-    this.bindings[i].update(context);
-  }
-};
-
-/**
- */
-
-View.prototype.render = function() {
-  return this.section.render();
-};
-
-/**
- */
-
-View.prototype.remove = function() {
-  return this.section.remove();
-};
-
-/**
- */
-
-module.exports = View;
-
-},{}],46:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"50":50}],66:[function(require,module,exports){
 module.exports = document;
 
-},{}],47:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 module.exports = extend
 
 function extend(target) {
@@ -3258,7 +4387,9 @@ function extend(target) {
     return target
 }
 
-},{}],48:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
+arguments[4][66][0].apply(exports,arguments)
+},{"66":66}],69:[function(require,module,exports){
 function _copy (to, from) {
 
   for (var i = 0, n = from.length; i < n; i++) {
@@ -3334,6 +4465,6 @@ protoclass.setup = function (child) {
 
 
 module.exports = protoclass;
-},{}],49:[function(require,module,exports){
-arguments[4][47][0].apply(exports,arguments)
-},{"47":47}]},{},[1]);
+},{}],70:[function(require,module,exports){
+arguments[4][67][0].apply(exports,arguments)
+},{"67":67}]},{},[1]);

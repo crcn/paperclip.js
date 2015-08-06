@@ -23,7 +23,7 @@ describe(__filename + "#", function () {
 
     var t = pc.template("hello {{name}}"),
     v     = t.view({name:"a"}),
-    v2    = t.view(void 0, { parent: v });
+    v2    = t.view({}, { parent: v });
 
     assert.equal(stringifyView(v2), "hello a");
   });
@@ -35,7 +35,7 @@ describe(__filename + "#", function () {
         return "a"
       }
     }),
-    v2    = t.view(void 0, { parent: v });
+    v2    = t.view({}, { parent: v });
 
     assert.equal(stringifyView(v2), "hello a");
   });
