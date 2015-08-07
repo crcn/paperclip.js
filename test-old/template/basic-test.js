@@ -1,8 +1,7 @@
 var assert = require("assert"),
 pc         = require("../.."),
 template   = pc.template,
-parser  = require("../../lib/parser"),
-compiler = require("../../lib/compiler"),
+compiler = require("../../lib/adapters/default/compiler"),
 stringifyView = require("../utils/stringifyView"),
 assert = require("assert");
 
@@ -22,12 +21,6 @@ describe(__filename + "#", function () {
     var script,
     tpl = template(script = compiler.compile("hello world"));
     assert.equal(typeof tpl.vnode, "object");
-  });
-
-  xit("can use a template with useCloneNode = false", function () {
-    var tpl = template(script = parser.compile("hello world"), { useCloneNode: false });
-    assert.equal(stringifyView(tpl.view()), "hello world");
-    assert.equal(stringifyView(tpl.view()), "hello world");
   });
 
   it("throws an error if the source is anything other than a string, or function", function () {

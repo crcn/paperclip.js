@@ -111,7 +111,7 @@ gulp.task("parser", function() {
   pipe(peg({
     optimize: "size"
   })).
-  pipe(gulp.dest(__dirname + "/lib"));
+  pipe(gulp.dest(__dirname + "/lib/adapters/default"));
 });
 
 /**
