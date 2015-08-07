@@ -1,0 +1,6 @@
+<repeat each={{items}} as="item">
+  {{item.value}}
+  <show when={{item.isEven}}>
+    is even
+  </show>
+</repeat>
