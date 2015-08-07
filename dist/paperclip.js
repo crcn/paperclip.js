@@ -1,16 +1,16 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (global){
-var defaultAdapter = require(24);
-var template       = require(33);
-var extend         = require(72);
+var defaultAdapter = require(23);
+var template       = require(32);
+var extend         = require(71);
 
 /**
  */
 
 module.exports = {
-  transpile   : require(34).transpile,
-  Attribute   : require(3),
-  Component   : require(17),
+  transpile   : require(33).transpile,
+  Attribute   : require(2),
+  Component   : require(16),
   noConflict: function() {
     delete global.paperclip;
   },
@@ -24,144 +24,8 @@ if (typeof window !== "undefined") {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"17":17,"24":24,"3":3,"33":33,"34":34,"72":72}],2:[function(require,module,exports){
-var extend       = require(72);
-
-function POJOAccessor() {
-  this._getters  = {};
-  this._callers  = {};
-  this._watchers = [];
-}
-
-function _set(target, keypath, value) {
-
-  var keys = typeof keypath === "string" ? keypath.split(".") : keypath;
-  var ct   = target;
-  var key;
-
-  for (var i = 0, n = keys.length - 1; i < n; i++) {
-    key = keys[i];
-    if (!ct[key]) {
-      ct[key] = {};
-    }
-    ct = ct[key];
-  }
-
-  ct[keys[keys.length - 1]] = value;
-  return value;
-}
-
-extend(POJOAccessor.prototype, {
-
-  /**
-   */
-
-  call: function(object, keypath, params) {
-
-    var caller;
-
-    if (!(caller = this._callers[keypath])) {
-      var ctxPath = ["this"].concat(keypath.split("."));
-      ctxPath.pop();
-      ctxPath = ctxPath.join(".");
-      caller = this._callers[keypath] = new Function("params", "return this." + keypath + ".apply(" + ctxPath + ", params);");
-    }
-
-    try {
-      var ret = caller.call(object, params);
-      this.applyChanges(object);
-      return ret;
-    } catch (e) {
-      return void 0;
-    }
-  },
-
-  /**
-   */
-
-  get: function(object, path) {
-
-    var pt = typeof path !== "string" ? path.join(".") : path;
-    var getter;
-
-    if (!(getter = this._getters[pt])) {
-      getter = this._getters[pt] = new Function("return this." + pt);
-    }
-
-    // is undefined - fugly, but works for this test.
-    try {
-      return getter.call(object);
-    } catch (e) {
-      return void 0;
-    }
-  },
-
-  /**
-   */
-
-  set: function(object, path, value) {
-
-    if (typeof path === "string") path = path.split(".");
-
-    var ret = _set(object, path, value);
-
-    this.applyChanges(object);
-
-    return ret;
-  },
-
-  /**
-   */
-
-  watch: function(object, listener) {
-
-    var self = this;
-    var currentValue;
-    var firstCall = true;
-
-    return this._addWatcher(function(changedObject) {
-      if (changedObject === object) listener();
-    });
-  },
-
-  /**
-   */
-
-  _addWatcher: function(applyChanges) {
-
-    var self = this;
-
-    var watcher = {
-      apply: applyChanges,
-      trigger: applyChanges,
-      dispose: function() {
-        var i = self._watchers.indexOf(watcher);
-        if (~i) self._watchers.splice(i, 1);
-      }
-    };
-
-    this._watchers.push(watcher);
-
-    return watcher;
-  },
-
-  /**
-   */
-
-  applyChanges: function(object) {
-    for (var i = 0, n = this._watchers.length; i < n; i++) {
-      this._watchers[i].apply(object);
-    }
-  }
-});
-
-/**
- */
-
-module.exports = POJOAccessor;
-
-},{"72":72}],3:[function(require,module,exports){
-var protoclass = require(71);
+},{"16":16,"2":2,"23":23,"32":32,"33":33,"71":71}],2:[function(require,module,exports){
+var protoclass = require(70);
 
 /**
  */
@@ -192,8 +56,8 @@ protoclass(Base, {
 
 module.exports = Base;
 
-},{"71":71}],4:[function(require,module,exports){
-var BaseAttribute = require(3);
+},{"70":70}],3:[function(require,module,exports){
+var BaseAttribute = require(2);
 
 /**
  */
@@ -245,8 +109,8 @@ module.exports.test = function(vnode, key, value) {
   return typeof value !== "string";
 };
 
-},{"3":3}],5:[function(require,module,exports){
-var KeyCodedEventAttribute = require(14);
+},{"2":2}],4:[function(require,module,exports){
+var KeyCodedEventAttribute = require(13);
 
 /**
  */
@@ -255,8 +119,8 @@ module.exports = KeyCodedEventAttribute.extend({
   keyCodes: [8]
 });
 
-},{"14":14}],6:[function(require,module,exports){
-var BaseAttribue = require(3);
+},{"13":13}],5:[function(require,module,exports){
+var BaseAttribue = require(2);
 
 /**
  */
@@ -270,8 +134,8 @@ module.exports = BaseAttribue.extend({
   }
 });
 
-},{"3":3}],7:[function(require,module,exports){
-var BaseAttribue = require(3);
+},{"2":2}],6:[function(require,module,exports){
+var BaseAttribue = require(2);
 
 /**
  */
@@ -285,8 +149,8 @@ module.exports = BaseAttribue.extend({
   }
 });
 
-},{"3":3}],8:[function(require,module,exports){
-var BaseAttribute = require(3);
+},{"2":2}],7:[function(require,module,exports){
+var BaseAttribute = require(2);
 
 /**
  */
@@ -305,8 +169,8 @@ module.exports = BaseAttribute.extend({
   }
 });
 
-},{"3":3}],9:[function(require,module,exports){
-var KeyCodedEventAttribute = require(14);
+},{"2":2}],8:[function(require,module,exports){
+var KeyCodedEventAttribute = require(13);
 
 /**
  */
@@ -315,8 +179,8 @@ module.exports = KeyCodedEventAttribute.extend({
   keyCodes: [13]
 });
 
-},{"14":14}],10:[function(require,module,exports){
-var KeyCodedEventAttribute = require(14);
+},{"13":13}],9:[function(require,module,exports){
+var KeyCodedEventAttribute = require(13);
 
 /**
  */
@@ -325,8 +189,8 @@ module.exports = KeyCodedEventAttribute.extend({
   keyCodes: [27]
 });
 
-},{"14":14}],11:[function(require,module,exports){
-var Base   = require(3);
+},{"13":13}],10:[function(require,module,exports){
+var Base   = require(2);
 
 /**
  */
@@ -341,9 +205,9 @@ module.exports = Base.extend({
   }
 });
 
-},{"3":3}],12:[function(require,module,exports){
+},{"2":2}],11:[function(require,module,exports){
 (function (process){
-var BaseAttribute = require(3);
+var BaseAttribute = require(2);
 
 /**
  */
@@ -369,47 +233,47 @@ module.exports = BaseAttribute.extend({
   }
 });
 
-}).call(this,require(52))
-},{"3":3,"52":52}],13:[function(require,module,exports){
+}).call(this,require(51))
+},{"2":2,"51":51}],12:[function(require,module,exports){
 
 module.exports = {
-  onClick       : require(11),
-  onDoubleClick : require(11),
-  onLoad        : require(11),
-  onSubmit      : require(11),
-  onMouseDown   : require(11),
-  onMouseMove   : require(11),
-  onMouseUp     : require(11),
-  onChange      : require(11),
-  onMouseOver   : require(11),
-  onMouseOut    : require(11),
-  onFocusIn     : require(11),
-  onFocusOut    : require(11),
-  onKeyDown     : require(11),
-  onKeyUp       : require(11),
-  onDragStart   : require(11),
-  onDragStop    : require(11),
-  onDragEnd     : require(11),
-  onDragOver    : require(11),
-  onDragEnter   : require(11),
-  onDragLeave   : require(11),
-  onDrop        : require(11),
-  onSelectStart : require(11),
-  onEnter       : require(9),
-  onDelete      : require(5),
-  focus         : require(12),
-  onEscape      : require(10),
-  class         : require(4),
-  style         : require(15),
-  value         : require(16),
-  checked       : require(16),
-  easeIn        : require(6),
-  easeOut       : require(7),
-  enable        : require(8)
+  onClick       : require(10),
+  onDoubleClick : require(10),
+  onLoad        : require(10),
+  onSubmit      : require(10),
+  onMouseDown   : require(10),
+  onMouseMove   : require(10),
+  onMouseUp     : require(10),
+  onChange      : require(10),
+  onMouseOver   : require(10),
+  onMouseOut    : require(10),
+  onFocusIn     : require(10),
+  onFocusOut    : require(10),
+  onKeyDown     : require(10),
+  onKeyUp       : require(10),
+  onDragStart   : require(10),
+  onDragStop    : require(10),
+  onDragEnd     : require(10),
+  onDragOver    : require(10),
+  onDragEnter   : require(10),
+  onDragLeave   : require(10),
+  onDrop        : require(10),
+  onSelectStart : require(10),
+  onEnter       : require(8),
+  onDelete      : require(4),
+  focus         : require(11),
+  onEscape      : require(9),
+  class         : require(3),
+  style         : require(14),
+  value         : require(15),
+  checked       : require(15),
+  easeIn        : require(5),
+  easeOut       : require(6),
+  enable        : require(7)
 };
 
-},{"10":10,"11":11,"12":12,"15":15,"16":16,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9}],14:[function(require,module,exports){
-var EventAttribute = require(11);
+},{"10":10,"11":11,"14":14,"15":15,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9}],13:[function(require,module,exports){
+var EventAttribute = require(10);
 
 /**
  */
@@ -439,8 +303,8 @@ module.exports = EventAttribute.extend({
   }
 });
 
-},{"11":11}],15:[function(require,module,exports){
-var BaseAttribute = require(3);
+},{"10":10}],14:[function(require,module,exports){
+var BaseAttribute = require(2);
 
 /**
  */
@@ -489,9 +353,9 @@ module.exports.test = function(vnode, key, value) {
   return typeof value !== "string";
 };
 
-},{"3":3}],16:[function(require,module,exports){
-var BaseAttribute = require(3);
-var _bind         = require(36);
+},{"2":2}],15:[function(require,module,exports){
+var BaseAttribute = require(2);
+var _bind         = require(35);
 
 /**
  */
@@ -638,11 +502,11 @@ module.exports.test = function(vnode, key, value) {
   return typeof value !== "string";
 };
 
-},{"3":3,"36":36}],17:[function(require,module,exports){
-var protoclass = require(71);
-var template   = require(33);
-var fragment   = require(45);
-var extend     = require(72);
+},{"2":2,"35":35}],16:[function(require,module,exports){
+var protoclass = require(70);
+var template   = require(32);
+var fragment   = require(44);
+var extend     = require(71);
 
 /**
  */
@@ -680,18 +544,18 @@ module.exports = protoclass(Component, {
   }
 });
 
-},{"33":33,"45":45,"71":71,"72":72}],18:[function(require,module,exports){
+},{"32":32,"44":44,"70":70,"71":71}],17:[function(require,module,exports){
 module.exports = {
-  repeat : require(19),
-  show   : require(20),
-  stack  : require(21),
-  switch : require(22),
-  unsafe : require(23)
+  repeat : require(18),
+  show   : require(19),
+  stack  : require(20),
+  switch : require(21),
+  unsafe : require(22)
 };
 
-},{"19":19,"20":20,"21":21,"22":22,"23":23}],19:[function(require,module,exports){
-var extend = require(72);
-var Base   = require(17);
+},{"18":18,"19":19,"20":20,"21":21,"22":22}],18:[function(require,module,exports){
+var extend = require(71);
+var Base   = require(16);
 
 /**
  */
@@ -785,8 +649,8 @@ module.exports = Base.extend(RepeatComponent, {
   }
 });
 
-},{"17":17,"72":72}],20:[function(require,module,exports){
-var Base = require(17);
+},{"16":16,"71":71}],19:[function(require,module,exports){
+var Base = require(16);
 
 /**
  */
@@ -824,9 +688,9 @@ module.exports = Base.extend(ShowComponent, {
   }
 });
 
-},{"17":17}],21:[function(require,module,exports){
-var BaseComponent = require(17);
-var template      = require(33);
+},{"16":16}],20:[function(require,module,exports){
+var BaseComponent = require(16);
+var template      = require(32);
 
 /**
  */
@@ -888,12 +752,12 @@ module.exports = BaseComponent.extend(StackComponent, {
   }
 });
 
-},{"17":17,"33":33}],22:[function(require,module,exports){
-var BaseComponent = require(17);
-var _bind         = require(36);
-var template      = require(33);
-var vdocument     = require(42);
-var fragment      = require(45);
+},{"16":16,"32":32}],21:[function(require,module,exports){
+var BaseComponent = require(16);
+var _bind         = require(35);
+var template      = require(32);
+var vdocument     = require(41);
+var fragment      = require(44);
 
 /**
  */
@@ -972,9 +836,9 @@ module.exports = BaseComponent.extend(SwitchComponent, {
   }
 });
 
-},{"17":17,"33":33,"36":36,"42":42,"45":45}],23:[function(require,module,exports){
+},{"16":16,"32":32,"35":35,"41":41,"44":44}],22:[function(require,module,exports){
 (function (global){
-var Base = require(17);
+var Base = require(16);
 
 /**
  */
@@ -1046,31 +910,31 @@ module.exports = Base.extend(UnsafeComponent, {
 });
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"17":17}],24:[function(require,module,exports){
+},{"16":16}],23:[function(require,module,exports){
 module.exports = {
 
   /**
    */
 
-  attributes: require(13),
+  attributes: require(12),
 
   /**
    */
 
-  components: require(18),
+  components: require(17),
 
   /**
    */
 
-  viewClass: require(29),
+  viewClass: require(28),
 
   /**
    */
 
-  modifiers: require(25)
+  modifiers: require(24)
 };
 
-},{"13":13,"18":18,"25":25,"29":29}],25:[function(require,module,exports){
+},{"12":12,"17":17,"24":24,"28":28}],24:[function(require,module,exports){
 module.exports = {
   uppercase: function(value) {
     return String(value).toUpperCase();
@@ -1093,8 +957,8 @@ module.exports = {
   round: Math.round
 };
 
-},{}],26:[function(require,module,exports){
-var protoclass = require(71);
+},{}],25:[function(require,module,exports){
+var protoclass = require(70);
 
 /**
  */
@@ -1136,10 +1000,10 @@ protoclass(Reference, {
 
 module.exports = Reference;
 
-},{"71":71}],27:[function(require,module,exports){
+},{"70":70}],26:[function(require,module,exports){
 (function (process){
-var protoclass = require(71);
-var async      = require(35);
+var protoclass = require(70);
+var async      = require(34);
 
 /**
  */
@@ -1188,8 +1052,8 @@ module.exports = protoclass(Transitions, {
   }
 });
 
-}).call(this,require(52))
-},{"35":35,"52":52,"71":71}],28:[function(require,module,exports){
+}).call(this,require(51))
+},{"34":34,"51":51,"70":70}],27:[function(require,module,exports){
 /* istanbul ignore next */
 function _stringifyNode(node) {
 
@@ -1213,15 +1077,36 @@ function _stringifyNode(node) {
 
 module.exports = _stringifyNode;
 
-},{}],29:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 (function (global){
-var ivd            = require(62);
-var extend         = require(72);
+var ivd            = require(61);
+var extend         = require(71);
 var BaseView       = ivd.View;
-var Accessor       = require(2);
-var _stringifyNode = require(28);
-var Transitions    = require(27);
-var Reference      = require(26);
+var _stringifyNode = require(27);
+var Transitions    = require(26);
+var Reference      = require(25);
+
+/**
+ */
+
+function _set(target, keypath, value) {
+
+  var keys = typeof keypath === "string" ? keypath.split(".") : keypath;
+  var ct   = target;
+  var key;
+
+  for (var i = 0, n = keys.length - 1; i < n; i++) {
+    key = keys[i];
+    if (!ct[key]) {
+      ct[key] = {};
+    }
+    ct = ct[key];
+  }
+
+  ct[keys[keys.length - 1]] = value;
+  return value;
+}
+
 
 /**
  */
@@ -1231,7 +1116,6 @@ function PaperclipView(node, template, options) {
   if (!options) options = {};
 
   this.parent       = options.parent;
-  this.accessor     = this.parent ? this.parent.accessor : new Accessor();
   this.transitions  = new Transitions();
   this._remove      = this._remove.bind(this);
 
@@ -1246,16 +1130,37 @@ extend(PaperclipView.prototype, BaseView.prototype, {
   /**
    */
 
+  _getters: {},
+  _callers: {},
+
+  /**
+   */
+
   get: function(keypath) {
-    var v =  this.accessor.get(this.context, keypath);
+    var pt = typeof keypath !== "string" ? keypath.join(".") : keypath;
+    var getter;
+
+    if (!(getter = this._getters[pt])) {
+      getter = this._getters[pt] = new Function("return this." + pt);
+    }
+
+    var v;
+
+    try {
+      v = getter.call(this.context);
+    } catch (e) {
+      v = void 0;
+    }
+
     return v != void 0 ? v : this.parent ? this.parent.get(keypath) : void 0;
   },
 
   /**
    */
 
-  set: function(keypath, value) {
-    this.accessor.set(this.context, keypath, value);
+  set: function(keypath, value, update) {
+    if (typeof path === "string") path = path.split(".");
+    var ret = _set(this.context, keypath, value);
     this.update(this.context);
   },
 
@@ -1263,9 +1168,7 @@ extend(PaperclipView.prototype, BaseView.prototype, {
    */
 
   setProperties: function(properties) {
-    for (var keypath in properties) {
-      this.accessor.set(this.context, keypath, properties[keypath]);
-    }
+    extend(this.context, properties);
     this.update(this.context);
   },
 
@@ -1283,8 +1186,22 @@ extend(PaperclipView.prototype, BaseView.prototype, {
    */
 
   call: function(keypath, params) {
-    var v =  this.accessor.get(this.context, keypath);
-    return v != void 0 ? this.accessor.call(this.context, keypath, params) : this.parent ? this.parent.call(keypath, params) : void 0;
+
+    var caller;
+
+    if (!(caller = this._callers[keypath])) {
+      var ctxPath = ["this"].concat(keypath.split("."));
+      ctxPath.pop();
+      ctxPath = ctxPath.join(".");
+      caller = this._callers[keypath] = new Function("params", "return this." + keypath + ".apply(" + ctxPath + ", params);");
+    }
+
+    try {
+      v = caller.call(this.context, params);
+    } catch (e) {
+    }
+
+    return v != void 0 ? v : this.parent ? this.parent.call(keypath, params) : void 0;
   },
 
   /**
@@ -1354,9 +1271,9 @@ extend(PaperclipView.prototype, BaseView.prototype, {
 module.exports = PaperclipView;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"2":2,"26":26,"27":27,"28":28,"62":62,"72":72}],30:[function(require,module,exports){
-var extend     = require(72);
-var transpiler = require(34);
+},{"25":25,"26":26,"27":27,"61":61,"71":71}],29:[function(require,module,exports){
+var extend     = require(71);
+var transpiler = require(33);
 
 /**
  */
@@ -1382,8 +1299,8 @@ extend(Compiler.prototype, {
 
 module.exports = new Compiler();
 
-},{"34":34,"72":72}],31:[function(require,module,exports){
-var extend = require(72);
+},{"33":33,"71":71}],30:[function(require,module,exports){
+var extend = require(71);
 
 module.exports = function(initialize, update) {
 
@@ -1476,7 +1393,7 @@ module.exports = function(initialize, update) {
   return Binding;
 };
 
-},{"72":72}],32:[function(require,module,exports){
+},{"71":71}],31:[function(require,module,exports){
 module.exports = (function() {
   /*
    * Generated by PEG.js 0.8.0.
@@ -2385,11 +2302,11 @@ module.exports = (function() {
     parse:       parse
   };
 })();
-},{}],33:[function(require,module,exports){
-var ivd                = require(46);
-var compiler           = require(30);
-var extend             = require(72);
-var createBindingClass = require(31);
+},{}],32:[function(require,module,exports){
+var ivd                = require(45);
+var compiler           = require(29);
+var extend             = require(71);
+var createBindingClass = require(30);
 
 
 
@@ -2419,10 +2336,10 @@ module.exports = function(source, options) {
   return ivd.template(vnode, options);
 };
 
-},{"30":30,"31":31,"46":46,"72":72}],34:[function(require,module,exports){
-var extend = require(72);
-var parser = require(32);
-var he     = require(53);
+},{"29":29,"30":30,"45":45,"71":71}],33:[function(require,module,exports){
+var extend = require(71);
+var parser = require(31);
+var he     = require(52);
 
 /**
  */
@@ -2463,7 +2380,7 @@ extend(Transpiler.prototype, {
   _root: function(elements) {
 
     var buffer = "function(fragment, element, text, comment, dynamic, createBindingClass) {";
-    var fragment = "fragment([" + elements.map(this._expression).join(",") + "])";
+    var fragment = "fragment([" + this._children(elements) + "])";
     buffer += "return " + fragment;
     buffer += "}";
 
@@ -2519,6 +2436,28 @@ extend(Transpiler.prototype, {
   /**
    */
 
+  _children: function(children) {
+    var items = [];
+
+    children = children.concat();
+
+    while(children.length) {
+        var child = children[children.length - 1];
+        if (child[0] !== "text") break;
+        child[1] = child[1].replace(/[\s\r\n\t]+$/,"");
+        if (/^[\s\r\n\t]+$/.test(child[1])) {
+            children.pop();
+        } else {
+            break;
+        }
+    }
+
+    return children.map(this._expression).join(", ");
+  },
+
+  /**
+   */
+
   _element2: function(expression) {
     var buffer   = "element('" + expression[1] + "'";
 
@@ -2544,21 +2483,10 @@ extend(Transpiler.prototype, {
 
     buffer += "}";
 
-    var children = expression[3].concat();
-
-    while(children.length) {
-        var child = children[children.length - 1];
-        if (child[0] === "text" && /^[\s\r\n\t]+$/.test(child[1])) {
-            children.pop();
-        } else {
-            break;
-        }
+    var childBuffer = this._children(expression[3])
+    if (childBuffer.length) {
+      buffer += ", " + childBuffer;
     }
-
-    children.forEach(function(child) {
-      buffer += "," + this._expression(child);
-    }.bind(this));
-
 
     buffer += ")";
 
@@ -2776,7 +2704,7 @@ extend(Transpiler.prototype, {
 
 module.exports = new Transpiler();
 
-},{"32":32,"53":53,"72":72}],35:[function(require,module,exports){
+},{"31":31,"52":52,"71":71}],34:[function(require,module,exports){
 module.exports = {
 
   /**
@@ -2798,7 +2726,7 @@ module.exports = {
   }
 };
 
-},{}],36:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 module.exports = function(callback, context) {
   if (callback.bind) return callback.bind.apply(callback, [context].concat(Array.prototype.slice.call(arguments, 2)));
   return function() {
@@ -2806,10 +2734,10 @@ module.exports = function(callback, context) {
   };
 };
 
-},{}],37:[function(require,module,exports){
-var extend        = require(72);
-var getNodeByPath = require(38);
-var getNodePath   = require(39);
+},{}],36:[function(require,module,exports){
+var extend        = require(71);
+var getNodeByPath = require(37);
+var getNodePath   = require(38);
 
 /**
  */
@@ -2944,7 +2872,7 @@ extend(Marker.prototype, {
 
 module.exports = FragmentSection;
 
-},{"38":38,"39":39,"72":72}],38:[function(require,module,exports){
+},{"37":37,"38":38,"71":71}],37:[function(require,module,exports){
 module.exports = function(root, path) {
 
   var c = root;
@@ -2956,7 +2884,7 @@ module.exports = function(root, path) {
   return c;
 };
 
-},{}],39:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 module.exports = function(node) {
 
   var path = [];
@@ -2977,10 +2905,10 @@ module.exports = function(node) {
   return path;
 };
 
-},{}],40:[function(require,module,exports){
-var extend        = require(72);
-var getNodeByPath = require(38);
-var getNodePath   = require(39);
+},{}],39:[function(require,module,exports){
+var extend        = require(71);
+var getNodeByPath = require(37);
+var getNodePath   = require(38);
 
 /**
  */
@@ -3068,7 +2996,7 @@ extend(Marker.prototype, {
 
 module.exports = NodeSection;
 
-},{"38":38,"39":39,"72":72}],41:[function(require,module,exports){
+},{"37":37,"38":38,"71":71}],40:[function(require,module,exports){
 /**
  */
 
@@ -3096,11 +3024,11 @@ module.exports = function(nodeValue) {
   return new Comment(nodeValue);
 };
 
-},{}],42:[function(require,module,exports){
-var text     = require(50);
-var element  = require(44);
-var fragment = require(45);
-var comment  = require(41);
+},{}],41:[function(require,module,exports){
+var text     = require(49);
+var element  = require(43);
+var fragment = require(44);
+var comment  = require(40);
 
 module.exports = {
 
@@ -3126,10 +3054,10 @@ module.exports = {
   }
 };
 
-},{"41":41,"44":44,"45":45,"50":50}],43:[function(require,module,exports){
-var extend        = require(72);
-var getNodePath   = require(39);
-var getNodeByPath = require(38);
+},{"40":40,"43":43,"44":44,"49":49}],42:[function(require,module,exports){
+var extend        = require(71);
+var getNodePath   = require(38);
+var getNodeByPath = require(37);
 
 /**
  */
@@ -3220,11 +3148,11 @@ module.exports = function(vnode, bindingClass) {
   return new DynamicNode(vnode, bindingClass);
 };
 
-},{"38":38,"39":39,"72":72}],44:[function(require,module,exports){
-var createSection    = require(47);
-var fragment         = require(45);
-var FragmentSection  = require(37);
-var NodeSection      = require(40);
+},{"37":37,"38":38,"71":71}],43:[function(require,module,exports){
+var createSection    = require(46);
+var fragment         = require(44);
+var FragmentSection  = require(36);
+var NodeSection      = require(39);
 
 /**
  */
@@ -3391,7 +3319,7 @@ function _hydrateDynamicAttributes(ref, options, dynamicAttributes, view) {
   }
 }
 
-},{"37":37,"40":40,"45":45,"47":47}],45:[function(require,module,exports){
+},{"36":36,"39":39,"44":44,"46":46}],44:[function(require,module,exports){
 
 /**
  */
@@ -3429,24 +3357,24 @@ module.exports = function(children) {
   return new Fragment(children);
 };
 
-},{}],46:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 /**
  */
 
 module.exports = {
-  element   : require(44),
-  fragment  : require(45),
-  text      : require(50),
-  dynamic   : require(43),
-  comment   : require(41),
-  template  : require(49),
-  View      : require(51)
+  element   : require(43),
+  fragment  : require(44),
+  text      : require(49),
+  dynamic   : require(42),
+  comment   : require(40),
+  template  : require(48),
+  View      : require(50)
 };
 
-},{"41":41,"43":43,"44":44,"45":45,"49":49,"50":50,"51":51}],47:[function(require,module,exports){
-var extend          = require(72);
-var FragmentSection = require(37);
-var NodeSection     = require(40);
+},{"40":40,"42":42,"43":43,"44":44,"48":48,"49":49,"50":50}],46:[function(require,module,exports){
+var extend          = require(71);
+var FragmentSection = require(36);
+var NodeSection     = require(39);
 
 module.exports = function(document, node) {
   if (node.nodeType === 11) {
@@ -3458,7 +3386,7 @@ module.exports = function(document, node) {
   }
 };
 
-},{"37":37,"40":40,"72":72}],48:[function(require,module,exports){
+},{"36":36,"39":39,"71":71}],47:[function(require,module,exports){
 module.exports = function(template) {
 
   function Component(section, vnode, attributes, view) {
@@ -3484,13 +3412,13 @@ module.exports = function(template) {
   return Component;
 }
 
-},{}],49:[function(require,module,exports){
-var defaultDocument   = require(70);
-var View              = require(51);
-var extend            = require(72);
-var FragmentSection   = require(37);
-var NodeSection       = require(40);
-var templateComponent = require(48);
+},{}],48:[function(require,module,exports){
+var defaultDocument   = require(69);
+var View              = require(50);
+var extend            = require(71);
+var FragmentSection   = require(36);
+var NodeSection       = require(39);
+var templateComponent = require(47);
 
 function _cleanupComponents(hash) {
   var c1 = hash || {};
@@ -3577,7 +3505,7 @@ module.exports = function(vnode, options) {
   return new Template(vnode, options);
 };
 
-},{"37":37,"40":40,"48":48,"51":51,"70":70,"72":72}],50:[function(require,module,exports){
+},{"36":36,"39":39,"47":47,"50":50,"69":69,"71":71}],49:[function(require,module,exports){
 /**
  */
 
@@ -3600,7 +3528,7 @@ module.exports = function(nodeValue) {
   return new Text(nodeValue);
 };
 
-},{}],51:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 /**
  */
 
@@ -3640,7 +3568,7 @@ View.prototype.remove = function() {
 
 module.exports = View;
 
-},{}],52:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -3700,7 +3628,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],53:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/he v0.5.0 by @mathias | MIT license */
 ;(function(root) {
@@ -4033,10 +3961,10 @@ process.umask = function() { return 0; };
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],54:[function(require,module,exports){
-var extend        = require(69);
-var getNodeByPath = require(55);
-var getNodePath   = require(56);
+},{}],53:[function(require,module,exports){
+var extend        = require(68);
+var getNodeByPath = require(54);
+var getNodePath   = require(55);
 
 /**
  */
@@ -4164,14 +4092,14 @@ extend(Marker.prototype, {
 
 module.exports = FragmentSection;
 
-},{"55":55,"56":56,"69":69}],55:[function(require,module,exports){
+},{"54":54,"55":55,"68":68}],54:[function(require,module,exports){
+arguments[4][37][0].apply(exports,arguments)
+},{"37":37}],55:[function(require,module,exports){
 arguments[4][38][0].apply(exports,arguments)
 },{"38":38}],56:[function(require,module,exports){
-arguments[4][39][0].apply(exports,arguments)
-},{"39":39}],57:[function(require,module,exports){
-var extend        = require(69);
-var getNodeByPath = require(55);
-var getNodePath   = require(56);
+var extend        = require(68);
+var getNodeByPath = require(54);
+var getNodePath   = require(55);
 
 /**
  */
@@ -4252,7 +4180,7 @@ extend(Marker.prototype, {
 
 module.exports = NodeSection;
 
-},{"55":55,"56":56,"69":69}],58:[function(require,module,exports){
+},{"54":54,"55":55,"68":68}],57:[function(require,module,exports){
 /**
  */
 
@@ -4279,10 +4207,10 @@ module.exports = function(nodeValue) {
   return new Comment(nodeValue);
 };
 
-},{}],59:[function(require,module,exports){
-var extend        = require(69);
-var getNodePath   = require(56);
-var getNodeByPath = require(55);
+},{}],58:[function(require,module,exports){
+var extend        = require(68);
+var getNodePath   = require(55);
+var getNodeByPath = require(54);
 
 /**
  */
@@ -4372,11 +4300,11 @@ module.exports = function(vnode, bindingClass) {
   return new DynamicNode(vnode, bindingClass);
 };
 
-},{"55":55,"56":56,"69":69}],60:[function(require,module,exports){
-var createSection    = require(63);
-var fragment         = require(61);
-var FragmentSection  = require(54);
-var NodeSection      = require(57);
+},{"54":54,"55":55,"68":68}],59:[function(require,module,exports){
+var createSection    = require(62);
+var fragment         = require(60);
+var FragmentSection  = require(53);
+var NodeSection      = require(56);
 
 /**
  */
@@ -4535,7 +4463,7 @@ function _hydrateDynamicAttributes(ref, options, dynamicAttributes, view) {
   }
 }
 
-},{"54":54,"57":57,"61":61,"63":63}],61:[function(require,module,exports){
+},{"53":53,"56":56,"60":60,"62":62}],60:[function(require,module,exports){
 
 /**
  */
@@ -4573,25 +4501,25 @@ module.exports = function() {
   return new Fragment(children);
 };
 
-},{}],62:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 /**
  */
 
 module.exports = {
-  element   : require(60),
-  fragment  : require(61),
-  text      : require(66),
-  dynamic   : require(59),
-  comment   : require(58),
-  template  : require(64),
+  element   : require(59),
+  fragment  : require(60),
+  text      : require(65),
+  dynamic   : require(58),
+  comment   : require(57),
+  template  : require(63),
 
-  View      : require(67)
+  View      : require(66)
 };
 
-},{"58":58,"59":59,"60":60,"61":61,"64":64,"66":66,"67":67}],63:[function(require,module,exports){
-var extend          = require(69);
-var FragmentSection = require(54);
-var NodeSection     = require(57);
+},{"57":57,"58":58,"59":59,"60":60,"63":63,"65":65,"66":66}],62:[function(require,module,exports){
+var extend          = require(68);
+var FragmentSection = require(53);
+var NodeSection     = require(56);
 
 module.exports = function(document, node) {
   if (node.nodeType === 11) {
@@ -4603,13 +4531,13 @@ module.exports = function(document, node) {
   }
 };
 
-},{"54":54,"57":57,"69":69}],64:[function(require,module,exports){
-var defaultDocument   = require(68);
-var View              = require(67);
-var extend            = require(69);
-var FragmentSection   = require(54);
-var NodeSection       = require(57);
-var templateComponent = require(65);
+},{"53":53,"56":56,"68":68}],63:[function(require,module,exports){
+var defaultDocument   = require(67);
+var View              = require(66);
+var extend            = require(68);
+var FragmentSection   = require(53);
+var NodeSection       = require(56);
+var templateComponent = require(64);
 
 function _cleanupComponents(hash) {
   var c1 = hash || {};
@@ -4694,7 +4622,7 @@ module.exports = function(vnode, options) {
   return new Template(vnode, options);
 };
 
-},{"54":54,"57":57,"65":65,"67":67,"68":68,"69":69}],65:[function(require,module,exports){
+},{"53":53,"56":56,"64":64,"66":66,"67":67,"68":68}],64:[function(require,module,exports){
 module.exports = function(template) {
 
   function Component(section, vnode, attributes, view) {
@@ -4716,7 +4644,7 @@ module.exports = function(template) {
   return Component;
 }
 
-},{}],66:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 /**
  */
 
@@ -4738,12 +4666,12 @@ module.exports = function(nodeValue) {
   return new Text(nodeValue);
 };
 
-},{}],67:[function(require,module,exports){
-arguments[4][51][0].apply(exports,arguments)
-},{"51":51}],68:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"50":50}],67:[function(require,module,exports){
 module.exports = document;
 
-},{}],69:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 module.exports = extend
 
 function extend(target) {
@@ -4760,9 +4688,9 @@ function extend(target) {
     return target
 }
 
-},{}],70:[function(require,module,exports){
-arguments[4][68][0].apply(exports,arguments)
-},{"68":68}],71:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
+arguments[4][67][0].apply(exports,arguments)
+},{"67":67}],70:[function(require,module,exports){
 function _copy (to, from) {
 
   for (var i = 0, n = from.length; i < n; i++) {
@@ -4838,6 +4766,6 @@ protoclass.setup = function (child) {
 
 
 module.exports = protoclass;
-},{}],72:[function(require,module,exports){
-arguments[4][69][0].apply(exports,arguments)
-},{"69":69}]},{},[1]);
+},{}],71:[function(require,module,exports){
+arguments[4][68][0].apply(exports,arguments)
+},{"68":68}]},{},[1]);
