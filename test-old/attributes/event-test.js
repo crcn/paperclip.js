@@ -10,25 +10,25 @@ describe(__filename + "#", function () {
 
   [
     "click",
-    "doubleClick:dblclick",
+    "dblclick",
     "load",
     "submit",
-    "mouseDown",
-    "mouseMove",
-    "mouseUp",
+    "mousedown",
+    "mousemove",
+    "mouseup",
     "change",
-    "mouseOver",
-    "mouseOut",
-    "focusIn:focus",
-    "focusOut:blur",
-    "keyDown",
-    "keyUp",
-    "dragStart",
-    "dragEnd",
-    "dragOver",
-    "dragEnter",
-    "dragLeave",
-    "selectStart",
+    "mouseover",
+    "mouseout",
+    "focus",
+    "blur",
+    "keydown",
+    "keyup",
+    "dragstart",
+    "dragend",
+    "dragover",
+    "dragenter",
+    "dragleave",
+    "selectstart",
     "drop"
   ].forEach(function (event) {
 
@@ -38,11 +38,11 @@ describe(__filename + "#", function () {
 
     it("can capture a " + name + " event", function (next) {
 
-      var t = template(
-        "<div on"+name.substr(0, 1).toUpperCase() + name.substr(1)+"='{{" +
+      var t = paperclip.template(
+        "<div on"+name+"={{" +
           "onEvent" +
-        "}}'></div>"
-      , paperclip).view({
+        "}}></div>"
+      ).view({
         onEvent: function (event) {
           assert.equal(event.type, name.toLowerCase());
           next();
@@ -50,7 +50,6 @@ describe(__filename + "#", function () {
       });
 
       t.render();
-
 
       var e = document.createEvent("Event");
       e.initEvent(name.toLowerCase(), true, true);
@@ -60,9 +59,9 @@ describe(__filename + "#", function () {
 
   it("does not prevent dragstart events", function (next) {
     var t = pc.template(
-      "<div onDragStart='{{" +
+      "<div ondragstart={{" +
       "onDragStart" +
-      "}}'></div>"
+      "}}></div>"
       , paperclip).view({
         onDragStart: function (event) {
           if (!event.defaultPrevented) {
@@ -79,9 +78,9 @@ describe(__filename + "#", function () {
 
   it("does not prevent dragend events", function (next) {
     var t = pc.template(
-      "<div onDragEnd='{{" +
+      "<div ondragend={{" +
       "onDragEnd" +
-      "}}'></div>"
+      "}}></div>"
       , paperclip).view({
         onDragEnd: function (event) {
           if (!event.defaultPrevented) {
@@ -99,9 +98,9 @@ describe(__filename + "#", function () {
   it("can capture an onEnter event", function (next) {
 
     var t = pc.template(
-      "<div onEnter='{{" +
+      "<div onenter={{" +
         "onEvent" +
-      "}}'></div>"
+      "}}></div>"
     , paperclip).view({
       onEvent: function (event) {
         next();
@@ -120,9 +119,9 @@ describe(__filename + "#", function () {
   it("can capture an onDelete event", function (next) {
 
     var t = pc.template(
-      "<div onDelete='{{" +
+      "<div ondelete={{" +
         "onEvent" +
-      "}}'></div>"
+      "}}></div>"
     , paperclip).view({
       onEvent: function (event) {
         next();
@@ -138,9 +137,9 @@ describe(__filename + "#", function () {
   it("can capture an onEscape event", function (next) {
 
     var t = pc.template(
-      "<div onEscape='{{" +
+      "<div onescape={{" +
         "onEvent" +
-      "}}'></div>"
+      "}}></div>"
     , paperclip).view({
       onEvent: function (event) {
         next();
@@ -156,9 +155,9 @@ describe(__filename + "#", function () {
   it("doesn't catch events outside of escape event keycode", function () {
     var i = 0;
     var t = pc.template(
-      "<div onEscape='{{" +
+      "<div onEscape={{" +
         "onEvent" +
-      "}}'></div>"
+      "}}></div>"
     , paperclip).view({
       onEvent: function (event) {
         i++;
@@ -176,9 +175,9 @@ describe(__filename + "#", function () {
   it("cannot trigger an event if a view is unbound", function () {
     var i = 0;
     var t = pc.template(
-      "<div onEscape='{{" +
+      "<div onescape={{" +
         "onEvent" +
-      "}}'></div>"
+      "}}></div>"
     , paperclip).view({
       onEvent: function (event) {
         i++;

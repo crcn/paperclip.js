@@ -12,3 +12,12 @@
 - binding blocks are completely deprecated {{#}}
 - assignments within blocks are no longer supported
 - [brackets] are no supported within blocks
+- event handlers no longer prevent default.
+- event handlers are now native
+- camelCase on event handlers is no longer supported
+- event handlers must now be defined without quotes
+- onFocusIn -> onfocus
+- onFocusOut -> onblur
+- easeIn -> easein
+- easeout -> easeout
+- registered component names & attributes are now case sensitive

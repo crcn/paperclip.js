@@ -10,7 +10,7 @@ describe(__filename + "#", function () {
     var i = 0;
 
     var v = pc.template(
-      "<div easeIn={{easeIn}}>abb</div>"
+      "<div easein={{easeIn}}>abb</div>"
     ).view({
       easeIn: function (node, complete) {
         assert.equal(node.nodeName, "DIV");
@@ -28,7 +28,7 @@ describe(__filename + "#", function () {
     var i = 0;
 
     var v = pc.template(
-      "<div easeOut={{easeOut}} />"
+      "<div easeout={{easeOut}} />"
     ).view({
       easeOut: function (node, complete) {
         assert.equal(node.nodeName, "DIV");
@@ -47,7 +47,7 @@ describe(__filename + "#", function () {
     var i = 0;
 
     var tpl = pc.template(
-      "<div><span easeOut='fade' /></div>"
+      "<div><span easeout='fade' /></div>"
     , {
       attributes: {
         easeout: pc.Attribute.extend({
