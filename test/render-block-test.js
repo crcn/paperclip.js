@@ -42,18 +42,21 @@ describe(__filename + "#", function() {
     "{{a%b}}"   : [{a:9,b:2}, "1"],
 
     // other
-    "{{a?'a':'b'}}"     :[{a:1},"a"],
-    "{{a!==1?'a':'b'}}" :[{a:1},"b"],
+    "{{a?'a':'b'}}"     : [{a:1},"a"],
+    "{{a!==1?'a':'b'}}" : [{a:1},"b"],
 
     // function calls
-    "{{a()}}" :[{a:function(){ return this.b; }, b:11},"11"],
-    "{{a.b()}}" :[{a:{b:function(){ return 11; }}},"11"],
-    "{{a(1,2)}}" :[{a:function(b,c){ return b + c; }},"3"],
+    "{{a()}}"    : [{a:function(){ return this.b; }, b:11},"11"],
+    "{{a.b()}}"  : [{a:{b:function(){ return 11; }}},"11"],
+    "{{a(1,2)}}" : [{a:function(b,c){ return b + c; }},"3"],
 
     // keypath
-    "{{a.b.c}}"   : [{a:{b:{c:555}}}, "555"],
-    "{{a[b][c]}}" : [{a:{d:{e:55}},b:"d",c:"e"}, "55"],
-    "{{a[notDefined]}}" : [{a:5}, "undefined"]
+    "{{a.b.c}}"         : [{a:{b:{c:555}}}, "555"],
+    "{{<~>a.b.c}}"      : [{a:{b:{c:555}}}, "555"],
+    "{{a[b][c]}}"       : [{a:{d:{e:55}},b:"d",c:"e"}, "55"],
+    "{{<~>a[b][c]}}"    : [{a:{d:{e:55}},b:"d",c:"e"}, "55"],
+    "{{a[notDefined]}}" : [{a:5}, "undefined"],
+    "{{a[b](5)}}"       : [{a:{count:2,c:function(v) { return v * this.count;}}, b:"c"}, "10"]
   };
 
   Object.keys(expressions).forEach(function(key) {
