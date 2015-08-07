@@ -282,10 +282,24 @@ FunctionCall
     }
 
 Reference
-  = bindingType:("^"/"~>"/"<~>"/"~"/"<~")? _ reference:ReferenceName path:("." ReferenceName)* _ {
-      path = [reference].concat(path.map(function(p) { return p[1]; }));
-      return ["reference", path, bindingType];
+  = bindingType:("^"/"~>"/"<~>"/"~"/"<~")? _ reference:ReferenceName path:ReferencePart* _ {
+
+      return ["reference", [reference].concat(path), bindingType];
     }
+
+
+ReferencePart
+  = ReferenceKeyPath/ReferenceBrackPath
+
+ReferenceKeyPath
+  = "." name:ReferenceName {
+    return name;
+  }
+
+ReferenceBrackPath
+  = "[" key:Expression "]" {
+    return key;
+  }
 
 ReferenceName
   = name:[a-zA-Z_$0-9]+ { return text(); }

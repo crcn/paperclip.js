@@ -11,3 +11,4 @@
 - you must call `require("paperclip/lib/register")` to `require()` pc templates
 - binding blocks are completely deprecated {{#}}
 - assignments within blocks are no longer supported
+- [brackets] are no supported within blocks

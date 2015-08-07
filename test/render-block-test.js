@@ -46,11 +46,15 @@ describe(__filename + "#", function() {
     "{{a!==1?'a':'b'}}" :[{a:1},"b"],
 
     // function calls
-    "{{a()}}" :[{a:function(){ return 11; }},"11"],
+    "{{a()}}" :[{a:function(){ return this.b; }, b:11},"11"],
     "{{a.b()}}" :[{a:{b:function(){ return 11; }}},"11"],
-    "{{a(1,2)}}" :[{a:function(b,c){ return b + c; }},"3"]
-  };
+    "{{a(1,2)}}" :[{a:function(b,c){ return b + c; }},"3"],
 
+    // keypath
+    "{{a.b.c}}"   : [{a:{b:{c:555}}}, "555"],
+    "{{a[b][c]}}" : [{a:{d:{e:55}},b:"d",c:"e"}, "55"],
+    "{{a[notDefined]}}" : [{a:5}, "undefined"]
+  };
 
   Object.keys(expressions).forEach(function(key) {
     var test = expressions[key];
