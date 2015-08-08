@@ -1,4 +1,4 @@
-var compiler = require("./parsers/default/compiler");
+var compiler = require("./lib/parsers/default/compiler");
 var fs       = require("fs");
 
 require.extensions[".pc"] = function(module, filename) {

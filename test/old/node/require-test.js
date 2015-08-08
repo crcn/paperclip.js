@@ -1,4 +1,4 @@
-require("../../../lib/register");
+require("../../../register");
 
 var pc   = require("../../.."),
 assert   = require("assert"),
