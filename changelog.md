@@ -8,7 +8,7 @@
 - repeat attributes are now applied to the element they're attached to. E.g: `<li repeat.each={{numbers}} as='number'>{{number}}</li>`
 - template.view() does not call `update` if the context is not currently present
 - `.bind()` has been changed to `update()`
-- you must call `require("paperclip/lib/register")` to `require()` pc templates
+- you must call `require("paperclip/register")` to `require()` pc templates
 - binding blocks are completely deprecated {{#}}
 - assignments within blocks are no longer supported
 - [brackets] are no supported within blocks

@@ -1,0 +1,1 @@
+<script>{{blarg}}</script>

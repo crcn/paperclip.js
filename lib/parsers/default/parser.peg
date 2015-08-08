@@ -66,7 +66,7 @@ DocType
     }
 
 ChildNodes
-  = children:(VoidElement/ElementNode/CommentNode/TextNode/BlockBinding)* { return trimTextExpressions(children); }
+  = children:(VoidElement/ScriptStart/ElementNode/CommentNode/TextNode/BlockBinding)* { return trimTextExpressions(children); }
 
 
 CommentNode
@@ -75,6 +75,16 @@ CommentNode
   }
   / DocType
 
+ScriptStart
+  = "<script" attributes:TagAttributes ">" content:ScriptEnd+ "</script>" {
+      content = content.join("").replace(/[\n\r]+/,"\\n").replace("'","\\'");
+      return ["element", "script", attributes, [["text", content]]];
+    }
+
+ScriptEnd
+  = !("</script>") SourceCharacter {
+      return text();
+    }
 
 VoidElement
   = "<" nodeName:("area"/"base"/"br"/"col"/"command"/"embed"/"hr"/"img"/"input"/"keygen"/"link"/"meta"/"param"/"source"/"track"/"wbr") attributes:TagAttributes (">"/"/>")? endTag:EndVoidTag? {
