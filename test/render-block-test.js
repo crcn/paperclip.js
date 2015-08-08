@@ -1,6 +1,7 @@
 var expect        = require("expect.js");
 var pc            = require("..");
 var stringifyView = require("./old/utils/stringifyView");
+pc.document       = global.document;
 
 describe(__filename + "#", function() {
   var expressions = {
@@ -62,10 +63,8 @@ describe(__filename + "#", function() {
   Object.keys(expressions).forEach(function(key) {
     var test = expressions[key];
     it("can render " + key + " " + JSON.stringify(test[1]), function() {
-        
       var template = pc.template(key);
       var view     = template.view(test[0]);
-      view.render();
       expect(stringifyView(view)).to.be(test[1]);
     });
   });
