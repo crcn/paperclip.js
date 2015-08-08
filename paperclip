@@ -1,0 +1,30 @@
+  <table class="table table-striped latest-data">
+      <repeat each="{{databases}}" as="db">
+        <tbody>
+          <tr>
+            <td class="dbname">
+              {{db.name}}
+            </td>
+
+            <!-- abba -->
+            <td class="query-count">
+              <span class="{{db | sampleLength | countClassName}}">
+                {{db | sampleLength}}
+              </span>
+            </td>
+
+            <repeat each="{{db.topFiveQueries}}" as="q">
+              <td class="{{q.elapsed|elapsedClassName}}">
+                {{q.elapsed | formatElapsed }}
+                <div class="popover left">
+                  <div class="popover-content">
+                    {{q.query}}
+                  </div>
+                  <div class="arrow"></div>
+                </div>
+              </td>
+            </repeat>
+          </tr>
+        </tbody>
+      </repeat>
+    </table>

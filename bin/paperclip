@@ -1,25 +1,12 @@
 #!/usr/bin/env node
-var argv = require('optimist').
-usage('Usage: $0 -i [paperclip_template_file] -o [js_file]').
-demand(['i']).
-alias('i', 'input').
-alias('w', 'watch').
-describe('p', 'pretty-print template output').
-describe('i', 'paperclip template source').
-argv,
-path = require("path"),
-parser = require("../lib/parser"),
-fs = require("fs");
 
-try {
-  console.log("// %s", argv.i);
-  var source = fs.readFileSync(argv.i, "utf8"),
-  script = parser.parse(source);
+var transpiler = require("../lib/parsers/default/transpiler");
 
+var buffer = [];
+process.stdin.on("data", function(data) {
+  buffer.push(String(data));
+})
 
-} catch (e) {
-  console.log(e);
-}
-
-
-console.log(script)
+process.stdin.on("end", function() {
+  console.log(transpiler.transpile(buffer.join("")));
+})
