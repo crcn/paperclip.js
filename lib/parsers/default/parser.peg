@@ -121,7 +121,7 @@ ElementNode
 
 TextNode
   = value:TextCharacter+ {
-      return ["text", trimNewLineChars(value.join(""))];
+      return ["text", escapeString(trimNewLineChars(value.join("")))];
     }
 
 TextCharacter
