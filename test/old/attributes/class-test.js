@@ -1,4 +1,4 @@
-var pc   = require("../.."),
+var pc   = require("../../.."),
 assert   = require("assert"),
 stringifyView = require("../utils/stringifyView");
 
@@ -7,7 +7,7 @@ describe(__filename + "#", function () {
   it("can add a class attribute to a div element", function () {
     var v = pc.template(
       "<div class='class'></div>"
-    , pc).view();
+    , pc).view({});
 
     assert.equal(stringifyView(v), '<div class="class"></div>');
   });
@@ -15,8 +15,7 @@ describe(__filename + "#", function () {
   it("can add a class attribute with a block to a div element", function () {
     var v = pc.template(
       "<div class='class {{'class2'}}'></div>"
-    , pc).view({});
-
+    ).view({});
 
     assert.equal(stringifyView(v), '<div class="class class2"></div>');
   });
@@ -24,7 +23,7 @@ describe(__filename + "#", function () {
   it("can add a class binding to a div element", function () {
     var v = pc.template(
       "<div class={{{class:true,class2:true}}}></div>"
-    , pc).view({});
+    ).view({});
 
     assert.equal(stringifyView(v), '<div class="class class2"></div>');
   });

@@ -23,9 +23,9 @@ process.env.PC_DEBUG = 1;
  */
 
 var paths = {
-  testFiles  : ["test/helpers/document.js", "test/**/*-test.js", "lib/**/*-test.js", "test-old/**/*-test.js"],
+  testFiles  : ["test/helpers/document.js", "test/**/*-test.js", "lib/**/*-test.js"],
   appFiles   : ["lib/**/*.js"],
-  allFiles   : ["test/**", "lib/**", "src/**", "test-old/**"]
+  allFiles   : ["test/**", "lib/**"]
 };
 
 /**
@@ -71,7 +71,7 @@ gulp.task("test-coveralls", ["test-coverage"], function () {
  */
 
 gulp.task("bundle", function() {
-  return browserify("./lib/index.js").
+  return browserify(pkg.browser || pkg.main).
   plugin(collapse).
   bundle().
   pipe(source(pkg.name + '.js')).
@@ -107,11 +107,11 @@ gulp.task("test-browser", function(complete) {
 
 gulp.task("parser", function() {
   return gulp.
-  src(__dirname + "/src/parser.peg").
+  src(__dirname + "/lib/parsers/default/parser.peg").
   pipe(peg({
     optimize: "size"
   })).
-  pipe(gulp.dest(__dirname + "/lib/adapters/default"));
+  pipe(gulp.dest(__dirname + "/lib/parsers/default"));
 });
 
 /**

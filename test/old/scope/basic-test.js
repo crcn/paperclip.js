@@ -1,5 +1,5 @@
 var assert     = require("assert"),
-pc             = require("../..")
+pc             = require("../../..")
 template       = pc.template,
 stringifyView  = require("../utils/stringifyView");
 

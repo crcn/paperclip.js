@@ -2,7 +2,7 @@ var fs            = require("fs");
 var pc            = require("../");
 var path          = require("path");
 var expect        = require("expect.js");
-var stringifyView = require("../test-old/utils/stringifyView");
+var stringifyView = require("./old/utils/stringifyView");
 
 describe(__filename + "#", function() {
 

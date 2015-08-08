@@ -1,4 +1,4 @@
-var parser = require("../../lib/parser.js"),
+var parser = require("../../../lib/parsers/default/parser"),
 assert     = require("assert");
 
 describe(__filename + "#", function () {

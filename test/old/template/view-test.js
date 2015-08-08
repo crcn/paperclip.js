@@ -1,6 +1,5 @@
 var assert     = require("assert"),
-template       = require("../../lib/template"),
-pc             = require("../../lib"),
+pc             = require("../../.."),
 sinon          = require("sinon"),
 stringifyView = require("../utils/stringifyView");
 

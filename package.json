@@ -2,7 +2,8 @@
   "name": "paperclip",
   "version": "3.0.6",
   "description": "controller logic:",
-  "main": "./lib/index.js",
+  "main": "./lib/node.js",
+  "browser": "./lib/browser.js",
   "publishConfig": {
     "tag": "trunk"
   },

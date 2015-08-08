@@ -1,5 +1,5 @@
 var assert = require("assert"),
-pc         = require("../.."),
+pc         = require("../../.."),
 stringifyView = require("../utils/stringifyView");
 
 describe(__filename + "#", function () {

@@ -1,5 +1,5 @@
 var assert  = require("assert"),
-RunLoop     = require("../../lib/runloop");
+RunLoop     = require("../../../lib/runloop");
 
 describe(__filename + "#", function () {
 

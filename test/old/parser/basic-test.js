@@ -1,4 +1,4 @@
-var parser = require("../../lib/parser");
+var parser = require("../../../lib/parsers/default/parser");
 var expect = require("expect.js");
 
 function _find(exprName, exprs, results) {

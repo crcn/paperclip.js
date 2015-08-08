@@ -1,6 +1,6 @@
-require("../../lib/register");
+require("../../../lib/register");
 
-var pc   = require("../../lib"),
+var pc   = require("../../.."),
 assert   = require("assert"),
 stringifyView = require("../utils/stringifyView")
 

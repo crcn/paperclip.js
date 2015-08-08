@@ -1,4 +1,4 @@
-var pc   = require("../.."),
+var pc   = require("../../.."),
 assert   = require("assert");
 
 

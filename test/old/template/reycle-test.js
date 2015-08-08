@@ -1,5 +1,5 @@
 var assert = require("assert"),
-pc = require("../..");
+pc = require("../../..");
 
 
 describe(__filename + "#", function() {

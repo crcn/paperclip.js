@@ -1,4 +1,4 @@
-var pc   = require("../.."),
+var pc   = require("../../.."),
 assert   = require("assert"),
 stringifyView = require("../utils/stringifyView");
 
@@ -7,7 +7,7 @@ describe(__filename + "#", function () {
 
   it("can register a custom attribute", function () {
 
-    var tpl = template("<div hello />", {
+    var tpl = pc.template("<div hello />", {
       attributes: {
         hello: pc.Attribute.extend({
           initialize: function () {
@@ -22,7 +22,7 @@ describe(__filename + "#", function () {
   });
 
   it("can specify an attribute without a value", function() {
-    var tpl = template("<div abba>baab</div>", {});
+    var tpl = pc.template("<div abba>baab</div>", {});
 
     var v = tpl.view({});
     assert.equal(stringifyView(v), "<div abba=\"true\">baab</div>");
@@ -30,7 +30,7 @@ describe(__filename + "#", function () {
 
   xit("automatically converts dashes to camelCase", function() {
 
-    var tpl = template("<div say-hello='{{message}}' />", {
+    var tpl = pc.template("<div say-hello='{{message}}' />", {
       attributes: {
         sayHello: pc.Attribute.extend({
           initialize: function () {
@@ -53,7 +53,7 @@ describe(__filename + "#", function () {
 
   xit("automatically converts dashes to camelCase", function() {
 
-    var tpl = template("<div say-hello />", {
+    var tpl = pc.template("<div say-hello />", {
       attributes: {
         sayHello: pc.Attribute.extend({
           initialize: function () {

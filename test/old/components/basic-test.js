@@ -1,8 +1,7 @@
 var assert     = require("assert"),
-template       = require("../..").template,
-pc             = require("../.."),
-parser         = require("../../lib/parser"),
-Component      = require("../..").Component,
+template       = require("../../..").template,
+pc             = require("../../.."),
+Component      = require("../../..").Component,
 stringifyView = require("../utils/stringifyView")
 
 /*
@@ -149,8 +148,8 @@ describe(__filename + "#", function () {
             this._node = this.document.createTextNode("");
             this.section.appendChild(this._node);
           },
-          update: function(context) {
-            this._node.nodeValue = context.message;
+          update: function() {
+            this._node.nodeValue = this.view.get("message");
           }
         })
       }

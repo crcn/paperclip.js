@@ -1,28 +1,28 @@
-var template = require("../..").template;
+var pc       = require("../../..");
 var expect   = require("expect.js");
 var doc      = require("nofactor");
 
 describe(__filename + "#", function() {
 
   it("can get() a property on the context", function() {
-    var v = template("").view({ a: { b: 1 }});
+    var v = pc.template("").view({ a: { b: 1 }});
     expect(v.get("a.b")).to.be(1);
   });
 
   it("can set() a property on the context", function() {
-    var v = template("").view({ a: { b: 1 }});
+    var v = pc.template("").view({ a: { b: 1 }});
     v.set("a.b", 2);
     expect(v.get("a.b")).to.be(2);
   });
 
   it("can call() a function on the context", function() {
-    var v = template("").view({ a: { b: function(v) { return v; } }});
+    var v = pc.template("").view({ a: { b: function(v) { return v; } }});
     expect(v.call("a.b", [2])).to.be(2);
   });
 
   it("can inherit a property from the parent", function() {
-    var p = template("").view({a:{b:1}});
-    var c = template("").view({}, { parent: p });
+    var p = pc.template("").view({a:{b:1}});
+    var c = pc.template("").view({}, { parent: p });
     expect(c.get("a.b")).to.be(1);
   });
 

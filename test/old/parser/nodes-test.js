@@ -1,6 +1,5 @@
-var parser = require("../../lib/parser.js"),
-pc         = require("../../lib"),
-template   = require("../../lib/template"),
+var parser = require("../../../lib/parsers/default/parser"),
+pc         = require("../../.."),
 assert     = require("assert"),
 stringifyView = require("../utils/stringifyView");
 

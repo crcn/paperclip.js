@@ -1,7 +1,7 @@
 var assert = require("assert"),
-pc         = require("../.."),
+pc         = require("../../.."),
 template   = pc.template,
-compiler = require("../../lib/adapters/default/compiler"),
+compiler = require("../../../lib/parsers/default/compiler"),
 stringifyView = require("../utils/stringifyView"),
 assert = require("assert");
 
