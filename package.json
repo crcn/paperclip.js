@@ -1,6 +1,6 @@
 {
   "name": "paperclip",
-  "version": "3.0.9",
+  "version": "3.0.10",
   "description": "controller logic:",
   "main": "./lib/node.js",
   "browser": "./lib/browser.js",
@@ -59,7 +59,6 @@
     "karma-safari-launcher": "^0.1.1",
     "karma-sauce-launcher": "^0.2.10",
     "mocha": "~1.15.1",
-    "nofactor": "^3.0.0",
     "pegjs": "^0.8.0",
     "sinon": "^1.12.2",
     "uglify-js": "^2.4.16",
@@ -72,6 +71,7 @@
   },
   "dependencies": {
     "he": "~0.5.0",
+    "nofactor": "^3.0.0",
     "protoclass": "0.0.6",
     "xtend": "^4.0.0"
   }
