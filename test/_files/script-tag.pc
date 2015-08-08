@@ -1,1 +1,2 @@
-<script>{{blarg}}</script>
+
+<script>{{blarg}} ''''''</script>

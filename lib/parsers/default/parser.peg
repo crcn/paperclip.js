@@ -52,6 +52,10 @@ function expression(name) {
   return Array.prototype.slice.call(arguments);
 }
 
+function escapeString(string) {
+  return string.replace(/[\n\r]+/g,"\\n").replace(/'/g,"\\'");
+}
+
 }
 
 Start
@@ -71,14 +75,13 @@ ChildNodes
 
 CommentNode
   = _ "<!--" value:(!"-->" v:SourceCharacter { return v; })+ "-->" _ {
-    return ["comment", trimEnds(value.join(""))];
+    return ["comment", escapeString(trimEnds(value.join("")))];
   }
   / DocType
 
 ScriptStart
-  = "<script" attributes:TagAttributes ">" content:ScriptEnd+ "</script>" {
-      content = content.join("").replace(/[\n\r]+/,"\\n").replace("'","\\'");
-      return ["element", "script", attributes, [["text", content]]];
+  = _ "<script" attributes:TagAttributes ">" content:ScriptEnd+ "</script>" _  {
+      return ["element", "script", attributes, [["text", escapeString(content.join(""))]]];
     }
 
 ScriptEnd
