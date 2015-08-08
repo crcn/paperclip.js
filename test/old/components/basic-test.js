@@ -139,6 +139,27 @@ describe(__filename + "#", function () {
     assert.equal(stringifyView(v), "ab0ab1ab2ab3ab4");
   });
 
+  it("can add & remove attributes on a custom component", function() {
+    var tpl = template("<ab c='{{v}}' />", {
+      components: {
+        ab: Component.extend({
+          initialize: function () {
+            this._node = this.document.createTextNode("");
+            this.section.appendChild(this._node);
+          },
+          update: function() {
+            this._node.nodeValue = this.attributes.c || "thing";
+          }
+        })
+      }
+    });
+
+    var v = tpl.view({v:"some"});
+    assert.equal(stringifyView(v), "some");
+    v.set("v", void 0);
+    assert.equal(stringifyView(v), "thing");
+  });
+
   it("automatically converts dashes to camelCase", function() {
 
     var tpl = template("<say-hello message={{message}} />", {
