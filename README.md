@@ -16,11 +16,6 @@ Paperclip is a reactive template engine that compiles HTML to DOM. All optimizat
 - works with any framework
 - no browser dependencies
 
-### Roadmap
-
-- move immutable virtual DOM to a [new repo](https://github.com/mojo-js/immutable-virtual-dom).
-- move more towards hybrid dirty-type checking & observables (ultra fast).
-
 ### Syntax
 
 template:
@@ -44,11 +39,6 @@ var helloView     = helloTemplate.view();
 document.body.appendChild(helloView.render());
 ```
 
-### Adapters
-
-- [MarionetteJS](https://github.com/mojo-js/marionette-paperclip)
-- [AngularJS](https://github.com/mojo-js/ng-paperclip)
-
 ### Examples
 
 - [dbmonster](http://paperclip-dbmonster.herokuapp.com/)
@@ -57,14 +47,8 @@ document.body.appendChild(helloView.render());
 - [partial todomvc example](http://paperclip-todomvc-example.herokuapp.com/)
 - [POJO dots](http://jsfiddle.net/JTxdM/116/)
 
-### Commands
+### Command Line Usage
 
-```
-make test-node    # run unit tests in NodeJS
-make test-browser # run unit tests in the browser
-make test-cov     # run test coverage tool
-make parser       # build the parser
-make test-watch   # run the tests and watch them
-make browser min  # build for the browser
-make lint         # run jshint and jscs
+```bash
+cat template.pc | paperclip
 ```

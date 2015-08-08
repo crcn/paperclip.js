@@ -520,6 +520,13 @@ module.exports = protoclass(Component, {
 
   setAttribute: function(key, value) {
     this.attributes[key] = value;
+  },
+
+  /**
+   */
+
+  removeAttribute: function(key) {
+    this.attributes[key] = void 0;
   }
 });
 
