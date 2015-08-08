@@ -1669,7 +1669,7 @@ module.exports = function(nodeValue) {
 };
 
 },{"48":48}],37:[function(require,module,exports){
-var extend        = require(49);
+var protoclass    = require(48);
 var getNodePath   = require(34);
 var getNodeByPath = require(33);
 
@@ -1683,35 +1683,26 @@ function DynamicNode(vnode, bindingClass) {
   this.target           = vnode;
 }
 
-/**
- */
-
-DynamicNode.prototype.freeze = function(options, hydrators) {
-  if (options.components[this.vnode.nodeName]) {
-    return this.freezeComponent(options, hydrators);
-  } else {
-    return this.freezeElement(options, hydrators);
+protoclass(DynamicNode, {
+  freeze: function(options, hydrators) {
+    if (options.components[this.vnode.nodeName]) {
+      return this.freezeComponent(options, hydrators);
+    } else {
+      return this.freezeElement(options, hydrators);
+    }
+  },
+  freezeComponent: function(options, hydrators) {
+    var h2 = [];
+    var element = this.vnode.freeze(options, h2);
+    hydrators.push(new ComponentHydrator(h2[0], this.bindingClass, options));
+    return element;
+  },
+  freezeElement: function(options, hydrators) {
+    var node = this.vnode.freeze(options, hydrators);
+    hydrators.push(new Hydrator(node, this.bindingClass, options));
+    return node;
   }
-};
-
-/**
- */
-
-DynamicNode.prototype.freezeComponent = function(options, hydrators) {
-  var h2 = [];
-  var element = this.vnode.freeze(options, h2);
-  hydrators.push(new ComponentHydrator(h2[0], this.bindingClass, options));
-  return element;
-};
-
-/**
- */
-
-DynamicNode.prototype.freezeElement = function(options, hydrators) {
-  var node = this.vnode.freeze(options, hydrators);
-  hydrators.push(new Hydrator(node, this.bindingClass, options));
-  return node;
-};
+});
 
 /**
  */
@@ -1725,7 +1716,7 @@ function Hydrator(ref, bindingClass, options) {
 /**
  */
 
-extend(Hydrator.prototype, {
+protoclass(Hydrator, {
 
   /**
    */
@@ -1747,7 +1738,7 @@ function ComponentHydrator(hydrator, bindingClass, options) {
 /**
  */
 
-extend(ComponentHydrator.prototype, {
+protoclass(ComponentHydrator, {
   hydrate: function(root, view) {
     this.hydrator.hydrate(root, view);
     var component = view.bindings[view.bindings.length - 1];
@@ -1762,7 +1753,7 @@ module.exports = function(vnode, bindingClass) {
   return new DynamicNode(vnode, bindingClass);
 };
 
-},{"33":33,"34":34,"49":49}],38:[function(require,module,exports){
+},{"33":33,"34":34,"48":48}],38:[function(require,module,exports){
 var protoclass       = require(48);
 var createSection    = require(41);
 var fragment         = require(39);
@@ -2006,6 +1997,7 @@ module.exports = function(template) {
 },{"48":48}],43:[function(require,module,exports){
 var defaultDocument   = require(47);
 var View              = require(45);
+var protoclass        = require(48);
 var extend            = require(49);
 var FragmentSection   = require(32);
 var NodeSection       = require(35);
@@ -2062,33 +2054,26 @@ function Template(vnode, options) {
   }
 }
 
-/**
- */
+protoclass(Template, {
+  __isTemplate: true,
+  view: function(context, options) {
 
-Template.prototype.__isTemplate = true;
+    // TODO - make compatible with IE 8
+    var section     = this.section.clone();
 
-/**
- * creates a new view
- */
+    var view = new this.viewClass(section, this, options);
 
-Template.prototype.view = function(context, options) {
+    for (var i = 0, n = this._hydrators.length; i < n; i++) {
+      this._hydrators[i].hydrate(section.node || section.start.parentNode, view);
+    }
 
-  // TODO - make compatible with IE 8
-  var section     = this.section.clone();
+    // only set the context if it exists. Should be a very explicit thing.
+    if (context) view.update(context);
 
-  var view = new this.viewClass(section, this, options);
-
-  for (var i = 0, n = this._hydrators.length; i < n; i++) {
-    this._hydrators[i].hydrate(section.node || section.start.parentNode, view);
+    // TODO - set section instead of node
+    return view;
   }
-
-  // only set the context if it exists. Should be a very explicit thing.
-  if (context) view.update(context);
-
-  // TODO - set section instead of node
-  return view;
-};
-
+});
 /**
  */
 
@@ -2096,7 +2081,9 @@ module.exports = function(vnode, options) {
   return new Template(vnode, options);
 };
 
-},{"32":32,"35":35,"42":42,"45":45,"47":47,"49":49}],44:[function(require,module,exports){
+},{"32":32,"35":35,"42":42,"45":45,"47":47,"48":48,"49":49}],44:[function(require,module,exports){
+var protoclass = require(48);
+
 /**
  */
 
@@ -2108,9 +2095,11 @@ function Text(nodeValue) {
 /**
  */
 
-Text.prototype.freeze = function(options) {
-  return options.document.createTextNode(this.nodeValue);
-};
+protoclass(Text, {
+  freeze: function(options) {
+    return options.document.createTextNode(this.nodeValue);
+  }
+});
 
 /**
  */
@@ -2119,7 +2108,7 @@ module.exports = function(nodeValue) {
   return new Text(nodeValue);
 };
 
-},{}],45:[function(require,module,exports){
+},{"48":48}],45:[function(require,module,exports){
 var protoclass = require(48);
 
 /**
