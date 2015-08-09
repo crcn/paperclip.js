@@ -1,8 +1,7 @@
-
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (global){
 var template       = require(25);
-var extend         = require(49);
+var extend         = require(48);
 
 /**
  */
@@ -14,6 +13,7 @@ module.exports = {
   components     : require(17),
   attributes     : require(12),
   modifiers      : require(24),
+  document       : global.document,
   noConflict: function() {
     delete global.paperclip;
   },
@@ -27,8 +27,8 @@ if (typeof window !== "undefined") {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"12":12,"16":16,"17":17,"2":2,"24":24,"25":25,"28":28,"49":49}],2:[function(require,module,exports){
-var protoclass = require(48);
+},{"12":12,"16":16,"17":17,"2":2,"24":24,"25":25,"28":28,"48":48}],2:[function(require,module,exports){
+var protoclass = require(47);
 
 /**
  */
@@ -59,7 +59,7 @@ protoclass(Base, {
 
 module.exports = Base;
 
-},{"48":48}],3:[function(require,module,exports){
+},{"47":47}],3:[function(require,module,exports){
 var Base = require(2);
 
 /**
@@ -484,7 +484,7 @@ module.exports.test = function(vnode, key, value) {
 };
 
 },{"2":2,"27":27}],16:[function(require,module,exports){
-var protoclass = require(48);
+var protoclass = require(47);
 var template   = require(25);
 var fragment   = require(39);
 
@@ -531,7 +531,7 @@ module.exports = protoclass(Component, {
   }
 });
 
-},{"25":25,"39":39,"48":48}],17:[function(require,module,exports){
+},{"25":25,"39":39,"47":47}],17:[function(require,module,exports){
 module.exports = {
   repeat : require(18),
   show   : require(19),
@@ -849,7 +849,7 @@ module.exports = Base.extend(UnsafeComponent, {
     }
 
     if (this.currentValue && this.currentValue === value) {
-      if (this.currentValue.render) {
+      if (this.currentValue.__isView) {
         this.currentValue.update(this.currentValue.context);
         return;
       }
@@ -895,7 +895,7 @@ module.exports = Base.extend(UnsafeComponent, {
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"16":16}],23:[function(require,module,exports){
-var protoclass = require(48);
+var protoclass = require(47);
 
 module.exports = function(initialize, update) {
 
@@ -988,7 +988,7 @@ module.exports = function(initialize, update) {
   return Binding;
 };
 
-},{"48":48}],24:[function(require,module,exports){
+},{"47":47}],24:[function(require,module,exports){
 module.exports = {
   uppercase: function(value) {
     return String(value).toUpperCase();
@@ -1013,7 +1013,7 @@ module.exports = {
 
 },{}],25:[function(require,module,exports){
 var ivd                = require(40);
-var extend             = require(49);
+var extend             = require(48);
 var createBindingClass = require(23);
 
 /**
@@ -1042,7 +1042,7 @@ module.exports = function(source, options) {
   return ivd.template(vnode, options);
 };
 
-},{"23":23,"40":40,"49":49}],26:[function(require,module,exports){
+},{"23":23,"40":40,"48":48}],26:[function(require,module,exports){
 module.exports = {
 
   /**
@@ -1073,13 +1073,12 @@ module.exports = function(callback, context) {
 };
 
 },{}],28:[function(require,module,exports){
-(function (global){
 var ivd            = require(40);
 var BaseView       = ivd.View;
 var _stringifyNode = require(31);
 var Transitions    = require(30);
 var Reference      = require(29);
-var extend         = require(49);
+var extend         = require(48);
 
 /**
  */
@@ -1183,6 +1182,7 @@ BaseView.extend(PaperclipView, {
   call: function(keypath, params) {
 
     var caller;
+    var v;
 
     if (typeof keypath !== "string") keypath = keypath.join(".");
 
@@ -1214,7 +1214,8 @@ BaseView.extend(PaperclipView, {
 
   toString: function() {
 
-    if (this.template.section.document === global.document) {
+    // browser DOM?
+    if (this.template.section.document && this.template.section.document.body) {
       return _stringifyNode(this.section.start ? this.section.start.parentNode : this.section.node);
     }
 
@@ -1267,9 +1268,8 @@ BaseView.extend(PaperclipView, {
 
 module.exports = PaperclipView;
 
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"29":29,"30":30,"31":31,"40":40,"49":49}],29:[function(require,module,exports){
-var protoclass = require(48);
+},{"29":29,"30":30,"31":31,"40":40,"48":48}],29:[function(require,module,exports){
+var protoclass = require(47);
 
 /**
  */
@@ -1311,9 +1311,9 @@ protoclass(Reference, {
 
 module.exports = Reference;
 
-},{"48":48}],30:[function(require,module,exports){
+},{"47":47}],30:[function(require,module,exports){
 (function (process){
-var protoclass = require(48);
+var protoclass = require(47);
 var async      = require(26);
 
 /**
@@ -1364,7 +1364,7 @@ module.exports = protoclass(Transitions, {
 });
 
 }).call(this,require(46))
-},{"26":26,"46":46,"48":48}],31:[function(require,module,exports){
+},{"26":26,"46":46,"47":47}],31:[function(require,module,exports){
 /* istanbul ignore next */
 function _stringifyNode(node) {
 
@@ -1389,7 +1389,7 @@ function _stringifyNode(node) {
 module.exports = _stringifyNode;
 
 },{}],32:[function(require,module,exports){
-var protoclass    = require(48);
+var protoclass    = require(47);
 var getNodeByPath = require(33);
 var getNodePath   = require(34);
 
@@ -1526,7 +1526,7 @@ protoclass(Marker, {
 
 module.exports = FragmentSection;
 
-},{"33":33,"34":34,"48":48}],33:[function(require,module,exports){
+},{"33":33,"34":34,"47":47}],33:[function(require,module,exports){
 module.exports = function(root, path) {
 
   var c = root;
@@ -1560,7 +1560,7 @@ module.exports = function(node) {
 };
 
 },{}],35:[function(require,module,exports){
-var protoclass    = require(48);
+var protoclass    = require(47);
 var getNodeByPath = require(33);
 var getNodePath   = require(34);
 
@@ -1650,8 +1650,8 @@ protoclass(Marker, {
 
 module.exports = NodeSection;
 
-},{"33":33,"34":34,"48":48}],36:[function(require,module,exports){
-var protoclass = require(48);
+},{"33":33,"34":34,"47":47}],36:[function(require,module,exports){
+var protoclass = require(47);
 
 /**
  */
@@ -1676,8 +1676,8 @@ module.exports = function(nodeValue) {
   return new Comment(nodeValue);
 };
 
-},{"48":48}],37:[function(require,module,exports){
-var protoclass    = require(48);
+},{"47":47}],37:[function(require,module,exports){
+var protoclass    = require(47);
 var getNodePath   = require(34);
 var getNodeByPath = require(33);
 
@@ -1761,8 +1761,8 @@ module.exports = function(vnode, bindingClass) {
   return new DynamicNode(vnode, bindingClass);
 };
 
-},{"33":33,"34":34,"48":48}],38:[function(require,module,exports){
-var protoclass       = require(48);
+},{"33":33,"34":34,"47":47}],38:[function(require,module,exports){
+var protoclass       = require(47);
 var createSection    = require(41);
 var fragment         = require(39);
 var FragmentSection  = require(32);
@@ -1911,8 +1911,8 @@ function _hydrateDynamicAttributes(ref, options, dynamicAttributes, view) {
   }
 }
 
-},{"32":32,"35":35,"39":39,"41":41,"48":48}],39:[function(require,module,exports){
-var protoclass = require(48);
+},{"32":32,"35":35,"39":39,"41":41,"47":47}],39:[function(require,module,exports){
+var protoclass = require(47);
 
 /**
  */
@@ -1945,7 +1945,7 @@ module.exports = function(children) {
   return new Fragment(children);
 };
 
-},{"48":48}],40:[function(require,module,exports){
+},{"47":47}],40:[function(require,module,exports){
 /**
  */
 
@@ -1960,7 +1960,7 @@ module.exports = {
 };
 
 },{"36":36,"37":37,"38":38,"39":39,"43":43,"44":44,"45":45}],41:[function(require,module,exports){
-var extend          = require(49);
+var extend          = require(48);
 var FragmentSection = require(32);
 var NodeSection     = require(35);
 
@@ -1974,8 +1974,8 @@ module.exports = function(document, node) {
   }
 };
 
-},{"32":32,"35":35,"49":49}],42:[function(require,module,exports){
-var protoclass = require(48);
+},{"32":32,"35":35,"48":48}],42:[function(require,module,exports){
+var protoclass = require(47);
 
 module.exports = function(template) {
 
@@ -2002,11 +2002,10 @@ module.exports = function(template) {
   return Component;
 }
 
-},{"48":48}],43:[function(require,module,exports){
-var defaultDocument   = require(47);
+},{"47":47}],43:[function(require,module,exports){
 var View              = require(45);
-var protoclass        = require(48);
-var extend            = require(49);
+var protoclass        = require(47);
+var extend            = require(48);
 var FragmentSection   = require(32);
 var NodeSection       = require(35);
 var templateComponent = require(42);
@@ -2043,9 +2042,7 @@ function Template(vnode, options) {
   // hydrates nodes when the template is used
   this._hydrators = [];
 
-  options = _cleanupOptions(extend({
-    document  : defaultDocument
-  }, options));
+  options = _cleanupOptions(options);
 
   this.viewClass = options.viewClass || View;
   this.options   = options;
@@ -2089,8 +2086,8 @@ module.exports = function(vnode, options) {
   return new Template(vnode, options);
 };
 
-},{"32":32,"35":35,"42":42,"45":45,"47":47,"48":48,"49":49}],44:[function(require,module,exports){
-var protoclass = require(48);
+},{"32":32,"35":35,"42":42,"45":45,"47":47,"48":48}],44:[function(require,module,exports){
+var protoclass = require(47);
 
 /**
  */
@@ -2116,8 +2113,8 @@ module.exports = function(nodeValue) {
   return new Text(nodeValue);
 };
 
-},{"48":48}],45:[function(require,module,exports){
-var protoclass = require(48);
+},{"47":47}],45:[function(require,module,exports){
+var protoclass = require(47);
 
 /**
  */
@@ -2130,6 +2127,7 @@ function View(section, template, options) {
 }
 
 protoclass(View, {
+  __isView: true,
   update: function() {
     for (var i = 0, n = this.bindings.length; i < n; i++) {
       this.bindings[i].update();
@@ -2147,7 +2145,7 @@ protoclass(View, {
 
 module.exports = View;
 
-},{"48":48}],46:[function(require,module,exports){
+},{"47":47}],46:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -2208,9 +2206,6 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],47:[function(require,module,exports){
-module.exports = document;
-
-},{}],48:[function(require,module,exports){
 function _copy (to, from) {
 
   for (var i = 0, n = from.length; i < n; i++) {
@@ -2235,7 +2230,7 @@ function protoclass (parent, child) {
     parent  = function() { };
   }
 
-  _copy(child, parent);
+  _copy(child, parent); 
 
   function ctor () {
     this.constructor = child;
@@ -2286,7 +2281,7 @@ protoclass.setup = function (child) {
 
 
 module.exports = protoclass;
-},{}],49:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 module.exports = extend
 
 function extend(target) {

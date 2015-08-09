@@ -71,7 +71,11 @@ describe(__filename + "#", function () {
     v.set("a", void 0);
     // v.runloop.runNow();
     assert.equal(stringifyView(v), "<div></div>");
+  });
 
+  it("can have a conditional block with an attribute value", function() {
+    var v = pc.template("<div class='a {{b?'c':'d'}}'></div>").view({b:true});
+    assert.equal(stringifyView(v), "<div class=\"a c\"></div>");
   });
 
   it("maintains dashes in native elements", function() {
