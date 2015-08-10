@@ -25,7 +25,7 @@ process.env.PC_DEBUG = 1;
 var paths = {
   testFiles  : ["test/helpers/document.js", "test/**/*-test.js", "lib/**/*-test.js"],
   appFiles   : ["lib/**/*.js"],
-  allFiles   : ["test/**", "lib/**"]
+  allFiles   : ["test/**", "lib/**", "examples/**/index.js"]
 };
 
 /**
@@ -205,8 +205,13 @@ gulp.task("default", function () {
 /**
  */
 
-gulp.task("example", function () {
-  return gulp.run("test-coverage");
+gulp.task("example", function() {
+  return browserify("./examples/" + options.name).
+  plugin(collapse).
+  bundle().
+  pipe(source('index.bundle.js')).
+  pipe(buffer()).
+  pipe(gulp.dest('./examples/' + options.name));
 });
 
 /**
