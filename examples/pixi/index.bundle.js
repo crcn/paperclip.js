@@ -6,7 +6,7 @@ var pixi    = require(170);
 
 
 pc.document.registerElement("text", require(2));
-
+ 
 var tpl = pc.template("<repeat each={{items}} as='item' key='v'><text text='{{i}}' position='{{item.position}}' /></repeat>", {
   modifiers: {
     ceil: Math.ceil,
@@ -20,22 +20,19 @@ var v   = tpl.view({
   })
 });
 
-console.log(v);
+// console.log(v);
  
 
 var renderer = PIXI.autoDetectRenderer(800, 600);
 document.body.appendChild(renderer.view);
 
-var container = new pixi.Container();
-container.addChild(v.render().target);
-
 var i = 0;
 
 function animate() {
-  console.log(i);
+  // console.log(i);
   v.context.i = ++i;
   v.update();
-  renderer.render(container);
+  renderer.render(v.render().target);
   requestAnimationFrame(animate);
 }
 
@@ -67,7 +64,7 @@ Node.extend(Container, {
 
   appendChild: function (node) {
 
-    if (node.nodeType === 11 && node.childNodes.length) {
+    if (node.nodeType === 11) {
       while (node.childNodes.length) {
         this.appendChild(node.childNodes[0]);
       }

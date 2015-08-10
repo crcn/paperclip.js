@@ -12,7 +12,7 @@ Node.extend(Container, {
 
   appendChild: function (node) {
 
-    if (node.nodeType === 11 && node.childNodes.length) {
+    if (node.nodeType === 11) {
       while (node.childNodes.length) {
         this.appendChild(node.childNodes[0]);
       }
