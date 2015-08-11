@@ -20,7 +20,7 @@ Good news is that most web-apps don't need complex UIs, and the small edge cases
 - works with any framework
 - no browser dependencies
 - ability to specify any rendering engine.
-- can use most parsing engines such as mustache, or handlebars. 
+- can use most parsing engines such as mustache, or handlebars.
 
 ### Syntax
 
@@ -37,7 +37,9 @@ controller (with [brfs](https://github.com/substack/brfs)):
 
 ```javascript
 var pc      = require("paperclip");
-pc.compiler = require("paperclip/compilers/default");
+
+// compiler needs to be specified here if you want to parse templates in the browser
+pc.compile  = require("paperclip/compilers/default");
 var fs      = require("fs");
 
 var helloTemplate = pc.template(fs.readFileSync(__dirname + "/template.pc", "utf8"));
