@@ -2,10 +2,14 @@
 
 **Visit http://paperclipjs.com for further documentation.**
 
-Paperclip is a reactive template engine that compiles HTML to DOM. All optimizations happen at compile time, so you can expect snappy and efficient user interfaces across desktop, and mobile devices.
+PaperclipJS is a template engine that compiles your HTML straight to DOM.
 
+PaperclipJS uses an immutable virtual dom. The added benefit of this is that there are fewer moving parts, and you end up with a template engine that's a wee-bit more native than other dynamic virtual dom libraries. I.e: it's faster. Here's a benchmark: http://paperclip-dbmonster.herokuapp.com.
 
-<!-- How is it so fast? -->
+The only downside to this is that you don't have the added benefit of adding/removing elements around dynamically - creating complex UIs. Once you're template is compiled, you can only mutate the elements that you specified as dynamic.
+
+Good news is that most web-apps don't need complex UIs, and the small edge cases where you might can easily be worked with.
+
 
 ### Features
 
@@ -15,6 +19,8 @@ Paperclip is a reactive template engine that compiles HTML to DOM. All optimizat
 - accepts plain old javascript objects
 - works with any framework
 - no browser dependencies
+- ability to specify any rendering engine.
+- can use most parsing engines such as mustache, or handlebars. 
 
 ### Syntax
 
@@ -30,8 +36,9 @@ template:
 controller (with [brfs](https://github.com/substack/brfs)):
 
 ```javascript
-var pc   = require("paperclip");
-var fs   = require("fs");
+var pc      = require("paperclip");
+pc.compiler = require("paperclip/compilers/default");
+var fs      = require("fs");
 
 var helloTemplate = pc.template(fs.readFileSync(__dirname + "/template.pc", "utf8"));
 var helloView     = helloTemplate.view();
