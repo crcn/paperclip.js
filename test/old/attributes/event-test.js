@@ -189,7 +189,7 @@ describe(__filename + "#", function () {
     e.keyCode = 27;
     t.render().dispatchEvent(e);
     assert.equal(i, 1);
-    t.update({});
+    t.set("onEvent", void 0);
     t.section.node.dispatchEvent(e);
     assert.equal(i, 1);
   });

@@ -50,13 +50,4 @@ describe(__filename + "#", function() {
     v.set("name", "b");
     expect(v.render().toString()).to.be("b");
   });
-
-  it("doesn't update children if the parent is the only thing that's changed", function() {
-    var p = template("{{name}}", { document: doc }).view({name:"a"});
-    var c = template("{{name}}", { document: doc }).view({name:"b"}, { parent: p });
-    expect(c.render().toString()).to.be("b");
-    c.context.name = "c";
-    p.set("name", "b");
-    expect(c.render().toString()).to.be("b");
-  });
 });

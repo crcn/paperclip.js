@@ -215,6 +215,7 @@ describe(__filename + "#", function () {
     try {
       var t = pc.template("<input type='text' value={{ name }} />", pc),
       v     = t.view({name:"a"});
+      v.render();
     } catch (e) {
       err = e;
     }
@@ -226,12 +227,14 @@ describe(__filename + "#", function () {
     var t = pc.template("<input type='text' value={{ <~>value }} />", pc),
       v     = t.view({value:0});
 
+      v.render();
     assert.equal(v.section.node.value, "0");
   });
 
   it("can handle false", function () {
     var t = pc.template("<input type='text' value={{ <~>value }} />", pc),
       v     = t.view({value:false});
+      v.render();
 
     assert.equal(v.section.node.value, "false");
   });

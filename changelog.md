@@ -21,3 +21,4 @@
 - easeIn -> easein
 - easeout -> easeout
 - registered component names & attributes are now case sensitive
+- `update` has been deprecated in views. Use `render` instead.

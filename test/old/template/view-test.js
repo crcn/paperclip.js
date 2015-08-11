@@ -34,7 +34,8 @@ describe(__filename + "#", function () {
   it("can change the context of a view", function () {
     var v = pc.template("{{name}}").view({name:"a"});
     assert.equal(stringifyView(v), "a");
-    v.update({name:"b"});
+    v.context = {name:"b"};
+    v.update();
     assert.equal(stringifyView(v), "b");
   });
 });

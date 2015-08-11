@@ -166,7 +166,8 @@ describe(__filename + "#", function () {
     var tpl = template("<switch><show>{{name}}</show></switch>", pc);
     var v = tpl.view({name:"a"});
     assert.equal(stringifyView(v), "a");
-    v.update({name:"b"})
+    v.context = {name:"b"};
+    v.update();
     assert.equal(stringifyView(v), "b");
   });
 });

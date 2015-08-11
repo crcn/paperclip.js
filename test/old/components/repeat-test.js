@@ -31,10 +31,10 @@ describe(__filename + "#", function () {
     var v = tpl.view(ctx);
     assert.equal(stringifyView(v), "0123");
     src.splice(0, 1, 4);
-    v.update(ctx)
+    v.setProperties(ctx);
     assert.equal(stringifyView(v), "4123");
     src.splice(1, 2, 5, 6, 7);
-    v.update(ctx);
+    v.setProperties(ctx);
     assert.equal(stringifyView(v), "45673");
   });
 
@@ -64,11 +64,11 @@ describe(__filename + "#", function () {
   });
 
   it("properly inherits properties from the parent view", function () {
-    var tpl = template("<repeat each={{source}} as='a'>{{a}}{{name}}</repeat>", paperclip);
+    var tpl = paperclip.template("<repeat each={{source}} as='a'>{{a}}{{name}}</repeat>");
 
     var view = tpl.view({ source: [1, 2, 3, 4, 5 ], name: 'b'});
 
-    assert.equal(view.toString(), "1b2b3b4b5b");
+    assert.equal(stringifyView(view), "1b2b3b4b5b");
   });
 
   it("can apply a repeat block to an existing element", function () {

@@ -112,17 +112,17 @@ describe(__filename + "#", function () {
 
     it("maintains attribute spaces with a text binding", function () {
       var tpl = pc.template("<div class='blue red {{color}} yellow'></div>");
-      assert.equal(tpl.view({ color: "blue" }).toString(), '<div class="blue red blue yellow"></div>');
+      assert.equal(stringifyView(tpl.view({ color: "blue" })), '<div class="blue red blue yellow"></div>');
     });
 
     it("preserves whitespace between nodes & text nodes", function () {
       var tpl = pc.template("<strong>hello</strong> world");
-      assert.equal(tpl.view().toString(), "<strong>hello</strong> world");
+      assert.equal(stringifyView(tpl.view()), "<strong>hello</strong> world");
     });
 
     it("preserves whitespace between nodes & blocks", function () {
       var tpl = pc.template("<strong>hello</strong> {{name}}");
-      assert.equal(tpl.view({name:"john"}).toString(), "<strong>hello</strong> john");
+      assert.equal(stringifyView(tpl.view({name:"john"})), "<strong>hello</strong> john");
     });
   });
 });

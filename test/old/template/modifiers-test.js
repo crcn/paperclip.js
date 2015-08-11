@@ -7,15 +7,15 @@ describe(__filename + "#", function () {
 
 
   it("can call uppercase()", function () {
-    assert.equal(pc.template("{{name|uppercase()}}").view({name:"abc"}).toString(), "ABC");
+    assert.equal(stringifyView(pc.template("{{name|uppercase()}}").view({name:"abc"})), "ABC");
   });
 
   it("can call lowercase()", function () {
-    assert.equal(pc.template("{{name|lowercase()}}").view({name:"ABC"}).toString(), "abc");
+    assert.equal(stringifyView(pc.template("{{name|lowercase()}}").view({name:"ABC"})), "abc");
   });
 
   it("can call titlecase()", function () {
-    assert.equal(pc.template("{{name|titlecase()}}").view({name:"abc"}).toString(), "Abc");
+    assert.equal(stringifyView(pc.template("{{name|titlecase()}}").view({name:"abc"})), "Abc");
   });
 
   it("can call json()", function () {
@@ -29,15 +29,15 @@ describe(__filename + "#", function () {
   });
 
   it("can call multiple modifiers on one expression", function () {
-    assert.equal(pc.template("{{name|lowercase()|titlecase()}}").view({name:"ABC"}).toString(), "Abc");
+    assert.equal(stringifyView(pc.template("{{name|lowercase()|titlecase()}}").view({name:"ABC"})), "Abc");
   });
 
   it("modifies the last expression only", function () {
-    assert.equal(pc.template("{{a+b|uppercase()}}").view({a:"a",b:"b"}).toString(), "aB");
+    assert.equal(stringifyView(pc.template("{{a+b|uppercase()}}").view({a:"a",b:"b"})), "aB");
   });
 
   it("respects grouped expressions", function () {
-    assert.equal(pc.template("{{(a+b)|uppercase()}}").view({a:"a",b:"b"}).toString(), "AB");
+    assert.equal(stringifyView(pc.template("{{(a+b)|uppercase()}}").view({a:"a",b:"b"})), "AB");
   });
 
   it("can register a custom modifer", function () {
@@ -47,7 +47,7 @@ describe(__filename + "#", function () {
       return name + value;
     };
 
-    assert.equal(tpl.view({a:"a"}).toString(), "ab")
+    assert.equal(stringifyView(tpl.view({a:"a"})), "ab")
   });
 
   it("recalls the modifier if a value changes", function () {
@@ -96,6 +96,6 @@ describe(__filename + "#", function () {
     tpl.modifiers.concat = function (name, value) {
       return name + value;
     };
-    assert.equal(tpl.view({a:"a"}).toString(), "aB");
+    assert.equal(stringifyView(tpl.view({a:"a"})), "aB");
   });
 });

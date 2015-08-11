@@ -45,7 +45,8 @@ describe(__filename + "#", function () {
 
     assert.equal(stringifyView(v), "c b a d");
 
-    v.update({ name: "e" });
+    v.context = { name: "e" };
+    v.update();
     assert.equal(stringifyView(v), "c b a e");
 
   });

@@ -65,6 +65,7 @@ describe(__filename + "#", function() {
     it("can render " + key + " " + JSON.stringify(test[1]), function() {
       var template = pc.template(key);
       var view     = template.view(test[0]);
+      view.render();
       expect(stringifyView(view)).to.be(test[1]);
     });
   });

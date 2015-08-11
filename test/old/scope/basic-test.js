@@ -12,7 +12,7 @@ describe(__filename + "#", function () {
 
   it("doesn't inherit properties if parent isn't set", function () {
 
-    var t = pc.template("hello {{name}}"),
+    var t = pc.template("hello {{name || ''}}"),
     v     = t.view({name:"a"}),
     v2    = t.view(void 0);
 

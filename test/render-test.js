@@ -18,7 +18,7 @@ describe(__filename + "#", function() {
       var name     = file.split(".").shift();
       var template = pc.template(fs.readFileSync(path.join(filesdir, file), "utf8"));
       var view     = template.view(require(path.join(filesdir, name + ".js")));
-
+      view.render();
       var output = fs.readFileSync(path.join(filesdir, name + ".txt"), "utf8");
       output = output.replace(/\n+\s*/g,"");
       expect(stringifyView(view)).to.be(output);

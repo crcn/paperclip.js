@@ -44,22 +44,26 @@ describe(__filename + "#", function () {
 
     var b2, b3;
 
-    t.update({ content: b2 = t2.view({})});
+    t.context = { content: b2 = t2.view({})};
+    t.update();
 
     // t.accessor.apply();
     // t.runloop.runNow();
     assert.equal(t.toString(), "hello world");
     var c = { content: b3 = t3.view({name:"bob"}) };
-    t.update(c);
+    t.context = c;
+    t.update();
 
     // t.accessor.apply();
     // t.runloop.runNow();
     assert.equal(t.toString(), "hello bob");
-    t.update({ content:  b2 });
+    t.context = { content:  b2 };
+    t.update();
     // t.accessor.apply();
     // t.runloop.runNow();
     assert.equal(t.toString(), "hello world");
-    t.update({ content: b3 });
+    t.context = { content: b3 };
+    t.update();
     // t.accessor.apply();
     // t.runloop.runNow();
     assert.equal(t.toString(), "hello bob");
@@ -93,6 +97,7 @@ describe(__filename + "#", function () {
     // t3.accessor.apply();
     // t2.accessor.apply();
     // t.runloop.runNow();
+
     assert.equal(t.toString(), "hello my name is bob");
     c.content = t3;
 
@@ -118,12 +123,13 @@ describe(__filename + "#", function () {
       "</show>!"
     ).view(c);
 
-    assert.equal(t.toString(), "hello bob!")
+    assert.equal(stringifyView(t), "hello bob!")
     c.condition = false;
-    t.update(c);
+    t.context = c;
+    t.update();
     // t.accessor.apply();
     // t.runloop.runNow();
-    assert.equal(t.toString(), "hello !");
+    assert.equal(stringifyView(t), "hello !");
   });
 
 });

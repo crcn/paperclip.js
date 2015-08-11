@@ -7,12 +7,12 @@ describe(__filename + "#", function () {
 
   it("can be rendered", function () {
     var tpl = pc.template("hello <strong id='a'>world</strong>!");
-    assert.equal(tpl.view().toString(), 'hello <strong id="a">world</strong>!');
+    assert.equal(stringifyView(tpl.view()), 'hello <strong id="a">world</strong>!');
   });
 
   it("can render an unbound block", function () {
     var tpl = pc.template("{{~a}} + {{~b}} is {{~a+~b}}");
-    assert.equal(tpl.view({ a: 1, b: 2 }).toString(), '1 + 2 is 3');
+    assert.equal(stringifyView(tpl.view({ a: 1, b: 2 })), '1 + 2 is 3');
   });
 
   // TODO - undefined should be displayed. Eng should explicitly defined conditional data.
@@ -28,7 +28,7 @@ describe(__filename + "#", function () {
 
   it("can render a bound block", function () {
     var tpl = pc.template("{{a}} + {{b}} is {{a+b}}"), v;
-    assert.equal((v = tpl.view({ a: 1, b: 2 })).toString(), '1 + 2 is 3');
+    assert.equal(stringifyView(v = tpl.view({ a: 1, b: 2 })), '1 + 2 is 3');
     v.set("a", 2);
     // v.runloop.runNow();
     assert.equal(stringifyView(v), '2 + 2 is 4');
@@ -47,14 +47,14 @@ describe(__filename + "#", function () {
       }
     });
 
-    assert.equal(v.toString(), '0-1');
+    assert.equal(stringifyView(v), '0-1');
     v.set("i", 2);
   });
 
   // text node value should not be modified in any way
   if (!process.browser)
   xit("properly encodes html entities", function () {
-    assert.equal(pc.template("{{content}}").view({content:"<script />"}).toString(), "&#x3C;script /&#x3E;");
+    assert.equal(stringifyView(pc.template("{{content}}").view({content:"<script />"})), "&#x3C;script /&#x3E;");
   });
 
 });
