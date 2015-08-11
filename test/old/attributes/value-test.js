@@ -252,12 +252,18 @@ describe(__filename + "#", function () {
     var t = pc.template("<input type='text' value={{ value }} />", pc),
       v     = t.view({});
 
-
     var input = v.render();
     input.value = "baab";
     var e = document.createEvent("Event");
     e.initEvent("change", true, true);
     input.dispatchEvent(e);
+  });
 
+  it("can specify a value for the input without blocks", function() {
+    var t = pc.template("<input type='text' value='blarg' />", pc),
+      v     = t.view({});
+
+    var input = v.render();
+    assert.equal(stringifyView(v), '<input value="blarg" type="text">');
   });
 });
