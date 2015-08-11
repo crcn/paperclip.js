@@ -1,11 +1,11 @@
 {
   "name": "paperclip",
-  "version": "3.0.12",
+  "version": "3.0.13",
   "description": "controller logic:",
   "main": "./lib/node.js",
   "browser": "./lib/browser.js",
   "publishConfig": {
-    "tag": "trunk"
+    "tag": "latest"
   },
   "scripts": {
     "test": "gulp lint test-coveralls"
