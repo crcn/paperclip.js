@@ -51,9 +51,9 @@ document.body.appendChild(helloView.render());
 ### Examples
 
 - [dbmonster](http://paperclip-dbmonster.herokuapp.com/)
-- [updating 1000 items](http://requirebin.com/?gist=5602fd414139b6ed4fbc)
+- [updating 1000 items](http://requirebin.com/?gist=a0a3322bce66c09746b9)
 - [inline html](http://requirebin.com/?gist=bbb9b0eaccd3d7e41df1)
-- [partial todomvc example](http://paperclip-todomvc-example.herokuapp.com/)
+- [partial todomvc example](http://jsfiddle.net/JTxdM/118/)
 - [POJO dots](http://jsfiddle.net/JTxdM/116/)
 
 ### Command Line Usage
