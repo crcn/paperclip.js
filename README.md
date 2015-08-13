@@ -39,7 +39,7 @@ controller (with [brfs](https://github.com/substack/brfs)):
 var pc      = require("paperclip");
 
 // compiler needs to be specified here if you want to parse templates in the browser
-pc.compile  = require("paperclip/compilers/default");
+pc.compile  = require("paperclip/compile/default");
 var fs      = require("fs");
 
 var helloTemplate = pc.template(fs.readFileSync(__dirname + "/template.pc", "utf8"));
@@ -59,5 +59,5 @@ document.body.appendChild(helloView.render());
 ### Command Line Usage
 
 ```bash
-cat template.pc | paperclip
+cat template.pc | paperclip > template.js
 ```
