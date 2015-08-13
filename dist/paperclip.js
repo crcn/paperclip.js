@@ -625,7 +625,8 @@ module.exports = Base.extend(RepeatComponent, {
         self.section.appendChild(child.render());
       } else {
         child = self._children[n];
-        child.update(properties);
+        child.context = properties;
+        child.update();
       }
 
       n++;
@@ -804,7 +805,8 @@ module.exports = Base.extend(SwitchComponent, {
     }
 
     if (this.currentChild == child) {
-      return this._view.update(this.view.context);
+      this._view.context = this.view.context;
+      return this._view.update();
     }
 
     if (this._view) {
@@ -841,7 +843,7 @@ module.exports = Base.extend(UnsafeComponent, {
   /**
    */
 
-  update: function(context) {
+  update: function() {
 
     var value = this.attributes.html;
 
@@ -869,7 +871,6 @@ module.exports = Base.extend(UnsafeComponent, {
     }
 
     var node;
-
 
     if (value.render) {
       value.remove();
@@ -1211,15 +1212,16 @@ function _set(target, keypath, value) {
 /**
  */
 
-function PaperclipView(node, template, options) {
+function PaperclipView(node, template, context, options) {
 
   if (!options) options = {};
 
   this.parent       = options.parent;
   this.transitions  = new Transitions();
+  this.context      = context || {};
   this._remove      = this._remove.bind(this);
 
-  BaseView.call(this, node, template, options);
+  BaseView.call(this, node, template, context, options);
 }
 
 /**
@@ -1313,14 +1315,6 @@ BaseView.extend(PaperclipView, {
   /**
    */
 
-  update: function(context) {
-    if (arguments.length === 1) this.context = context;
-    BaseView.prototype.update.call(this);
-  },
-
-  /**
-   */
-
   updateLater: function() {
     this.runloop.deferOnce(this);
   },
@@ -1343,14 +1337,7 @@ BaseView.extend(PaperclipView, {
    */
 
   render: function() {
-
-    // re-bind if the old context exists.
-    if (!this.context && this.__context) {
-      var context    = this.__context;
-      this.__context = void 0;
-      this.update(context);
-    }
-
+    this.update();
     var section = BaseView.prototype.render.call(this);
     this.transitions.enter();
     return section;
@@ -1371,12 +1358,6 @@ BaseView.extend(PaperclipView, {
 
   _remove: function() {
     BaseView.prototype.remove.call(this);
-
-    // cache the context incase we re-render this view
-    this.__context = this.context;
-
-    // remove the context & unbind all the bindings
-    this.update(void 0);
   }
 });
 
@@ -2102,7 +2083,7 @@ module.exports = function(template) {
     this.attributes = attributes;
     this.view       = view;
 
-    this.childView = template.view();
+    this.childView = template.view(this.attributes);
     this.section.appendChild(this.childView.render());
   }
 
@@ -2112,7 +2093,7 @@ module.exports = function(template) {
       this.attributes[key] = value;
     },
     update: function(context) {
-      this.childView.update(this.attributes);
+      this.childView.update();
     }
   });
 
@@ -2183,14 +2164,11 @@ protoclass(Template, {
     // TODO - make compatible with IE 8
     var section     = this.section.clone();
 
-    var view = new this.viewClass(section, this, options);
+    var view = new this.viewClass(section, this, context, options);
 
     for (var i = 0, n = this._hydrators.length; i < n; i++) {
       this._hydrators[i].hydrate(section.node || section.start.parentNode, view);
     }
-
-    // only set the context if it exists. Should be a very explicit thing.
-    if (context) view.update(context);
 
     // TODO - set section instead of node
     return view;
@@ -2236,11 +2214,12 @@ var protoclass = require(48);
 /**
  */
 
-function View(section, template, options) {
+function View(section, template, context, options) {
   this.section  = section;
   this.bindings = [];
   this.template = template;
   this.options  = options;
+  this.context  = context;
   this.runloop  = template.options.runloop;
 }
 

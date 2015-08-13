@@ -70,21 +70,35 @@ gulp.task("test-coveralls", ["test-coverage"], function () {
 /**
  */
 
+function bundle(src, out) {
+    return browserify(src).
+    plugin(collapse).
+    bundle().
+    pipe(source(out)).
+    pipe(buffer()).
+    pipe(gulp.dest('./dist'));
+}
+
+/**
+ */
+
 gulp.task("bundle", function() {
-  return browserify(pkg.browser || pkg.main).
-  plugin(collapse).
-  bundle().
-  pipe(source(pkg.name + '.js')).
-  pipe(buffer()).
-  pipe(gulp.dest('./dist'));
+  return bundle(pkg.browser || pkg.main, pkg.name + ".js");
 });
 
 /**
  */
 
-gulp.task("minify", ["bundle"], function() {
+gulp.task("bundle-parser", function() {
+  return bundle("./compilers/default", "parser.js");
+});
+
+/**
+ */
+
+gulp.task("minify", ["bundle", "bundle-parser"], function() {
   return gulp.
-  src("./dist/" + pkg.name + ".js").
+  src(["./dist/" + pkg.name + ".js", "./dist/parser.js"]).
   pipe(uglify()).
   pipe(rename(function(path) {
       path.basename += ".min";
