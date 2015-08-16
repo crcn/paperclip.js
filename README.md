@@ -39,7 +39,7 @@ controller (with [brfs](https://github.com/substack/brfs)):
 var pc      = require("paperclip");
 
 // compiler needs to be specified here if you want to parse templates in the browser
-pc.compile  = require("paperclip/compilers/default");
+pc.compile  = require("paperclip/compile/default");
 var fs      = require("fs");
 
 var helloTemplate = pc.template(fs.readFileSync(__dirname + "/template.pc", "utf8"));
@@ -51,13 +51,13 @@ document.body.appendChild(helloView.render());
 ### Examples
 
 - [dbmonster](http://paperclip-dbmonster.herokuapp.com/)
-- [updating 1000 items](http://requirebin.com/?gist=5602fd414139b6ed4fbc)
+- [updating 2000 items](http://requirebin.com/?gist=a0a3322bce66c09746b9)
 - [inline html](http://requirebin.com/?gist=bbb9b0eaccd3d7e41df1)
-- [partial todomvc example](http://paperclip-todomvc-example.herokuapp.com/)
-- [POJO dots](http://jsfiddle.net/JTxdM/116/)
+- [partial todomvc example](http://jsfiddle.net/JTxdM/118/)
+- [POJO dots](http://jsfiddle.net/JTxdM/118/)
 
 ### Command Line Usage
 
 ```bash
-cat template.pc | paperclip
+cat template.pc | paperclip > template.js
 ```
