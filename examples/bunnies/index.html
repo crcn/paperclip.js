@@ -1,0 +1,21 @@
+<html>
+  <head>
+  </head>
+
+  <script type="text/x-paperclip" data-template-name="bunnies">
+    how many bunnies? <input type="text" focus={{true}} oninput={{makeBunnies}} />
+
+    <br /> <br />
+
+    <pixi width="1024" height="768">
+        <repeat each={{bunnies}} as="bunny">
+          <image src="./bunny.png" rotation="{{rotation}}" width="26" height="37" position="{{bunny.position}}" /> 
+        </repeat>
+    </pixi>
+
+  </script>
+
+  <body id="body">
+    <script type="text/javascript" src="./index.bundle.js"></script>
+  </body>
+</html>
