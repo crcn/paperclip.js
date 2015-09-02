@@ -55,6 +55,7 @@ template.pc:
 ##  Resources
 
 - [Docs](/docs)
+    - [command line usage](/docs/com)
 - [Changelog](./changelog.md)
 - Rendering engines
     - [Pixi](/examples/common/documents/pixi) - [pixijs](http://www.pixijs.com/) WebGL rendering engine.
