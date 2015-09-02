@@ -12,11 +12,12 @@ index.js:
 var pc      = require("paperclip");
 var fs      = require("fs");
 
-// register the compile method for the browser
-pc.compile  = require("paperclip/compile/default");
-
 // readFileSync works in the browser assuming you're using brfs with browserify
-var template = pc.template(fs.readFileSync(__dirname + "/template.pc", "utf8"));
+var template = pc.template(fs.readFileSync(__dirname + "/template.pc", "utf8"), {
+
+    // compiler not included by default. Register it to this template
+    compile: require("paperclip/compile/default")
+});
 
 // create a view from the template
 var view = template.view({
