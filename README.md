@@ -53,7 +53,7 @@ template.pc:
 
 #### Installation
 
-[NPM](http://nodejs.org): `npm install paperclip --save`
+[NPM](http://nodejs.org): `npm install paperclip --save` <br />
 [Bower](http://bower.io/): `bower install paperclip`
 
 ####  Resources
