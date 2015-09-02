@@ -12,8 +12,7 @@ index.js:
 var pc      = require("paperclip");
 var fs      = require("fs");
 
-// the compiler is not included in the browserify bundle. You'll need to register it here
-// if you want to compile templates in the browser
+// register the compile method for the browser
 pc.compile  = require("paperclip/compile/default");
 
 // readFileSync works in the browser assuming you're using brfs with browserify
@@ -23,8 +22,7 @@ var template = pc.template(fs.readFileSync(__dirname + "/template.pc", "utf8"));
 var view = template.view({
     items: [1, 2, 3],
     addItem: function() {
-        this.items.push(this.items.length + 1);
-        view.update();
+        this.set("items", this.items.concat(this.items.length + 1));
     }
 });
 
@@ -53,14 +51,15 @@ template.pc:
 - No browser dependencies
 - Explicit data binding operators
 
-##  Resources
+####  Resources
 
+- [changelog](./changelog.md)
 - [docs](/docs)
 - [examples](/examples)
     - [pixi.js (WebGL) bunnymark](/examples/pixi)
 
 
-## Installation
+#### Installation
 
 [NPM](http://nodejs.org):
 
@@ -70,38 +69,8 @@ template.pc:
 
 `bower install paperclip`
 
-Production:
 
-`https://raw.githubusercontent.com/mojo-js/paperclip.js/master/dist/paperclip.min.js`
-
-Development:
-
-`https://raw.githubusercontent.com/mojo-js/paperclip.js/master/dist/paperclip.js`
-
-Quick browser usage:
-
-```html
-<script type="text/javascript" src="./paperclip.min.js"></script>
-
-<script type="text/javascript">
-
-    // create the template. accepts a string, or pre-compiled template
-    var template = paperclip.template(
-      "hello {{message}}!"
-    );
-
-    // create the view from the template
-    var view = template.view({
-      message: "world"
-    });
-
-    // render the view, and append to the DOM
-    // Should say "hello world!"
-    document.body.appendChild(view.render());
-</script>
-```
-
-## Command line usage
+#### Command line usage
 
 Paperclip templates can also be compiled straight to javascript. This is a great utility if you want to pre-compile your templates for the browser, or want to use Paperclip in a module system such as [requirejs](http://requirejs.org/), or [browserify](http://browserify.org/). In your project directory, simply run:
 
@@ -117,9 +86,7 @@ cat ./template.pc | ./node_modules/.bin/paperclip > ./template.pc.js
 
 to compile templates into JavaScript.
 
-## License (MIT)
-
-Licence (MIT)
+#### License (MIT)
 
 Copyright (c) 2015 Craig Condon
 
