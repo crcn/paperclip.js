@@ -8,7 +8,7 @@
     "tag": "latest"
   },
   "scripts": {
-    "test": "gulp lint test-coveralls"
+    "test": "gulp test-coveralls"
   },
   "keywords": [
     "template",
