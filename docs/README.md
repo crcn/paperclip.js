@@ -1,11 +1,13 @@
 
 ## Basic API
 
+Blow is the basic JavaScript API for using paperclip.
 
 #### template pc.template(source, options)
 
-Creates a new template.
+Creates a new paperclip template. `source` can either the template source, or a function
 
+- `source` - `String` or `Function`
 - `options` - options for the template
   - `components` - component classes
   - `attributes` - attribute helpers
@@ -210,32 +212,6 @@ Checked data binding
 
 Notice the `<~>` operator. This tells paperclip to bind both ways. See [binding operators](#binding-operators) for more info.
 
-#### onEvent={{ expression }}
-
-Executed when an event is fired on the DOM element. Here are all the available events:
-
-- `onChange` - called when an element changes
-- `onClick` - called when an element is clicked
-- `onLoad` - called when an element loads - useful for `<img />`
-- `onSubmit` - called on submit - useful for `<form />`
-- `onMouseDown` - called on mouse down
-- `onMouseUp` - called on mouse up
-- `onMouseOver` - called on mouse over
-- `onMouseOut` - called on mouse out
-- `onKeyDown` - called on key down
-- `onKeyUp` - called on key up
-- `onEnter` - called on enter key up
-- `onDelete` - called on delete key up
-
-```html
-<input type="text" class="form-control" placeholder="Type in a message" onEnter="{{ enterPressed = true }}"></input>
-
-<show when="{{enterPressed}}">
-  <h3>enter pressed</h3>
-</show>
-
-```
-
 #### enable={{ bool }}
 
 Toggles the enabled state of an element.
@@ -300,6 +276,21 @@ eases out an element
 </show>
 ```
 
+#### event handlers
+
+Paperclip enables you to set native event handlers on any element. Checkout the [w3c to see a full list of options](http://www.w3schools.com/jsref/dom_obj_event.asp).
+
+Here's a basic example:
+
+```javascript
+var template = pc.template("<button onclick={{handleClick}}>click me!</button>");
+var view = template.view({
+  handleClick: function(event) {
+    console.log("clicked");
+  }
+});
+document.body.appendChild(view.render());
+```
 
 ## Command Line Usage
 

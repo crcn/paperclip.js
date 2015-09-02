@@ -59,7 +59,14 @@ template.pc:
 ####  Resources
 
 - [Docs](/docs)
-    - [command line usage](/docs/com)
+    - [command line usage](/docs#command-line-usage) - compile templates to js from the command line
+    - [block syntax](/docs#block-syntax) - dynamic parts of your template
+    - [modifiers](/docs#modifiers) - block helper utilities
+    - [built-in components](/docs#built-in-components)
+    - [built-in attributes](/docs#attribute-helpers)
+    - [advanced API](/docs#advanced-api) - advanced API such as custom components, rendering engines, etc.
+- Questions - various questions from the community
+    - [compiling templates in the browser](https://github.com/mojo-js/paperclip.js/issues/232)
 - [Changelog](./changelog.md)
 - Rendering engines
     - [Pixi](/examples/common/documents/pixi) - [pixijs](http://www.pixijs.com/) WebGL rendering engine.
