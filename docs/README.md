@@ -386,11 +386,10 @@ var HelloComponent = pc.Component.extend({
   },
 
   /**
-   * called when the attributes change
+   * called whenever update() is called on the view
    */
 
   update: function () {
-    // called when attributes change
     this.textNode.nodeValue = "Hello " + this.attributes.message;
   }
 });
@@ -404,40 +403,14 @@ var view = tpl.view({message:"world"})
 document.body.appendChild(view.render()); // hello world
 ```
 
-#### override component.bind(context)
+#### component properties
 
-Called when the block is added, and bound to the DOM. This is where you initialize your binding.
-Be sure to call `paperclip.Component.prototype.bind.call(this, context)` if you override.
-this method
-
-#### override component.unbind()
-
-Called when the block is removed from the DOM. This is a cleanup method.
-
-#### override component.update()
-
-Called whenever the attributes change on the component.
-
-#### component.context
-
-the context of the component
-
-#### component.document
-
-The `document` for creating elements. Use this property instead of the global `document` property
-to make your components interoperable between server-side & browser-side rendering.
-
-#### component.name
-
-The component name.
-
-#### component.section
-
-The [document section](https://github.com/mojo-js/document-section.js) which contains all the elements
-
-#### component.childTemplate
-
-The child template.
+- `vnode` - the virtual node of the component and all its children
+- `document` - the document to use for the component.
+- `attributes` - the component attributes
+- `section` - The section which contains all elements
+- `childTemplate` - the child template if the `vnode` has child nodes
+- `view` - the view this component is used in
 
 #### paperclip.Attribute
 
@@ -454,23 +427,18 @@ var HelloAttribute = paperclip.Attribute.extend({
   },
 
   /**
-   * called wen attrs change
+   * called when view.update() is called
    */
 
   update: function () {
-
   }
 });
 ```
 
-#### attribute.key
+#### attribute properties
 
-The attribute key.
-
-#### attribute.value
-
-The attribute value.
-
-#### attribute.context
-
-The context of the attribute.
+- `ref` - the reference to the `DOM node` or `component`
+- `key` - the attribute key
+- `value` - the attribute value
+- `view` - the view this attribute is used in
+- `document` - the document to use for this attribute
