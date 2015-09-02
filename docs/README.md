@@ -316,9 +316,13 @@ cat ./template.pc | ./node_modules/.bin/paperclip > ./template.pc.js
 to compile templates into JavaScript.
 
 
-## Advanced API
+## Global Properties
 
-Below are some advanced docs you can use to really get the most out of paperclip.
+Paperclip has a number of global properties you can easily modify.
+
+#### paperclip.compile
+
+Default transpiler. 
 
 #### paperclip.components
 
@@ -372,6 +376,10 @@ var tpl = pc.template("{{number|ceil}}", {
   }
 });
 ```
+
+## Custom Components
+
+Below are some advanced docs you can use to really get the most out of paperclip.
 
 #### paperclip.Component(options)
 
