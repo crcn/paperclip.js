@@ -1,63 +1,130 @@
 [![Build Status](https://travis-ci.org/mojo-js/paperclip.js.svg?branch=master)](https://travis-ci.org/mojo-js/paperclip.js) [![Coverage Status](https://coveralls.io/repos/mojo-js/paperclip.js/badge.svg?branch=master)](https://coveralls.io/r/mojo-js/paperclip.js?branch=master) [![Coverage Status](https://david-dm.org/mojo-js/paperclip.js.svg)](https://david-dm.org/mojo-js/paperclip.js) [![Join the chat at https://gitter.im/mojo-js/paperclip.js](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mojo-js/paperclip.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-**Visit http://paperclipjs.com for further documentation.**
+PaperclipJS is a tiny template engine for the DOM. It compiles HTML straight to JavaScript, and only updates the parts it needs to. This means you get über fast apps with a low CPU & memory footprint.
 
-PaperclipJS is a template engine that compiles your HTML straight to DOM.
+Paperclip was designed for interoperability, and customization. Incorporate it into your existing application, or use it with any rendering engine (DOM, Canvas, WebGL, server-side).
 
-PaperclipJS uses an immutable virtual dom. The added benefit of this is that there are fewer moving parts, and you end up with a template engine that's a wee-bit more native than other dynamic virtual dom libraries. I.e: it's faster. Here's a benchmark: http://paperclip-dbmonster.herokuapp.com.
+#### Basic example
 
-The only downside to this is that you don't have the added benefit of adding/removing elements around dynamically - creating complex UIs. Once you're template is compiled, you can only mutate the elements that you specified as dynamic.
-
-Good news is that most web-apps don't need complex UIs, and the small edge cases where you might can easily be worked with.
-
-
-### Features
-
-- [very fast](http://paperclip-dbmonster.herokuapp.com/)
-- explicit data-bindings (1-way, 2-way, unbound)
-- tiny (6kb gzipped)
-- accepts plain old javascript objects
-- works with any framework
-- no browser dependencies
-- ability to specify any rendering engine.
-- can use most parsing engines such as mustache, or handlebars.
-
-### Syntax
-
-template:
-
-```html
-<input type="text" value="{{ <~> name }}" />
-<show when="{{name}}">
-  <h3>Hello {{name}}!</h3>
-</show>
-```
-
-controller (with [brfs](https://github.com/substack/brfs)):
+index.js:
 
 ```javascript
 var pc      = require("paperclip");
-
-// compiler needs to be specified here if you want to parse templates in the browser
-pc.compile  = require("paperclip/compile/default");
 var fs      = require("fs");
 
-var helloTemplate = pc.template(fs.readFileSync(__dirname + "/template.pc", "utf8"));
-var helloView     = helloTemplate.view();
+// the compiler is not included in the browserify bundle. You'll need to register it here
+// if you want to compile templates in the browser
+pc.compile  = require("paperclip/compile/default");
 
-document.body.appendChild(helloView.render());
+// readFileSync works in the browser assuming you're using brfs with browserify
+var template = pc.template(fs.readFileSync(__dirname + "/template.pc", "utf8"));
+
+// create a view from the template
+var view = template.view({
+    items: [1, 2, 3],
+    addItem: function() {
+        this.items.push(this.items.length + 1);
+        view.update();
+    }
+});
+
+document.body.appendChild(view.render());
 ```
 
-### Examples
+template.pc:
 
-- [dbmonster](http://paperclip-dbmonster.herokuapp.com/)
-- [updating 2000 items](http://requirebin.com/?gist=a0a3322bce66c09746b9)
-- [inline html](http://requirebin.com/?gist=bbb9b0eaccd3d7e41df1)
-- [partial todomvc example](http://jsfiddle.net/JTxdM/118/)
-- [POJO dots](http://jsfiddle.net/JTxdM/118/)
-
-### Command Line Usage
-
-```bash
-cat template.pc | paperclip > template.js
+```html
+<button onclick={{ addItem.bind(this) }}>add item</button>
+<ul>
+    <li repeat.each={{items}} repeat.as="item">
+        {{item}}
+    </li>
+</ul>
 ```
+
+####  Features
+
+- Runs on any platform (web, mobile, NodeJS)
+- Super fast. Uses native browser APIs such as `cloneNode()` for super fast rendering.
+- Tiny (7kb gzipped without parser)
+- Supports any rendering engine (WebGL, Canvas, SVG, custom).
+- Supports inline JavaScript
+- Works with old browsers (IE 8+)
+- No browser dependencies
+- Explicit data binding operators
+
+##  Resources
+
+- [docs](/docs)
+- [examples](/examples)
+    - [pixi.js (WebGL) bunnymark](/examples/pixi)
+
+
+## Installation
+
+[NPM](http://nodejs.org):
+
+`npm install paperclip --save`
+
+[Bower](http://bower.io/):
+
+`bower install paperclip`
+
+Production:
+
+`https://raw.githubusercontent.com/mojo-js/paperclip.js/master/dist/paperclip.min.js`
+
+Development:
+
+`https://raw.githubusercontent.com/mojo-js/paperclip.js/master/dist/paperclip.js`
+
+Quick browser usage:
+
+```html
+<script type="text/javascript" src="./paperclip.min.js"></script>
+
+<script type="text/javascript">
+
+    // create the template. accepts a string, or pre-compiled template
+    var template = paperclip.template(
+      "hello {{message}}!"
+    );
+
+    // create the view from the template
+    var view = template.view({
+      message: "world"
+    });
+
+    // render the view, and append to the DOM
+    // Should say "hello world!"
+    document.body.appendChild(view.render());
+</script>
+```
+
+## Command line usage
+
+Paperclip templates can also be compiled straight to javascript. This is a great utility if you want to pre-compile your templates for the browser, or want to use Paperclip in a module system such as [requirejs](http://requirejs.org/), or [browserify](http://browserify.org/). In your project directory, simply run:
+
+```
+npm install paperclip
+```
+
+then run:
+
+```
+cat ./template.pc | ./node_modules/.bin/paperclip > ./template.pc.js
+```
+
+to compile templates into JavaScript.
+
+## License (MIT)
+
+Licence (MIT)
+
+Copyright (c) 2015 Craig Condon
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
