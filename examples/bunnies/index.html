@@ -8,9 +8,11 @@
     <br /> <br />
 
     <pixi width="1024" height="768">
+      <pcontainer>
         <repeat each={{bunnies}} as="bunny">
           <image src="./bunny.png" rotation="{{rotation}}" width="26" height="37" position="{{bunny.position}}" /> 
         </repeat>
+      </pcontainer>
     </pixi>
 
   </script>

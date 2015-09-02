@@ -12,7 +12,7 @@ pc.modifiers = {
     });
   }
 };
- 
+
 for (var elementName in pixiElements) {
   pixiDocument.registerElement(elementName, pixiElements[elementName]);
 }
@@ -24,20 +24,18 @@ function PixiComponent(section, vElement, options, view) {
       document   : pixiDocument,
       components : pc.components,
       modifiers  : pc.modifiers
-    }); 
+    });
 
     this._childView = this._childTemplate.view(view.context);
 
     this._renderer = PIXI.autoDetectRenderer(vElement.attributes.width, vElement.attributes.height);
-    this._stage    = new PIXI.Stage(0xFFFFF);
-    this._stage.addChild(this._childView.section.render().target);
     section.appendChild(this._renderer.view);
 }
 
 pc.components.pixi = pc.Component.extend(PixiComponent, {
   update: function() {
     this._childView.update(this.view.context);
-    this._renderer.render(this._stage);
+    this._renderer.render(this._childView.section.render().target);
   }
 });
 
@@ -45,15 +43,15 @@ var template = pc.template(document.querySelector("script[data-template-name='bu
 var controller = {
   numBunnies: 10,
   rotation: 0.5,
-  makeBunnies: function(event) { 
+  makeBunnies: function(event) {
     view.set("bunnies", controller.createBunnies(Number(event.target.value)));
-  }, 
+  },
   createBunnies: function(count) {
     return Array.apply(void 0, new Array(count)).map(function(v, i) {
       return {
         position: { x: (i%50) * 30 + 15, y: Math.floor(i/50) * 30 + 15 }
       }
-    }); 
+    });
   }
 };
 
@@ -65,8 +63,14 @@ var view     = template.view(controller);
 document.body.appendChild(view.render());
 
 function animate() {
+  controller.bunnies.forEach(function(bunny) {
+    bunny.position.y += Math.random();
+    bunny.rotation += 0.5;
+  });
   view.context.rotation += 0.1;
   view.update();
+
+
   requestAnimationFrame(animate);
 }
 
@@ -1128,9 +1132,11 @@ module.exports = Base.extend(RepeatComponent, {
 
     var properties;
 
-    _each(each, function(model, k) {
+    // _each(each, function(model, k) {
+    for (var k = 0, n = each.length; k < n; k++) {
 
       var child;
+      var model = each[k];
 
       if (as) {
         properties       = { };
@@ -1141,22 +1147,24 @@ module.exports = Base.extend(RepeatComponent, {
       }
 
       // TODO - provide SAME context here for speed and stability
-      if (n >= self._children.length) {
+      if (k >= self._children.length) {
         child = self.childTemplate.view(properties, {
           parent: parent
         });
         self._children.push(child);
         self.section.appendChild(child.render());
       } else {
-        child = self._children[n];
+        child = self._children[k];
         child.context = properties;
         child.update();
       }
 
-      n++;
-    });
+    //   n++;
+    };
 
-    this._children.splice(n).forEach(function(child) {
+    // console.log(k);
+
+    this._children.splice(k).forEach(function(child) {
       child.remove();
     });
   }
@@ -1454,7 +1462,7 @@ module.exports = function(initialize, update) {
     /**
      */
 
-    update2: update || function() { },
+    update: update || function() { },
 
     /**
      */
@@ -1473,7 +1481,7 @@ module.exports = function(initialize, update) {
      */
 
     setProperty: function(key, value) {
-      if (!this.setAsRegisteredAttribute(key, value)) {
+      if (true || !this.setAsRegisteredAttribute(key, value)) {
 
         // no node type? It's a registered component.
         if (!this.ref.nodeType) {
@@ -1504,7 +1512,7 @@ module.exports = function(initialize, update) {
     /**
      */
 
-    update: function(context) {
+    update2: function(context) {
       this.update2(context);
       for(var key in this.attrBindings) {
         this.attrBindings[key].update(context);
@@ -2781,7 +2789,7 @@ protoclass(Transpiler, {
 
     keypath = isDynamic ? "[" + keypath.map(function(part, i) {
       return typeof expression[i] === "string" ? "'"+part+"'" : part;
-    }).join(",") + "]" : "'" + keypath.join(".") + "'";
+    }).join(",") + "]" : "" + keypath.join(".") + "";
 
     return keypath;
   },
@@ -2800,7 +2808,7 @@ protoclass(Transpiler, {
 
       return "this.view.ref(" + keypath + ", " + gettable + ", " + settable + ")";
     }
-    return "this.view.get(" + keypath + ")";
+    return "this.view.context."+keypath;
   },
 
   /**
@@ -3678,21 +3686,21 @@ function DynamicNode(vnode, bindingClass) {
 }
 
 protoclass(DynamicNode, {
-  freeze: function(options, hydrators) {
+  freeze: function(options, hydrators, parentNode) {
     if (options.components[this.vnode.nodeName]) {
-      return this.freezeComponent(options, hydrators);
+      return this.freezeComponent(options, hydrators, parentNode);
     } else {
-      return this.freezeElement(options, hydrators);
+      return this.freezeElement(options, hydrators, parentNode);
     }
   },
-  freezeComponent: function(options, hydrators) {
+  freezeComponent: function(options, hydrators, parentNode) {
     var h2 = [];
-    var element = this.vnode.freeze(options, h2);
+    var element = this.vnode.freeze(options, h2, parentNode);
     hydrators.push(new ComponentHydrator(h2[0], this.bindingClass, options));
     return element;
   },
-  freezeElement: function(options, hydrators) {
-    var node = this.vnode.freeze(options, hydrators);
+  freezeElement: function(options, hydrators, parentNode) {
+    var node = this.vnode.freeze(options, hydrators, parentNode);
     hydrators.push(new Hydrator(node, this.bindingClass, options));
     return node;
   }
@@ -3770,13 +3778,13 @@ function Element(nodeName, attributes, childNodes) {
 
 protoclass(Element, {
   nodeType: 1,
-  freeze: function(options, hydrators) {
+  freeze: function(options, hydrators, parentNode) {
 
     var components = options.components || {};
     var attributes = options.attributes || {};
 
     if (components[this._nodeNameNoDashes]) {
-      return this._freezeComponent(components[this._nodeNameNoDashes], options, hydrators);
+      return this._freezeComponent(components[this._nodeNameNoDashes], options, hydrators, parentNode);
     }
 
     return this._freezeElement(options, hydrators);
@@ -3784,10 +3792,10 @@ protoclass(Element, {
   setAttribute: function(key, value) {
     this.attributes[key] = value;
   },
-  _freezeComponent: function(clazz, options, hydrators) {
+  _freezeComponent: function(clazz, options, hydrators, parentNode) {
 
     // TODO - check parent node to see if there are anymore children. If not, then user NodeSection
-    var section = new FragmentSection(options.document);
+    var section =  !parentNode || this.parentNode.target.childNodes.length > 1 ? new FragmentSection(options.document) : new NodeSection(options.document, parentNode);
     hydrators.push(new ComponentHydrator(clazz, section, this, this._splitAttributes(options), options));
     return section.render();
   },
@@ -3802,7 +3810,8 @@ protoclass(Element, {
     }
 
     for (var i = 0, n = this.childNodes.length; i < n; i++) {
-      element.appendChild(this.childNodes[i].freeze(options, hydrators));
+      var childElement = this.childNodes[i].freeze(options, hydrators, element);
+      if (childElement !== element) element.appendChild(childElement);
     }
 
     if (Object.keys(inf.dynamicAttributes).length) {
