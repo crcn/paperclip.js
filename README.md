@@ -60,7 +60,7 @@ template.pc:
 
 - [Docs](/docs)
     - [command line usage](/docs#command-line-usage) - compile templates to js from the command line
-    - [block syntax](/docs#block-syntax) - dynamic parts of your template
+    - [block syntax](/docs#template-syntax) - dynamic parts of your template
     - [modifiers](/docs#modifiers) - block helper utilities
     - [event handlers](/docs#event-handlers) - `onclick`, `onsubmit`, `onmouseover` etc.
     - [built-in components](/docs#built-in-components)
