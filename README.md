@@ -56,6 +56,8 @@ template.pc:
 
 - [changelog](./changelog.md)
 - [docs](/docs)
+- rendering engines
+    - [Pixi](/examples/common/documents/pixi)
 - [examples](/examples)
     - [pixi.js (WebGL) bunnymark](/examples/pixi)
 
