@@ -69,6 +69,9 @@ template.pc:
     - [custom attributes](/docs#custom-attributes) 
     - [compiling templates in the browser](https://github.com/mojo-js/paperclip.js/issues/232)
 - [Changelog](./changelog.md)
+- Community
+    - [Google Discussion](https://groups.google.com/forum/#!forum/paperclipjs)
+    - [Gitter Chat](https://gitter.im/mojo-js/paperclip.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 - Rendering engines
     - [Pixi](/examples/common/documents/pixi) - [pixijs](http://www.pixijs.com/) WebGL rendering engine.
 - [Examples](/examples)
