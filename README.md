@@ -63,10 +63,10 @@ template.pc:
     - [block syntax](/docs#template-syntax) - dynamic parts of your template
     - [modifiers](/docs#modifiers) - block helper utilities
     - [event handlers](/docs#event-handlers) - `onclick`, `onsubmit`, `onmouseover` etc.
-    - [built-in components](/docs#built-in-components)
-    - [built-in attributes](/docs#attribute-helpers)
-    - [advanced API](/docs#advanced-api) - advanced API such as custom components, rendering engines, etc.
-- Questions - various questions from the community
+    - [built-in components](/docs#unsafe-htmlcontent-)
+    - [built-in attributes](/docs#value-context-)
+    - [custom components](/docs#custom-components) 
+    - [custom attributes](/docs#custom-attributes) 
     - [compiling templates in the browser](https://github.com/mojo-js/paperclip.js/issues/232)
 - [Changelog](./changelog.md)
 - Rendering engines
