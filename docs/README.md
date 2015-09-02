@@ -228,7 +228,7 @@ Focuses cursor on an element.
 <input class="form-control" focus="{{ focus }}"></input>
 ```
 
-#### easeIn={{ easer }}
+#### easein={{ easer }}
 
 eases in an element
 
@@ -254,7 +254,7 @@ eases in an element
 </ul>
 ```
 
-#### easeOut={{ easer }}
+#### easeout={{ easer }}
 
 eases out an element
 
@@ -272,7 +272,7 @@ eases out an element
 ```html
 <button class="btn btn-primary" onClick="{{show=!show}}">{{show ? 'hide' : 'show'}} message</button>
 <show when="{{show}}">
-  <h3 easeIn="{{fadeIn}}" easeOut="{{fadeOut}}">Hello World!</h3>
+  <h3 easein="{{fadeIn}}" easeout="{{fadeOut}}">Hello World!</h3>
 </show>
 ```
 
