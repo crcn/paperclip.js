@@ -180,7 +180,7 @@ Or:
 </ul>
 ```
 
-## Attribute helpers
+## Built-in Attributes
 
 Below are a list of data binding attributes you can use with elements.
 
@@ -286,6 +286,18 @@ Here's a basic example:
 var template = pc.template("<button onclick={{handleClick}}>click me!</button>");
 var view = template.view({
   handleClick: function(event) {
+    console.log("clicked");
+  }
+});
+document.body.appendChild(view.render());
+```
+
+You can also pass in additional properties to event handlers using the native `.bind()` method. For example:
+
+```
+var template = pc.template("<button onclick={{handleClick.bind(this, 1)}}>increment</button>");
+var view = template.view({
+  handleClick: function(count) {
     console.log("clicked");
   }
 });
