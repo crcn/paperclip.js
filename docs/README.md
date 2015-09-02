@@ -303,15 +303,19 @@ eases out an element
 
 ## Command Line Usage
 
-Paperclip comes with a command line utility for compiling templates to JavaScript. Simply install paperclip
-via NPM in your project, then run:
+
+Paperclip templates can also be compiled straight to javascript. This is a great utility if you want to pre-compile your templates for the browser, or want to use Paperclip in a module system such as [requirejs](http://requirejs.org/), or [browserify](http://browserify.org/). In your project directory, simply run:
 
 ```
-cat ./template.pc | ./node_modules/.bin/paperclip > ./template.js
+cat ./template.pc | ./node_modules/.bin/paperclip > ./template.pc.js
 ```
+
+to compile templates into JavaScript.
+
 
 ## Advanced API
 
+Below are some advanced docs you can use to really get the most out of paperclip
 
 #### paperclip.components
 

@@ -54,11 +54,11 @@ template.pc:
 
 ##  Resources
 
-- [changelog](./changelog.md)
-- [docs](/docs)
-- rendering engines
-    - [Pixi](/examples/common/documents/pixi)
-- [examples](/examples)
+- [Docs](/docs)
+- [Changelog](./changelog.md)
+- Rendering engines
+    - [Pixi](/examples/common/documents/pixi) - [pixijs](http://www.pixijs.com/) WebGL rendering engine.
+- [Examples](/examples)
     - [pixi.js (WebGL) bunnymark](/examples/pixi)
 
 
@@ -72,22 +72,6 @@ template.pc:
 
 `bower install paperclip`
 
-
-#### Command line usage
-
-Paperclip templates can also be compiled straight to javascript. This is a great utility if you want to pre-compile your templates for the browser, or want to use Paperclip in a module system such as [requirejs](http://requirejs.org/), or [browserify](http://browserify.org/). In your project directory, simply run:
-
-```
-npm install paperclip
-```
-
-then run:
-
-```
-cat ./template.pc | ./node_modules/.bin/paperclip > ./template.pc.js
-```
-
-to compile templates into JavaScript.
 
 #### License (MIT)
 
