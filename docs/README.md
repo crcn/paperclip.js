@@ -1,8 +1,6 @@
 
 ## Basic API
 
-Blow is the basic JavaScript API for using paperclip.
-
 #### template pc.template(source, options)
 
 Creates a new paperclip template. `source` can either the template source, or a function
@@ -55,7 +53,64 @@ The context that the view is currently bound to. This can be anything.
 
 Removes the views from the DOM.
 
-## Block Syntax
+#### pc.compile
+
+Default transpiler. 
+
+#### pc.components
+
+Default component classes.
+
+
+```javascript
+var pc = require("paperclip");
+pc.attributes.Hello = pc.Component.extend({
+  initialize: function() {
+    this.ref.appendChild(document.createElement("world"));
+  }
+});
+
+var tpl = pc.template("<hello />");
+document.body.appendChild(tpl.view().render());
+```
+
+#### pc.attributes
+
+Default attribute classes.
+
+```javascript
+var pc = require("paperclip");
+pc.attributes.Hello = pc.Attribute.extend({
+  initialize: function() {
+    this.ref.appendChild(document.createElement("world"));
+  }
+});
+
+var tpl = pc.template("<div hello />");
+document.body.appendChild(tpl.view().render());
+```
+
+#### pc.modifiers
+
+Default paperclip modifiers.
+
+```javascript
+var pc = require("paperclip");
+pc.modifiers.ceil = Math.ceil;
+var tpl = pc.template("{{number|ceil}}");
+
+// will display 1
+document.body.appendChild(tpl.view({ number: Math.random() }).render());
+
+// This also works
+var tpl = pc.template("{{number|ceil}}", {
+  modifiers: {
+    ceil: Math.ceil
+  }
+});
+```
+
+## Template Syntax
 
 
 #### {{ blocks }}
@@ -99,7 +154,7 @@ Unbound helper - don't watch for any changes:
 {{ ~name }}
 ```
 
-## Modifiers
+#### Modifiers
 
 Modifiers format data in a variable block. A good example of this might be presenting data to the user depending on their locale, or parsing data into markdown. Here's an example of how you can use
 modifiers:
@@ -107,8 +162,6 @@ modifiers:
 ```html
 A human that is {{age}} years old is like a {{ age | divide(5.6) | round }} year old dog!
 ```
-
-## Built-in Components
 
 #### &lt;unsafe html={{content}} /&gt;
 
@@ -132,7 +185,6 @@ Conditional helper
   <h3>Hello World!</h3>
 </show>
 ```
-
 
 #### &lt;switch /&gt;
 
@@ -179,10 +231,6 @@ Or:
   <li repeat.each="{{items}}" repeat.as="i">item {{i}} <br /></li>
 </ul>
 ```
-
-## Built-in Attributes
-
-Below are a list of data binding attributes you can use with elements.
 
 #### value={{ context }}
 
@@ -315,67 +363,6 @@ cat ./template.pc | ./node_modules/.bin/paperclip > ./template.pc.js
 
 to compile templates into JavaScript.
 
-
-## Global Properties
-
-Paperclip has a number of global properties you can easily modify.
-
-#### paperclip.compile
-
-Default transpiler. 
-
-#### paperclip.components
-
-Default component classes.
-
-
-```javascript
-var pc = require("paperclip");
-pc.attributes.Hello = pc.Component.extend({
-  initialize: function() {
-    this.ref.appendChild(document.createElement("world"));
-  }
-});
-
-var tpl = pc.template("<hello />");
-document.body.appendChild(tpl.view().render());
-```
-
-#### paperclip.attributes
-
-Default attribute classes.
-
-```javascript
-var pc = require("paperclip");
-pc.attributes.Hello = pc.Attribute.extend({
-  initialize: function() {
-    this.ref.appendChild(document.createElement("world"));
-  }
-});
-
-var tpl = pc.template("<div hello />");
-document.body.appendChild(tpl.view().render());
-```
-
-#### paperclip.modifiers
-
-Default paperclip modifiers.
-
-```javascript
-var pc = require("paperclip");
-pc.modifiers.ceil = Math.ceil;
-var tpl = pc.template("{{number|ceil}}");
-
-// will display 1
-document.body.appendChild(tpl.view({ number: Math.random() }).render());
-
-// This also works
-var tpl = pc.template("{{number|ceil}}", {
-  modifiers: {
-    ceil: Math.ceil
-  }
-});
-```
 
 ## Custom Components
 
