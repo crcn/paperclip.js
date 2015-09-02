@@ -318,23 +318,63 @@ to compile templates into JavaScript.
 
 ## Advanced API
 
-Below are some advanced docs you can use to really get the most out of paperclip
+Below are some advanced docs you can use to really get the most out of paperclip.
 
 #### paperclip.components
 
-Object containing all components.
+Default component classes.
+
+
+```javascript
+var pc = require("paperclip");
+pc.attributes.Hello = pc.Component.extend({
+  initialize: function() {
+    this.ref.appendChild(document.createElement("world"));
+  }
+});
+
+var tpl = pc.template("<hello />");
+document.body.appendChild(tpl.view().render());
+```
 
 #### paperclip.attributes
 
-Object containing all attribute helpers.
+Default attribute classes.
+
+```javascript
+var pc = require("paperclip");
+pc.attributes.Hello = pc.Attribute.extend({
+  initialize: function() {
+    this.ref.appendChild(document.createElement("world"));
+  }
+});
+
+var tpl = pc.template("<div hello />");
+document.body.appendChild(tpl.view().render());
+```
 
 #### paperclip.modifiers
 
-Object containing all expression modifiers.
+Default paperclip modifiers.
+
+```javascript
+var pc = require("paperclip");
+pc.modifiers.ceil = Math.ceil;
+var tpl = pc.template("{{number|ceil}}");
+
+// will display 1
+document.body.appendChild(tpl.view({ number: Math.random() }).render());
+
+// This also works
+var tpl = pc.template("{{number|ceil}}", {
+  modifiers: {
+    ceil: Math.ceil
+  }
+});
+```
 
 #### paperclip.Component(options)
 
-Base class to extend when creating custom components.<!-- Here's an example for a [components binding](http://requirebin.com/?gist=858e3b7928eea5e1bed6):-->
 
 ```javascript
 var pc = require("paperclip");
