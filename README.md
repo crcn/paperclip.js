@@ -4,6 +4,17 @@ PaperclipJS is a tiny template engine for the DOM. It compiles HTML straight to 
 
 Paperclip was designed for interoperability, and customization. Incorporate it into your existing application, or use it with any rendering engine (DOM, Canvas, WebGL, server-side).
 
+####  Features
+
+- Runs on any platform (web, mobile, NodeJS)
+- Super fast. Uses native browser APIs such as `cloneNode()` for super fast rendering.
+- Tiny (7kb gzipped without parser)
+- Supports any rendering engine (WebGL, Canvas, SVG, custom).
+- Supports inline JavaScript
+- Works with old browsers (IE 8+)
+- No browser dependencies
+- Explicit data binding operators
+
 #### Basic example
 
 index.js:
@@ -41,18 +52,7 @@ template.pc:
 </ul>
 ```
 
-####  Features
-
-- Runs on any platform (web, mobile, NodeJS)
-- Super fast. Uses native browser APIs such as `cloneNode()` for super fast rendering.
-- Tiny (7kb gzipped without parser)
-- Supports any rendering engine (WebGL, Canvas, SVG, custom).
-- Supports inline JavaScript
-- Works with old browsers (IE 8+)
-- No browser dependencies
-- Explicit data binding operators
-
-####  Resources
+##  Resources
 
 - [changelog](./changelog.md)
 - [docs](/docs)
@@ -60,7 +60,7 @@ template.pc:
     - [pixi.js (WebGL) bunnymark](/examples/pixi)
 
 
-#### Installation
+## Installation
 
 [NPM](http://nodejs.org):
 
