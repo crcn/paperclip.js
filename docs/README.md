@@ -366,7 +366,7 @@ to compile templates into JavaScript.
 
 ## Custom Components
 
-Below are some advanced docs you can use to really get the most out of paperclip.
+Paperclip enables you to register custom components. These are similar to `web components` but specific to paperclip. 
 
 #### paperclip.Component(options)
 
@@ -412,7 +412,11 @@ document.body.appendChild(view.render()); // hello world
 - `childTemplate` - the child template if the `vnode` has child nodes
 - `view` - the view this component is used in
 
+## Custom Attributes
+
+
 #### paperclip.Attribute
+
 
 The base attribute helper class.
 
