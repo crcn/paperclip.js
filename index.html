@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Paperclip.js : reactive DOM template engine built for speed, and extensibility">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Paperclip.js</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/mojo-js/paperclip.js">View on GitHub</a>
+
+          <h1 id="project_title">Paperclip.js</h1>
+          <h2 id="project_tagline">reactive DOM template engine built for speed, and extensibility</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/mojo-js/paperclip.js/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/mojo-js/paperclip.js/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>PaperclipJS is a tiny immutable virtual dom library for building user interfaces. It compiles HTML straight to JavaScript, and only updates the parts it needs to. This means you get über fast apps with a low CPU &amp; memory footprint.</p>
+
+<p>Paperclip was designed for interoperability, and customization. Incorporate it into your existing application, or use it with any rendering engine (DOM, Canvas, WebGL, server-side).</p>
+
+<p><br></p>
+
+<h2>
+<a id="any-rendering-engine" class="anchor" href="#any-rendering-engine" aria-hidden="true"><span class="octicon octicon-link"></span></a>Any rendering engine</h2>
+
+<p>Paperclip works with any rendering engine. Easily build sophisticated user interfaces that interoperate between DOM, WebGL, Canvas, SVG, and more. Here's a simple <a href="https://github.com/mojo-js/paperclip.js/tree/master/examples/pixi">pixi.js demo</a>:</p>
+
+<p>index.js:</p>
+
+<div class="highlight highlight-javascript"><pre><span class="pl-k">var</span> pc <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">"</span>paperclip<span class="pl-pds">"</span></span>);
+
+<span class="pl-c">// register the default paperclip transpiler</span>
+<span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">"</span>paperclip/compile/default<span class="pl-pds">"</span></span>); 
+
+<span class="pl-k">var</span> fs <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">"</span>fs<span class="pl-pds">"</span></span>);
+
+<span class="pl-c">// readFileSync works in the browser assuming you're using brfs with browserify</span>
+<span class="pl-k">var</span> template <span class="pl-k">=</span> pc.template(fs.readFileSync(<span class="pl-c1">__dirname</span> <span class="pl-k">+</span> <span class="pl-s"><span class="pl-pds">"</span>/template.pc<span class="pl-pds">"</span></span>, <span class="pl-s"><span class="pl-pds">"</span>utf8<span class="pl-pds">"</span></span>));
+
+<span class="pl-k">var</span> view <span class="pl-k">=</span> template.view({
+  numBunnies<span class="pl-k">:</span> 
+})</pre></div>
+
+<p>template.pc:</p>
+
+<div class="highlight highlight-html"><pre>How many bunnies? &lt;<span class="pl-ent">input</span> <span class="pl-e">type</span>=<span class="pl-s"><span class="pl-pds">"</span>text<span class="pl-pds">"</span></span> <span class="pl-e">value</span>=<span class="pl-s">{{</span>&lt;~&gt;numBunnies}}&gt;&lt;/<span class="pl-ent">input</span>&gt;
+
+&lt;<span class="pl-ent">pixi</span>&gt;
+    &lt;<span class="pl-ent">repeat</span> <span class="pl-e">each</span>=<span class="pl-s">{{range(numBunnies)}}</span> <span class="pl-e">as</span>=<span class="pl-s"><span class="pl-pds">'</span>bunny<span class="pl-pds">'</span></span>&gt;
+    &lt;/<span class="pl-ent">repeat</span>&gt;
+&lt;/<span class="pl-ent">pixi</span>&gt;</pre></div>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Paperclip.js maintained by <a href="https://github.com/mojo-js">mojo-js</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
