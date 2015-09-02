@@ -4,20 +4,7 @@ PaperclipJS is a tiny template engine for the DOM. It compiles HTML straight to 
 
 Paperclip was designed for interoperability, and customization. Incorporate it into your existing application, or use it with any rendering engine (DOM, Canvas, WebGL, server-side).
 
-####  Features
-
-- Runs on any platform (web, mobile, NodeJS)
-- Super fast. Uses native browser APIs such as `cloneNode()` for super fast rendering.
-- Tiny (7kb gzipped without parser)
-- Supports any rendering engine (WebGL, Canvas, SVG, custom).
-- Supports inline JavaScript
-- Works with old browsers (IE 8+)
-- No browser dependencies
-- Explicit data binding operators
-
-#### Basic example
-
-index.js:
+basic example:
 
 ```javascript
 var pc      = require("paperclip");
@@ -52,7 +39,24 @@ template.pc:
 </ul>
 ```
 
-##  Resources
+#### Highlights
+
+- Runs on any platform (web, mobile, NodeJS)
+- Super fast. Uses native browser APIs such as `cloneNode()` for super fast rendering.
+- Tiny (7kb gzipped without parser)
+- Supports any rendering engine (WebGL, Canvas, SVG, custom).
+- Supports inline JavaScript
+- Works with old browsers (IE 8+)
+- No browser dependencies
+- Explicit data binding operators
+
+
+#### Installation
+
+[NPM](http://nodejs.org): `npm install paperclip --save`
+[Bower](http://bower.io/): `bower install paperclip`
+
+####  Resources
 
 - [Docs](/docs)
     - [command line usage](/docs/com)
@@ -61,17 +65,6 @@ template.pc:
     - [Pixi](/examples/common/documents/pixi) - [pixijs](http://www.pixijs.com/) WebGL rendering engine.
 - [Examples](/examples)
     - [pixi.js (WebGL) bunnymark](/examples/pixi)
-
-
-## Installation
-
-[NPM](http://nodejs.org):
-
-`npm install paperclip --save`
-
-[Bower](http://bower.io/):
-
-`bower install paperclip`
 
 
 #### License (MIT)
