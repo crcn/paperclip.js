@@ -1,21 +1,76 @@
 #### 3.x changes
 
-- event handlers now act like attributes [breaking]
+- [BREAKING] event handlers now act like attributes.
+
+You must now do this for event handlers:
+
+```html
+<div onclick={{handle.bind(this, arg) }} />
+```
+
 - fewer change watchers
-- autocomplete check temporarily removed
+- autocomplete check temporarily removed in inputs. 
 - templates can now be registered as components
-- key={{value}} and key='{{value}}' behave differently.
-- repeat attributes are now applied to the element they're attached to. E.g: `<li repeat.each={{numbers}} as='number'>{{number}}</li>`
-- template.view() does not call `update` if the context is not currently present
-- `.bind()` has been changed to `update()`
+
+```javascript
+var tpl = template("<hello />", { 
+  components: {
+    hello: template("world")
+  }
+});
+```
+
+- key={{value}} and key='{{value}}' behave differently. `key={{value}}` sets a prop, `key='{{value}}'` sets an attr.
+- [BREAKING] repeat attributes are now applied to the element they're attached to. E.g:
+
+```html
+<ul>
+  <li repeat.each={{numbers}} as='number'>{{number}}</li>
+</ul>
+```
+- [BREAKING] template.view() does not call `update` if the context is not currently present
+- [BREAKING] `.bind()` has been changed to `update()`
 - you must call `require("paperclip/register")` to `require()` pc templates
-- binding blocks are completely deprecated {{#}}
-- assignments within blocks are no longer supported
-- [brackets] are no supported within blocks
-- event handlers no longer prevent default.
-- event handlers are now native
-- camelCase on event handlers is no longer supported
-- event handlers must now be defined without quotes
+- [BREAKING] binding blocks are completely deprecated
+
+This no longer works:
+```html
+{{#if:expression}}
+  do something
+{{/}}
+```
+- [BREAKING] assignments within blocks are no longer supported
+
+does not work:
+
+```html
+{{value=5}}
+```
+
+- are now supported within blocks
+
+```html
+{{path[key].value}}
+```
+
+- event handlers no longer prevent default. This must be done within event handlers.
+
+```javascript
+view({ 
+  handleEvent: function(event) {
+    event.preventDefault();
+  }
+});
+```
+
+template.pc
+
+```html
+<button onclick={{handleEvent}}></button>
+```
+
+- event handlers are now native (see above for examples)
+- camelCase on event handlers is no longer supported 
 - onFocusIn -> onfocus
 - onFocusOut -> onblur
 - easeIn -> easein
