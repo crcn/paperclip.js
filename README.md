@@ -2,7 +2,7 @@
 
 PaperclipJS is a tiny template engine for the DOM. It compiles HTML straight to JavaScript, and only updates the parts it needs to. This means you get über fast apps with a low CPU & memory footprint.
 
-Paperclip was designed for interoperability, and customization. Incorporate it into your existing application, and use it with any rendering engine (DOM, Canvas, WebGL, server-side).
+Paperclip was designed for interoperability, and customization. Incorporate it into your existing application, use it with any rendering engine (DOM, Canvas, WebGL, server-side).
 
 basic example:
 
