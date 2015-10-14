@@ -21,7 +21,7 @@
   "transform": "./lib/transform.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mojo-js/paperclip.js"
+    "url": "https://github.com/crcn/paperclip.js"
   },
   "author": "",
   "license": "MIT",

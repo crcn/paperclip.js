@@ -1,5 +1,5 @@
 
-[![Build Status](https://travis-ci.org/crcn/paperclip.js.svg?branch=master)](https://travis-ci.org/crcn/paperclip.js) [![Coverage Status](https://coveralls.io/repos/mojo-js/paperclip.js/badge.svg?branch=master)](https://coveralls.io/r/mojo-js/paperclip.js?branch=master) [![Coverage Status](https://david-dm.org/mojo-js/paperclip.js.svg)](https://david-dm.org/mojo-js/paperclip.js) [![Join the chat at https://gitter.im/mojo-js/paperclip.js](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/mojo-js/paperclip.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/crcn/paperclip.js.svg?branch=master)](https://travis-ci.org/crcn/paperclip.js) [![Coverage Status](https://coveralls.io/repos/crcn/paperclip.js/badge.svg?branch=master)](https://coveralls.io/r/crcn/paperclip.js?branch=master) [![Coverage Status](https://david-dm.org/crcn/paperclip.js.svg)](https://david-dm.org/crcn/paperclip.js) [![Join the chat at https://gitter.im/crcn/paperclip.js](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/crcn/paperclip.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 PaperclipJS is a tiny template engine for the DOM. It compiles HTML straight to JavaScript, and only updates the parts it needs to. This means you get über fast apps with a low CPU & memory footprint.
 
@@ -63,11 +63,11 @@ template.pc:
     - [built-in attributes](/docs#value-context-)
     - [custom components](/docs#custom-components)
     - [custom attributes](/docs#custom-attributes)
-    - [compiling templates in the browser](https://github.com/mojo-js/paperclip.js/issues/232)
+    - [compiling templates in the browser](https://github.com/crcn/paperclip.js/issues/232)
 - [Changelog](./changelog.md)
 - Community
     - [Google Discussion](https://groups.google.com/forum/#!forum/paperclipjs)
-    - [Gitter Chat](https://gitter.im/mojo-js/paperclip.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+    - [Gitter Chat](https://gitter.im/crcn/paperclip.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 - Rendering engines
     - [Pixi](/examples/common/documents/pixi) - [pixijs](http://www.pixijs.com/) WebGL rendering engine.
 - [Examples](/examples)
