@@ -12,11 +12,7 @@ var pc      = require("paperclip");
 var fs      = require("fs");
 
 // readFileSync works in the browser assuming you're using brfs with browserify
-var template = pc.template(fs.readFileSync(__dirname + "/template.pc", "utf8"), {
-
-    // compiler not included by default. Register it to this template
-    compile: require("paperclip/compile/default")
-});
+var template = pc.template(fs.readFileSync(__dirname + "/template.pc", "utf8"));
 
 // create a view from the template
 var view = template.view({
@@ -44,7 +40,6 @@ template.pc:
 
 - Runs on any platform (web, mobile, NodeJS)
 - Super fast. Uses native browser APIs such as `cloneNode()` for super fast rendering.
-- Tiny (7kb gzipped without parser)
 - Supports any rendering engine (WebGL, Canvas, SVG, custom).
 - Supports inline JavaScript
 - Works with old browsers (IE 8+)
@@ -66,8 +61,8 @@ template.pc:
     - [event handlers](/docs#event-handlers) - `onclick`, `onsubmit`, `onmouseover` etc.
     - [built-in components](/docs#unsafe-htmlcontent-)
     - [built-in attributes](/docs#value-context-)
-    - [custom components](/docs#custom-components) 
-    - [custom attributes](/docs#custom-attributes) 
+    - [custom components](/docs#custom-components)
+    - [custom attributes](/docs#custom-attributes)
     - [compiling templates in the browser](https://github.com/mojo-js/paperclip.js/issues/232)
 - [Changelog](./changelog.md)
 - Community

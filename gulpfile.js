@@ -86,19 +86,13 @@ gulp.task("bundle", function() {
   return bundle(pkg.browser || pkg.main, pkg.name + ".js");
 });
 
-/**
- */
-
-gulp.task("bundle-parser", function() {
-  return bundle("./compilers/default", "parser.js");
-});
 
 /**
  */
 
-gulp.task("minify", ["bundle", "bundle-parser"], function() {
+gulp.task("minify", ["bundle"], function() {
   return gulp.
-  src(["./dist/" + pkg.name + ".js", "./dist/parser.js"]).
+  src(["./dist/" + pkg.name + ".js"]).
   pipe(uglify()).
   pipe(rename(function(path) {
       path.basename += ".min";
@@ -187,6 +181,19 @@ gulp.task("jshint", function() {
     pipe(jshint.reporter('default'));
 });
 
+
+/**
+ */
+
+gulp.task("minify", ["bundle"], function() {
+  return gulp.
+  src(["./dist/" + pkg.name + ".js"]).
+  pipe(uglify()).
+  pipe(rename(function(path) {
+      path.basename += ".min";
+  })).
+  pipe(gulp.dest('./dist'));
+});
 /**
  */
 

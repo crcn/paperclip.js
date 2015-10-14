@@ -1,6 +1,6 @@
 var expect        = require("expect.js");
 var pc            = require("..");
-var stringifyView = require("./old/utils/stringifyView");
+var stringifyView = require("./utils/stringifyView");
 pc.document       = global.document;
 
 describe(__filename + "#", function() {
