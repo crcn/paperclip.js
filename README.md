@@ -39,7 +39,7 @@ template.pc:
 #### Highlights
 
 - Runs on any platform (web, mobile, NodeJS)
-- Super fast. Uses native browser APIs such as `cloneNode()` for super fast rendering.
+- Super fast. Uses native browser APIs such as `cloneNode()` for rendering.
 - Supports any rendering engine (WebGL, Canvas, SVG, custom).
 - Supports inline JavaScript
 - Works with old browsers (IE 8+)
