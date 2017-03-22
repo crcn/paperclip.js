@@ -1,8 +1,0 @@
-
-items:
-<repeat each={{items}} as="a">
-  :{{a.length}}:
-  <repeat each={{a}} as="b">
-    {{b}}
-  </repeat>
-</repeat>

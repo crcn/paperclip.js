@@ -1,4 +1,0 @@
-<ul>
-  <li>items:</li>
-  <li repeat.each={{items}} repeat.as="number">{{number}}</li>
-</ul>
