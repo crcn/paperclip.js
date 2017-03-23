@@ -1,4 +1,4 @@
-const pc = require('./paperclip');
+const { VirtualElement, Hydrator, Binding, createTemplate } = require('./lib/paperclip');
 
 class Element {
   constructor(nodeName) {
@@ -66,22 +66,48 @@ const document = {
   }
 };
 
-class RepeatComponent extends pc.Component {
-  
+// class VirtualRepeatHydrator {
+//   createBinding()
+// }
+
+class RepeatHydrator extends Hydrator {
+  createBinding(root) {
+    return new RepeatBinding(root, this);
+  }
 }
 
-const template = pc.createTemplate(function(element, textNode, binding) {
+class RepeatBinding extends Binding {
+  update(context) {
+
+  }
+}
+
+class VirtualRepeat extends VirtualElement {
+  constructor(nodeName, attributes, children, options) {
+    super(nodeName, attributes, []);
+    this.childTemplate = createTemplate(children[0], options);
+  }
+  collectHydrators(hydrators) {
+    super.collectHydrators(hydrators);
+    hydrators.push(new RepeatHydrator(this));
+  }
+  toNativeNode(factory) {
+    return factory.createElement('div');
+  }
+}
+
+const template = createTemplate(function(element, textNode) {
   return element('div', {
     class: function(context) {
       return context.name;
     }
-  }, [element('repeat', {}, [textNode(function(context) {
+  }, [element('repeat', { each: (({ items }) => items || []), }, [textNode(function(context) {
     return context.text;
   })])]);
 }, {
   document,
   components: {
-    repeat: RepeatComponent
+    repeat: VirtualRepeat
   }
 });
 
