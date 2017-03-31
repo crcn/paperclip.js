@@ -1,0 +1,23 @@
+{
+  "name": "paperclip",
+  "version": "4.0.0",
+  "description": "PaperclipJS is a tiny immutable virtual DOM library.",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:dist": "browserify -e lib/index.js > dist/paperclip.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/crcn/paperclip.js.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/crcn/paperclip.js/issues"
+  },
+  "homepage": "https://github.com/crcn/paperclip.js#readme",
+  "devDependencies": {
+    "browserify": "^14.1.0"
+  }
+}

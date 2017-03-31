@@ -1,4 +1,5 @@
-const { VirtualElement, Hydrator, Binding, createTemplate } = require('./lib/paperclip');
+const { VirtualElement, Hydrator, Binding, createTemplate } = require('./lib/core');
+const { Repeat } = require('./lib/components');
 
 class Element {
   constructor(nodeName) {
@@ -8,7 +9,39 @@ class Element {
   }
 
   appendChild(child) {
+    child.parentNode = this;
+    const previousChild = this.childNodes[this.childNodes.length - 1];
     this.childNodes.push(child);
+    if (previousChild) {
+      previousChild.nextSibling = child;
+      child.previousSibling = previousChild;
+    }
+  }
+
+  removeChild(child) {
+    const index = this.childNodes.indexOf(child);
+    if (index === -1) return;
+    child.parentNode = undefined;
+    this.childNodes.splice(index, 1);
+
+    const nextSibling = child.nextSibling;
+    if (child.previousSibling) {
+      child.previousSibling = nextSibling;
+    }
+
+    child.nextSibling = child.previousSibling = undefined;
+  }
+
+  insertBefore(newNode, referenceNode) {
+    const index = this.childNodes.indexOf(referenceNode);
+    if (index === -1) throw new Error(`Reference child node does not exist`);
+    this.childNodes.splice(index, 0, newNode);
+    newNode.parentNode = this;
+    const previousSibling = referenceNode.previousSibling;
+    newNode.nextSibling = referenceNode;
+    referenceNode.previousSibling = newNode;
+    previousSibling.nextSibling = newNode;
+    newNode.previousSibling = previousSibling;
   }
 
   setAttribute(name, value) {
@@ -50,7 +83,7 @@ class TextNode {
     this.nodeValue = nodeValue;
   }
   cloneNode(deep) {
-    return new TextNode(this.nodeValuee);
+    return new TextNode(this.nodeValue);
   }
   toString() {
     return this.nodeValue;
@@ -66,53 +99,27 @@ const document = {
   }
 };
 
-// class VirtualRepeatHydrator {
-//   createBinding()
-// }
-
-class RepeatHydrator extends Hydrator {
-  createBinding(root) {
-    return new RepeatBinding(root, this);
-  }
-}
-
-class RepeatBinding extends Binding {
-  update(context) {
-
-  }
-}
-
-class VirtualRepeat extends VirtualElement {
-  constructor(nodeName, attributes, children, options) {
-    super(nodeName, attributes, []);
-    this.childTemplate = createTemplate(children[0], options);
-  }
-  collectHydrators(hydrators) {
-    super.collectHydrators(hydrators);
-    hydrators.push(new RepeatHydrator(this));
-  }
-  toNativeNode(factory) {
-    return factory.createElement('div');
-  }
-}
-
 const template = createTemplate(function(element, textNode) {
   return element('div', {
     class: function(context) {
       return context.name;
     }
-  }, [element('repeat', { each: (({ items }) => items || []), }, [textNode(function(context) {
-    return context.text;
-  })])]);
+  }, [element('repeat', { each: (({ items }) => items || []), }, [textNode(function(number) {
+    return number;
+  })]), element('span')]);
 }, {
   document,
   components: {
-    repeat: VirtualRepeat
+    repeat: Repeat
   }
 });
 
 const view = template.createView();
 view.update({ text: 'blarg' });
 console.log(view.node.toString());
-view.update({ text: 'blarg', name: 'test' });
+view.update({ text: 'blarg', name: 'test', items: [1, 2, 3] });
+console.log(view.node.toString());
+view.update({ text: 'blarg', name: 'test', items: [1, 2, 3, 4] });
+console.log(view.node.toString());
+view.update({ text: 'blarg', name: 'test', items: [3, 2, 1] });
 console.log(view.node.toString());
