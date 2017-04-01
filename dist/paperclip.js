@@ -1,9 +1,6 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-module.exports = {
-  Repeat: require('./repeat')
-}
-},{"./repeat":4}],2:[function(require,module,exports){
-(function (global){
+(function (exports) {
+'use strict';
+
 class View {
   constructor(template, node, bindings) {
     this.template = template;
@@ -36,7 +33,7 @@ class Template {
     this.$viewPool = [];
   }
   createView(context) {
-    const eview = this.$viewPool.shift()
+    const eview = this.$viewPool.shift();
     if (eview) return eview;
     
     const node = this.nativeNode.cloneNode(true);
@@ -137,6 +134,7 @@ class VirtualTextNode {
     return document.createTextNode(this.nodeValue);
   }
 }
+
 class Hydrator {
   constructor(virtualNode) {
     this.virtualNode = virtualNode;
@@ -201,20 +199,16 @@ class TextNodeBinding extends ComputeBinding {
   }
 }
 
-function createNativeElement(nodeName, attributes, children) {
-  return new VirtualElement(nodeName, attributes, children);
-}
+const createTemplate = (vdomOrFactory, options = {}) => {
 
-function createTemplate(vdomOrFactory, options = {}) {
-
-  function createTextNode(nodeValue) {
+  const createTextNode = (nodeValue) => {
     return new VirtualTextNode(nodeValue);
-  }
+  };
   
-  function createElement(nodeName, attributes = {}, children = []) {
+  const createElement = (nodeName, attributes = {}, children = []) => {
     const clazz = options.components && options.components[nodeName] || VirtualElement;
     return new clazz(nodeName, attributes, children, options);
-  }
+  };
 
   const vdom = typeof vdomOrFactory === 'function' ? vdomOrFactory(
     createElement,
@@ -224,87 +218,8 @@ function createTemplate(vdomOrFactory, options = {}) {
   return new Template(vdom, {
     document: options.document || global.document
   });
-}
-
-module.exports = {
-  createTemplate: createTemplate,
-  VirtualElement: VirtualElement,
-  VirtualComponent: VirtualComponent,
-  Hydrator: Hydrator,
-  Binding: Binding,
 };
-}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],3:[function(require,module,exports){
 
-module.exports = window.paperclip = Object.assign({}, require('./core'), require('./components'));
-},{"./components":1,"./core":2}],4:[function(require,module,exports){
-const { Hydrator, Binding, VirtualComponent, createTemplate } = require('./core');
-const { diffArray } = require('./utils');
-
-class RepeatHydrator extends Hydrator {
-  createBinding(root) {
-    return new RepeatBinding(root, this);
-  }
-}
-
-class RepeatBinding extends Binding {
-  constructor(root, hydrator) {
-    super(root, hydrator);
-    this.children = [];
-  }
-  
-  update(context) {
-    const { childTemplate, attributes } = this.virtualNode;
-    const { node } = this;
-    const { each } = attributes;
-    const newItems = each(context)      || [];
-    const oldItems = this._currentItems || [];
-
-    this._currentItems = newItems;
-
-    const parentNode = node.parentNode;
-    const startIndex = parentNode.childNodes.indexOf(node);
-    let i = 0;
-
-    diffArray(oldItems, newItems, () => 0).accept({
-      visitUpdate: ({ originalOldIndex, patchedOldIndex, newValue, index }) => {
-        this.children[index].update(newValue);
-      },
-      visitInsert: ({ value, index }) => {
-        const insertAfterChild = parentNode.childNodes[startIndex + index];
-        const insertBeforeChild = insertAfterChild.nextSibling;
-        const child = childTemplate.createView(value);
-        this.children.splice(index, 0, child);
-        if (insertBeforeChild) {
-          parentNode.insertBefore(child.node, insertBeforeChild);
-        } else {
-          parentNode.appendChild(child.node);
-        }
-      },
-      visitRemove: ({ value, index }) => {
-        const [child] = this.children.splice(index, 1);
-        child.detach().dispose();
-      }
-    });
-  }
-}
-
-class VirtualRepeat extends VirtualComponent {
-  constructor(nodeName, attributes, children, options) {
-    super(nodeName, attributes, []);
-    this.childTemplate = createTemplate(children[0], options);
-  }
-  collectHydrators(hydrators) {
-    super.collectHydrators(hydrators);
-    hydrators.push(new RepeatHydrator(this));
-  }
-  toNativeNode(factory) {
-    return factory.createTextNode('');
-  }
-}
-
-module.exports = VirtualRepeat;
-},{"./core":2,"./utils":5}],5:[function(require,module,exports){
 // taken from tandem
 
 const createInsertMutation = (index, value) => {
@@ -347,9 +262,9 @@ const createArrayMutations = (mutations) => {
       }
     }
   }
-}
+};
 
- exports.diffArray = (oldArray, newArray, countDiffs) => {
+ const diffArray = (oldArray, newArray, countDiffs) => {
 
   // model used to figure out the proper mutation indices
   const model    = [].concat(oldArray);
@@ -442,5 +357,78 @@ const createArrayMutations = (mutations) => {
   }
 
   return createArrayMutations(mutations);
+};
+
+class RepeatHydrator extends Hydrator {
+  createBinding(root) {
+    return new RepeatBinding(root, this);
+  }
 }
-},{}]},{},[3]);
+
+class RepeatBinding extends Binding {
+  constructor(root, hydrator) {
+    super(root, hydrator);
+    this.children = [];
+  }
+  
+  update(context) {
+    const { childTemplate, attributes } = this.virtualNode;
+    const { node } = this;
+    const { each } = attributes;
+    const newItems = each(context)      || [];
+    const oldItems = this._currentItems || [];
+
+    this._currentItems = newItems;
+
+    const parentNode = node.parentNode;
+    const startIndex = parentNode.childNodes.indexOf(node);
+    let i = 0;
+
+    diffArray(oldItems, newItems, () => 0).accept({
+      visitUpdate: ({ originalOldIndex, patchedOldIndex, newValue, index }) => {
+        this.children[index].update(newValue);
+      },
+      visitInsert: ({ value, index }) => {
+        const insertAfterChild = parentNode.childNodes[startIndex + index];
+        const insertBeforeChild = insertAfterChild.nextSibling;
+        const child = childTemplate.createView(value);
+        this.children.splice(index, 0, child);
+        if (insertBeforeChild) {
+          parentNode.insertBefore(child.node, insertBeforeChild);
+        } else {
+          parentNode.appendChild(child.node);
+        }
+      },
+      visitRemove: ({ value, index }) => {
+        const [child] = this.children.splice(index, 1);
+        child.detach().dispose();
+      }
+    });
+  }
+}
+
+class RepeatComponent extends VirtualComponent {
+  constructor(nodeName, attributes, children, options) {
+    super(nodeName, attributes, []);
+    this.childTemplate = createTemplate(children[0], options);
+  }
+  collectHydrators(hydrators) {
+    super.collectHydrators(hydrators);
+    hydrators.push(new RepeatHydrator(this));
+  }
+  toNativeNode(factory) {
+    return factory.createTextNode('');
+  }
+}
+
+exports.View = View;
+exports.Template = Template;
+exports.VirtualComponent = VirtualComponent;
+exports.VirtualElement = VirtualElement;
+exports.VirtualTextNode = VirtualTextNode;
+exports.Hydrator = Hydrator;
+exports.Binding = Binding;
+exports.createTemplate = createTemplate;
+exports.RepeatComponent = RepeatComponent;
+
+}((this.paperclip = this.paperclip || {})));
