@@ -1,5 +1,6 @@
-(function (exports) {
 'use strict';
+
+Object.defineProperty(exports, '__esModule', { value: true });
 
 class View {
   constructor(template, node, bindings) {
@@ -245,11 +246,10 @@ class RepeatBinding extends Binding {
       const value = newItems[i];
       let child;
 
-      if (i < this.children.length) {
-        child = this.children[i];
+      if (i < oldChildren.length) {
+        child = oldChildren[i];
       } else {
         const insertAfterChild = parentNode.childNodes[startIndex + i];
-        const insertAfterChild = parentNode.childNodes[startIndex + index];
         const insertBeforeChild = insertAfterChild.nextSibling;
         child = childTemplate.createView(value);
         if (insertBeforeChild) {
@@ -259,12 +259,13 @@ class RepeatBinding extends Binding {
         }
       }
       
+
       child.update(value);
       newChildren[i] = child;
     }
 
-    for (let j = i, n = oldChildren.length; j < n; j++) {
-      oldChildren[j].detach().dispose();
+    for (let i = newItems.length, n = oldChildren.length; i < n; i++) {
+      oldChildren[i].detach().dispose();
     }
   }
 }
@@ -286,7 +287,7 @@ class RepeatComponent extends VirtualComponent {
 
 
 var components = Object.freeze({
-	RepeatComponent: RepeatComponent
+	repeat: RepeatComponent
 });
 
 exports.components = components;
@@ -298,5 +299,3 @@ exports.VirtualTextNode = VirtualTextNode;
 exports.Hydrator = Hydrator;
 exports.Binding = Binding;
 exports.createTemplate = createTemplate;
-
-}((this.paperclip = this.paperclip || {})));

@@ -1,5 +1,5 @@
-const { VirtualElement, Hydrator, Binding, createTemplate } = require('./lib/core');
-const { Repeat } = require('./lib/components');
+const { components, VirtualElement, Hydrator, Binding, createTemplate } = require('./dist/paperclip4');
+
 
 class Element {
   constructor(nodeName) {
@@ -109,9 +109,7 @@ const template = createTemplate(function(element, textNode) {
   })]), element('span')]);
 }, {
   document,
-  components: {
-    repeat: Repeat
-  }
+  components
 });
 
 const view = template.createView();
