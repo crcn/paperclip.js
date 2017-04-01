@@ -421,6 +421,13 @@ class RepeatComponent extends VirtualComponent {
   }
 }
 
+
+
+var components = Object.freeze({
+	RepeatComponent: RepeatComponent
+});
+
+exports.components = components;
 exports.View = View;
 exports.Template = Template;
 exports.VirtualComponent = VirtualComponent;
@@ -429,6 +436,5 @@ exports.VirtualTextNode = VirtualTextNode;
 exports.Hydrator = Hydrator;
 exports.Binding = Binding;
 exports.createTemplate = createTemplate;
-exports.RepeatComponent = RepeatComponent;
 
 }((this.paperclip = this.paperclip || {})));
