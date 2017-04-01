@@ -1,6 +1,5 @@
+(function (exports) {
 'use strict';
-
-Object.defineProperty(exports, '__esModule', { value: true });
 
 class View {
   constructor(template, node, bindings) {
@@ -299,3 +298,5 @@ exports.VirtualTextNode = VirtualTextNode;
 exports.Hydrator = Hydrator;
 exports.Binding = Binding;
 exports.createTemplate = createTemplate;
+
+}((this.paperclip = this.paperclip || {})));
