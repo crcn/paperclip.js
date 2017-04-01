@@ -5,7 +5,7 @@
   "main": "lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:dist": "rollup  --format=iife --name=paperclip --input=lib/index.js > dist/paperclip3.js"
+    "build:dist": "mkdir -p dist; rollup  --format=iife --name=paperclip --input=lib/index.js > dist/paperclip4.js"
   },
   "repository": {
     "type": "git",

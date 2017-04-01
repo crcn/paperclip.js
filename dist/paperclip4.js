@@ -381,8 +381,7 @@ class RepeatBinding extends Binding {
     this._currentItems = newItems;
 
     const parentNode = node.parentNode;
-    const startIndex = parentNode.childNodes.indexOf(node);
-    let i = 0;
+    const startIndex = Array.prototype.indexOf.call(parentNode.childNodes, node);
 
     diffArray(oldItems, newItems, () => 0).accept({
       visitUpdate: ({ originalOldIndex, patchedOldIndex, newValue, index }) => {
