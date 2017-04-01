@@ -1,4 +1,4 @@
-const { components, VirtualElement, Hydrator, Binding, createTemplate } = require('./dist/paperclip4');
+const { components, VirtualElement, Hydrator, Binding, createTemplate } = require('./dist/paperclip6');
 
 
 class Element {

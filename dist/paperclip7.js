@@ -2,19 +2,17 @@
 'use strict';
 
 class View {
-  constructor(template, node, bindings) {
+  constructor(template, node, binding) {
     this.template = template;
     this.node = node;
-    this.bindings = bindings;
+    this.binding = binding;
   }
   dispose() {
     this.template.$viewPool.push(this);
     return this;
   }
   update(context) {
-    for (const binding of this.bindings) {
-      binding.update(context);
-    }
+    this.binding.update(context);
     return this;
   }
   detach() {
@@ -22,6 +20,18 @@ class View {
       this.node.parentNode.removeChild(this.node);
     }
     return this;
+  }
+}
+
+class Bindings {
+  constructor(targets) {
+    this.targets = targets;
+    this.length  = targets.length;
+  }
+  update(context) {
+    for (let i = 0; i < this.length; i++) {
+      this.targets[i].update(context);
+    }
   }
 }
 
@@ -41,7 +51,7 @@ class Template {
     for (const hydrator of this.hydrators) {
       bindings.push(hydrator.createBinding(node));
     }
-    const view = new View(this, node, bindings);
+    const view = new View(this, node, bindings.length === 1 ? bindings[0] : new Bindings(bindings));
     if (arguments.length !== 0) {
       view.update(context);
     }
