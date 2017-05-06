@@ -1,1 +1,1 @@
-export * from './lib/core';
+module.exports = require('./lib/core');
