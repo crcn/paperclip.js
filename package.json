@@ -1,7 +1,7 @@
 {
   "name": "paperclip",
-  "version": "4.0.0",
-  "description": "PaperclipJS is a tiny immutable virtual DOM library.",
+  "version": "5.0.0",
+  "description": "Tiny WYSIWYG-first language for building web applications.",
   "main": "lib/index.js",
   "scripts": {
     "test": "mocha test ./lib/**/*-test.js",
@@ -26,5 +26,8 @@
     "mocha": "^3.4.2",
     "rollup": "^0.41.6",
     "typescript": "^2.4.1"
+  },
+  "dependencies": {
+    "pegjs": "^0.10.0"
   }
 }

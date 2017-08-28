@@ -14,16 +14,26 @@ const flattenArray = (value) => Array.isArray(value) ? value.reduce((a, b) => []
 
   // CUSTOM
   COMPONENT = 21,
-  TEXT_BINDING = 
+  TEXT_BINDING = 22
 };
 
 export type VirtualNode = {
   nodeType: NodeTypes
 };
 
+export type VirtualBindingFn = (value: any) => any;
+
+export type VirtualTextBinding = {
+  nodeType: NodeTypes.TEXT_BINDING,
+  run: VirtualBindingFn
+};
+
 export type VirtualContainer =  {
 
 }
+
+
+export type VirtualChildNode = VirtualNode|string|VirtualBindingFn;
 
 export type VirtualElement = {
   tagName: string,
@@ -43,6 +53,11 @@ export const textNode = (nodeValue: string): VirtualTextNode => ({
   nodeValue
 });
 
+export const textBinding = (run: VirtualBindingFn): VirtualTextBinding => ({
+  nodeType: NodeTypes.TEXT_BINDING,
+  run,
+});
+
 export function element(component: VirtualComponent, attributes: any, ...children: Array<string|VirtualNode>);
 export function element(tagName: string, attributes: any, ...children: Array<string|VirtualNode>);
 export function element(tagNameOrComponent: any, attributes: any, ...children: Array<string|VirtualNode>) {
@@ -51,7 +66,16 @@ export function element(tagNameOrComponent: any, attributes: any, ...children: A
       nodeType: NodeTypes.ELEMENT,
       tagName: tagNameOrComponent,
       attributes: attributes,
-      children: flattenArray(children).map((child) => typeof child === "string" ? textNode(child) : child)
+      children: flattenArray(children).map(mapChildNode)
     } as VirtualElement
+  }
+};
+
+const mapChildNode = (child: VirtualChildNode) => {
+  const toc = typeof child;
+  switch(toc) {
+    case "string": return textNode(child as string);
+    case "function": return textBinding(child as VirtualBindingFn);
+    default: return child;
   }
 }

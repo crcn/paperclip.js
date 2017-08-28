@@ -1,18 +1,33 @@
-PaperclipJS is a tiny immutable virtual DOM library.
+Paperclip is a WYSIWYG-first library for building visual applications.
 
-Example:
+#### Goals
 
-```javascript
-const { createTemplate } from 'paperclip';
+- [ ] Provide a readable DSL that can be 100% coded visually.
+- [ ] Provide a set of APIs that are non-inventy and use existing principles in other popular libraries.
+- [ ] Provide a DSL that covers 80-90% of visual development, but gives enough wiggle-room for devs to add more expressive behavior.
+- [ ] _just the view layer_. Nothing else.
 
-const template = createTemplate(element, textNode) {
-  return element('div', {}, textNode(({ text }) => `hello ${text}!`)));
-}, { document });
+#### Non-goals
 
+- [ ] expressive components must be deferred to higher order functions, or view controllers. Paperclip components are dumb, and provide a limted range 
+- [ ] 
 
-const view = template.createView();
+#### Example
 
-document.body.appendChild(view.node);
-
-view.update({ text: 'blarg' });
+```html
+<style>
+</style>
+<template name="button">
+  <show when={{show}}>
+  </show>
+</template>
 ```
+
+#### TODO
+
+- [ ] Vue -> Paperclip transpiler
+- [ ] Paperclip -> JSX transpiler
+- [ ] Paperclip -> Vue transpiler
+
+
+### API

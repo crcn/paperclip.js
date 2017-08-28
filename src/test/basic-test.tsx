@@ -27,7 +27,6 @@ describe(__filename + "#", () => {
     const div = <div>{ (value) => value }</div>;
     expect(div.tagName).to.eql("div");
     expect(div.children.length).to.eql(1);
-    expect(div.children[0].nodeType).to.eql(NodeTypes.TEXT);
-    expect(div.children[1].nodeType).to.eql(NodeTypes.ELEMENT);
+    expect(div.children[0].nodeType).to.eql(NodeTypes.TEXT_BINDING);
   });
 });
