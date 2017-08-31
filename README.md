@@ -47,6 +47,7 @@ TODOS:
 
 - [ ] visual editor plugin
 - [ ] react transpiler
+- [ ] Strong types
 
 
 GOALS:
