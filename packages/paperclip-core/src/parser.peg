@@ -1,0 +1,139 @@
+{
+  const { ExpressionType } = require("./expressions");
+
+  const flatten = (value) => {
+    if (!Array.isArray(value)) return [value];
+    return value.reduce((a, b) => {
+      return a.concat(flatten(b));
+    }, []);
+  }
+
+  const getText = (value) => {
+    return flatten(value).filter(v => v != null).join("");
+  }
+}
+
+Start = Fragment
+
+Child = Comment/Element/TextBlock/TextNode
+
+Fragment = children: Child+ {
+  return children.length === 1 ? children[0] : {
+    type: ExpressionType.FRAGMENT,
+    children
+  };
+}
+
+Comment = "<!--" value: (!"-->" SourceCharacter)* "-->" {
+  return {
+    type: ExpressionType.COMMENT,
+    value: getText(value)
+  };
+}
+
+Block = "{{" value: TextBlockCharacter+ "}}" {
+  return getText(value);
+}
+
+TextBlock = value: Block {
+  return {
+    type: ExpressionType.TEXT_BLOCK,
+    value,
+  }
+}
+
+TextBlockCharacter = !"}}" value: SourceCharacter {
+  return value;
+}
+
+TextNode = TextNodeCharacter+ {
+  return {
+    type: ExpressionType.TEXT_NODE,
+    value: text()
+  };
+}
+
+TextNodeCharacter = !("<"/"{{") value: SourceCharacter {
+  return value;
+}
+
+Element = ElementOpenClose/ElementSelfClosing
+
+
+ElementOpenClose = open: ElementOpen ">" children: Child* close: ElementClose {
+  if (open.tagName !== close.tagName) {
+    // TODO: throw error
+  }
+
+  return {
+    type: ExpressionType.ELEMENT,
+    children: children
+  }
+}
+
+ElementSelfClosing = open: ElementOpen " "* "/>" {
+  return {
+    tagName: open.tagName,
+    type: ExpressionType.ELEMENT,
+    attributes: open.attributes,
+    children: []
+  };
+}
+
+ElementOpen = "<" tagName: TagName attributes: ElementAttribute* {
+  return {
+    tagName,
+    attributes
+  };
+}
+
+ElementClose = "</" tagName: TagName ">" {
+  return {
+    tagName
+  };
+}
+
+TagName = Name;
+
+ElementAttribute = " " attribute: Attribute {
+  return attribute;
+}
+
+Attribute = AttributeWithBlockValue/AttributeWithStringValue/AttributeWithoutValue;
+
+AttributeWithBlockValue = name: AttributeName "=" value: Block {
+  return {
+    type: ExpressionType.BLOCK_ATTRIBUTE,
+    name,
+    value,
+  }
+}
+
+AttributeWithStringValue = name: AttributeName "=" value: String {
+  return {
+    type: ExpressionType.STRING_ATTRIBUTE,
+    name,
+    value,
+  }
+}
+
+AttributeWithoutValue = name: AttributeName {
+  return {
+    type: ExpressionType.STRING_ATTRIBUTE,
+    name
+  };
+}
+
+AttributeName = Name
+
+String = value: DoubleQuoteString/SingleQuoteString;
+
+DoubleQuoteString = '"' value: (!'"' SourceCharacter)* '"' { return getText(value); }
+
+SingleQuoteString = "'" value: (!"'" SourceCharacter)* "'" { return getText(value); }
+
+Name = (!(" "/"="/">"/"/") SourceCharacter)+ {
+  return text();
+}
+
+SourceCharacter = .

@@ -1,33 +1,53 @@
-Paperclip is a WYSIWYG-first library for building visual applications.
-
-#### Goals
-
-- [ ] Provide a readable DSL that can be 100% coded visually.
-- [ ] Provide a set of APIs that are non-inventy and use existing principles in other popular libraries.
-- [ ] Provide a DSL that covers 80-90% of visual development, but gives enough wiggle-room for devs to add more expressive behavior.
-- [ ] _just the view layer_. Nothing else.
-
-#### Non-goals
-
-- [ ] expressive components must be deferred to higher order functions, or view controllers. Paperclip components are dumb, and provide a limted range 
-- [ ] 
-
-#### Example
+Paperclip is a template langauge designed for UI editors that can also be coded by hand. It's meant to be transpiled
+to existing frameworks such as React, Vue, and Angular. Here's there basic syntax:
 
 ```html
-<style>
-</style>
-<template name="button">
-  <show when={{show}}>
-  </show>
+<template>
+  {{count}}
+  <a href="#" onclick={{addOne}}>add one</a>
 </template>
 ```
 
-#### TODO
+To transpile the above template to React, just add the `paperclip-react-loader` to your `webpack.config.js` file:
 
-- [ ] Vue -> Paperclip transpiler
-- [ ] Paperclip -> JSX transpiler
-- [ ] Paperclip -> Vue transpiler
+```javascript
+module.exports = {
+
+  /* rest of the config here */
+
+  module: {
+    rules: [
+      { test: /\.pc?$/, use: 'paperclip-react-loader' }
+    ]
+  }
+}
+```
+
+Once you have that, you can use Paperclip files like normal components:
+
+```typescript
+import ButtonBase from "./button.pc";
+import { compose, withHandlers, withState } from "recompose";
+
+const enhanceButton = compose(
+  withState("count", "setCount", 0),
+  withHandlers({
+    addOne: ({ count, setCount }) => () => {
+      setCount(count + 1);
+    }
+  })
+);
+
+const Button = enhanceButton(ButtonBase);
+
+export default Button;
+```
+
+TODOS:
+
+- [ ] visual editor plugin
+- [ ] react transpiler
 
 
-### API
+GOALS:
+

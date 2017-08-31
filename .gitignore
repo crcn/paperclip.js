@@ -3,3 +3,4 @@ npm-debug*
 .DS_Store
 test-web
 coverage
+lib
