@@ -66,6 +66,8 @@ ElementOpenClose = open: ElementOpen ">" children: Child* close: ElementClose {
   }
 
   return {
+    tagName: open.tagName,
+    attributes: open.attributes,
     type: ExpressionType.ELEMENT,
     children: children
   }

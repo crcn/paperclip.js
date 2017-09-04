@@ -15,8 +15,12 @@ export type Expression = {
   locationRange: LocationRange;
 };
 
+export type ParentExpression = {
+  children: Expression[];
+} & Expression;
+
 export type ValueNode = {
-  value: Expression;
+  value: string;
 } & Expression;
 
 export type Attribute = {
@@ -27,9 +31,6 @@ export type Attribute = {
 export type Element = {
   tagName: string;
   attributes: Attribute[];
-  children: Expression[];
-} & Expression;
+} & ParentExpression;
 
-export type Fragment = {
-  children: Expression[];
-} & Expression;
+export type Fragment = ParentExpression;
